@@ -84,7 +84,7 @@ const UserHomepage = () => {
                         <div>About</div>
                     </Link>
                     <a
-                        href="https://github.com/thenbthoughts"
+                        href="https://ai-notes.xyz/docs/selfhost/selfhost-local"
                         className='block p-3 border bg-cyan-100 rounded hover:shadow-md'
                     >
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
