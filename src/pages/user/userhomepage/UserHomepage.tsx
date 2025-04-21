@@ -84,7 +84,7 @@ const UserHomepage = () => {
                         <div>About</div>
                     </Link>
                     <a
-                        href="https://ai-notes.xyz/docs/selfhost/selfhost-local"
+                        href="https://ai-notes.xyz/docs/selfhost/selfhost-docker-build"
                         className='block p-3 border bg-cyan-100 rounded hover:shadow-md'
                     >
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
