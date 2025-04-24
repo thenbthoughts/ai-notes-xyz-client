@@ -15,6 +15,7 @@ import UserLogout from './pages/user/auth/Logout.tsx';
 
 // pages
 import PageChatOneList from './pages/user/noteAdvance/pageChatOneList/ChatOneList.tsx';
+import PageChatLlmList from './pages/user/noteAdvance/pageChatLlmList/ChatLlmList.tsx';
 import MemoQuickAi from './pages/user/noteAdvance/MemoQuickAi/MemoQuickAi';
 
 // Test
@@ -94,8 +95,8 @@ function App() {
           element: <About />,
         },
         {
-          path: '/chat',
-          element: <UserLogin />
+          path: '/user/chat',
+          element: <PageChatLlmList />
         },
       ]
     },

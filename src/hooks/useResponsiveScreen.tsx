@@ -10,10 +10,10 @@ const useResponsiveScreen = () => {
     const [currentScreen, setCurrentScreen] = useState(screenList.lg);
 
     const updateDimensions = () => {
-        if (window.innerWidth < 992) {
-            setCurrentScreen(screenList.sm);
-        } else {
+        if (window.innerWidth >= 1024) {
             setCurrentScreen(screenList.lg);
+        } else {
+            setCurrentScreen(screenList.sm);
         }
     };
 

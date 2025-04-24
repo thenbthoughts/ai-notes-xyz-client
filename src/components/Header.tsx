@@ -31,7 +31,7 @@ const Header = () => {
         <header className={`${isScrolled ? 'bg-blue-600 transition-colors duration-1000' : ''} text-white p-4 fixed w-full`} style={{ height: '60px', top: 0 }}>
             <div className="container mx-auto flex justify-between items-center h-full">
                 <h1 className="text-2xl font-bold">AI Notes</h1>
-                <nav className="hidden md:flex space-x-4">
+                <nav className="hidden lg:flex space-x-4">
                     <Link to="/" className="hover:underline">Home</Link>
                     {authState.isLoggedIn === 'true' && (
                         <Fragment>
@@ -56,7 +56,7 @@ const Header = () => {
                         <Link to="/login" className="hover:underline">Login</Link>
                     )}
                 </nav>
-                <div className="md:hidden">
+                <div className="lg:hidden">
                     <button className="focus:outline-none" onClick={() => setStateNavigationDrawer(!stateNavigationDrawer)}>
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
