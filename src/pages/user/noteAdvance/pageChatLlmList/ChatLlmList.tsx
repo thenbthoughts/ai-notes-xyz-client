@@ -30,7 +30,7 @@ import useResponsiveScreen, {
     screenList
 } from '../../../../hooks/useResponsiveScreen.tsx';
 
-const ChatOneList = () => {
+const ChatLlmList = () => {
 
     // useState
     const screenWidth = useResponsiveScreen();
@@ -351,22 +351,24 @@ const ChatOneList = () => {
                     </div>
 
                     {/* chat history */}
-                    <div
-                        className='p-1 cursor-pointer'
-                        onClick={() => {
-                            setStateDisplayChatHistory(!stateDisplayChatHistory);
-                        }}
-                    >
-                        <div className={`py-3 rounded ${stateDisplayChatHistory ? 'bg-blue-600' : 'bg-gray-600'}`}>
-                            <LucideList
-                                style={{
-                                    width: '100%',
-                                    color: 'white', // Set icon color to white
-                                }}
-                                className=''
-                            />
+                    {screenWidth === screenList.sm && (
+                        <div
+                            className='p-1 cursor-pointer'
+                            onClick={() => {
+                                setStateDisplayChatHistory(!stateDisplayChatHistory);
+                            }}
+                        >
+                            <div className={`py-3 rounded ${stateDisplayChatHistory ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                                <LucideList
+                                    style={{
+                                        width: '100%',
+                                        color: 'white', // Set icon color to white
+                                    }}
+                                    className=''
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                 </div>
             </div>
@@ -383,4 +385,4 @@ const ChatOneList = () => {
     );
 };
 
-export default ChatOneList;
+export default ChatLlmList;
