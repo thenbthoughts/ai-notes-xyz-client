@@ -14,7 +14,7 @@ import UserRegister from './pages/user/auth/Register.tsx';
 import UserLogout from './pages/user/auth/Logout.tsx';
 
 // pages
-import PageChatOneList from './pages/user/noteAdvance/pageChatAllList/ChatOneList.tsx';
+import PageChatOneList from './pages/user/noteAdvance/pageChatOneList/ChatOneList.tsx';
 import MemoQuickAi from './pages/user/noteAdvance/MemoQuickAi/MemoQuickAi';
 
 // Test
