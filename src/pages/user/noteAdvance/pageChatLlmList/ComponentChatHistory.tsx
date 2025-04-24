@@ -1,4 +1,6 @@
+import { LucideTrash } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { DebounceInput } from 'react-debounce-input';
 import { Link, useLocation } from 'react-router-dom';
 
 // Sample data for chat history items
@@ -84,23 +86,51 @@ const ComponentChatHistory = () => {
                 Chat History
             </h2>
 
+            <div className="mb-4">
+                <DebounceInput
+                    debounceTimeout={750}
+                    type="text"
+                    placeholder="Search chat history..."
+                    className="border rounded-lg p-2 w-full"
+                    onChange={(e) => {
+                        // const searchTerm = e.target.value.toLowerCase();
+                        // const filteredItems = historyItems.filter(item =>
+                        //     item.title.toLowerCase().includes(searchTerm)
+                        // );
+                        // setFilteredHistoryItems(filteredItems);
+                    }}
+                />
+            </div>
+
             {/* History Items List */}
             <div className="space-y-3">
                 {historyItems.map((item) => (
-                    <Link
-                        to={`/user/chat?id=${item.id}`}
-                        key={item.id}
-                        className={`block p-3 rounded-lg border cursor-pointer transition-colors duration-150 ease-in-out ${item.id === activeChatId ? 'bg-blue-100 border-blue-600' : 'bg-gray-100 border-gray-300 hover:border-gray-600'}`}
-                    >
-                        {/* Chat Title */}
-                        <span className="block text-base font-semibold text-black mb-1">
-                            {item.title}
-                        </span>
-                        {/* Timestamp */}
-                        <span className="block text-xs text-gray-600">
-                            {item.timestamp}
-                        </span>
-                    </Link>
+                    <div>
+                        <Link
+                            to={`/user/chat?id=${item.id}`}
+                            key={item.id}
+                            className={`block p-3 rounded-lg border cursor-pointer transition-colors duration-150 ease-in-out ${item.id === activeChatId ? 'bg-blue-100 border-blue-600' : 'bg-gray-100 border-gray-300 hover:border-gray-600'}`}
+                        >
+                            {/* Chat Title */}
+                            <span className="block text-base font-semibold text-black mb-1">
+                                {item.title}
+                            </span>
+                            {/* Timestamp */}
+                            <span className="block text-xs text-gray-600">
+                                {item.timestamp}
+                            </span>
+
+                        </Link>
+                        <div>
+                            {/* Delete Icon */}
+                            <button
+                                className="text-red-500 hover:text-red-700 mt-2 mr-1"
+                                onClick={() => alert('Delete action triggered!')}
+                            >
+                                <LucideTrash />
+                            </button>
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>
