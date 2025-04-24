@@ -105,7 +105,7 @@ const ComponentChatHistory = () => {
                     type="text"
                     placeholder="Search chat history..."
                     className="border rounded-lg p-2 w-full"
-                    onChange={(e) => {
+                    onChange={() => {
                         // const searchTerm = e.target.value.toLowerCase();
                         // const filteredItems = historyItems.filter(item =>
                         //     item.title.toLowerCase().includes(searchTerm)
