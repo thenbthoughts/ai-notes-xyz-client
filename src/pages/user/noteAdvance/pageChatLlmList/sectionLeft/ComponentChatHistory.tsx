@@ -2,6 +2,8 @@ import { LucideTrash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { Link, useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
+
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 
 /**
@@ -42,6 +44,22 @@ const ComponentChatHistory = () => {
     const addNewThread = async () => {
         try {
             await axiosCustom.post('/api/chat-llm/threads-crud/threadsAdd');
+            await fetchChatThreads();
+        } catch (error) {
+            alert('Error adding new thread: ' + error);
+        }
+    };
+
+    const deleteThread = async (argThreadId: string) => {
+        try {
+            if (!window.confirm('Are you sure you want to delete this thread?')) {
+                return;
+            }
+
+            await axiosCustom.post('/api/chat-llm/threads-crud/threadsDeleteById', {
+                threadId: argThreadId
+            });
+            toast.success('Thread deleted successfully');
             await fetchChatThreads();
         } catch (error) {
             alert('Error adding new thread: ' + error);
@@ -93,11 +111,12 @@ const ComponentChatHistory = () => {
                     <div key={item._id}>
                         <Link
                             to={`/user/chat?id=${item._id}`}
-                            className={`block p-3 rounded-lg border cursor-pointer transition-colors duration-150 ease-in-out ${
-                                item._id === activeChatId
+                            className={
+                                `block p-3 rounded-lg border cursor-pointer transition-colors duration-150 ease-in-out 
+                                ${item._id === activeChatId
                                     ? 'bg-blue-100 border-blue-600'
                                     : 'bg-gray-100 border-gray-300 hover:border-gray-600'
-                            }`}
+                                }`}
                         >
                             {/* Chat Title */}
                             <span className="block text-base font-semibold text-black mb-1">
@@ -112,7 +131,7 @@ const ComponentChatHistory = () => {
                             {/* Delete Icon */}
                             <button
                                 className="text-red-500 hover:text-red-700 mt-2 mr-1"
-                                onClick={() => alert('Delete action triggered!')}
+                                onClick={() => deleteThread(item._id)}
                             >
                                 <LucideTrash />
                             </button>
