@@ -92,7 +92,7 @@ const ComponentChatHistory = () => {
     }, [location.search]);
 
     return (
-        <div className="py-4 pl-3 text-black">
+        <div className="py-4 px-2 text-black">
             {/* Chat Options Title */}
             <h2 className="text-lg font-bold mb-4 text-black">Chat History</h2>
 
