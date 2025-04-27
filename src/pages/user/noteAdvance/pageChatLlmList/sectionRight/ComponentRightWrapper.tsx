@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import CRightChatById from "./CRightChatById";
+import ComponentThreadAdd from "./ComponentThreadAdd";
 
 const ComponentRightWrapper = ({
     stateDisplayAdd,
@@ -24,7 +25,9 @@ const ComponentRightWrapper = ({
 
     return (
         <div>
-            {threadId === '' ? 'New Chat' : (
+            {threadId === '' ? (
+                <ComponentThreadAdd />
+            ) : (
                 <CRightChatById
                     key={threadId}
                     stateDisplayAdd={stateDisplayAdd}
