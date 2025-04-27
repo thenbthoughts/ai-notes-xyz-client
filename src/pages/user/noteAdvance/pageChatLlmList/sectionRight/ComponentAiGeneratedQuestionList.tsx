@@ -1,8 +1,12 @@
 import { useState } from 'react';
-import axiosCustom from '../../../../config/axiosCustom';
+import axiosCustom from '../../../../../config/axiosCustom';
 import toast from 'react-hot-toast';
 
-const ComponentAiGeneratedQuestionList = () => {
+const ComponentAiGeneratedQuestionList = ({
+    threadId,
+}: {
+    threadId: string;
+}) => {
     const [questions, setQuestions] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -10,7 +14,10 @@ const ComponentAiGeneratedQuestionList = () => {
         setLoading(true);
         const config = {
             method: 'post',
-            url: '/api/chat-one/ai-generated-next-questions/notesNextQuestionGenerateByLast30Conversation',
+            url: '/api/chat-llm/ai-generated-next-questions/notesNextQuestionGenerateByLast30Conversation',
+            data: {
+                threadId,
+            },
             headers: {
                 'Content-Type': 'application/json',
             },

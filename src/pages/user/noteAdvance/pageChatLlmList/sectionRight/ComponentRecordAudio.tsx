@@ -1,16 +1,18 @@
 import { Fragment } from "react/jsx-runtime";
-import envKeys from "../../../../config/envKeys";
+import envKeys from "../../../../../config/envKeys";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useEffect } from "react";
-import axiosCustom from "../../../../config/axiosCustom";
+import axiosCustom from "../../../../../config/axiosCustom";
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { LucideMic, LucidePause, LucidePlay, LucideMicOff } from "lucide-react";
 
 const ComponentUploadFile = ({
-    setRefreshParentRandomNum
+    setRefreshParentRandomNum,
+    threadId,
 }: {
-    setRefreshParentRandomNum: React.Dispatch<React.SetStateAction<number>>
+    setRefreshParentRandomNum: React.Dispatch<React.SetStateAction<number>>;
+    threadId: string;
 }) => {
 
     const {
@@ -51,11 +53,12 @@ const ComponentUploadFile = ({
 
             const config = {
                 method: 'post',
-                url: `/api/chat-one/chat-add/notesAdd`,
+                url: `/api/chat-llm/chat-add/notesAdd`,
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 data: {
+                    threadId: threadId,
                     type: fileType,
                     content: `Image: ${tempFilePath}`,
                     visibility: 'public',
