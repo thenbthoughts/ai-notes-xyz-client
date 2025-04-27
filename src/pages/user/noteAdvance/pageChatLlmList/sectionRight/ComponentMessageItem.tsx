@@ -3,11 +3,11 @@ import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import envKeys from "../../../../config/envKeys";
-import axiosCustom from "../../../../config/axiosCustom";
+import envKeys from "../../../../../config/envKeys";
+import axiosCustom from "../../../../../config/axiosCustom";
 import { LucideAudioLines, LucideClipboard, LucideTrash } from "lucide-react";
 
-import { tsMessageItem } from '../../../../types/pages/tsNotesAdvanceList';
+import { tsMessageItem } from '../../../../../types/pages/tsNotesAdvanceList';
 
 const ComponentAiTaskByNotesId = ({
     itemMessageId,
@@ -186,16 +186,21 @@ const ComponentMessageItem = ({
         setIsSpeaking(false);
     };
 
-    const handleDeleteMessage = async (id: string) => {
+    const handleDeleteMessage = async () => {
         const confirmDelete = window.confirm("Are you sure you want to delete this note?");
         if (confirmDelete) {
             try {
-                await axiosCustom.post(`/api/chat-one/crud/notesDelete`, { id }, {
-                    headers: {
-                        'Content-Type': 'application/json',
+                await axiosCustom.post(`/api/chat-llm/crud/notesDelete`,
+                    {
+                        _id: itemMessage._id,
                     },
-                    withCredentials: true,
-                });
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        withCredentials: true,
+                    }
+                );
 
                 setIsDeleted(true);
                 toast.success('Note deleted successfully!');
@@ -358,7 +363,7 @@ const ComponentMessageItem = ({
                         </Fragment>
                     )}
                     <button
-                        onClick={() => handleDeleteMessage(itemMessage._id)}
+                        onClick={() => handleDeleteMessage()}
                         className="px-2 py-1 rounded bg-red-500 text-white mb-1 mr-1"
                     >
                         <LucideTrash
@@ -448,11 +453,11 @@ const ComponentMessageItem = ({
                     {(
                         itemMessage.aiModelProvider === '' && itemMessage.aiModelName === ''
                     ) === false && (
-                        <p className="text-xs text-gray-400 hover:text-gray-800 pb-1">
-                            {itemMessage.aiModelProvider !== '' ? `${itemMessage.aiModelProvider} - ` : ''}
-                            {itemMessage.aiModelName}:
-                        </p>
-                    )}
+                            <p className="text-xs text-gray-400 hover:text-gray-800 pb-1">
+                                {itemMessage.aiModelProvider !== '' ? `${itemMessage.aiModelProvider} - ` : ''}
+                                {itemMessage.aiModelName}:
+                            </p>
+                        )}
                     {renderMessageContent()}
                     {renderButtons()}
                     <ComponentAiTaskByNotesId

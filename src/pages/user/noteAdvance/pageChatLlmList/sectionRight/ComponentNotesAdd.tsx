@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import cssNoteAdvanceList from './scss/noteAdvanceList.module.scss';
 import toast from 'react-hot-toast';
-import axiosCustom from '../../../../config/axiosCustom';
+import axiosCustom from '../../../../../config/axiosCustom';
 import ComponentUploadFile from './ComponentUploadFile';
 import ComponentRecordAudio from './ComponentRecordAudio';
 import { LucideSend } from 'lucide-react';
 
 const ComponentNotesAdd = ({
-    setRefreshParentRandomNum
+    setRefreshParentRandomNum,
+    threadId,
 }: {
-    setRefreshParentRandomNum: React.Dispatch<React.SetStateAction<number>>
+    setRefreshParentRandomNum: React.Dispatch<React.SetStateAction<number>>;
+    threadId: string;
 }) => {
     // useState
     const [newNote, setNewNote] = useState('');
@@ -21,11 +23,12 @@ const ComponentNotesAdd = ({
                 const toastLoadingId = toast.loading('Adding note...');
                 const config = {
                     method: 'post',
-                    url: `/api/chat-one/chat-add/notesAdd`,
+                    url: `/api/chat-llm/chat-add/notesAdd`,
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     data: {
+                        threadId: threadId,
                         type: "text",
                         content: newNote,
                         visibility: 'public',
@@ -93,11 +96,13 @@ const ComponentNotesAdd = ({
                 {/* file */}
                 <ComponentUploadFile
                     setRefreshParentRandomNum={setRefreshParentRandomNum}
+                    threadId={threadId}
                 />
 
                 {/* audio */}
                 <ComponentRecordAudio
                     setRefreshParentRandomNum={setRefreshParentRandomNum}
+                    threadId={threadId}
                 />
 
                 {/* public or private */}

@@ -1,15 +1,17 @@
 import { Fragment } from "react/jsx-runtime";
-import envKeys from "../../../../config/envKeys";
+import envKeys from "../../../../../config/envKeys";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { ChangeEvent, useRef } from "react";
-import axiosCustom from "../../../../config/axiosCustom";
+import axiosCustom from "../../../../../config/axiosCustom";
 import { LucideFile } from "lucide-react";
 
 const ComponentUploadFile = ({
-    setRefreshParentRandomNum
+    setRefreshParentRandomNum,
+    threadId,
 }: {
-    setRefreshParentRandomNum: React.Dispatch<React.SetStateAction<number>>
+    setRefreshParentRandomNum: React.Dispatch<React.SetStateAction<number>>,
+    threadId: string;
 }) => {
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -36,11 +38,12 @@ const ComponentUploadFile = ({
 
             const config = {
                 method: 'post',
-                url: `/api/chat-one/chat-add/notesAdd`,
+                url: `/api/chat-llm/chat-add/notesAdd`,
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 data: {
+                    threadId: threadId,
                     type: fileType,
                     content: `Image: ${tempFilePath}`,
                     visibility: 'public',
