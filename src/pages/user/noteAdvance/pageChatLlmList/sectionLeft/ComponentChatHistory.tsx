@@ -1,7 +1,7 @@
 import { LucideTrash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
@@ -12,6 +12,8 @@ import axiosCustom from '../../../../../config/axiosCustom.ts';
  */
 const ComponentChatHistory = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+
     const [activeChatId, setActiveChatId] = useState('');
 
     // 
@@ -43,8 +45,19 @@ const ComponentChatHistory = () => {
 
     const addNewThread = async () => {
         try {
-            await axiosCustom.post('/api/chat-llm/threads-crud/threadsAdd');
-            await fetchChatThreads();
+            const result = await axiosCustom.post('/api/chat-llm/threads-crud/threadsAdd');
+
+            const tempThreadId = result?.data?.thread?._id;
+            if (tempThreadId) {
+                if (typeof tempThreadId === 'string') {
+                    const redirectUrl = `/user/chat?id=${tempThreadId}`;
+                    navigate(redirectUrl);
+                }
+            }
+
+            toast.success('New thread added successfully!');
+
+            fetchChatThreads();
         } catch (error) {
             alert('Error adding new thread: ' + error);
         }
@@ -61,6 +74,8 @@ const ComponentChatHistory = () => {
             });
             toast.success('Thread deleted successfully');
             await fetchChatThreads();
+
+            navigate('/user/chat');
         } catch (error) {
             alert('Error adding new thread: ' + error);
         }
@@ -84,12 +99,12 @@ const ComponentChatHistory = () => {
             {/* New Chat Button */}
             <div className="mb-4">
                 <button
-                    className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 transition-colors duration-150"
+                    className="w-full p-1 text-white bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 rounded-md shadow-sm hover:from-indigo-600 hover:via-purple-700 hover:to-pink-600 transition-colors duration-300"
                     onClick={() => {
                         addNewThread();
                     }}
                 >
-                    New Chat
+                    + Add
                 </button>
             </div>
 
