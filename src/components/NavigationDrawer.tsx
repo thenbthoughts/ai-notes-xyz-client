@@ -37,7 +37,10 @@ const NavigationDrawer = () => {
                     {authState.isLoggedIn === 'true' && (
                         <Fragment>
                             <li className="hover:bg-purple-700 rounded-lg mx-2 my-2">
-                                <Link to="/user/chat-one" className="text-white block p-2" onClick={handleLinkClick}>📝 Chat</Link>
+                                <Link to="/user/chat-one" className="text-white block p-2" onClick={handleLinkClick}>📝 Chat One</Link>
+                            </li>
+                            <li className="hover:bg-purple-700 rounded-lg mx-2 my-2">
+                                <Link to="/user/chat" className="text-white block p-2" onClick={handleLinkClick}>📝 Chat</Link>
                             </li>
                             <li className="hover:bg-purple-700 rounded-lg mx-2 my-2">
                                 <Link to="/user/quick-memo-ai" className="text-white block p-2" onClick={handleLinkClick}>📝 Memo</Link>

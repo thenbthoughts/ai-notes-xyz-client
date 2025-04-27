@@ -39,6 +39,9 @@ const Header = () => {
                                 to="/user/chat-one" className="hover:underline"
                             >Chat One</Link>
                             <Link
+                                to="/user/chat" className="hover:underline"
+                            >Chat</Link>
+                            <Link
                                 to="/user/quick-memo-ai" className="hover:underline"
                             >Memo</Link>
                             <Link

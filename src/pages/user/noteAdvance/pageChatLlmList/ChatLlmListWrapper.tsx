@@ -32,7 +32,7 @@ const ChatLlmListWrapper = () => {
     const [
         stateDisplayAdd,
         setStateDisplayAdd,
-    ] = useState(false);
+    ] = useState(true);
 
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
