@@ -25,6 +25,7 @@ import Setting from "./pages/user/settings/Setting.tsx";
 import TaskList from "./pages/user/noteAdvance/taskList/TaskList.tsx";
 import About from "./pages/other/About.tsx";
 import UserHomepage from "./pages/user/userhomepage/UserHomepage.tsx";
+import LlmTaskBackgroundProcess from "./components/LlmTaskBackgroundProcess.tsx";
 
 function App() {
   const Layout = () => {
@@ -110,8 +111,8 @@ function App() {
         position="top-center"
       />
       <RouterProvider router={router} />
-
       <RefreshToken />
+      <LlmTaskBackgroundProcess />
     </>
   )
 }
