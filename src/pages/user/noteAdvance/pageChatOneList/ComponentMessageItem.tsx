@@ -208,7 +208,7 @@ const ComponentMessageItem = ({
 
     const renderImage = () => {
         return (
-            <div>
+            <div className="pb-3">
                 <img
                     src={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${itemMessage?.fileUrl}`}
                     alt="Attached photo"

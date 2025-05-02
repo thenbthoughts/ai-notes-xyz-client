@@ -26,6 +26,7 @@ import TaskList from "./pages/user/noteAdvance/taskList/TaskList.tsx";
 import About from "./pages/other/About.tsx";
 import UserHomepage from "./pages/user/userhomepage/UserHomepage.tsx";
 import LlmTaskBackgroundProcess from "./components/LlmTaskBackgroundProcess.tsx";
+import AuthorizedRoute from "./components/AuthorizedRoute.tsx";
 
 function App() {
   const Layout = () => {
@@ -49,11 +50,19 @@ function App() {
         },
         {
           path: "/login",
-          element: <UserLogin />,
+          element: (
+            <AuthorizedRoute>
+              <UserLogin />,
+            </AuthorizedRoute>
+          )
         },
         {
           path: "/register",
-          element: <UserRegister />,
+          element: (
+            <AuthorizedRoute>
+              <UserRegister />
+            </AuthorizedRoute>
+          ),
         },
         {
           path: "/logout",
@@ -68,6 +77,14 @@ function App() {
               <PageChatOneList />
             </UnauthorizedRoute>
           ),
+        },
+        {
+          path: '/user/chat',
+          element: (
+            <UnauthorizedRoute>
+              <PageChatLlmListWrapper />
+            </UnauthorizedRoute>
+          )
         },
         {
           path: '/user/task',
@@ -94,10 +111,6 @@ function App() {
         {
           path: "/about",
           element: <About />,
-        },
-        {
-          path: '/user/chat',
-          element: <PageChatLlmListWrapper />
         },
       ]
     },
