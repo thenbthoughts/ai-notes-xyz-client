@@ -1,4 +1,4 @@
-import { LucideTrash } from 'lucide-react';
+import { LucideBoxSelect, LucideCheck, LucideChevronDown, LucideSettings, LucideTrash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -93,8 +93,126 @@ const ComponentChatHistory = () => {
 
     return (
         <div className="py-4 px-2 text-black">
+
+            <h1 className="text-xl font-bold mb-4 text-black">Life Events</h1>
+
+            <div>
+            <button
+                    className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors duration-200 mr-1"
+                >+ Add</button>
+                <button
+                    className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors duration-200 mr-1"
+                >Clear Filters</button>
+                <button
+                    className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors duration-200"
+                >Ai Extract</button>
+            </div>
+
             {/* Chat Options Title */}
-            <h2 className="text-lg font-bold mb-4 text-black">Chat History</h2>
+            <h2 className="text-lg font-bold mb-4 text-black">Filters</h2>
+
+            {/* filter */}
+            <div>
+                Search:
+                <input type="text" className='border' />
+            </div>
+
+            {/* filter -> category and subcategory */}
+            <div className="flex items-center justify-between">
+                <span>Category</span>
+                <div>
+                    <button
+                        className="p-1 rounded hover:bg-gray-200"
+                        onClick={() => {
+                            // You can add your select action here
+                        }}
+                        title="Select"
+                    >
+                        <LucideChevronDown className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
+                    </button>
+                    <button
+                        className="p-1 rounded hover:bg-gray-200"
+                        onClick={() => {
+                            // You can add your select action here
+                        }}
+                        title="Select"
+                    >
+                        <LucideBoxSelect className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
+                    </button>
+                    <button
+                        className="p-1 rounded hover:bg-gray-200"
+                        onClick={() => {
+                            // You can add your select action here
+                        }}
+                        title="Select"
+                    >
+                        <LucideCheck className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
+                    </button>
+                    <button
+                        className="p-1 rounded hover:bg-gray-200"
+                        onClick={() => {
+                            addNewThread();
+                        }}
+                    >
+                        <LucideSettings className="w-5 h-5 text-indigo-600" />
+                    </button>
+                </div>
+            </div>
+
+            {/* filter -> date range */}
+            <div className="flex items-center justify-between">
+                <span>Date Range</span>
+                <div>
+                    <button
+                        className="p-1 rounded hover:bg-gray-200"
+                        onClick={() => {
+                            // You can add your select action here
+                        }}
+                        title="Select"
+                    >
+                        <LucideChevronDown className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
+                    </button>
+                    <button
+                        className="p-1 rounded hover:bg-gray-200"
+                        onClick={() => {
+                            // You can add your select action here
+                        }}
+                        title="Select"
+                    >
+                        <LucideBoxSelect className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
+                    </button>
+                    <button
+                        className="p-1 rounded hover:bg-gray-200"
+                        onClick={() => {
+                            // You can add your select action here
+                        }}
+                        title="Select"
+                    >
+                        <LucideCheck className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                Is started <input type='checkbox' />
+            </div>
+
+            <div className='py-3'>
+                Status<br />
+                Completed<br />
+                In progress<br />
+                Upcoming<br />
+            </div>
+
+            <div className='py-3'>
+                Event impact:
+                Very huge<br />
+                Huge<br />
+                Big<br />
+                Medium<br />
+                Small<br />
+                Very small<br />
+            </div>
 
             {/* New Chat Button */}
             <div className="mb-4">
