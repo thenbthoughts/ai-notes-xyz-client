@@ -1,4 +1,3 @@
-
 export interface tsMessageItem {
     _id: string;
     
@@ -7,7 +6,7 @@ export interface tsMessageItem {
     paginationDateLocalYearMonthStr: string;
     paginationDateLocalYearMonthDateStr: string;
 
-    type: string,
+    type: string;
     content: string;
     username: string;
     tags: string[];
@@ -34,6 +33,15 @@ export interface tsMessageItem {
     updatedAtUtc: Date;
     updatedAtIpAddress: string;
     updatedAtUserAgent: string;
-}
 
-// TODO update required
+    // Life event specific fields (added)
+    title?: string;
+    description?: string;
+    imageUrl?: string;
+    date?: string;
+    category?: string;
+    subcategory?: string;
+    priority?: string;
+    status?: string;
+    starred?: boolean;
+}

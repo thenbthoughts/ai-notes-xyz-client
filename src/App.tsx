@@ -17,6 +17,7 @@ import UserLogout from './pages/user/auth/Logout.tsx';
 import PageChatOneList from './pages/user/noteAdvance/pageChatOneList/ChatOneList.tsx';
 import PageChatLlmListWrapper from './pages/user/noteAdvance/pageChatLlmList/ChatLlmListWrapper.tsx';
 import MemoQuickAi from './pages/user/noteAdvance/MemoQuickAi/MemoQuickAi';
+import PageLifeEventsWrapper from './pages/user/noteAdvance/pageLifeEventsList/LifeEventWrapper.tsx';
 
 // Test
 import RefreshToken from "./components/RefreshToken.tsx";
@@ -87,8 +88,20 @@ function App() {
           )
         },
         {
+          path: '/user/life-events',
+          element: (
+            <UnauthorizedRoute>
+              <PageLifeEventsWrapper />
+            </UnauthorizedRoute>
+          )
+        },
+        {
           path: '/user/task',
-          element: <TaskList />
+          element: (
+            <UnauthorizedRoute>
+              <TaskList />
+            </UnauthorizedRoute>
+          )
         },
         {
           path: "/user/quick-memo-ai",
