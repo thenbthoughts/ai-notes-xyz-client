@@ -1,5 +1,6 @@
 export interface tsLifeEventsItem {
     // identification
+    _id: string;
     username: string;
 
     // fields
@@ -11,7 +12,7 @@ export interface tsLifeEventsItem {
     eventImpact: string;
 
     // identification - pagination
-    eventDateUtc: Date;
+    eventDateUtc: string;
     eventDateYearStr: string;
     eventDateYearMonthStr: string;
 
