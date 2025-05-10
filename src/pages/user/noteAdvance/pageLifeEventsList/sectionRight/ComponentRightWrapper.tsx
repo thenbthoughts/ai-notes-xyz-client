@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ComponentLifeEventsList from "./ComponentLifeEventsList";
+import ComponentLifeEventsEdit from "./ComponentLifeEventsEdit";
 
 const ComponentRightWrapper = ({
     stateDisplayAdd,
@@ -11,20 +12,32 @@ const ComponentRightWrapper = ({
 }) => {
     const location = useLocation();
     const [pageName, setPageName] = useState({
-        actionType: 'list'
+        actionType: 'list',
+        recordId: '',
     } as {
-        actionType: 'list' | 'edit'
+        actionType: 'list' | 'edit',
+        recordId: string;
     });
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         let tempActionType = 'list' as 'list' | 'edit';
-        const actionType = queryParams.get('action') || 'life';
+        let tempRecordId = '';
+        const actionType = queryParams.get('action') || 'list';
         if (actionType === 'edit') {
-            tempActionType = actionType;
+            
+            const recordId = queryParams.get('id');
+            if (typeof recordId === 'string') {
+                if(recordId.length === 24) {
+                    tempRecordId = recordId;
+                    tempActionType = 'edit';
+                }
+            }
+
         }
         setPageName({
             actionType: tempActionType,
+            recordId: tempRecordId,
         });
     }, [
         location.search,
@@ -53,7 +66,9 @@ const ComponentRightWrapper = ({
             )}
             {pageName.actionType === 'edit' && (
                 <div>
-                    Life Events {'->'} Edit
+                    <ComponentLifeEventsEdit
+                        recordId={pageName.recordId}
+                    />
                 </div>
             )}
         </div>

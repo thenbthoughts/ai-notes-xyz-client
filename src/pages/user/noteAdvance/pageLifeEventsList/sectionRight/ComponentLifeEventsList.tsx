@@ -38,6 +38,8 @@ const ComponentLifeEventsList = () => {
                     'Content-Type': 'application/json',
                 },
                 data: {
+                    page: 1,
+                    perPage: 100,
                     // paginationDateLocalYearMonthStr
                 },
                 cancelToken: axiosCancelTokenSource.token,

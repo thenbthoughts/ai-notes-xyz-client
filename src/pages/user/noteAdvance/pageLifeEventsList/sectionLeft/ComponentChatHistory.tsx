@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
+import { lifeEventAddAxios } from '../utils/lifeEventsListAxios.ts';
 
 /**
  * ComponentChatHistory displays the chat history section.
@@ -91,14 +92,28 @@ const ComponentChatHistory = () => {
         setActiveChatId(tempActiveChatId);
     }, [location.search]);
 
+    const lifeEventAddAxiosLocal = async () => {
+        try {
+            const result = await lifeEventAddAxios();
+            if (result.success !== '') {
+                navigate(`/user/life-events?action=edit&id=${result.recordId}`)
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <div className="py-4 px-2 text-black">
 
             <h1 className="text-xl font-bold mb-4 text-black">Life Events</h1>
 
             <div>
-            <button
+                <button
                     className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors duration-200 mr-1"
+                    onClick={() => {
+                        lifeEventAddAxiosLocal();
+                    }}
                 >+ Add</button>
                 <button
                     className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors duration-200 mr-1"
