@@ -31,6 +31,26 @@ const ComponentLifeEventItem = ({
         return impactStr;
     }
 
+    const getCategoryStr = () => {
+        let categoryStr = '';
+
+        const category = lifeEventObj.categoryArr.length > 0 ? lifeEventObj.categoryArr[0].name : '';
+        const subCategory = lifeEventObj.categorySubArr.length > 0 ? lifeEventObj.categorySubArr[0].name : '';
+
+        if (
+            lifeEventObj.categoryArr.length === 1 &&
+            lifeEventObj.categorySubArr.length === 1
+        ) {
+            categoryStr = `${category} > ${subCategory}`;
+        } else if (
+            lifeEventObj.categoryArr.length === 1
+        ) {
+            categoryStr = `${category}`;
+        }
+
+        return categoryStr;
+    }
+
     const deleteItem = async () => {
         try {
             const confirmDelete = window.confirm("Are you sure you want to delete this item?");
@@ -110,9 +130,11 @@ const ComponentLifeEventItem = ({
                         medium
                     </span>
                     {/* category */}
-                    <span className="inline-block bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                        Purchase {'>'} Tech
-                    </span>
+                    {getCategoryStr() !== '' && (
+                        <span className="inline-block bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+                            {getCategoryStr()}
+                        </span>
+                    )}
                     {/* star */}
                     {lifeEventObj.isStarred && (
                         <span className="inline-block bg-purple-100 text-purple-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
@@ -197,21 +219,6 @@ const ComponentLifeEventItem = ({
                                 }}
                             />
                             Delete
-                        </button>
-                        <button
-                            className="px-3 py-1 rounded bg-yellow-100 text-yellow-800 text-sm font-semibold hover:bg-yellow-200 mr-1"
-                            onClick={() => {/* Logic to duplicate item */ }}
-                            aria-label="Duplicate"
-                        >
-                            <LucideCopy
-                                className="w-4 h-4 inline-block mr-2"
-                                style={{
-                                    height: '15px',
-                                    top: '-2px',
-                                    position: 'relative',
-                                }}
-                            />
-                            Duplicate
                         </button>
                     </div>
                 </div>

@@ -28,4 +28,11 @@ export interface tsLifeEventsItem {
     updatedAtUtc: Date;
     updatedAtIpAddress: string;
     updatedAtUserAgent: string;
+
+    categoryArr: {
+        name: string;
+    }[];
+    categorySubArr: {
+        name: string;
+    }[];
 };
