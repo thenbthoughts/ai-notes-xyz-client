@@ -1,4 +1,4 @@
-import { LucideCopy, LucideCpu, LucideEdit, LucideExpand, LucideStar, LucideTrash2 } from "lucide-react";
+import { LucideCpu, LucideEdit, LucideExpand, LucideStar, LucideTrash2 } from "lucide-react";
 import { tsLifeEventsItem } from "../../../../../types/pages/tsLifeEvents";
 import { Link } from "react-router-dom";
 import axiosCustom from "../../../../../config/axiosCustom";
