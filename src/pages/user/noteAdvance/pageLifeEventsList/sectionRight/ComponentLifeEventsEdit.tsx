@@ -7,6 +7,8 @@ import { tsLifeEventsItem } from '../../../../../types/pages/tsLifeEvents.ts';
 import { Link, useNavigate } from 'react-router-dom';
 import { LucideArrowLeft, LucideSave } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ComponentLifeEventsEditCategory from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategory.tsx';
+import ComponentLifeEventsEditCategorySub from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategorySub.tsx';
 
 const ComponentLifeEventsEdit = ({
     lifeEventObj
@@ -22,8 +24,8 @@ const ComponentLifeEventsEdit = ({
     const [formData, setFormData] = useState({
         title: lifeEventObj.title,
         description: lifeEventObj.description,
-        categoryUniqueKey: lifeEventObj.categoryUniqueKey,
-        categorySubUniqueKey: lifeEventObj.categorySubUniqueKey,
+        categoryId: lifeEventObj.categoryId,
+        categorySubId: lifeEventObj.categorySubId,
         eventImpact: lifeEventObj.eventImpact,
         isStarred: lifeEventObj.isStarred,
         eventDateUtc: lifeEventObj.eventDateUtc.substring(0, 10),
@@ -31,8 +33,8 @@ const ComponentLifeEventsEdit = ({
         // fields
         title: string;
         description: string;
-        categoryUniqueKey: string;
-        categorySubUniqueKey: string;
+        categoryId: string;
+        categorySubId: string;
         isStarred: boolean;
         eventImpact: string;
 
@@ -43,16 +45,16 @@ const ComponentLifeEventsEdit = ({
     const [formError, setFormError] = useState({
         title: '',
         description: '',
-        categoryUniqueKey: '',
-        categorySubUniqueKey: '',
+        categoryId: '',
+        categorySubId: '',
         eventImpact: '',
         isStarred: '',
         eventDateUtc: '',
     } as {
         title: string;
         description: string;
-        categoryUniqueKey: string;
-        categorySubUniqueKey: string;
+        categoryId: string;
+        categorySubId: string;
         eventImpact: string;
         isStarred: string;
         eventDateUtc: string;
@@ -66,8 +68,8 @@ const ComponentLifeEventsEdit = ({
         const newFormError = {
             title: '',
             description: '',
-            categoryUniqueKey: '',
-            categorySubUniqueKey: '',
+            categoryId: '',
+            categorySubId: '',
             eventImpact: '',
             isStarred: '',
             eventDateUtc: '',
@@ -191,23 +193,24 @@ const ComponentLifeEventsEdit = ({
 
                 {/* category */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Category Unique Key</label>
-                    <input
-                        type="text"
-                        value={formData.categoryUniqueKey}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        onChange={(e) => setFormData({ ...formData, categoryUniqueKey: e.target.value })}
+                    <label className="block text-sm font-medium text-gray-700">Category</label>
+                    <ComponentLifeEventsEditCategory
+                        value={formData.categoryId}
+                        onChange={(e) => {
+                            setFormData({ ...formData, categoryId: e.target.value })
+                        }}
                     />
                 </div>
 
                 {/* sub category */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Category Sub Unique Key</label>
-                    <input
-                        type="text"
-                        value={formData.categorySubUniqueKey}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        onChange={(e) => setFormData({ ...formData, categorySubUniqueKey: e.target.value })}
+                    <label className="block text-sm font-medium text-gray-700">Sub Category</label>
+                    <ComponentLifeEventsEditCategorySub
+                        value={formData.categorySubId}
+                        onChange={(e) => {
+                            setFormData({ ...formData, categorySubId: e.target.value })
+                        }}
+                        categoryId={formData.categoryId}
                     />
                 </div>
 
@@ -320,7 +323,6 @@ const ComponentLifeEventsEditWrapper = ({
     return (
         <div className='bg-white rounded p-4'>
             <h1 className="text-3xl font-bold text-gray-800 my-4">Life Events {'->'} Edit</h1>
-            <div>{recordId}</div>
             {loading && (
                 <div className="text-center">
                     <p className="text-lg text-blue-500">Loading...</p>
