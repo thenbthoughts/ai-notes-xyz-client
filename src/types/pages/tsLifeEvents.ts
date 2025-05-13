@@ -6,8 +6,8 @@ export interface tsLifeEventsItem {
     // fields
     title: string;
     description: string;
-    categoryUniqueKey: string;
-    categorySubUniqueKey: string;
+    categoryId: string;
+    categorySubId: string;
     isStarred: boolean;
     eventImpact: string;
 
