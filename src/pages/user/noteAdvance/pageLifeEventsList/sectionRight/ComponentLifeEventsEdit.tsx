@@ -27,7 +27,7 @@ const ComponentLifeEventsEdit = ({
         categoryId: lifeEventObj.categoryId,
         categorySubId: lifeEventObj.categorySubId,
         eventImpact: lifeEventObj.eventImpact,
-        isStarred: lifeEventObj.isStarred,
+        isStar: lifeEventObj.isStar,
         eventDateUtc: lifeEventObj.eventDateUtc.substring(0, 10),
     } as {
         // fields
@@ -35,7 +35,7 @@ const ComponentLifeEventsEdit = ({
         description: string;
         categoryId: string;
         categorySubId: string;
-        isStarred: boolean;
+        isStar: boolean;
         eventImpact: string;
 
         // identification - pagination
@@ -48,7 +48,7 @@ const ComponentLifeEventsEdit = ({
         categoryId: '',
         categorySubId: '',
         eventImpact: '',
-        isStarred: '',
+        isStar: '',
         eventDateUtc: '',
     } as {
         title: string;
@@ -56,7 +56,7 @@ const ComponentLifeEventsEdit = ({
         categoryId: string;
         categorySubId: string;
         eventImpact: string;
-        isStarred: string;
+        isStar: string;
         eventDateUtc: string;
     });
 
@@ -71,7 +71,7 @@ const ComponentLifeEventsEdit = ({
             categoryId: '',
             categorySubId: '',
             eventImpact: '',
-            isStarred: '',
+            isStar: '',
             eventDateUtc: '',
         };
 
@@ -162,9 +162,9 @@ const ComponentLifeEventsEdit = ({
                     <label className="block text-sm font-medium text-gray-700">Is Starred</label>
                     <input
                         type="checkbox"
-                        checked={formData.isStarred}
+                        checked={formData.isStar}
                         className="mt-1"
-                        onChange={(e) => setFormData({ ...formData, isStarred: e.target.checked })}
+                        onChange={(e) => setFormData({ ...formData, isStar: e.target.checked })}
                     />
                 </div>
 
@@ -225,8 +225,8 @@ const ComponentLifeEventsEdit = ({
                         <option value="very-low">Very Low</option>
                         <option value="low">Low</option>
                         <option value="medium">Medium</option>
-                        <option value="high">Large</option>
-                        <option value="very-high">Huge</option>
+                        <option value="large">Large</option>
+                        <option value="huge">Huge</option>
                     </select>
                     {formError.eventImpact.length >= 1 && <p className="text-red-500 text-sm">{formError.eventImpact}</p>}
                 </div>

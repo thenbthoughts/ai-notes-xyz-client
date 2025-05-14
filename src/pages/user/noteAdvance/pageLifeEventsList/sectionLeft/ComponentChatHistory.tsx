@@ -1,96 +1,22 @@
-import { LucideBoxSelect, LucideCheck, LucideChevronDown, LucideSettings, LucideTrash } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
-import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { lifeEventAddAxios } from '../utils/lifeEventsListAxios.ts';
 
-/**
- * ComponentChatHistory displays the chat history section.
- * It fetches chat threads from the API and displays them.
- */
+import { jotaiStateLifeEventSearch, jotaiStateLifeEventCategory, jotaiStateLifeEventCategorySub, jotaiStateLifeEventIsStar, jotaiStateLifeEventImpact, jotaiStateLifeEventDateRange } from '../stateJotai/lifeEventStateJotai.ts';
+import { useAtom } from 'jotai';
+
 const ComponentChatHistory = () => {
-    const location = useLocation();
     const navigate = useNavigate();
 
-    const [activeChatId, setActiveChatId] = useState('');
-
-    // 
-    const [items, setItems] = useState([] as {
-        _id: string;
-        threadTitle: string;
-        createdAtUtc: string;
-    }[]);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useAtom(jotaiStateLifeEventSearch);
+    const [category, setCategory] = useAtom(jotaiStateLifeEventCategory);
+    const [subcategory, setSubcategory] = useAtom(jotaiStateLifeEventCategorySub);
+    const [isStar, setIsStar] = useAtom(jotaiStateLifeEventIsStar);
+    const [impact, setImpact] = useAtom(jotaiStateLifeEventImpact);
+    const [dateRange, setDateRange] = useAtom(jotaiStateLifeEventDateRange); // Added date range state
 
     // Fetch chat threads from API
-    const fetchChatThreads = async () => {
-        try {
-            const response = await axiosCustom.post('/api/chat-llm/threads-crud/threadsGet', {});
-            if (response.data && response.data.docs) {
-                // Map API data to expected format
-                setItems(response.data.docs);
-            }
-        } catch (error) {
-            console.error('Failed to fetch chat threads:', error);
-        }
-    };
-
-    useEffect(() => {
-        fetchChatThreads();
-    }, [
-        searchTerm,
-    ]);
-
-    const addNewThread = async () => {
-        try {
-            const result = await axiosCustom.post('/api/chat-llm/threads-crud/threadsAdd');
-
-            const tempThreadId = result?.data?.thread?._id;
-            if (tempThreadId) {
-                if (typeof tempThreadId === 'string') {
-                    const redirectUrl = `/user/chat?id=${tempThreadId}`;
-                    navigate(redirectUrl);
-                }
-            }
-
-            toast.success('New thread added successfully!');
-
-            fetchChatThreads();
-        } catch (error) {
-            alert('Error adding new thread: ' + error);
-        }
-    };
-
-    const deleteThread = async (argThreadId: string) => {
-        try {
-            if (!window.confirm('Are you sure you want to delete this thread?')) {
-                return;
-            }
-
-            await axiosCustom.post('/api/chat-llm/threads-crud/threadsDeleteById', {
-                threadId: argThreadId
-            });
-            toast.success('Thread deleted successfully');
-            await fetchChatThreads();
-
-            navigate('/user/chat');
-        } catch (error) {
-            alert('Error adding new thread: ' + error);
-        }
-    };
-
-    useEffect(() => {
-        const queryParams = new URLSearchParams(location.search);
-        let tempActiveChatId = '';
-        const chatId = queryParams.get('id') || '';
-        if (chatId) {
-            tempActiveChatId = chatId;
-        }
-        setActiveChatId(tempActiveChatId);
-    }, [location.search]);
 
     const lifeEventAddAxiosLocal = async () => {
         try {
@@ -103,190 +29,204 @@ const ComponentChatHistory = () => {
         }
     }
 
+    const clearFilters = () => {
+        setSearchTerm('');
+        setCategory('');
+        setSubcategory('');
+        setIsStar('');
+        setImpact('');
+        setDateRange({ startDate: null, endDate: null });
+    };
+
     return (
-        <div className="py-4 px-2 text-black">
+        <div className="py-6 px-4">
 
-            <h1 className="text-xl font-bold mb-4 text-black">Life Events</h1>
+            <h1 className="text-2xl font-bold mb-5 text-indigo-700">Life Events</h1>
 
-            <div>
+            <div className="flex space-x-2 mb-4">
                 <button
-                    className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors duration-200 mr-1"
-                    onClick={() => {
-                        lifeEventAddAxiosLocal();
-                    }}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
+                    onClick={lifeEventAddAxiosLocal}
                 >+ Add</button>
                 <button
-                    className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors duration-200 mr-1"
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
+                    onClick={clearFilters}
                 >Clear Filters</button>
                 <button
-                    className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors duration-200"
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
                 >Ai Extract</button>
             </div>
 
             {/* Chat Options Title */}
-            <h2 className="text-lg font-bold mb-4 text-black">Filters</h2>
+            <h2 className="text-xl font-semibold mb-4 text-indigo-600">Filters</h2>
 
             {/* filter */}
-            <div>
-                Search:
-                <input type="text" className='border' />
-            </div>
-
-            {/* filter -> category and subcategory */}
-            <div className="flex items-center justify-between">
-                <span>Category</span>
-                <div>
-                    <button
-                        className="p-1 rounded hover:bg-gray-200"
-                        onClick={() => {
-                            // You can add your select action here
-                        }}
-                        title="Select"
-                    >
-                        <LucideChevronDown className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
-                    </button>
-                    <button
-                        className="p-1 rounded hover:bg-gray-200"
-                        onClick={() => {
-                            // You can add your select action here
-                        }}
-                        title="Select"
-                    >
-                        <LucideBoxSelect className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
-                    </button>
-                    <button
-                        className="p-1 rounded hover:bg-gray-200"
-                        onClick={() => {
-                            // You can add your select action here
-                        }}
-                        title="Select"
-                    >
-                        <LucideCheck className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
-                    </button>
-                    <button
-                        className="p-1 rounded hover:bg-gray-200"
-                        onClick={() => {
-                            addNewThread();
-                        }}
-                    >
-                        <LucideSettings className="w-5 h-5 text-indigo-600" />
-                    </button>
-                </div>
-            </div>
-
-            {/* filter -> date range */}
-            <div className="flex items-center justify-between">
-                <span>Date Range</span>
-                <div>
-                    <button
-                        className="p-1 rounded hover:bg-gray-200"
-                        onClick={() => {
-                            // You can add your select action here
-                        }}
-                        title="Select"
-                    >
-                        <LucideChevronDown className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
-                    </button>
-                    <button
-                        className="p-1 rounded hover:bg-gray-200"
-                        onClick={() => {
-                            // You can add your select action here
-                        }}
-                        title="Select"
-                    >
-                        <LucideBoxSelect className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
-                    </button>
-                    <button
-                        className="p-1 rounded hover:bg-gray-200"
-                        onClick={() => {
-                            // You can add your select action here
-                        }}
-                        title="Select"
-                    >
-                        <LucideCheck className="w-5 h-5 text-indigo-600 hover:bg-gray-200" />
-                    </button>
-                </div>
-            </div>
-
-            <div>
-                Is started <input type='checkbox' />
-            </div>
-
-            <div className='py-3'>
-                Status<br />
-                Completed<br />
-                In progress<br />
-                Upcoming<br />
-            </div>
-
-            <div className='py-3'>
-                Event impact:
-                Very huge<br />
-                Huge<br />
-                Big<br />
-                Medium<br />
-                Small<br />
-                Very small<br />
-            </div>
-
-            {/* New Chat Button */}
             <div className="mb-4">
-                <button
-                    className="w-full p-1 text-white bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 rounded-md shadow-sm hover:from-indigo-600 hover:via-purple-700 hover:to-pink-600 transition-colors duration-300"
-                    onClick={() => {
-                        addNewThread();
-                    }}
-                >
-                    + Add
-                </button>
-            </div>
-
-            {/* Search Input */}
-            <div className="mb-4">
+                <label className="block text-sm font-medium">Search:</label>
                 <DebounceInput
                     debounceTimeout={500}
                     type="text"
-                    placeholder="Search chat history..."
-                    className="border rounded-lg p-2 w-full"
+                    placeholder="Search..."
+                    className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     onChange={(e) => setSearchTerm(e.target.value)}
                     value={searchTerm}
                 />
             </div>
 
-            {/* History Items List */}
-            <div className="space-y-3">
-                {items.map((item) => (
-                    <div key={item._id}>
-                        <Link
-                            to={`/user/chat?id=${item._id}`}
-                            className={
-                                `block p-3 rounded-lg border cursor-pointer transition-colors duration-150 ease-in-out 
-                                ${item._id === activeChatId
-                                    ? 'bg-blue-100 border-blue-600'
-                                    : 'bg-gray-100 border-gray-300 hover:border-gray-600'
-                                }`}
-                        >
-                            {/* Chat Title */}
-                            <span className="block text-base font-semibold text-black mb-1">
-                                {item.threadTitle}
-                            </span>
-                            {/* Timestamp */}
-                            <span className="block text-xs text-gray-600">
-                                {item.createdAtUtc}
-                            </span>
-                        </Link>
-                        <div>
-                            {/* Delete Icon */}
-                            <button
-                                className="text-red-500 hover:text-red-700 mt-2 mr-1"
-                                onClick={() => deleteThread(item._id)}
-                            >
-                                <LucideTrash />
-                            </button>
-                        </div>
-                    </div>
-                ))}
+            {/* filter -> category */}
+            <div className="mb-4">
+                <label className="block text-sm font-medium">Category</label>
+                <select
+                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                >
+                    <option value="">Select</option>
+                    <option value="category1">Category 1</option>
+                    <option value="category2">Category 2</option>
+                    <option value="category3">Category 3</option>
+                </select>
             </div>
+
+            {/* filter -> subcategory */}
+            <div className="mb-4">
+                <label className="block text-sm font-medium">Sub Category</label>
+                <select
+                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={subcategory}
+                    onChange={(e) => setSubcategory(e.target.value)}
+                >
+                    <option value="">Select</option>
+                    <option value="subcategory1">Subcategory 1</option>
+                    <option value="subcategory2">Subcategory 2</option>
+                    <option value="subcategory3">Subcategory 3</option>
+                </select>
+            </div>
+
+            {/* filter -> date range */}
+            <div className="mb-4">
+                <label className="block text-sm font-medium">Date Range</label>
+                <input
+                    type="date"
+                    className="p-2 border border-gray-300 rounded-lg block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={dateRange.startDate ? dateRange.startDate.toISOString().split('T')[0] : ''}
+                    onChange={(e) => setDateRange({ ...dateRange, startDate: new Date(e.target.value) })}
+                />
+                <input
+                    type="date"
+                    className="p-2 border border-gray-300 rounded-lg block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-2"
+                    value={dateRange.endDate ? dateRange.endDate.toISOString().split('T')[0] : ''}
+                    onChange={(e) => setDateRange({ ...dateRange, endDate: new Date(e.target.value) })}
+                />
+            </div>
+
+            <div className="mb-4">
+                <span className="mr-2 text-lg font-semibold">Is Started</span>
+                <div>
+                    <label className="items-center mr-4">
+                        <input
+                            type="radio"
+                            value="true"
+                            checked={isStar === ''}
+                            onChange={() => setIsStar('')}
+                            className="form-radio h-4 w-4 text-indigo-600"
+                        />
+                        <span className="ml-2">All</span>
+                    </label>
+                </div>
+                <div>
+                    <label className="items-center mr-4">
+                        <input
+                            type="radio"
+                            value="true"
+                            checked={isStar === 'true'}
+                            onChange={() => setIsStar('true')}
+                            className="form-radio h-4 w-4 text-indigo-600"
+                        />
+                        <span className="ml-2">Yes</span>
+                    </label>
+                </div>
+                <div>
+                    <label className="items-center">
+                        <input
+                            type="radio"
+                            value="false"
+                            checked={isStar === 'false'}
+                            onChange={() => setIsStar('false')}
+                            className="form-radio h-4 w-4 text-indigo-600"
+                        />
+                        <span className="ml-2">No</span>
+                    </label>
+                </div>
+            </div>
+
+            {/* impact */}
+            <div className="mb-4">
+                <span className="font-medium">Event impact:</span><br />
+                <div>
+                    <label className="block">
+                        <input
+                            type="radio"
+                            value="all"
+                            checked={impact === ''}
+                            onChange={() => setImpact('')}
+                            className="mr-2"
+                        />
+                        All
+                    </label>
+                    <label className="block">
+                        <input
+                            type="radio"
+                            value="very-low"
+                            checked={impact === 'very-low'}
+                            onChange={() => setImpact('very-low')}
+                            className="mr-2"
+                        />
+                        Very Low
+                    </label>
+                    <label className="block">
+                        <input
+                            type="radio"
+                            value="low"
+                            checked={impact === 'low'}
+                            onChange={() => setImpact('low')}
+                            className="mr-2"
+                        />
+                        Low
+                    </label>
+                    <label className="block">
+                        <input
+                            type="radio"
+                            value="medium"
+                            checked={impact === 'medium'}
+                            onChange={() => setImpact('medium')}
+                            className="mr-2"
+                        />
+                        Medium
+                    </label>
+                    <label className="block">
+                        <input
+                            type="radio"
+                            value="large"
+                            checked={impact === 'large'}
+                            onChange={() => setImpact('large')}
+                            className="mr-2"
+                        />
+                        Large
+                    </label>
+                    <label className="block">
+                        <input
+                            type="radio"
+                            value="huge"
+                            checked={impact === 'huge'}
+                            onChange={() => setImpact('huge')}
+                            className="mr-2"
+                        />
+                        Huge
+                    </label>
+                </div>
+            </div>
+
         </div>
     );
 };
@@ -344,7 +284,7 @@ const ComponentChatHistoryModelRender = () => {
                 >
                     <div
                         style={{
-                            height: 'calc(100vh)',
+                            height: 'calc(100vh - 60px)',
                             overflowY: 'auto',
                         }}
                         className="pt-3 pb-5"

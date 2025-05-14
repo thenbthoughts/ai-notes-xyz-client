@@ -22,12 +22,11 @@ const ComponentLifeEventItem = ({
             impactStr = 'Low';
         } else if (lifeEventObj.eventImpact === 'medium') {
             impactStr = 'Medium';
-        } else if (lifeEventObj.eventImpact === 'high') {
+        } else if (lifeEventObj.eventImpact === 'large') {
             impactStr = 'Large';
-        } else if (lifeEventObj.eventImpact === 'very-high') {
+        } else if (lifeEventObj.eventImpact === 'huge') {
             impactStr = 'Huge';
         }
-
         return impactStr;
     }
 
@@ -136,7 +135,7 @@ const ComponentLifeEventItem = ({
                         </span>
                     )}
                     {/* star */}
-                    {lifeEventObj.isStarred && (
+                    {lifeEventObj.isStar && (
                         <span className="inline-block bg-purple-100 text-purple-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
                             <LucideStar className="inline-block mr-1" style={{
                                 height: '15px',

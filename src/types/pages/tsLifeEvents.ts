@@ -8,7 +8,7 @@ export interface tsLifeEventsItem {
     description: string;
     categoryId: string;
     categorySubId: string;
-    isStarred: boolean;
+    isStar: boolean;
     eventImpact: string;
 
     // identification - pagination
