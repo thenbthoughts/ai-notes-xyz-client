@@ -14,8 +14,8 @@ const ComponentLifeEventsList = () => {
     // jotai
 
     const searchTerm = useAtomValue(jotaiStateLifeEventSearch);
-    const category = useAtomValue(jotaiStateLifeEventCategory);
-    const subcategory = useAtomValue(jotaiStateLifeEventCategorySub);
+    const categoryId = useAtomValue(jotaiStateLifeEventCategory);
+    const categorySubId = useAtomValue(jotaiStateLifeEventCategorySub);
     const isStar = useAtomValue(jotaiStateLifeEventIsStar);
     const eventImpact = useAtomValue(jotaiStateLifeEventImpact);
     const dateRange = useAtomValue(jotaiStateLifeEventDateRange);
@@ -41,8 +41,8 @@ const ComponentLifeEventsList = () => {
         setRefreshRandomNum(Math.random());
     }, [
         searchTerm,
-        category,
-        subcategory,
+        categoryId,
+        categorySubId,
         isStar,
         eventImpact,
         dateRange,
@@ -64,6 +64,8 @@ const ComponentLifeEventsList = () => {
                     page: 1,
                     perPage: 100,
                     search: searchTerm,
+                    categoryId: categoryId,
+                    categorySubId: categorySubId,
                     isStar: isStar,
                     eventImpact: eventImpact,
                     // paginationDateLocalYearMonthStr
