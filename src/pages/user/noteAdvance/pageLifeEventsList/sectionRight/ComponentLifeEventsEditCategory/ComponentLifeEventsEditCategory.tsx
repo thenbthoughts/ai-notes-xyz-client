@@ -7,7 +7,7 @@ interface Category {
     name: string;
 }
 
-const ComponentLifeEventsEditCategory = ({ value, onChange }: {
+const ComponentFilterCategory = ({ value, onChange }: {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }) => {
@@ -65,4 +65,4 @@ const ComponentLifeEventsEditCategory = ({ value, onChange }: {
     );
 };
 
-export default ComponentLifeEventsEditCategory;
+export default ComponentFilterCategory;

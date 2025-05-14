@@ -4,14 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import { lifeEventAddAxios } from '../utils/lifeEventsListAxios.ts';
 
 import { jotaiStateLifeEventSearch, jotaiStateLifeEventCategory, jotaiStateLifeEventCategorySub, jotaiStateLifeEventIsStar, jotaiStateLifeEventImpact, jotaiStateLifeEventDateRange } from '../stateJotai/lifeEventStateJotai.ts';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
+import ComponentFilterCategory from './ComponentFilterCategory.tsx';
+import ComponentFilterCategorySub from './ComponentFilterCategorySub.tsx';
 
 const ComponentChatHistory = () => {
     const navigate = useNavigate();
 
     const [searchTerm, setSearchTerm] = useAtom(jotaiStateLifeEventSearch);
-    const [category, setCategory] = useAtom(jotaiStateLifeEventCategory);
-    const [subcategory, setSubcategory] = useAtom(jotaiStateLifeEventCategorySub);
+    const setCategory = useSetAtom(jotaiStateLifeEventCategory);
+    const setSubcategory = useSetAtom(jotaiStateLifeEventCategorySub);
     const [isStar, setIsStar] = useAtom(jotaiStateLifeEventIsStar);
     const [impact, setImpact] = useAtom(jotaiStateLifeEventImpact);
     const [dateRange, setDateRange] = useAtom(jotaiStateLifeEventDateRange); // Added date range state
@@ -74,34 +76,10 @@ const ComponentChatHistory = () => {
             </div>
 
             {/* filter -> category */}
-            <div className="mb-4">
-                <label className="block text-sm font-medium">Category</label>
-                <select
-                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                >
-                    <option value="">Select</option>
-                    <option value="category1">Category 1</option>
-                    <option value="category2">Category 2</option>
-                    <option value="category3">Category 3</option>
-                </select>
-            </div>
+            <ComponentFilterCategory />
 
             {/* filter -> subcategory */}
-            <div className="mb-4">
-                <label className="block text-sm font-medium">Sub Category</label>
-                <select
-                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    value={subcategory}
-                    onChange={(e) => setSubcategory(e.target.value)}
-                >
-                    <option value="">Select</option>
-                    <option value="subcategory1">Subcategory 1</option>
-                    <option value="subcategory2">Subcategory 2</option>
-                    <option value="subcategory3">Subcategory 3</option>
-                </select>
-            </div>
+            <ComponentFilterCategorySub />
 
             {/* filter -> date range */}
             <div className="mb-4">
