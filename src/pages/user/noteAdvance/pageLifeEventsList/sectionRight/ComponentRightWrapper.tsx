@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ComponentLifeEventsList from "./ComponentLifeEventsList";
 import ComponentLifeEventsEdit from "./ComponentLifeEventsEdit";
+import PageLifeEventCategoryCrud from "./PageLifeEventCategoryCrud/PageLifeEventCategoryCrud";
 
 const ComponentRightWrapper = ({
     stateDisplayAdd,
@@ -15,17 +16,17 @@ const ComponentRightWrapper = ({
         actionType: 'list',
         recordId: '',
     } as {
-        actionType: 'list' | 'edit',
+        actionType: 'list' | 'edit' | 'category',
         recordId: string;
     });
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
-        let tempActionType = 'list' as 'list' | 'edit';
+        let tempActionType = 'list' as 'list' | 'edit' | 'category';
         let tempRecordId = '';
         const actionType = queryParams.get('action') || 'list';
+
         if (actionType === 'edit') {
-            
             const recordId = queryParams.get('id');
             if (typeof recordId === 'string') {
                 if(recordId.length === 24) {
@@ -33,7 +34,8 @@ const ComponentRightWrapper = ({
                     tempActionType = 'edit';
                 }
             }
-
+        } else if (actionType === 'category') {
+            tempActionType = 'category';
         }
         setPageName({
             actionType: tempActionType,
@@ -69,6 +71,11 @@ const ComponentRightWrapper = ({
                     <ComponentLifeEventsEdit
                         recordId={pageName.recordId}
                     />
+                </div>
+            )}
+            {pageName.actionType === 'category' && (
+                <div>
+                    <PageLifeEventCategoryCrud />
                 </div>
             )}
         </div>
