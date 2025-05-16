@@ -5,7 +5,7 @@ import { AxiosRequestConfig } from 'axios';
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { tsLifeEventsItem } from '../../../../../types/pages/tsLifeEvents.ts';
 import { Link, useNavigate } from 'react-router-dom';
-import { LucideArrowLeft, LucideSave } from 'lucide-react';
+import { LucideArrowLeft, LucidePlus, LucideSave } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ComponentLifeEventsEditCategory from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategory.tsx';
 import ComponentLifeEventsEditCategorySub from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategorySub.tsx';
@@ -193,7 +193,17 @@ const ComponentLifeEventsEdit = ({
 
                 {/* category */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Category</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Category
+                        <Link
+                            to={'/user/life-events?action=category'}
+                            className="ml-2 p-0 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300 inline-block text-sm"
+                        >
+                            <LucidePlus className="inline-block m-1"
+                                size={'20px'}
+                            />
+                        </Link>
+                    </label>
                     <ComponentLifeEventsEditCategory
                         value={formData.categoryId}
                         onChange={(e) => {

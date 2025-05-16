@@ -59,7 +59,7 @@ const ComponentFilterCategory = () => {
                     <label className="block text-sm font-medium pb-2">
                         Category
                         <Link
-                            to={'/user/life-events'}
+                            to={'/user/life-events?action=category'}
                             className="ml-2 p-0 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300 inline-block text-sm"
                         >
                             <LucidePlus className="inline-block m-1"
