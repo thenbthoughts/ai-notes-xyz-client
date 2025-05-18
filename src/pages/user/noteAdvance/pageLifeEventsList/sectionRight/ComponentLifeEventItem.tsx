@@ -166,7 +166,6 @@ const ComponentLifeEventItem = ({
                                     <button
                                         className="px-3 py-1 rounded bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200 mr-1"
                                         onClick={() => setIsExpanded(!isExpanded)}
-                                        aria-label="Expand Description"
                                     >
                                         <LucideExpand className="w-4 h-4 inline-block mr-2" />
                                         {isExpanded ? 'Collapse' : 'Expand'} Description
@@ -177,7 +176,6 @@ const ComponentLifeEventItem = ({
                         <button
                             className="px-3 py-1 rounded bg-purple-100 text-purple-800 text-sm font-semibold hover:bg-purple-200"
                             onClick={() => {/* Logic to show AI summary */ }}
-                            aria-label="Show AI Summary"
                         >
                             <LucideCpu
                                 className="w-4 h-4 inline-block mr-2"
@@ -193,8 +191,6 @@ const ComponentLifeEventItem = ({
                         <Link
                             to={`/user/life-events?action=edit&id=${lifeEventObj._id}`}
                             className="px-3 py-1 rounded bg-green-100 text-green-800 text-sm font-semibold hover:bg-green-200 mr-1"
-                            onClick={() => {/* Logic to edit item */ }}
-                            aria-label="Edit"
                         >
                             <LucideEdit
                                 className="w-4 h-4 inline-block mr-2"
@@ -211,7 +207,6 @@ const ComponentLifeEventItem = ({
                             onClick={() => {
                                 deleteItem();
                             }}
-                            aria-label="Delete"
                         >
                             <LucideTrash2
                                 className="w-4 h-4 inline-block mr-2"
