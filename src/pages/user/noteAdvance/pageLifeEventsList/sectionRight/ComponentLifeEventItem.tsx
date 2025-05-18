@@ -82,21 +82,14 @@ const ComponentLifeEventItem = ({
         return (
             <Fragment>
                 {/* files and images */}
-                <div style={{
-                    overflowX: 'auto',
-                    overflowY: 'hidden',
-                    whiteSpace: 'nowrap',
-                }}>
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/7/77/Black_and_white_Playstation_5_base_edition_with_controller.png"
-                        alt=""
-                        style={{
-                            display: 'inline-block',
-                            height: '150px',
-                            maxWidth: '150px',
-                            objectFit: 'contain',
-                        }}
-                    />
+                {/*
+                <div
+                    style={{
+                        overflowX: 'auto',
+                        overflowY: 'hidden',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => {
                         return (<img
                             src="https://upload.wikimedia.org/wikipedia/commons/7/77/Black_and_white_Playstation_5_base_edition_with_controller.png"
@@ -110,6 +103,7 @@ const ComponentLifeEventItem = ({
                         />)
                     })}
                 </div>
+                */}
 
                 {/* title */}
                 <h3>{lifeEventObj.title}</h3>
