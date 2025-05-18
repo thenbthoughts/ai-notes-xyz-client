@@ -47,6 +47,9 @@ const Header = () => {
                             <Link
                                 to="/user/task" className="hover:underline"
                             >Task</Link>
+                            <Link
+                                to="/user/life-events" className="hover:underline"
+                            >Life Events</Link>
                         </Fragment>
                     )}
                     <Link to="/about" className="hover:underline">About</Link>
