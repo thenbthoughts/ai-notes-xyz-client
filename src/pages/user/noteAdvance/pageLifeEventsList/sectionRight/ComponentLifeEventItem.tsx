@@ -14,6 +14,8 @@ const ComponentLifeEventItem = ({
         setIsDeleted,
     ] = useState(false);
 
+    const [isExpanded, setIsExpanded] = useState(false);
+
     const getImpactStr = () => {
         let impactStr = 'Very Low';
         if (lifeEventObj.eventImpact === 'very-low') {
@@ -158,22 +160,22 @@ const ComponentLifeEventItem = ({
                 {/* actions */}
                 <div>
                     <div className="action-buttons my-4">
-                        {lifeEventObj.description.trim().length !== 0 && (
-                            <button
-                                className="px-3 py-1 rounded bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200 mr-1"
-                                onClick={() => {/* Logic to expand description */ }}
-                                aria-label="Expand Description"
-                            >
-                                <LucideExpand className="w-4 h-4 inline-block mr-2"
-
-                                />
-                                Expand
-                            </button>
+                        {lifeEventObj.description.length >= 151 && (
+                            <Fragment>
+                                {lifeEventObj.description.trim().length !== 0 && (
+                                    <button
+                                        className="px-3 py-1 rounded bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200 mr-1"
+                                        onClick={() => setIsExpanded(!isExpanded)}
+                                    >
+                                        <LucideExpand className="w-4 h-4 inline-block mr-2" />
+                                        {isExpanded ? 'Collapse' : 'Expand'} Description
+                                    </button>
+                                )}
+                            </Fragment>
                         )}
                         <button
                             className="px-3 py-1 rounded bg-purple-100 text-purple-800 text-sm font-semibold hover:bg-purple-200"
                             onClick={() => {/* Logic to show AI summary */ }}
-                            aria-label="Show AI Summary"
                         >
                             <LucideCpu
                                 className="w-4 h-4 inline-block mr-2"
@@ -189,8 +191,6 @@ const ComponentLifeEventItem = ({
                         <Link
                             to={`/user/life-events?action=edit&id=${lifeEventObj._id}`}
                             className="px-3 py-1 rounded bg-green-100 text-green-800 text-sm font-semibold hover:bg-green-200 mr-1"
-                            onClick={() => {/* Logic to edit item */ }}
-                            aria-label="Edit"
                         >
                             <LucideEdit
                                 className="w-4 h-4 inline-block mr-2"
@@ -207,7 +207,6 @@ const ComponentLifeEventItem = ({
                             onClick={() => {
                                 deleteItem();
                             }}
-                            aria-label="Delete"
                         >
                             <LucideTrash2
                                 className="w-4 h-4 inline-block mr-2"
@@ -223,7 +222,16 @@ const ComponentLifeEventItem = ({
                 </div>
 
                 {/* description */}
-                <p>{lifeEventObj.description}</p>
+                {lifeEventObj.description.length >= 151 ? (
+                    <p className="mb-2 whitespace-pre-wrap">
+                        {isExpanded ? lifeEventObj.description : `${lifeEventObj.description.substring(0, 150)}`}
+                        {!isExpanded && (
+                            <span className="text-blue-500">...</span>
+                        )}
+                    </p>
+                ) : (
+                    <p className="mb-2 whitespace-pre-wrap">{lifeEventObj.description}</p>
+                )}
             </Fragment>
         )
     }
