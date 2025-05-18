@@ -40,6 +40,82 @@ const ComponentChatHistory = () => {
         setDateRange({ startDate: null, endDate: null });
     };
 
+    const setDateRangeToPreset = (preset: string) => {
+        const today = new Date();
+        let startDate, endDate;
+
+        switch (preset) {
+            case 'today':
+                startDate = endDate = today;
+                break;
+            case 'yesterday':
+                startDate = endDate = new Date(today.setDate(today.getDate() - 1));
+                break;
+            case 'this week':
+                startDate = new Date(today.setDate(today.getDate() - today.getDay()));
+                endDate = new Date(today.setDate(today.getDate() + (6 - today.getDay())));
+                break;
+            case 'last week':
+                const lastWeekStart = new Date(today);
+                lastWeekStart.setDate(today.getDate() - today.getDay() - 7);
+                startDate = lastWeekStart;
+                endDate = new Date(lastWeekStart);
+                endDate.setDate(lastWeekStart.getDate() + 6);
+                break;
+            case 'this month':
+                startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                break;
+            case 'last month':
+                startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+                break;
+            case 'this year':
+                startDate = new Date(today.getFullYear(), 0, 1);
+                endDate = new Date(today.getFullYear(), 11, 31);
+                break;
+            case 'last year':
+                startDate = new Date(today.getFullYear() - 1, 0, 1);
+                endDate = new Date(today.getFullYear() - 1, 11, 31);
+                break;
+            default:
+                return;
+        }
+
+        setDateRange({ startDate, endDate });
+    };
+
+    const renderDateRange = () => {
+        return (
+            <div className="mb-4">
+                <label className="block text-sm font-medium">Date Range</label>
+                <input
+                    type="date"
+                    className="p-2 border border-gray-300 rounded-lg block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={dateRange.startDate ? dateRange.startDate.toISOString().split('T')[0] : ''}
+                    onChange={(e) => setDateRange({ ...dateRange, startDate: new Date(e.target.value) })}
+                />
+                <input
+                    type="date"
+                    className="p-2 border border-gray-300 rounded-lg block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-2"
+                    value={dateRange.endDate ? dateRange.endDate.toISOString().split('T')[0] : ''}
+                    onChange={(e) => setDateRange({ ...dateRange, endDate: new Date(e.target.value) })}
+                />
+                <div className="mt-4">
+                    <button onClick={() => setDateRange({ startDate: null, endDate: null })} className="mr-2 mb-1 px-2 py-1 bg-red-500 text-white rounded">Clear</button>
+                    <button onClick={() => setDateRangeToPreset('today')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">Today</button>
+                    <button onClick={() => setDateRangeToPreset('yesterday')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">Yesterday</button>
+                    <button onClick={() => setDateRangeToPreset('this week')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">This Week</button>
+                    <button onClick={() => setDateRangeToPreset('last week')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">Last Week</button>
+                    <button onClick={() => setDateRangeToPreset('this month')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">This Month</button>
+                    <button onClick={() => setDateRangeToPreset('last month')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">Last Month</button>
+                    <button onClick={() => setDateRangeToPreset('this year')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">This Year</button>
+                    <button onClick={() => setDateRangeToPreset('last year')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">Last Year</button>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="py-6 px-4">
 
@@ -82,21 +158,7 @@ const ComponentChatHistory = () => {
             <ComponentFilterCategorySub />
 
             {/* filter -> date range */}
-            <div className="mb-4">
-                <label className="block text-sm font-medium">Date Range</label>
-                <input
-                    type="date"
-                    className="p-2 border border-gray-300 rounded-lg block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    value={dateRange.startDate ? dateRange.startDate.toISOString().split('T')[0] : ''}
-                    onChange={(e) => setDateRange({ ...dateRange, startDate: new Date(e.target.value) })}
-                />
-                <input
-                    type="date"
-                    className="p-2 border border-gray-300 rounded-lg block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-2"
-                    value={dateRange.endDate ? dateRange.endDate.toISOString().split('T')[0] : ''}
-                    onChange={(e) => setDateRange({ ...dateRange, endDate: new Date(e.target.value) })}
-                />
-            </div>
+            {renderDateRange()}
 
             <div className="mb-4">
                 <span className="mr-2 text-lg font-semibold">Is Started</span>

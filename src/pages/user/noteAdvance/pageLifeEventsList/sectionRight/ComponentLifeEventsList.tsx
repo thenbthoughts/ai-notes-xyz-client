@@ -70,6 +70,16 @@ const ComponentLifeEventsList = () => {
         axiosCancelTokenSource: CancelTokenSource
     }) => {
         try {
+            let startDate = '';
+            console.log('dateRange: ', dateRange);
+            if (dateRange.startDate instanceof Date) {
+                startDate = `${dateRange.startDate.toISOString().split('T')[0]}T00:00:00.000Z`;
+            }
+            let endDate = '';
+            if (dateRange.endDate instanceof Date) {
+                endDate = `${dateRange.endDate.toISOString().split('T')[0]}T23:59:59.999Z`;
+            }
+
             const config = {
                 method: 'post',
                 url: `/api/life-events/crud/lifeEventsGet`,
@@ -84,7 +94,9 @@ const ComponentLifeEventsList = () => {
                     categorySubId: categorySubId,
                     isStar: isStar,
                     eventImpact: eventImpact,
-                    // paginationDateLocalYearMonthStr
+
+                    startDate,
+                    endDate,
                 },
                 cancelToken: axiosCancelTokenSource.token,
             } as AxiosRequestConfig;
