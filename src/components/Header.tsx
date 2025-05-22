@@ -28,7 +28,10 @@ const Header = () => {
     }, []);
 
     return (
-        <header className={`${isScrolled ? 'bg-blue-600 transition-colors duration-1000' : ''} text-white p-4 fixed w-full`} style={{ height: '60px', top: 0 }}>
+        <header
+            className={`${isScrolled ? 'bg-blue-600 transition-colors duration-1000' : ''} text-white p-4 fixed w-full`}
+            style={{ height: '60px', top: 0, zIndex: 100 }}
+        >
             <div className="container mx-auto flex justify-between items-center h-full">
                 <h1 className="text-2xl font-bold">AI Notes</h1>
                 <nav className="hidden lg:flex space-x-4">
