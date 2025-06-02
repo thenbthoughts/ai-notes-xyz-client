@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
     ComponentChatHistoryModelRender,
@@ -19,22 +19,31 @@ import useResponsiveScreen, {
     screenList
 } from '../../../../hooks/useResponsiveScreen.tsx';
 import ComponentRightWrapper from './sectionRight/ComponentRightWrapper.tsx';
+import { lifeEventAddAxios } from './utils/lifeEventsListAxios.ts';
 
 const ChatLlmListWrapper = () => {
 
     // useState
     const screenWidth = useResponsiveScreen();
+    const navigate = useNavigate();
 
     const [
         stateDisplayChatHistory,
         setStateDisplayChatHistory,
     ] = useState(false);
-    const [
-        stateDisplayAdd,
-        setStateDisplayAdd,
-    ] = useState(true);
 
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
+
+    const lifeEventAddAxiosLocal = async () => {
+        try {
+            const result = await lifeEventAddAxios();
+            if (result.success !== '') {
+                navigate(`/user/life-events?action=edit&id=${result.recordId}`)
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <div style={{ display: 'flex', width: '100%' }}>
@@ -71,14 +80,10 @@ const ChatLlmListWrapper = () => {
                                 {/*  */}
                                 <div
                                     style={{
-                                        // height: 'calc(100vh - 155px - 120px - 50px)',
-                                        // height: `${getCssHeightForMessages()}`,
                                         height: 'calc(100vh - 60px)',
-                                        // overflowY: 'scroll'
                                     }}
                                 >
                                     <ComponentRightWrapper
-                                        stateDisplayAdd={stateDisplayAdd}
                                         refreshRandomNumParent={refreshRandomNum}
                                     />
                                     {/* {renderChatList()} */}
@@ -118,14 +123,14 @@ const ChatLlmListWrapper = () => {
                     <div
                         className='p-1 cursor-pointer'
                         onClick={() => {
-                            setStateDisplayAdd(!stateDisplayAdd);
+                            lifeEventAddAxiosLocal();
                         }}
                     >
-                        <div className={`py-3 rounded ${stateDisplayAdd ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                        <div className={`py-3 rounded bg-gray-600`}>
                             <LucidePlus
                                 style={{
                                     width: '100%',
-                                    color: 'white', // Set icon color to white
+                                    color: 'white',
                                 }}
                                 className=''
                             />

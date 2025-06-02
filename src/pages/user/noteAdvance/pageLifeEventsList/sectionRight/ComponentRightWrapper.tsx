@@ -5,10 +5,8 @@ import ComponentLifeEventsEdit from "./ComponentLifeEventsEdit";
 import PageLifeEventCategoryCrud from "./PageLifeEventCategoryCrud/PageLifeEventCategoryCrud";
 
 const ComponentRightWrapper = ({
-    stateDisplayAdd,
     refreshRandomNumParent,
 }: {
-    stateDisplayAdd: boolean;
     refreshRandomNumParent: number;
 }) => {
     const location = useLocation();
@@ -43,7 +41,6 @@ const ComponentRightWrapper = ({
         });
     }, [
         location.search,
-        stateDisplayAdd,
         refreshRandomNumParent,
     ]);
 
