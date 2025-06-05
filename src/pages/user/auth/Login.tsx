@@ -19,7 +19,7 @@ export default function Component() {
     useEffect(() => {
         if (authState.isLoggedIn === 'true') {
             // redirect to /home
-            navigate('/user/chat-one')
+            navigate('/')
         }
     }, []);
 
