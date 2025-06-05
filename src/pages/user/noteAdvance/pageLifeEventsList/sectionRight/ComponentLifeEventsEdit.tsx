@@ -29,6 +29,7 @@ const ComponentLifeEventsEdit = ({
         eventImpact: lifeEventObj.eventImpact,
         isStar: lifeEventObj.isStar,
         eventDateUtc: lifeEventObj.eventDateUtc.substring(0, 10),
+        aiTags: lifeEventObj.aiTags,
     } as {
         // fields
         title: string;
@@ -40,6 +41,9 @@ const ComponentLifeEventsEdit = ({
 
         // identification - pagination
         eventDateUtc: string;
+
+        // ai tags
+        aiTags: string[];
     });
 
     const [formError, setFormError] = useState({
@@ -240,6 +244,20 @@ const ComponentLifeEventsEdit = ({
                     </select>
                     {formError.eventImpact.length >= 1 && <p className="text-red-500 text-sm">{formError.eventImpact}</p>}
                 </div>
+
+                {/* field -> ai tags */}
+                {formData.aiTags.length > 0 && (
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">AI Tags</label>
+                        <div className="mt-2">
+                            {formData.aiTags.map((tag, index) => (
+                                <div key={index} className="inline-block bg-gray-100 rounded-md p-1 px-2 text-sm text-gray-600 mb-2 mr-2">
+                                    {tag}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         )
     }
