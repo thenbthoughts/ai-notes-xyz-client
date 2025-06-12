@@ -182,15 +182,37 @@ const ComponentLifeEventsEditFileUpload = ({ lifeEventId }: { lifeEventId: strin
                                         </div>
                                     )}
                                     <div className="mt-1">
-                                        <a
-                                            href={getFileUrl(file.fileUrl)}
-                                            download
+                                        <button
                                             className="inline-flex items-center text-blue-600 hover:underline text-xs"
                                             title="Download file"
+                                            type="button"
+                                            onClick={() => {
+                                                // Directly download
+                                                fetch(getFileUrl(file.fileUrl), {
+                                                    credentials: "include"
+                                                })
+                                                    .then(async (response) => {
+                                                        if (!response.ok) throw new Error("Network response was not ok");
+                                                        const blob = await response.blob();
+                                                        const url = window.URL.createObjectURL(blob);
+                                                        const link = document.createElement("a");
+                                                        link.href = url;
+                                                        link.download = file.fileTitle || "download";
+                                                        document.body.appendChild(link);
+                                                        link.click();
+                                                        setTimeout(() => {
+                                                            window.URL.revokeObjectURL(url);
+                                                            document.body.removeChild(link);
+                                                        }, 1000);
+                                                    })
+                                                    .catch(() => {
+                                                        toast.error("Failed to download file");
+                                                    });
+                                            }}
                                         >
                                             <LucideFile className="w-4 h-4 mr-1" />
                                             Download
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                                 <button
