@@ -35,4 +35,8 @@ export interface tsLifeEventsItem {
     categorySubArr: {
         name: string;
     }[];
+    filesArr: {
+        fileUrl: string;
+        fileType: string;
+    }[];
 };
