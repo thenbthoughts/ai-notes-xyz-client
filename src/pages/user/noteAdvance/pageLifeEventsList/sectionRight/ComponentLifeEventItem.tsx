@@ -1,8 +1,9 @@
-import { LucideCpu, LucideEdit, LucideExpand, LucideStar, LucideTrash2 } from "lucide-react";
+import { LucideCpu, LucideEdit, LucideExpand, LucideFile, LucideStar, LucideTrash2 } from "lucide-react";
 import { tsLifeEventsItem } from "../../../../../types/pages/tsLifeEvents";
 import { Link } from "react-router-dom";
 import axiosCustom from "../../../../../config/axiosCustom";
 import { Fragment, useState } from "react";
+import envKeys from "../../../../../config/envKeys";
 
 const ComponentLifeEventItem = ({
     lifeEventObj,
@@ -78,32 +79,81 @@ const ComponentLifeEventItem = ({
         }
     }
 
+    const getFileUrl = (fileUrl: string) =>
+        `${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${fileUrl}`;
+
+    const renderFiles = () => {
+        return (
+            <div
+                style={{
+                    overflowX: 'auto',
+                    overflowY: 'hidden',
+                    whiteSpace: 'nowrap',
+                }}
+            >
+                {lifeEventObj.filesArr.map((fileObj, fileIndex) => {
+                    return (
+                        <Fragment key={fileIndex}>
+                            {fileObj.fileType === "image" && (
+                                <a href={getFileUrl(fileObj.fileUrl)} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginRight: 8 }}>
+                                    <img
+                                        src={getFileUrl(fileObj.fileUrl)}
+                                        alt=""
+                                        style={{
+                                            display: 'inline-block',
+                                            height: '150px',
+                                            maxWidth: '150px',
+                                            objectFit: 'contain',
+                                            borderRadius: 6,
+                                        }}
+                                    />
+                                </a>
+                            )}
+                            {fileObj.fileType === "video" && (
+                                <video
+                                    src={getFileUrl(fileObj.fileUrl)}
+                                    controls
+                                    style={{
+                                        display: 'inline-block',
+                                        height: '150px',
+                                        maxWidth: '150px',
+                                        objectFit: 'contain',
+                                        borderRadius: 6,
+                                        marginRight: 8,
+                                    }}
+                                />
+                            )}
+                            {fileObj.fileType === "audio" && (
+                                <audio
+                                    src={getFileUrl(fileObj.fileUrl)}
+                                    controls
+                                    style={{
+                                        display: 'inline-block',
+                                        width: '150px',
+                                        marginRight: 8,
+                                        borderRadius: 6,
+                                    }}
+                                />
+                            )}
+                            {fileObj.fileType === "file" && (
+                                <div style={{ display: 'inline-block', marginRight: 8, verticalAlign: 'middle' }}>
+                                    <a href={getFileUrl(fileObj.fileUrl)} target="_blank" rel="noopener noreferrer">
+                                        <LucideFile className="w-10 h-10 text-gray-400" />
+                                    </a>
+                                </div>
+                            )}
+                        </Fragment>
+                    )
+                })}
+            </div>
+        )
+    }
+
     const renderItem = () => {
         return (
             <Fragment>
                 {/* files and images */}
-                {/*
-                <div
-                    style={{
-                        overflowX: 'auto',
-                        overflowY: 'hidden',
-                        whiteSpace: 'nowrap',
-                    }}
-                >
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => {
-                        return (<img
-                            src="https://upload.wikimedia.org/wikipedia/commons/7/77/Black_and_white_Playstation_5_base_edition_with_controller.png"
-                            alt=""
-                            style={{
-                                display: 'inline-block',
-                                height: '150px',
-                                maxWidth: '150px',
-                                objectFit: 'contain',
-                            }}
-                        />)
-                    })}
-                </div>
-                */}
+                {renderFiles()}
 
                 {/* title */}
                 <h3>{lifeEventObj.title}</h3>
