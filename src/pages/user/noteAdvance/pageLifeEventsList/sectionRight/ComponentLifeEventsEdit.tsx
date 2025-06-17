@@ -31,6 +31,7 @@ const ComponentLifeEventsEdit = ({
         isStar: lifeEventObj.isStar,
         eventDateUtc: lifeEventObj.eventDateUtc.substring(0, 10),
         aiTags: lifeEventObj.aiTags,
+        aiSummary: lifeEventObj.aiSummary,
     } as {
         // fields
         title: string;
@@ -45,6 +46,7 @@ const ComponentLifeEventsEdit = ({
 
         // ai tags
         aiTags: string[];
+        aiSummary: string;
     });
 
     const [formError, setFormError] = useState({
@@ -264,6 +266,16 @@ const ComponentLifeEventsEdit = ({
                                     {tag}
                                 </div>
                             ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* field -> ai summary */}
+                {formData.aiSummary.length > 0 && (
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">AI Summary</label>
+                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-3 text-gray-700 text-sm whitespace-pre-line break-words">
+                            {formData.aiSummary}
                         </div>
                     </div>
                 )}
