@@ -15,7 +15,8 @@ const ComponentLifeEventItem = ({
         setIsDeleted,
     ] = useState(false);
 
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpandedDescription, setIsExpandedDescription] = useState(false);
+    const [isExpandedAiSummary, setIsExpandedAiSummary] = useState(false);
 
     const getImpactStr = () => {
         let impactStr = 'Very Low';
@@ -204,33 +205,42 @@ const ComponentLifeEventItem = ({
                 {/* actions */}
                 <div>
                     <div className="action-buttons my-4">
-                        {lifeEventObj.description.length >= 151 && (
-                            <Fragment>
-                                {lifeEventObj.description.trim().length !== 0 && (
-                                    <button
-                                        className="px-3 py-1 rounded bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200 mr-1"
-                                        onClick={() => setIsExpanded(!isExpanded)}
-                                    >
-                                        <LucideExpand className="w-4 h-4 inline-block mr-2" />
-                                        {isExpanded ? 'Collapse' : 'Expand'} Description
-                                    </button>
-                                )}
-                            </Fragment>
-                        )}
-                        <button
-                            className="px-3 py-1 rounded bg-purple-100 text-purple-800 text-sm font-semibold hover:bg-purple-200"
-                            onClick={() => {/* Logic to show AI summary */ }}
-                        >
-                            <LucideCpu
-                                className="w-4 h-4 inline-block mr-2"
-                                style={{
-                                    height: '15px',
-                                    top: '-2px',
-                                    position: 'relative',
+                        {lifeEventObj.description.trim().length >= 1 && (
+                            <button
+                                className="px-3 py-1 rounded bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200 mr-1"
+                                onClick={() => {
+                                    setIsExpandedDescription(!isExpandedDescription)
                                 }}
-                            />
-                            AI Summary
-                        </button>
+                            >
+                                <LucideExpand
+                                    className="w-4 h-4 inline-block mr-2"
+                                    style={{
+                                        height: '15px',
+                                        top: '-2px',
+                                        position: 'relative',
+                                    }}
+                                />
+                                {isExpandedDescription ? 'Hide Description' : 'Show Description'}
+                            </button>
+                        )}
+                        {lifeEventObj.aiSummary.trim().length >= 1 && (
+                            <button
+                                className="px-3 py-1 rounded bg-purple-100 text-purple-800 text-sm font-semibold hover:bg-purple-200 mr-1"
+                                onClick={() => {
+                                    setIsExpandedAiSummary(!isExpandedAiSummary)
+                                }}
+                            >
+                                <LucideCpu
+                                    className="w-4 h-4 inline-block mr-2"
+                                    style={{
+                                        height: '15px',
+                                        top: '-2px',
+                                        position: 'relative',
+                                    }}
+                                />
+                                AI Summary
+                            </button>
+                        )}
                         { }
                         <Link
                             to={`/user/life-events?action=edit&id=${lifeEventObj._id}`}
@@ -266,15 +276,13 @@ const ComponentLifeEventItem = ({
                 </div>
 
                 {/* description */}
-                {lifeEventObj.description.length >= 151 ? (
-                    <p className="mb-2 whitespace-pre-wrap">
-                        {isExpanded ? lifeEventObj.description : `${lifeEventObj.description.substring(0, 150)}`}
-                        {!isExpanded && (
-                            <span className="text-blue-500">...</span>
-                        )}
-                    </p>
-                ) : (
-                    <p className="mb-2 whitespace-pre-wrap">{lifeEventObj.description}</p>
+                {isExpandedDescription && (
+                    <p className="mb-2 whitespace-pre-wrap border border-gray-200 rounded p-1">{lifeEventObj.description}</p>
+                )}
+
+                {/* ai summary */}
+                {isExpandedAiSummary && (
+                    <p className="mb-2 whitespace-pre-wrap border border-gray-200 rounded p-1">{lifeEventObj.aiSummary}</p>
                 )}
             </Fragment>
         )
