@@ -20,6 +20,8 @@ export interface tsLifeEventsItem {
     aiSummary: string;
     aiTags: string[];
     aiSuggestions: string;
+    aiCategory: string;
+    aiSubCategory: string;
 
     // auto
     createdAtUtc: Date;

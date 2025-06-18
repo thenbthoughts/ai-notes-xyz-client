@@ -32,6 +32,8 @@ const ComponentLifeEventsEdit = ({
         eventDateUtc: lifeEventObj.eventDateUtc.substring(0, 10),
         aiTags: lifeEventObj.aiTags,
         aiSummary: lifeEventObj.aiSummary,
+        aiCategory: lifeEventObj.aiCategory || '',
+        aiSubCategory: lifeEventObj.aiSubCategory || '',
     } as {
         // fields
         title: string;
@@ -47,6 +49,10 @@ const ComponentLifeEventsEdit = ({
         // ai tags
         aiTags: string[];
         aiSummary: string;
+
+        // ai category and sub category
+        aiCategory: string;
+        aiSubCategory: string;
     });
 
     const [formError, setFormError] = useState({
@@ -276,6 +282,22 @@ const ComponentLifeEventsEdit = ({
                         <label className="block text-sm font-medium text-gray-700">AI Summary</label>
                         <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-3 text-gray-700 text-sm whitespace-pre-line break-words">
                             {formData.aiSummary}
+                        </div>
+                    </div>
+                )}
+
+                {/* field -> ai category and sub category */}
+                {formData.aiCategory.length > 0 && (
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">AI Category</label>
+                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-3 text-gray-700 text-sm whitespace-pre-line break-words">
+                            {formData?.aiCategory}
+                            {formData?.aiSubCategory.length > 0 && (
+                                <span className='text-gray-500 px-3'>
+                                    {' ->'}
+                                </span>
+                            )}
+                            {formData?.aiSubCategory}
                         </div>
                     </div>
                 )}
