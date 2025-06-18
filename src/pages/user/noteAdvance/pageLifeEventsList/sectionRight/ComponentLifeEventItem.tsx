@@ -54,6 +54,21 @@ const ComponentLifeEventItem = ({
         return categoryStr;
     }
 
+    const getAiCategoryStr = () => {
+        let aiCategoryStr = '';
+        try {
+            if (lifeEventObj.aiCategory.length > 0) {
+                aiCategoryStr = `AI category: ${lifeEventObj.aiCategory}`;
+            }
+            if(lifeEventObj.aiCategory.length > 0 && lifeEventObj.aiSubCategory.length > 0) {
+                aiCategoryStr = `AI category: ${lifeEventObj.aiCategory} > ${lifeEventObj.aiSubCategory}`;
+            }
+        } catch (error) {
+            console.error(error);
+        }
+        return aiCategoryStr;
+    }
+
     const deleteItem = async () => {
         try {
             const confirmDelete = window.confirm("Are you sure you want to delete this item?");
@@ -181,6 +196,13 @@ const ComponentLifeEventItem = ({
                             {getCategoryStr()}
                         </span>
                     )}
+                    {/* ai category */}
+                    {getAiCategoryStr() !== '' && (
+                        <span className="inline-block bg-purple-100 text-purple-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+                            {getAiCategoryStr()}
+                        </span>
+                    )}
+
                     {/* star */}
                     {lifeEventObj.isStar && (
                         <span className="inline-block bg-purple-100 text-purple-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
