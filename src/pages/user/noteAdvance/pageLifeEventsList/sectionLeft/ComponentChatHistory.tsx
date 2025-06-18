@@ -7,6 +7,8 @@ import { jotaiStateLifeEventSearch, jotaiStateLifeEventCategory, jotaiStateLifeE
 import { useAtom, useSetAtom } from 'jotai';
 import ComponentFilterCategory from './ComponentFilterCategory.tsx';
 import ComponentFilterCategorySub from './ComponentFilterCategorySub.tsx';
+import ComponentFilterAiCategory from './ComponentFilterAiCategory.tsx';
+import ComponentFilterAiCategorySub from './ComponentFilterAiCategorySub.tsx';
 
 const ComponentChatHistory = () => {
     const navigate = useNavigate();
@@ -156,6 +158,12 @@ const ComponentChatHistory = () => {
 
             {/* filter -> subcategory */}
             <ComponentFilterCategorySub />
+
+            {/* filter -> category */}
+            <ComponentFilterAiCategory />
+
+            {/* filter -> subcategory */}
+            <ComponentFilterAiCategorySub />
 
             {/* filter -> date range */}
             {renderDateRange()}

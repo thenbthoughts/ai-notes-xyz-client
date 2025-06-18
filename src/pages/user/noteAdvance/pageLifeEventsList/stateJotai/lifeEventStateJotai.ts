@@ -7,6 +7,10 @@ export const jotaiStateLifeEventSearch = atom<string>('');
 export const jotaiStateLifeEventCategory = atom<string>('');
 export const jotaiStateLifeEventCategorySub = atom<string>('');
 
+// Category Dropdown
+export const jotaiStateLifeEventAiCategory = atom<string>('');
+export const jotaiStateLifeEventAiCategorySub = atom<string>('');
+
 // Date Range
 export const jotaiStateLifeEventDateRange = atom<{ startDate: Date | null; endDate: Date | null }>({
   startDate: null,
