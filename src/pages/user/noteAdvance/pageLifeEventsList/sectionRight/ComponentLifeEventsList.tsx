@@ -6,7 +6,10 @@ import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { tsLifeEventsItem } from '../../../../../types/pages/tsLifeEvents.ts';
 import ComponentLifeEventItem from './ComponentLifeEventItem.tsx';
 
-import { jotaiStateLifeEventSearch, jotaiStateLifeEventCategory, jotaiStateLifeEventCategorySub, jotaiStateLifeEventIsStar, jotaiStateLifeEventImpact, jotaiStateLifeEventDateRange } from '../stateJotai/lifeEventStateJotai.ts';
+import { jotaiStateLifeEventSearch, jotaiStateLifeEventCategory, jotaiStateLifeEventCategorySub, jotaiStateLifeEventIsStar, jotaiStateLifeEventImpact, jotaiStateLifeEventDateRange,
+    jotaiStateLifeEventAiCategory,
+    jotaiStateLifeEventAiCategorySub,
+} from '../stateJotai/lifeEventStateJotai.ts';
 import ReactPaginate from 'react-paginate';
 import { PlusCircle } from 'lucide-react';
 import { lifeEventAddAxios } from '../utils/lifeEventsListAxios.ts';
@@ -25,6 +28,8 @@ const ComponentLifeEventsList = () => {
     const searchTerm = useAtomValue(jotaiStateLifeEventSearch);
     const categoryId = useAtomValue(jotaiStateLifeEventCategory);
     const categorySubId = useAtomValue(jotaiStateLifeEventCategorySub);
+    const aiCategory = useAtomValue(jotaiStateLifeEventAiCategory);
+    const aiSubCategory = useAtomValue(jotaiStateLifeEventAiCategorySub);
     const isStar = useAtomValue(jotaiStateLifeEventIsStar);
     const eventImpact = useAtomValue(jotaiStateLifeEventImpact);
     const dateRange = useAtomValue(jotaiStateLifeEventDateRange);
@@ -57,8 +62,13 @@ const ComponentLifeEventsList = () => {
         setRefreshRandomNum(Math.random());
     }, [
         searchTerm,
+
+        // category
         categoryId,
         categorySubId,
+        aiCategory,
+        aiSubCategory,
+
         isStar,
         eventImpact,
         dateRange,
@@ -97,6 +107,9 @@ const ComponentLifeEventsList = () => {
 
                     startDate,
                     endDate,
+
+                    aiCategory,
+                    aiSubCategory: aiSubCategory,
                 },
                 cancelToken: axiosCancelTokenSource.token,
             } as AxiosRequestConfig;
