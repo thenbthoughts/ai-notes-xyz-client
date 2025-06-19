@@ -179,6 +179,9 @@ const ComponentLifeEventsList = () => {
 
     return (
         <div>
+            {/* div scroll up */}
+            <div id='messagesScrollUp' />
+
             {renderCount()}
 
             {list.map((lifeEventObj) => {
@@ -219,6 +222,9 @@ const ComponentLifeEventsList = () => {
                     />
                 </div>
             )}
+
+            {/* div scroll down */}
+            <div id='messagesScrollDown' />
         </div>
     )
 };

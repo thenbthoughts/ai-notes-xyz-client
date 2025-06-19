@@ -154,7 +154,6 @@ const ChatLlmListWrapper = () => {
                                     color: 'white', // Set icon color to white
                                 }}
                                 className=''
-
                             />
                         </div>
                     </div>
