@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import TestReactQuill from './TestReactQuill';
 
 const TestDevWrapper = () => {
     return (
@@ -19,6 +20,8 @@ const TestDevWrapper = () => {
             <p>
                 <Link to="/user/ai-deep-search" target="_blank" rel="noopener noreferrer">Go to AI Deep Search</Link>
             </p>
+
+            <TestReactQuill />
         </div>
     )
 };
