@@ -49,9 +49,6 @@ const ComponentNotesLeft = () => {
                     className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
                     onClick={clearFilters}
                 >Clear Filters</button>
-                <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
-                >Ai Extract</button>
             </div>
 
             {/* Workspace */}
