@@ -44,7 +44,10 @@ const NotesWrapper = () => {
 
     const notesAddAxiosLocal = async () => {
         try {
-            const result = await notesAddAxios();
+            console.log('workspaceId 1234', workspaceId);
+            const result = await notesAddAxios({
+                notesWorkspaceId: workspaceId,
+            });
             if (result.success !== '') {
                 navigate(`/user/notes?action=edit&id=${result.recordId}&workspace=${workspaceId}`)
             }

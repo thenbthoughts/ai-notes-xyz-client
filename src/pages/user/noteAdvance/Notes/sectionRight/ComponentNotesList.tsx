@@ -7,7 +7,9 @@ import ReactPaginate from 'react-paginate';
 import { PlusCircle } from 'lucide-react';
 import { notesAddAxios } from '../utils/notesListAxios.ts';
 import { useNavigate } from 'react-router-dom';
-
+import { jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
+import { useAtomValue } from 'jotai';
+    
 const perPage = 20;
 
 const ComponentNotesList = () => {
@@ -15,7 +17,7 @@ const ComponentNotesList = () => {
     const [totalCount, setTotalCount] = useState(0 as number);
     const [list, setList] = useState([] as INotes[]);
     const [page, setPage] = useState(1);
-
+    const workspaceId = useAtomValue(jotaiStateNotesWorkspaceId);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
     useEffect(() => {
@@ -27,8 +29,9 @@ const ComponentNotesList = () => {
     }, [refreshRandomNum]);
 
     useEffect(() => {
+        setPage(1);
         setRefreshRandomNum(Math.random());
-    }, [page]);
+    }, [page, workspaceId]);
 
     const fetchList = async ({ axiosCancelTokenSource }: { axiosCancelTokenSource: CancelTokenSource }) => {
         try {
@@ -41,6 +44,7 @@ const ComponentNotesList = () => {
                 data: {
                     page: page,
                     perPage: perPage,
+                    notesWorkspaceId: workspaceId,
                 },
                 cancelToken: axiosCancelTokenSource.token,
             } as AxiosRequestConfig;
@@ -64,7 +68,9 @@ const ComponentNotesList = () => {
 
     const notesAddAxiosLocal = async () => {
         try {
-            const result = await notesAddAxios();
+            const result = await notesAddAxios({
+                notesWorkspaceId: workspaceId,
+            });
             if (result.success !== '') {
                 navigate(`/user/notes?action=edit&id=${result.recordId}`);
             }

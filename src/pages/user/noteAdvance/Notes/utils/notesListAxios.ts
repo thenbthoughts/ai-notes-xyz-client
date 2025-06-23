@@ -1,13 +1,20 @@
 import { AxiosRequestConfig } from "axios";
 import axiosCustom from "../../../../../config/axiosCustom";
 
-export const notesAddAxios = async () => {
+export const notesAddAxios = async ({
+    notesWorkspaceId,
+}: {
+    notesWorkspaceId: string;
+}) => {
     try {
         const config = {
             method: 'post',
             url: `/api/notes/crud/notesAdd`,
             headers: {
                 'Content-Type': 'application/json',
+            },
+            data: {
+                notesWorkspaceId: notesWorkspaceId,
             },
         } as AxiosRequestConfig;
 

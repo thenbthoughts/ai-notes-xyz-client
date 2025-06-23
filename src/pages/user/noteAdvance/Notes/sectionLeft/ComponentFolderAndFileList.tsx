@@ -141,7 +141,7 @@ const ComponentFolderAndFileList = () => {
     const axiosGetMenuItems = async () => {
         try {
             const result = await axiosCustom.post('/api/notes/crud/notesGet', {
-                workspaceId: workspaceId,
+                notesWorkspaceId: workspaceId,
             });
             if (result.data.docs) {
                 let tempMenuItems: MenuItem[] = [];

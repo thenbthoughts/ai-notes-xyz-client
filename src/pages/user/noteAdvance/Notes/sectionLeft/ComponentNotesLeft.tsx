@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom';
 
 import { notesAddAxios } from '../utils/notesListAxios.ts';
 
-import { jotaiStateNotesSearch, jotaiStateNotesIsStar } from '../stateJotai/notesStateJotai.ts';
-import { useAtom } from 'jotai';
+import { jotaiStateNotesSearch, jotaiStateNotesIsStar, jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
+import { useAtom, useAtomValue } from 'jotai';
 
 import ComponentFolderAndFileList from './ComponentFolderAndFileList.tsx';
 import ComponentNotesWorkspace from './ComponentNotesWorkspace.tsx';
 
 const ComponentNotesLeft = () => {
     const navigate = useNavigate();
-
+    const workspaceId = useAtomValue(jotaiStateNotesWorkspaceId);
     const [searchTerm, setSearchTerm] = useAtom(jotaiStateNotesSearch);
     const [isStar, setIsStar] = useAtom(jotaiStateNotesIsStar);
 
@@ -19,7 +19,9 @@ const ComponentNotesLeft = () => {
 
     const notesAddAxiosLocal = async () => {
         try {
-            const result = await notesAddAxios();
+            const result = await notesAddAxios({
+                notesWorkspaceId: workspaceId,
+            });
             if (result.success !== '') {
                 navigate(`/user/notes?action=edit&id=${result.recordId}`)
             }
