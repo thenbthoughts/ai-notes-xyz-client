@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'; // Importing Link from react-router-dom
-import { LucideInfo, LucideList, LucideMessageSquare, LucideSettings, LucideLogIn, LucideUserPlus, LucideLogOut, LucideStickyNote, LucideLoader, LucideCalendar1 } from 'lucide-react'; // Importing lucide icons
+import { LucideInfo, LucideList, LucideMessageSquare, LucideSettings, LucideLogIn, LucideUserPlus, LucideLogOut, LucideStickyNote, LucideLoader, LucideCalendar1, LucideFileText } from 'lucide-react'; // Importing lucide icons
 import { useAtomValue } from 'jotai';
 import stateJotaiAuthAtom from '../../../jotai/stateJotaiAuth'; // Adjust the import path as necessary
 import iconGit from './iconGit.svg';
@@ -110,6 +110,12 @@ const UserHomepage = () => {
                                             <LucideStickyNote size={32} />
                                         </div>
                                         <div>Memo</div>
+                                    </Link>
+                                    <Link to="/user/notes" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                            <LucideFileText size={32} />
+                                        </div>
+                                        <div>Notes</div>
                                     </Link>
                                     <Link to="/user/life-events" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>

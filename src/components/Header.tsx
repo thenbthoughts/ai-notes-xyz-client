@@ -33,7 +33,7 @@ const Header = () => {
             style={{ height: '60px', top: 0, zIndex: 100 }}
         >
             <div className="container mx-auto flex justify-between items-center h-full">
-                <h1 className="text-2xl font-bold">AI Notes</h1>
+                <Link to="/" className="text-2xl font-bold hover:underline">AI Notes</Link>
                 <nav className="hidden lg:flex space-x-4">
                     <Link to="/" className="hover:underline">Home</Link>
                     {authState.isLoggedIn === 'true' && (
@@ -50,6 +50,9 @@ const Header = () => {
                             <Link
                                 to="/user/task" className="hover:underline"
                             >Task</Link>
+                            <Link
+                                to="/user/notes" className="hover:underline"
+                            >Notes</Link>
                             <Link
                                 to="/user/life-events" className="hover:underline"
                             >Life Events</Link>
