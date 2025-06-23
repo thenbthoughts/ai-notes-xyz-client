@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import ComponentLifeEventsList from "./ComponentLifeEventsList";
-import ComponentLifeEventsEdit from "./ComponentLifeEventsEdit";
-import PageLifeEventCategoryCrud from "./PageLifeEventCategoryCrud/PageLifeEventCategoryCrud";
+import ComponentNotesList from "./ComponentNotesList";
+import ComponentNotesEdit from "./ComponentNotesEdit";
 
 const ComponentRightWrapper = ({
     refreshRandomNumParent,
@@ -14,13 +13,13 @@ const ComponentRightWrapper = ({
         actionType: 'list',
         recordId: '',
     } as {
-        actionType: 'list' | 'edit' | 'category',
+        actionType: 'list' | 'edit',
         recordId: string;
     });
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
-        let tempActionType = 'list' as 'list' | 'edit' | 'category';
+        let tempActionType = 'list' as 'list' | 'edit';
         let tempRecordId = '';
         const actionType = queryParams.get('action') || 'list';
 
@@ -32,8 +31,6 @@ const ComponentRightWrapper = ({
                     tempActionType = 'edit';
                 }
             }
-        } else if (actionType === 'category') {
-            tempActionType = 'category';
         }
         setPageName({
             actionType: tempActionType,
@@ -60,19 +57,14 @@ const ComponentRightWrapper = ({
 
             {pageName.actionType === 'list' && (
                 <div>
-                    <ComponentLifeEventsList />
+                    <ComponentNotesList />
                 </div>
             )}
             {pageName.actionType === 'edit' && (
                 <div>
-                    <ComponentLifeEventsEdit
+                    <ComponentNotesEdit
                         recordId={pageName.recordId}
                     />
-                </div>
-            )}
-            {pageName.actionType === 'category' && (
-                <div>
-                    <PageLifeEventCategoryCrud />
                 </div>
             )}
         </div>

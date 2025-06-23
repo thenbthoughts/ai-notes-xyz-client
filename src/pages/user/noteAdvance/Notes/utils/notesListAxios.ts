@@ -1,11 +1,11 @@
 import { AxiosRequestConfig } from "axios";
 import axiosCustom from "../../../../../config/axiosCustom";
 
-export const lifeEventAddAxios = async () => {
+export const notesAddAxios = async () => {
     try {
         const config = {
             method: 'post',
-            url: `/api/life-events/crud/lifeEventsAdd`,
+            url: `/api/notes/crud/notesAdd`,
             headers: {
                 'Content-Type': 'application/json',
             },

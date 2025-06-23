@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     LucideList,
     LucideMoveDown,
@@ -8,25 +8,33 @@ import {
     LucideSettings
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-
+import { useAtom } from 'jotai';
 import { Link, useNavigate } from 'react-router-dom';
 
 import {
-    ComponentChatHistoryModelRender,
-    ComponentChatHistoryRender
-} from './sectionLeft/ComponentChatHistory.tsx';
+    ComponentNotesLeftModelRender,
+    ComponentNotesLeftRender
+} from './sectionLeft/ComponentNotesLeft.tsx';
 import useResponsiveScreen, {
     screenList
 } from '../../../../hooks/useResponsiveScreen.tsx';
-import ComponentRightWrapper from './sectionRight/ComponentRightWrapper.tsx';
-import { lifeEventAddAxios } from './utils/lifeEventsListAxios.ts';
 
-const ChatLlmListWrapper = () => {
+import ComponentRightWrapper from './sectionRight/ComponentRightWrapper.tsx';
+
+import { notesAddAxios } from './utils/notesListAxios.ts';
+
+import axiosCustom from '../../../../config/axiosCustom.ts';
+
+import { jotaiStateNotesWorkspaceId } from './stateJotai/notesStateJotai.ts';
+
+const NotesWrapper = () => {
 
     // useState
     const screenWidth = useResponsiveScreen();
     const navigate = useNavigate();
 
+    const [workspaceId, setWorkspaceId] = useAtom(jotaiStateNotesWorkspaceId);
+    
     const [
         stateDisplayChatHistory,
         setStateDisplayChatHistory,
@@ -34,12 +42,53 @@ const ChatLlmListWrapper = () => {
 
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
-    const lifeEventAddAxiosLocal = async () => {
+    const notesAddAxiosLocal = async () => {
         try {
-            const result = await lifeEventAddAxios();
+            const result = await notesAddAxios();
             if (result.success !== '') {
-                navigate(`/user/life-events?action=edit&id=${result.recordId}`)
+                navigate(`/user/notes?action=edit&id=${result.recordId}&workspace=${workspaceId}`)
             }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        // from query
+        const searchParams = new URLSearchParams(window.location.search);
+        const workspace = searchParams.get('workspace');
+        console.log('workspace', workspace);
+        if (workspace) {
+            setWorkspaceId(workspace);
+        } else {
+            redirectToDefaultWorkspace();
+        }
+    }, []);
+
+    const redirectToDefaultWorkspace = async () => {
+        try {
+            const result = await axiosCustom.post('/api/notes-workspace/crud/notesWorkspaceGet');
+
+            if (result.data.docs) {
+                if (result.data.docs.length > 0) {
+                    const firstWorkspace = result.data.docs[0];
+                    setWorkspaceId(firstWorkspace._id);
+                    navigate(`/user/notes?workspace=${firstWorkspace._id}`);
+                } else {
+                    toast.error('No workspace found, creating default workspace...');
+                    try {
+                        const createResult = await axiosCustom.post('/api/notes-workspace/crud/notesWorkspaceAddDefault');
+                        if (createResult.data.doc) {
+                            setWorkspaceId(createResult.data.doc._id);
+                            navigate(`/user/notes?workspace=${createResult.data.doc._id}`);
+                        }
+                    } catch (createError) {
+                        console.error('Failed to create default workspace:', createError);
+                        toast.error('Failed to create default workspace');
+                    }
+                }
+            }
+
         } catch (error) {
             console.error(error);
         }
@@ -59,15 +108,18 @@ const ChatLlmListWrapper = () => {
                             flexDirection: 'row'
                         }}
                     >
+                        {/* part 1 -> 25% */}
                         {screenWidth === screenList.lg && (
                             <div
                                 style={{
                                     width: '25%'
                                 }}
                             >
-                                <ComponentChatHistoryRender />
+                                <ComponentNotesLeftRender />
                             </div>
                         )}
+
+                        {/* part 2 -> 75% */}
                         <div
                             style={{
                                 width: screenWidth === screenList.lg ? '75%' : '100%'
@@ -86,7 +138,6 @@ const ChatLlmListWrapper = () => {
                                     <ComponentRightWrapper
                                         refreshRandomNumParent={refreshRandomNum}
                                     />
-                                    {/* {renderChatList()} */}
                                 </div>
                             </div>
                         </div>
@@ -123,7 +174,7 @@ const ChatLlmListWrapper = () => {
                     <div
                         className='p-1 cursor-pointer'
                         onClick={() => {
-                            lifeEventAddAxiosLocal();
+                            notesAddAxiosLocal();
                         }}
                     >
                         <div className={`py-3 rounded bg-gray-600`}>
@@ -229,7 +280,7 @@ const ChatLlmListWrapper = () => {
             {screenWidth === screenList.sm && (
                 <div>
                     {stateDisplayChatHistory && (
-                        <ComponentChatHistoryModelRender />
+                        <ComponentNotesLeftModelRender />
                     )}
                 </div>
             )}
@@ -237,4 +288,4 @@ const ChatLlmListWrapper = () => {
     );
 };
 
-export default ChatLlmListWrapper;
+export default NotesWrapper;

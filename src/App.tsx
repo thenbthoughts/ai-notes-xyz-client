@@ -4,45 +4,47 @@ import {
   Outlet,
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-
-import Header from './components/Header';
-import NavigationDrawer from './components/NavigationDrawer.tsx';
-
-// pages
-import UserLogin from './pages/user/auth/Login.tsx';
-import UserRegister from './pages/user/auth/Register.tsx';
-import UserLogout from './pages/user/auth/Logout.tsx';
-
-
-// Test
-import UnauthorizedRoute from "./components/UnauthorizedRoute.tsx";
-import Setting from "./pages/user/settings/Setting.tsx";
-import About from "./pages/other/About.tsx";
-import UserHomepage from "./pages/user/userhomepage/UserHomepage.tsx";
+import { lazy, Suspense } from "react";
 
 // component
+import Header from './components/Header';
+import NavigationDrawer from './components/NavigationDrawer.tsx';
+import UnauthorizedRoute from "./components/UnauthorizedRoute.tsx";
 import RefreshToken from "./components/RefreshToken.tsx";
 import LlmTaskBackgroundProcess from "./components/LlmTaskBackgroundProcess.tsx";
 import AuthorizedRoute from "./components/AuthorizedRoute.tsx";
 
+// pages -> auth
+const UserLogin = lazy(() => import('./pages/user/auth/Login.tsx'));
+const UserRegister = lazy(() => import('./pages/user/auth/Register.tsx'));
+const UserLogout = lazy(() => import('./pages/user/auth/Logout.tsx'));
+
+// pages -> other
+const About = lazy(() => import("./pages/other/About.tsx"));
+const UserHomepage = lazy(() => import("./pages/user/userhomepage/UserHomepage.tsx"));
+
+// pages -> setting
+const Setting = lazy(() => import("./pages/user/settings/Setting.tsx"));
+
 // pages -> ai
-import PageChatOneList from './pages/user/noteAdvance/pageChatOneList/ChatOneList.tsx';
-import PageChatLlmListWrapper from './pages/user/noteAdvance/pageChatLlmList/ChatLlmListWrapper.tsx';
-import AiDeepResearchWrapper from "./pages/user/noteAdvance/AiDeepResearch/AiDeepResearchWrapper.tsx";
+const PageChatOneList = lazy(() => import('./pages/user/noteAdvance/pageChatOneList/ChatOneList.tsx'));
+const PageChatLlmListWrapper = lazy(() => import('./pages/user/noteAdvance/pageChatLlmList/ChatLlmListWrapper.tsx'));
+const AiDeepResearchWrapper = lazy(() => import("./pages/user/noteAdvance/AiDeepResearch/AiDeepResearchWrapper.tsx"));
 
 // pages -> notes
-import MemoQuickAi from './pages/user/noteAdvance/MemoQuickAi/MemoQuickAi';
-import NotesWrapper from "./pages/user/noteAdvance/Notes/NotesWrapper.tsx";
-import InfoVaultWrapper from "./pages/user/noteAdvance/InfoVault/InfoVaultWrapper.tsx";
-import PageLifeEventsWrapper from './pages/user/noteAdvance/pageLifeEventsList/LifeEventWrapper.tsx';
+const MemoQuickAi = lazy(() => import('./pages/user/noteAdvance/MemoQuickAi/MemoQuickAi'));
+const NotesWrapper = lazy(() => import("./pages/user/noteAdvance/Notes/NotesWrapper.tsx"));
+const NotesWorkspaceCrud = lazy(() => import("./pages/user/noteAdvance/NotesWorkspaceCrud/NotesWorkspaceCrud.tsx"));
+const InfoVaultWrapper = lazy(() => import("./pages/user/noteAdvance/InfoVault/InfoVaultWrapper.tsx"));
+const PageLifeEventsWrapper = lazy(() => import('./pages/user/noteAdvance/pageLifeEventsList/LifeEventWrapper.tsx'));
 
 // pages -> productivity
-import TaskList from "./pages/user/noteAdvance/taskList/TaskList.tsx";
-import CalendarWrapper from "./pages/user/noteAdvance/Calendar/CalendarWrapper.tsx";
-import FinanceWrapper from "./pages/user/noteAdvance/Finance/FinanceWrapper.tsx";
+const TaskList = lazy(() => import("./pages/user/noteAdvance/taskList/TaskList.tsx"));
+const CalendarWrapper = lazy(() => import("./pages/user/noteAdvance/Calendar/CalendarWrapper.tsx"));
+const FinanceWrapper = lazy(() => import("./pages/user/noteAdvance/Finance/FinanceWrapper.tsx"));
 
 // pages -> test
-import TestDevWrapper from "./pages/test/testDev/TestDevWrapper.tsx";
+const TestDevWrapper = lazy(() => import("./pages/test/testDev/TestDevWrapper.tsx"));
 
 function App() {
   const Layout = () => {
@@ -50,7 +52,9 @@ function App() {
       <>
         <Header />
         <NavigationDrawer />
-        <Outlet />
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+          <Outlet />
+        </Suspense>
       </>
     );
   }
@@ -68,7 +72,7 @@ function App() {
           path: "/login",
           element: (
             <AuthorizedRoute>
-              <UserLogin />,
+              <UserLogin />
             </AuthorizedRoute>
           )
         },
@@ -82,7 +86,11 @@ function App() {
         },
         {
           path: "/logout",
-          element: <UserLogout />,
+          element: (
+            <UnauthorizedRoute>
+              <UserLogout />
+            </UnauthorizedRoute>
+          ),
         },
 
         // protected route
@@ -137,6 +145,14 @@ function App() {
           ),
         },
         {
+          path: "/user/notes-workspace",
+          element: (
+            <UnauthorizedRoute>
+              <NotesWorkspaceCrud />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
           path: "/user/info-vault",
           element: (
             <UnauthorizedRoute>
@@ -176,21 +192,33 @@ function App() {
 
         {
           path: "/user/setting",
-          element: <Setting />,
+          element: (
+            <UnauthorizedRoute>
+              <Setting />
+            </UnauthorizedRoute>
+          ),
         },
 
         // -----
 
         {
           path: "/about",
-          element: <About />,
+          element: (
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+              <About />
+            </Suspense>
+          ),
         },
 
         // -----
 
         {
           path: '/test',
-          element: <TestDevWrapper />
+          element:  (
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+              <TestDevWrapper />
+            </Suspense>
+          )
         }
       ]
     },
