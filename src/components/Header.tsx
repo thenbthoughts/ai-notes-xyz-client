@@ -33,7 +33,7 @@ const Header = () => {
             style={{ height: '60px', top: 0, zIndex: 100 }}
         >
             <div className="container mx-auto flex justify-between items-center h-full">
-                <Link to="/" className="text-2xl font-bold hover:underline">AI Notes</Link>
+                <Link to="/" className="text-2xl font-bold hover:underline">AI NOTES XYZ</Link>
                 <nav className="hidden lg:flex space-x-4">
                     <Link to="/" className="hover:underline">Home</Link>
                     {authState.isLoggedIn === 'true' && (
