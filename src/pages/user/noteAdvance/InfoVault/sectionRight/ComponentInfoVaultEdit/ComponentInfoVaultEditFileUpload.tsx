@@ -45,7 +45,7 @@ const ComponentInfoVaultEditFileUpload = ({ infoVaultId }: { infoVaultId: string
         if (!infoVaultId) return;
         setLoading(true);
         try {
-            const res = await axiosCustom.post("/api/info-vault/file-upload-crud/infoVaultFileUploadGet", { infoVaultId });
+            const res = await axiosCustom.post("/api/info-vault/fileUpload/infoVaultFileUploadGet", { infoVaultId });
             setFiles(Array.isArray(res.data.docs) ? res.data.docs : []);
         } catch {
             toast.error("Failed to load files");
@@ -72,7 +72,7 @@ const ComponentInfoVaultEditFileUpload = ({ infoVaultId }: { infoVaultId: string
                 );
                 const fileUrl = uploadRes.data.fileName;
                 const fileType = getFileType(file);
-                await axiosCustom.post("/api/info-vault/file-upload-crud/infoVaultFileUploadAdd", {
+                await axiosCustom.post("/api/info-vault/fileUpload/infoVaultFileUploadAdd", {
                     fileType,
                     fileUrl,
                     fileTitle: file.name,
@@ -94,7 +94,7 @@ const ComponentInfoVaultEditFileUpload = ({ infoVaultId }: { infoVaultId: string
     const handleDelete = async (_id: string) => {
         if (!window.confirm("Delete this file?")) return;
         try {
-            await axiosCustom.post("/api/info-vault/file-upload-crud/infoVaultFileUploadDelete", { _id });
+            await axiosCustom.post("/api/info-vault/fileUpload/infoVaultFileUploadDelete", { _id });
             toast.success("File deleted");
             fetchFiles();
         } catch {
