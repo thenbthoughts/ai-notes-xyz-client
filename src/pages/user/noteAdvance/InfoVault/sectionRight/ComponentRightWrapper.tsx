@@ -51,8 +51,8 @@ const ComponentRightWrapper = ({
         >
 
             <div className="mb-6 p-4 rounded-lg shadow-lg text-white bg-yellow-500">
-                <h1 className="text-3xl font-extrabold mb-2 drop-shadow-md">Notes</h1>
-                <p className="text-lg font-medium drop-shadow-sm">Notes are a great way to keep track of information. You can add, edit, and delete notes as you wish.</p>
+                <h1 className="text-3xl font-extrabold mb-2 drop-shadow-md">Info Vault</h1>
+                <p className="text-lg font-medium drop-shadow-sm">Info Vault is a great way to keep track of information. You can add, edit, and delete info vault as you wish.</p>
             </div>
 
             {pageName.actionType === 'list' && (
