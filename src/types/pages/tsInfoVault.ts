@@ -5,6 +5,7 @@ export interface IInfoVault {
 
     // basic information
     infoVaultType: string;
+    infoVaultSubType: string;
     name: string; // Computed or custom display name
     nickname: string;
     photoUrl: string; // Profile picture/avatar URL

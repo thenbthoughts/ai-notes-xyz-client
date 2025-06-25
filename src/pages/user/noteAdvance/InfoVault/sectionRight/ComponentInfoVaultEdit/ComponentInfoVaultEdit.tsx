@@ -22,19 +22,39 @@ const ComponentInfoVaultEdit = ({
     })
 
     const [formData, setFormData] = useState({
+        infoVaultType: infoVaultObj.infoVaultType || '',
+        infoVaultSubType: infoVaultObj.infoVaultSubType || '',
         name: infoVaultObj.name,
+        nickname: infoVaultObj.nickname || '',
+        photoUrl: infoVaultObj.photoUrl || '',
+        company: infoVaultObj.company || '',
+        jobTitle: infoVaultObj.jobTitle || '',
+        department: infoVaultObj.department || '',
         notes: infoVaultObj.notes,
-        isFavorite: infoVaultObj.isFavorite,
         tags: infoVaultObj.tags,
+        isFavorite: infoVaultObj.isFavorite,
+        relationshipType: infoVaultObj.relationshipType || 'other',
+        lastContactDate: infoVaultObj.lastContactDate ? new Date(infoVaultObj.lastContactDate).toISOString().split('T')[0] : '',
+        contactFrequency: infoVaultObj.contactFrequency || 'rarely',
         aiTags: infoVaultObj.aiTags,
         aiSummary: infoVaultObj.aiSummary,
         aiSuggestions: infoVaultObj.aiSuggestions,
         tagsInput: '', // Temporary field for tag input
     } as {
+        infoVaultType: string;
+        infoVaultSubType: string;
         name: string;
+        nickname: string;
+        photoUrl: string;
+        company: string;
+        jobTitle: string;
+        department: string;
         notes: string;
-        isFavorite: boolean;
         tags: string[];
+        isFavorite: boolean;
+        relationshipType: string;
+        lastContactDate: string;
+        contactFrequency: string;
         aiTags: string[];
         aiSummary: string;
         aiSuggestions: string;
@@ -107,6 +127,51 @@ const ComponentInfoVaultEdit = ({
     const renderEditFields = () => {
         return (
             <div className="space-y-4">
+                {/* field -> info vault type */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">Type *</label>
+                    <div className="space-y-2">
+                        {[
+                            { value: "myself", label: "Myself" },
+                            { value: "contact", label: "Contact" },
+                            { value: "place", label: "Place" },
+                            { value: "event", label: "Event" },
+                            { value: "document", label: "Document" },
+                            { value: "product", label: "Product" },
+                            { value: "asset", label: "Asset" },
+                            { value: "media", label: "Media" },
+                            { value: "other", label: "Other" }
+                        ].map((option) => (
+                            <label key={option.value} className="px-2 font-semibold">
+                                <input
+                                    type="radio"
+                                    name="infoVaultType"
+                                    value={option.value}
+                                    checked={formData.infoVaultType === option.value}
+                                    onChange={(e) => setFormData({ ...formData, infoVaultType: e.target.value })}
+                                    className="mr-2"
+                                    required
+                                />
+                                {option.label}
+                            </label>
+                        ))}
+                    </div>
+                </div>
+
+                <div>
+                    {/* field -> info vault sub type */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Sub Type</label>
+                        <input
+                            type="text"
+                            value={formData.infoVaultSubType || ''}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            onChange={(e) => setFormData({ ...formData, infoVaultSubType: e.target.value })}
+                            placeholder="e.g., Friend, Colleague, Restaurant, Conference, Invoice, Software, Car, Photo..."
+                        />
+                    </div>
+                </div>
+
                 {/* field -> is star */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Is Starred</label>
@@ -126,6 +191,62 @@ const ComponentInfoVaultEdit = ({
                         value={formData.name}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    />
+                </div>
+
+                {/* field -> nickname */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Nickname</label>
+                    <input
+                        type="text"
+                        value={formData.nickname}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
+                    />
+                </div>
+
+                {/* field -> photo URL */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Photo URL</label>
+                    <input
+                        type="url"
+                        value={formData.photoUrl}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        onChange={(e) => setFormData({ ...formData, photoUrl: e.target.value })}
+                        placeholder="https://example.com/photo.jpg"
+                    />
+                </div>
+
+                {/* field -> company */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Company</label>
+                    <input
+                        type="text"
+                        value={formData.company}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    />
+                </div>
+
+                {/* field -> job title */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Job Title</label>
+                    <input
+                        type="text"
+                        value={formData.jobTitle}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
+                    />
+                </div>
+
+                {/* field -> department */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Department</label>
+                    <input
+                        type="text"
+                        value={formData.department}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                     />
                 </div>
 
@@ -214,6 +335,50 @@ const ComponentInfoVaultEdit = ({
                             <LucidePlus className="w-4 h-4" />
                         </button>
                     </div>
+                </div>
+
+                {/* field -> relationship type */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Relationship Type</label>
+                    <select
+                        value={formData.relationshipType}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        onChange={(e) => setFormData({ ...formData, relationshipType: e.target.value })}
+                    >
+                        <option value="myself">Myself</option>
+                        <option value="personal">Personal</option>
+                        <option value="professional">Professional</option>
+                        <option value="family">Family</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                {/* field -> last contact date */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Last Contact Date</label>
+                    <input
+                        type="date"
+                        value={formData.lastContactDate}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        onChange={(e) => setFormData({ ...formData, lastContactDate: e.target.value })}
+                    />
+                </div>
+
+                {/* field -> contact frequency */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Contact Frequency</label>
+                    <select
+                        value={formData.contactFrequency}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        onChange={(e) => setFormData({ ...formData, contactFrequency: e.target.value })}
+                    >
+                        <option value="">Select</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                        <option value="rarely">Rarely</option>
+                    </select>
                 </div>
 
                 {/* field -> ai tags */}
