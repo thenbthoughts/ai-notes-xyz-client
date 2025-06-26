@@ -8,6 +8,11 @@ import toast from 'react-hot-toast';
 import { IInfoVault } from '../../../../../../types/pages/tsInfoVault.ts';
 import ComponentInfoVaultEditFileUpload from './ComponentInfoVaultEditFileUpload.tsx';
 import ComponentInfoVaultCustomField from './ComponentInfoVaultCustomField.tsx';
+import ComponentInfoVaultEmail from './ComponentInfoVaultEmail.tsx';
+import ComponentInfoVaultPhone from './ComponentInfoVaultPhone.tsx';
+import ComponentInfoVaultWebsite from './ComponentInfoVaultWebsite.tsx';
+import ComponentInfoVaultSignificantDate from './ComponentInfoVaultSignificantDate.tsx';
+import ComponentInfoVaultAddress from './ComponentInfoVaultAddress.tsx';
 
 const ComponentInfoVaultEdit = ({
     infoVaultObj
@@ -270,6 +275,31 @@ const ComponentInfoVaultEdit = ({
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Custom Fields</label>
                     <ComponentInfoVaultCustomField infoVaultId={infoVaultObj._id} />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Emails</label>
+                    <ComponentInfoVaultEmail infoVaultId={infoVaultObj._id} />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Phones</label>
+                    <ComponentInfoVaultPhone infoVaultId={infoVaultObj._id} />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Websites</label>
+                    <ComponentInfoVaultWebsite infoVaultId={infoVaultObj._id} />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Significant Dates</label>
+                    <ComponentInfoVaultSignificantDate infoVaultId={infoVaultObj._id} />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Addresses</label>
+                    <ComponentInfoVaultAddress infoVaultId={infoVaultObj._id} />
                 </div>
 
                 {/* field -> tags */}
