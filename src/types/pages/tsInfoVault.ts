@@ -45,3 +45,22 @@ export interface IInfoVault {
     updatedAtIpAddress: string;
     updatedAtUserAgent: string;
 };
+
+export interface IInfoVaultCustomField {
+    // identification
+    _id: string;
+    infoVaultId: string;
+    username: string;
+
+    // fields
+    key: string;
+    value: string;
+
+    // auto
+    createdAtUtc: Date;
+    createdAtIpAddress: string;
+    createdAtUserAgent: string;
+    updatedAtUtc: Date;
+    updatedAtIpAddress: string;
+    updatedAtUserAgent: string;
+}; 

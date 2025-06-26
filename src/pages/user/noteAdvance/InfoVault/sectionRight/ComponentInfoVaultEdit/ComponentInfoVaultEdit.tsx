@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 
 import { IInfoVault } from '../../../../../../types/pages/tsInfoVault.ts';
 import ComponentInfoVaultEditFileUpload from './ComponentInfoVaultEditFileUpload.tsx';
+import ComponentInfoVaultCustomField from './ComponentInfoVaultCustomField.tsx';
 
 const ComponentInfoVaultEdit = ({
     infoVaultObj
@@ -264,6 +265,11 @@ const ComponentInfoVaultEdit = ({
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Files</label>
                     <ComponentInfoVaultEditFileUpload infoVaultId={infoVaultObj._id} />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Custom Fields</label>
+                    <ComponentInfoVaultCustomField infoVaultId={infoVaultObj._id} />
                 </div>
 
                 {/* field -> tags */}
