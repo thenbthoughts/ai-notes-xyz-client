@@ -44,7 +44,7 @@ const UserHomepage = () => {
 
     return (
         <div>
-            <div style={{ maxWidth: '800px', margin: '0 auto', paddingTop: '20px', paddingBottom: '20px' }}>
+            <div style={{ maxWidth: '1000px', margin: '0 auto', paddingTop: '20px', paddingBottom: '20px' }}>
                 <div style={{ paddingLeft: '20px', paddingRight: '20px' }}>
                     <h1 className="text-2xl font-bold text-white mb-2">Hello {name}</h1>
                 </div>
@@ -52,7 +52,7 @@ const UserHomepage = () => {
                     {/* left */}
                     <div
                         style={{
-                            width: `${screenSize === 'sm' ? '100%' : '50%' }`,
+                            width: `${screenSize === 'sm' ? '100%' : '40%' }`,
                             paddingLeft: `${screenSize === 'sm' ? '10px' : '20px' }`,
                             paddingRight: `${screenSize === 'sm' ? '10px' : '20px' }`,
                         }}
@@ -64,7 +64,7 @@ const UserHomepage = () => {
                     {/* right */}
                     <div
                         style={{
-                            width: `${screenSize === 'sm' ? '100%' : '50%' }`,
+                            width: `${screenSize === 'sm' ? '100%' : '60%' }`,
                             paddingLeft: `${screenSize === 'sm' ? '10px' : '20px' }`,
                             paddingRight: `${screenSize === 'sm' ? '10px' : '20px' }`,
                         }}
@@ -72,7 +72,7 @@ const UserHomepage = () => {
                         <div
                             style={{
                                 display: 'grid',
-                                gridTemplateColumns: 'repeat(2, 1fr)',
+                                gridTemplateColumns: 'repeat(3, 1fr)',
                                 gap: '20px',
                                 textAlign: 'center',
                             }}
@@ -122,6 +122,12 @@ const UserHomepage = () => {
                                             <LucideCalendar1 size={32} />
                                         </div>
                                         <div>Life Events</div>
+                                    </Link>
+                                    <Link to="/user/info-vault" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                            <LucideInfo size={32} />
+                                        </div>
+                                        <div>Info Vault</div>
                                     </Link>
                                     <Link to="/user/setting" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
