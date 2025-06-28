@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { AxiosRequestConfig } from 'axios';
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { Link, useNavigate } from 'react-router-dom';
-import { LucideArrowLeft, LucidePlus, LucideSave, LucideTrash } from 'lucide-react';
+import { LucideArrowLeft, LucidePlus, LucideSave, LucideTrash, LucideX } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSetAtom } from 'jotai';
 
@@ -131,6 +131,23 @@ const ComponentNotesEdit = ({
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     />
+                    {formData?.title.length >= 1 && formData.title.includes("Empty Note") && (
+                        <button
+                            type="button"
+                            className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-md"
+                            onClick={() => setFormData({ ...formData, title: '' })}
+                            aria-label="Clear title"
+                        >
+                            Clear
+                            <LucideX
+                                className="w-4 h-4 inline-block"
+                                style={{
+                                    position: 'relative',
+                                    top: '-2px',
+                                }}
+                            />
+                        </button>
+                    )}
                 </div>
 
                 {/* field -> description */}
