@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import htmlToMarkdown from '@wcj/html-to-markdown';
 
 import styleQuillCustom from "./scss/QuillEditorCustom1.module.scss";
 
@@ -241,6 +242,43 @@ const QuillEditorCustom1 = ({
           theme="snow"
           placeholder="Start writing here..."
         />
+      </div>
+
+      {/* download button */}
+      <div className="flex justify-end mt-2">
+
+        {/* Copy Button */}
+        <button
+          className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-md mr-2"
+          onClick={async () => {
+            const markdownContent = await htmlToMarkdown({
+              html: processedValue,
+            });
+            navigator.clipboard.writeText(markdownContent);
+            toast.success('Copied to clipboard');
+          }}
+        >Copy</button>
+
+        <button
+          className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-md"
+          onClick={async () => {
+            const quill = quillRef.current?.getEditor?.();
+            if(quill) {
+              const markdownContent = await htmlToMarkdown({
+                html: processedValue,
+              });
+
+              const blob = new Blob([markdownContent], { type: 'text/plain' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `note_${new Date().toISOString()}.txt`;
+              a.click();
+
+              toast.success('Downloaded');
+            }
+          }}
+        >Download</button>
       </div>
     </div>
   );
