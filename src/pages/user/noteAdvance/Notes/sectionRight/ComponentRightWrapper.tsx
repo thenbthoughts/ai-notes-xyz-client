@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ComponentNotesList from "./ComponentNotesList";
-import ComponentNotesEdit from "./ComponentNotesEdit";
+import ComponentNotesEdit from "./ComponentNotesEdit/ComponentNotesEdit";
 
 const ComponentRightWrapper = ({
     refreshRandomNumParent,

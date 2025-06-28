@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { AxiosRequestConfig } from 'axios';
-import axiosCustom from '../../../../../config/axiosCustom.ts';
+import axiosCustom from '../../../../../../config/axiosCustom.ts';
 import { Link, useNavigate } from 'react-router-dom';
-import { LucideArrowLeft, LucidePlus, LucideSave, LucideTrash, LucideX } from 'lucide-react';
+import { LucideArrowLeft, LucideCopy, LucidePlus, LucideSave, LucideTrash, LucideX } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSetAtom } from 'jotai';
 
-import { jotaiStateNotesWorkspaceRefresh } from '../stateJotai/notesStateJotai.ts';
-import { INotes } from '../../../../../types/pages/tsNotes.ts';
+import { jotaiStateNotesWorkspaceRefresh } from '../../stateJotai/notesStateJotai.ts';
+import { INotes } from '../../../../../../types/pages/tsNotes.ts';
+import QuillEditorCustom1 from '../../../../../../components/quillJs/QuillEditorCustom1/QuillEditorCustom1.tsx';
 
 const ComponentNotesEdit = ({
     notesObj
@@ -131,33 +132,60 @@ const ComponentNotesEdit = ({
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     />
-                    {formData?.title.length >= 1 && formData.title.includes("Empty Note") && (
-                        <button
-                            type="button"
-                            className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-md"
-                            onClick={() => setFormData({ ...formData, title: '' })}
-                            aria-label="Clear title"
-                        >
-                            Clear
-                            <LucideX
-                                className="w-4 h-4 inline-block"
-                                style={{
-                                    position: 'relative',
-                                    top: '-2px',
+                    <div className="flex items-center mt-1">
+                        {formData?.title.length >= 1 && formData.title.includes("Empty Note") && (
+                            <button
+                                type="button"
+                                className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-md"
+                                onClick={() => setFormData({ ...formData, title: '' })}
+                                aria-label="Clear title"
+                            >
+                                Clear
+                                <LucideX
+                                    className="w-4 h-4 inline-block ml-2"
+                                    style={{
+                                        position: 'relative',
+                                        top: '-2px',
+                                    }}
+                                />
+                            </button>
+                        )}
+                        {formData?.title.length >= 1 && (
+                            <button
+                                type="button"
+                                className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-md ml-2"
+                                onClick={() => {
+                                    navigator.clipboard.writeText(formData.title);
+                                    toast.success('Title copied to clipboard!');
                                 }}
-                            />
-                        </button>
-                    )}
+                                aria-label="Copy title"
+                            >
+                                Copy
+                                <LucideCopy
+                                    className="w-4 h-4 inline-block ml-2"
+                                    style={{
+                                        position: 'relative',
+                                        top: '-2px',
+                                    }}
+                                />
+                            </button>
+                        )}
+                    </div>
+
                 </div>
 
                 {/* field -> description */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Description</label>
-                    <textarea
+                    {/* <textarea
                         value={formData.description}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         rows={10}
+                    /> */}
+                    <QuillEditorCustom1
+                        value={formData.description}
+                        setValue={(value) => setFormData({ ...formData, description: value })}
                     />
                 </div>
 
