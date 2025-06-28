@@ -1,4 +1,4 @@
-import { useRef, useCallback, useMemo } from "react";
+import { useRef, useCallback, useMemo, useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
@@ -8,6 +8,16 @@ import styleQuillCustom from "./scss/QuillEditorCustom1.module.scss";
 
 import envKeys from "../../../config/envKeys";
 
+const preprocessContent = (content: string): string => {
+  // Convert plain text line breaks to HTML line breaks
+  if(content.length > 0) {
+    if(content[0] !== '<') {
+      return content.replace(/\n/g, '<br>');
+    }
+  }
+  return content;
+};
+
 const QuillEditorCustom1 = ({
     value,
     setValue,
@@ -16,6 +26,45 @@ const QuillEditorCustom1 = ({
     setValue: (value: string) => void;  
 }) => {
   const quillRef = useRef<any>(null);
+
+  const [isVisible, setIsVisible] = useState(true);
+  const [key, setKey] = useState(0);
+
+  const processedValue = useMemo(() => {
+    return preprocessContent(value);
+  }, [value]);
+
+  // Handle tab visibility changes
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+        // Force re-render when tab becomes visible again
+        setTimeout(() => {
+          setKey(prev => prev + 1);
+        }, 100);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  // Re-initialize editor when it becomes visible
+  useEffect(() => {
+    if (isVisible && quillRef.current) {
+      const quill = quillRef.current.getEditor();
+      if (quill) {
+        // Refresh the editor
+        quill.update();
+      }
+    }
+  }, [isVisible]);
 
   // Helper function to convert base64 to File
   const base64ToFile = useCallback((base64: string, filename: string): File => {
@@ -183,8 +232,9 @@ const QuillEditorCustom1 = ({
     <div>
       <div className={styleQuillCustom.quillCusomContainer}>
         <ReactQuill
+          key={key}
           ref={quillRef}
-          value={value}
+          value={processedValue}
           onChange={handleChange}
           modules={modules}
           formats={formats}
