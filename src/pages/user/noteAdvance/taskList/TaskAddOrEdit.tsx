@@ -241,6 +241,32 @@ const TaskAddOrEdit: React.FC<{
                                             value={taskTitle}
                                             onChange={(e) => setTaskTitle(e.target.value)}
                                         />
+
+                                        {/* set current date */}
+                                        <div className='mt-1'>
+                                            <button
+                                                onClick={() => {
+                                                    setTaskTitle(new Date().toISOString().split('T')[0])
+                                                }}
+                                                className="bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded mt-1"
+                                            >
+                                                Today
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    const tomorrow = new Date(
+                                                        new Date().setDate(
+                                                            new Date().getDate() + 1
+                                                        )
+                                                    );
+                                                    setTaskTitle(tomorrow.toISOString().split('T')[0])
+                                                }}
+                                                className="bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded mt-1 ml-1"
+                                            >
+                                                Tomorrow
+                                            </button>
+                                        </div>
+
                                         {taskAiSuggestion.display && (
                                             <div className='mt-1'>
                                                 <div className='p-1 border rounded-lg bg-blue-100'>
