@@ -15,6 +15,9 @@ const TaskList: React.FC = () => {
     const [tasks, setTasks] = useState<tsPageTask[]>([]);
     const [searchInput, setSearchInput] = useState('');
     const [loading, setLoading] = useState(false); // State to manage loading
+    const [priority, setPriority] = useState('');
+    const [isArchived, setIsArchived] = useState('not-archived');
+    const [isCompleted, setIsCompleted] = useState('');
 
     const [isTaskAddModalIsOpen, setIsTaskAddModalIsOpen] = useState({
         openStatus: false,
@@ -41,7 +44,10 @@ const TaskList: React.FC = () => {
                 Math.random() * 1_000_000
             )
         )
-    }, [isTaskAddModalIsOpen, taskStatusArr])
+    }, [
+        isTaskAddModalIsOpen, taskStatusArr,
+        priority, isArchived, isCompleted
+    ])
 
     const fetchTasks = async () => {
         setLoading(true); // Set loading to true when fetching starts
@@ -51,6 +57,12 @@ const TaskList: React.FC = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
+            data: {
+                searchInput: searchInput || '',
+                priority: priority || '',
+                isArchived: isArchived || '',
+                isCompleted: isCompleted || ''
+            }
         };
 
         try {
@@ -90,7 +102,7 @@ const TaskList: React.FC = () => {
         return (
             <div className='px-2'>
                 <h1 className="text-3xl font-bold text-center text-white mb-4">
-                    Simple AI To-Do List
+                    Smart AI Task Manager
                 </h1>
             </div>
         )
@@ -107,6 +119,68 @@ const TaskList: React.FC = () => {
                     boardName={'Task'}
                     setTaskStatusArr={setTaskStatusArr}
                 />
+
+                {/* Filter */}
+                <div className="mb-6">
+                    <h2 className="text-xl font-semibold mb-2 text-blue-600">Filter</h2>
+
+                    {/* Search */}
+                    <div className="mb-2">
+                        <input
+                            type="text"
+                            placeholder="Search tasks..."
+                            className="border border-gray-300 p-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                        />
+                    </div>
+
+                    {/* Priority Filter */}
+                    <div className="mb-2">
+                        {priority === '' && <label className="block text-xs font-medium text-gray-700 mb-1">Priority</label>}
+                        <select
+                            value={priority}
+                            onChange={(e) => setPriority(e.target.value)}
+                            className="border border-gray-300 p-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+                        >
+                            <option value="">All Priorities</option>
+                            <option value="very-high">Very High</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                            <option value="very-low">Very Low</option>
+                        </select>
+                    </div>
+
+                    {/* Archive Status Filter */}
+                    <div className="mb-2">
+                        {isArchived === 'not-archived' && <label className="block text-xs font-medium text-gray-700 mb-1">Archive Status</label>}
+                        <select
+                            value={isArchived}
+                            onChange={(e) => setIsArchived(e.target.value)}
+                            className="border border-gray-300 p-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+                        >
+                            <option value="">All Tasks</option>
+                            <option value="archived">Archived</option>
+                            <option value="not-archived">Not Archived</option>
+                        </select>
+                    </div>
+
+                    {/* Completion Status Filter */}
+                    <div className="mb-2">
+                        {isCompleted === '' && <label className="block text-xs font-medium text-gray-700 mb-1">Completion Status</label>}
+                        <select
+                            value={isCompleted}
+                            onChange={(e) => setIsCompleted(e.target.value)}
+                            className="border border-gray-300 p-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+                        >
+                            <option value="">All Tasks</option>
+                            <option value="completed">Completed</option>
+                            <option value="not-completed">Not Completed</option>
+                        </select>
+                    </div>
+
+                </div>
 
                 {/* Section 3: Labels with Search Functionality */}
                 <div className="mb-6">

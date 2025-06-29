@@ -140,8 +140,8 @@ const componentTaskBoardListNames = ({
     return (
         <div>
             {/* Section 1: Display Task Boards */}
-            <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-2 text-blue-600 flex justify-between items-center">
+            <div className="mb-2">
+                <h2 className="text-xl font-semibold mb-1 text-blue-600 flex justify-between items-center">
                     List
                     <button
                         onClick={fetchGroupList}
@@ -150,21 +150,21 @@ const componentTaskBoardListNames = ({
                         <LucideRefreshCcw size={16} className="" />
                     </button>
                 </h2>
-                <div className="flex flex-col mb-4">
+                <div className="flex flex-col mb-2">
                     {listArr.map((list) => (
-                        <div key={list._id} className="border border-gray-300 p-2 rounded-lg mb-2 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-center">
+                        <div key={list._id} className="border border-gray-300 p-1 rounded-lg mb-1 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-center">
                             <span>{list.boardListName}</span>
                             <div>
                                 <div>
                                     {list.boardListName !== 'Uncategorized' && (
                                         <Fragment>
-                                            <button onClick={() => revalidatePositionById({ id: list._id, upOrDown: 'up' })} className="text-red-600 hover:text-red-700 ml-2 mr-2">
+                                            <button onClick={() => revalidatePositionById({ id: list._id, upOrDown: 'up' })} className="text-red-600 hover:text-red-700 ml-1 mr-1">
                                                 <LucideMoveUp size={16} />
                                             </button>
-                                            <button onClick={() => revalidatePositionById({ id: list._id, upOrDown: 'down' })} className="text-red-600 hover:text-red-700 ml-2 mr-2">
+                                            <button onClick={() => revalidatePositionById({ id: list._id, upOrDown: 'down' })} className="text-red-600 hover:text-red-700 ml-1 mr-1">
                                                 <LucideMoveDown size={16} />
                                             </button>
-                                            <button onClick={() => deleteGroup(list._id)} className="text-red-600 hover:text-red-700 ml-2">
+                                            <button onClick={() => deleteGroup(list._id)} className="text-red-600 hover:text-red-700 ml-1">
                                                 <LucideTrash2 size={16} />
                                             </button>
                                         </Fragment>
@@ -174,17 +174,17 @@ const componentTaskBoardListNames = ({
                         </div>
                     ))}
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
                     <input
                         type="text"
                         placeholder="Enter list name"
-                        className="border border-gray-300 p-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                        className="border border-gray-300 p-1 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                         value={newListName}
                         onChange={(e) => setNewListName(e.target.value)} // Update state on input change
                     />
                     <button
                         onClick={addGroup}
-                        className="bg-blue-500 text-white h-10 px-3 rounded-sm hover:bg-blue-600 transition"
+                        className="bg-blue-500 text-white h-8 px-2 rounded-sm hover:bg-blue-600 transition"
                     >
                         <LucidePlus size={16} />
                     </button>
