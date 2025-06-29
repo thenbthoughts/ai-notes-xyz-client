@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
 
 import axiosCustom from '../../../../config/axiosCustom';
 import TaskListComponentSuggestAiGeneratedTask from './TaskListComponentSuggestAiGeneratedTask';
@@ -7,8 +8,9 @@ import TaskItem from './TaskItem';
 import { tsPageTask } from '../../../../types/pages/tsPageTaskList';
 import ComponentTaskListFooter from './ComponentTaskListFooter';
 import TaskAddOrEdit from './TaskAddOrEdit';
-// import TasksBoardNamesList from './componentTaskBoardNames/TaskBoardNamesList';
-import ComponentTasksBoardListNames from './componentTaskBoardListNames/componentTaskBoardListNames';
+import ComponentTaskStatusListNames from './componentTaskStatusListNames/componentTaskStatusListNames';
+import ComponentTaskWorkspace from './componentTaskWorkspace/ComponentTaskWorkspace';
+import { jotaiStateTaskWorkspaceId } from './stateJotai/taskStateJotai';
 
 const TaskList: React.FC = () => {
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
@@ -19,20 +21,19 @@ const TaskList: React.FC = () => {
     const [isArchived, setIsArchived] = useState('not-archived');
     const [isCompleted, setIsCompleted] = useState('not-completed');
 
+    const [workspaceId, setWorkspaceId] = useAtom(jotaiStateTaskWorkspaceId);
+
+    const [taskStatusList, setTaskStatusList] = useState<{
+        _id: string;
+        statusTitle: string;
+        listPosition: number;
+    }[]>([]);
+
     const [isTaskAddModalIsOpen, setIsTaskAddModalIsOpen] = useState({
         openStatus: false,
         modalType: 'add' as 'add' | 'edit',
         recordId: ''
     });
-
-    const [
-        taskStatusArr,
-        setTaskStatusArr,
-    ] = useState<string[]>([
-        'Task',
-        'Doing',
-        'Done',
-    ]);
 
     useEffect(() => {
         fetchTasks();
@@ -45,8 +46,9 @@ const TaskList: React.FC = () => {
             )
         )
     }, [
-        isTaskAddModalIsOpen, taskStatusArr,
-        priority, isArchived, isCompleted
+        isTaskAddModalIsOpen, taskStatusList,
+        priority, isArchived, isCompleted,
+        workspaceId,
     ])
 
     const fetchTasks = async () => {
@@ -61,42 +63,31 @@ const TaskList: React.FC = () => {
                 searchInput: searchInput || '',
                 priority: priority || '',
                 isArchived: isArchived || '',
-                isCompleted: isCompleted || ''
+                isCompleted: isCompleted || '',
+                taskWorkspaceId: workspaceId || ''
             }
         };
 
         try {
             const response = await axiosCustom.request(config);
             const tempTaskArr = response.data.docs;
-            const fetchedTasks = tempTaskArr.map((task: tsPageTask) => {
-
-                let taskStatus = task.taskStatus;
-
-                let doesExist = false;
-                for (let index = 0; index < taskStatusArr.length; index++) {
-                    const tempTaskName = taskStatusArr[index];
-                    if (tempTaskName === taskStatus) {
-                        doesExist = true;
-                    }
-                }
-                if (doesExist === false) {
-                    taskStatus = 'Uncategorized';
-                }
-
-                return {
-                    ...task,
-                    dueDate: task.dueDate ? new Date(task.dueDate) : null,
-                    taskStatus: taskStatus,
-                }
-            });
-            console.log(fetchedTasks);
-            setTasks(fetchedTasks);
+            setTasks(tempTaskArr);
         } catch (error) {
             console.error('Error fetching tasks:', error);
         } finally {
             setLoading(false); // Set loading to false when fetching ends
         }
     };
+
+    useEffect(() => {
+        // from query
+        const searchParams = new URLSearchParams(window.location.search);
+        const workspace = searchParams.get('workspace');
+        if (workspace) {
+            setWorkspaceId(workspace);
+        } else {
+        }
+    }, []);
 
     const renderHeading = () => {
         return (
@@ -113,12 +104,15 @@ const TaskList: React.FC = () => {
             <div className="bg-white shadow-md rounded-lg p-4">
                 {/* Tasks Board Names List */}
                 {/* <TasksBoardNamesList /> */}
+                <ComponentTaskWorkspace />
 
                 {/* Tasks Board List Names */}
-                <ComponentTasksBoardListNames
-                    boardName={'Task'}
-                    setTaskStatusArr={setTaskStatusArr}
-                />
+                {workspaceId.length === 24 && (
+                    <ComponentTaskStatusListNames
+                        workspaceId={workspaceId}
+                        setTaskStatusList={setTaskStatusList}
+                    />
+                )}
 
                 {/* Filter */}
                 <div className="mb-6">
@@ -179,7 +173,6 @@ const TaskList: React.FC = () => {
                             <option value="not-completed">Not Completed</option>
                         </select>
                     </div>
-
                 </div>
 
                 {/* Section 3: Labels with Search Functionality */}
@@ -214,34 +207,43 @@ const TaskList: React.FC = () => {
                     </div>
                 )}
 
-                {taskStatusArr.map((itemTaskStatus) => {
-                    let tempTaskList = tasks.filter(filterTask => itemTaskStatus === filterTask.taskStatus);
+                <div>
+                    {workspaceId.length === 24 && (
+                        <div>
+                            {taskStatusList.map((itemTaskStatus) => {
+                                let tempTaskList = tasks.filter(filterTask => itemTaskStatus._id === filterTask.taskStatusId);
+                                // let tempTaskList = tasks;
 
-                    return (
-                        <div key={itemTaskStatus} className="mb-4 p-4 rounded-lg shadow-md bg-gray-100">
-                            <h2 className="text-xl font-semibold mb-2 text-blue-600">{itemTaskStatus}</h2>
-                            {tempTaskList.length === 0 && (
-                                <div className="text-center">
-                                    <p>No tasks available in this group.</p>
-                                </div>
-                            )}
-                            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {
-                                    tempTaskList.map(task => {
-                                        return (
-                                            <TaskItem
-                                                task={task}
-                                                taskStatusArr={taskStatusArr}
-                                                setRefreshRandomNum={setRefreshRandomNum}
-                                                setIsTaskAddModalIsOpen={setIsTaskAddModalIsOpen}
-                                            />
-                                        )
-                                    })
-                                }
-                            </ul>
+                                return (
+                                    <div key={itemTaskStatus._id} className="mb-4 p-4 rounded-lg shadow-md bg-gray-100">
+                                        <h2 className="text-xl font-semibold mb-2 text-blue-600">{itemTaskStatus.statusTitle}</h2>
+                                        {tempTaskList.length === 0 && (
+                                            <div className="text-center">
+                                                <p>No tasks available in this group.</p>
+                                            </div>
+                                        )}
+                                        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            {
+                                                tempTaskList.map(task => {
+                                                    return (
+                                                        <div>
+                                                            <TaskItem
+                                                                task={task}
+                                                                taskStatusList={taskStatusList}
+                                                                setRefreshRandomNum={setRefreshRandomNum}
+                                                                setIsTaskAddModalIsOpen={setIsTaskAddModalIsOpen}
+                                                            />
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </ul>
+                                    </div>
+                                )
+                            })}
                         </div>
-                    )
-                })}
+                    )}
+                </div>
             </div>
         )
     }

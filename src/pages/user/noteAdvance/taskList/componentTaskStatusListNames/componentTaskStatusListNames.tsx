@@ -2,38 +2,40 @@ import { Fragment, useEffect, useState } from 'react';
 import axiosCustom from '../../../../../config/axiosCustom';
 import { LucideMoveDown, LucideMoveUp, LucidePlus, LucideRefreshCcw, LucideTrash2 } from 'lucide-react'; // Importing the delete icon
 
-const componentTaskBoardListNames = ({
-    boardName,
-    setTaskStatusArr,
+const componentTaskStatusListNames = ({
+    workspaceId,
+    setTaskStatusList,
 }: {
-    boardName: string;
-    setTaskStatusArr: React.Dispatch<React.SetStateAction<string[]>>;
+    workspaceId: string;
+    setTaskStatusList: React.Dispatch<React.SetStateAction<{
+        _id: string;
+        statusTitle: string;
+        listPosition: number;
+    }[]>>;
 }) => {
     const [listArr, setListArr] = useState<{
         _id: string;
-        boardName: string;
-        boardListName: string;
+        statusTitle: string;
         listPosition: number;
     }[]>([]); // State to hold the task boards
     const [newListName, setNewListName] = useState(''); // State to hold the new board name
 
     useEffect(() => {
         fetchGroupList();
-    }, []);
+    }, [workspaceId]);
 
     const addGroup = async () => {
         if (!newListName.trim()) return; // Prevent adding empty board names
 
         const newGroup = {
-            // boardName: newListName,
-            boardName: boardName,
-            boardListName: newListName,
+            taskWorkspaceId: workspaceId,
+            statusTitle: newListName,
             listPosition: 100,
         };
 
         const config = {
             method: 'post',
-            url: '/api/task-board-list/crud/taskBoardListAdd',
+            url: '/api/task-status-list/crud/taskStatusListAdd',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -55,7 +57,7 @@ const componentTaskBoardListNames = ({
 
         const config = {
             method: 'post',
-            url: '/api/task-board-list/crud/taskBoardListDelete',
+            url: '/api/task-status-list/crud/taskStatusListDelete',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -71,45 +73,19 @@ const componentTaskBoardListNames = ({
     };
 
     const fetchGroupList = async () => {
-        const config = {
-            method: 'post',
-            url: '/api/task-board-list/crud/taskBoardListGet',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-
         try {
-            const response = await axiosCustom.request(config);
+            const response = await axiosCustom.post('/api/task-status-list/crud/taskStatusListGet', {
+                taskWorkspaceId: workspaceId,
+            });
             if (Array.isArray(response.data?.docs)) {
                 const docs = response.data.docs as {
                     _id: string;
-                    boardName: string;
-                    boardListName: string;
+                    statusTitle: string;
                     listPosition: number;
                 }[];
 
-                // does unclassified
-                let doesUncategorizedExist = false;
-                for (let index = 0; index < docs.length; index++) {
-                    const element = docs[index];
-                    if (element.boardListName === 'Uncategorized') {
-                        doesUncategorizedExist = true;
-                    }
-                }
-                if (doesUncategorizedExist === false) {
-                    const newGroup = {
-                        _id: '000000000000000000000000',
-                        boardName: 'Default',
-                        boardListName: 'Uncategorized',
-                        listPosition: docs.length + 100, // Position it at the end
-                    };
-                    docs.push(newGroup);
-                }
-
                 setListArr(docs); // Assuming the response data is an array of group names
-                const tempArr = docs.map((item) => item.boardListName);
-                setTaskStatusArr(tempArr);
+                setTaskStatusList(docs);
             } else {
                 console.error('Invalid response format: Expected an array');
             }
@@ -121,7 +97,7 @@ const componentTaskBoardListNames = ({
     const revalidatePositionById = async ({ id, upOrDown }: { id: string; upOrDown: 'up' | 'down' }) => {
         const config = {
             method: 'post',
-            url: '/api/task-board-list/crud/taskBoardListRevalidatePositionById',
+            url: '/api/task-status-list/crud/taskStatusListRevalidatePositionById',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -153,10 +129,10 @@ const componentTaskBoardListNames = ({
                 <div className="flex flex-col mb-2">
                     {listArr.map((list) => (
                         <div key={list._id} className="border border-gray-300 p-1 rounded-lg mb-1 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-center">
-                            <span>{list.boardListName}</span>
+                            <span>{list.statusTitle}</span>
                             <div>
                                 <div>
-                                    {list.boardListName !== 'Uncategorized' && (
+                                    {list.statusTitle !== 'Uncategorized' && (
                                         <Fragment>
                                             <button onClick={() => revalidatePositionById({ id: list._id, upOrDown: 'up' })} className="text-red-600 hover:text-red-700 ml-1 mr-1">
                                                 <LucideMoveUp size={16} />
@@ -194,4 +170,4 @@ const componentTaskBoardListNames = ({
     )
 }
 
-export default componentTaskBoardListNames;
+export default componentTaskStatusListNames;

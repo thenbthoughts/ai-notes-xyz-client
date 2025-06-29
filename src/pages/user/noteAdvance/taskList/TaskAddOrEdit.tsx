@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import axiosCustom from '../../../../config/axiosCustom';
 import ComponentTaskSubList from './componentTaskSubList/ComponentTaskSubList';
 import ComponentTaskCommentList from './componentTaskCommentList/ComponentTaskCommentList';
 import { LucideDelete } from 'lucide-react';
+import ComponentSelectWorkspace from './ComponentTaskEdit/ComponentSelectWorkspace';
 
 const TaskAddOrEdit: React.FC<{
     isTaskAddModalIsOpen: {
@@ -30,6 +31,9 @@ const TaskAddOrEdit: React.FC<{
         isArchived: false,
         isCompleted: false,
     });
+
+    const [workspaceId, setWorkspaceId] = useState('');
+    const [taskStatusId, setTaskStatusId] = useState('');
 
     const [taskCommentsReloadRandomNum, setTaskCommentsReloadRandomNum] = useState(Math.random());
 
@@ -68,6 +72,8 @@ const TaskAddOrEdit: React.FC<{
                         setStatus(taskInfo.taskStatus || 'Uncategorized'); // Set status from task info
                         setDueDate(taskInfo.dueDate || ''); // Set due date from task info
                         setLabels(taskInfo?.labels); // Set labels from task info
+
+                        setWorkspaceId(taskInfo.taskWorkspaceId || '');
 
                         setFormData({
                             isArchived: taskInfo.isArchived || false,
@@ -125,6 +131,9 @@ const TaskAddOrEdit: React.FC<{
             priority: formData.priority,
             isArchived: formData.isArchived,
             isCompleted: formData.isCompleted,
+
+            // workspace
+            taskWorkspaceId: workspaceId,
         } as {
             id?: string;
             title: string;
@@ -141,7 +150,15 @@ const TaskAddOrEdit: React.FC<{
             priority: string;
             isArchived: boolean;
             isCompleted: boolean;
+
+            // workspace
+            taskWorkspaceId: string;
+            taskStatusId: string;
         };
+
+        if (taskStatusId !== 'EMPTY') {
+            newTask.taskStatusId = '';
+        }
 
         if (isTaskAddModalIsOpen.modalType === 'edit') {
             newTask.id = isTaskAddModalIsOpen.recordId;
@@ -361,46 +378,62 @@ const TaskAddOrEdit: React.FC<{
 
                                     {/* status */}
                                     <div className="flex flex-wrap gap-2">
-                                        <div
-                                            className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2 cursor-pointer"
-                                            onClick={() => setFormData({ ...formData, isCompleted: !formData.isCompleted })}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                className="border border-gray-300 rounded-lg w-4 h-4 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-                                                checked={formData.isCompleted}
-                                            />
-                                            <label className="block font-medium">Completed</label>
-                                        </div>
+                                        {isTaskAddModalIsOpen.modalType === 'edit' && (
+                                            <Fragment>
+                                                <div
+                                                    className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2 cursor-pointer"
+                                                    onClick={() => setFormData({ ...formData, isCompleted: !formData.isCompleted })}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        className="border border-gray-300 rounded-lg w-4 h-4 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                        checked={formData.isCompleted}
+                                                    />
+                                                    <label className="block font-medium">Completed</label>
+                                                </div>
 
-                                        {/* archived */}
-                                        <div
-                                            className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2 cursor-pointer"
-                                            onClick={() => setFormData({ ...formData, isArchived: !formData.isArchived })}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                className="border border-gray-300 rounded-lg w-4 h-4 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-                                                checked={formData.isArchived}
-                                            />
-                                            <label className="block font-medium">Archived</label>
-                                        </div>
+                                                {/* archived */}
+                                                <div
+                                                    className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2 cursor-pointer"
+                                                    onClick={() => setFormData({ ...formData, isArchived: !formData.isArchived })}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        className="border border-gray-300 rounded-lg w-4 h-4 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                        checked={formData.isArchived}
+                                                    />
+                                                    <label className="block font-medium">Archived</label>
+                                                </div>
 
-                                        {/* priority */}
+                                                {/* priority */}
+                                                <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2">
+                                                    <label className="block font-medium">Priority:</label>
+                                                    <select
+                                                        className="border border-gray-300 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                        value={formData.priority}
+                                                        onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                                                    >
+                                                        <option value="">Select Priority</option>
+                                                        <option value="very-high">Very High</option>
+                                                        <option value="high">High</option>
+                                                        <option value="medium">Medium</option>
+                                                        <option value="low">Low</option>
+                                                        <option value="very-low">Very Low</option>
+                                                    </select>
+                                                </div>
+                                            </Fragment>
+                                        )}
+
+                                        {/* workspace */}
                                         <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2">
-                                            <label className="block font-medium">Priority:</label>
-                                            <select
-                                                className="border border-gray-300 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-                                                value={formData.priority}
-                                                onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                                            >
-                                                <option value="">Select Priority</option>
-                                                <option value="very-high">Very High</option>
-                                                <option value="high">High</option>
-                                                <option value="medium">Medium</option>
-                                                <option value="low">Low</option>
-                                                <option value="very-low">Very Low</option>
-                                            </select>
+                                            <label className="block font-medium">Workspace:</label>
+                                            <ComponentSelectWorkspace
+                                                workspaceId={workspaceId}
+                                                setWorkspaceIdFunc={(workspaceId: string) => {
+                                                    setWorkspaceId(workspaceId);
+                                                    setTaskStatusId('EMPTY');
+                                                }}
+                                            />
                                         </div>
                                     </div>
 

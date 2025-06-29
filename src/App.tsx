@@ -40,6 +40,7 @@ const PageLifeEventsWrapper = lazy(() => import('./pages/user/noteAdvance/pageLi
 
 // pages -> productivity
 const TaskList = lazy(() => import("./pages/user/noteAdvance/taskList/TaskList.tsx"));
+const TaskWorkspaceCrud = lazy(() => import("./pages/user/noteAdvance/TaskWorkspaceCrud/TaskWorkspaceCrud.tsx"));
 const CalendarWrapper = lazy(() => import("./pages/user/noteAdvance/Calendar/CalendarWrapper.tsx"));
 const FinanceWrapper = lazy(() => import("./pages/user/noteAdvance/Finance/FinanceWrapper.tsx"));
 
@@ -126,7 +127,14 @@ function App() {
             </UnauthorizedRoute>
           )
         },
-
+        {
+          path: '/user/task-workspace',
+          element: (
+            <UnauthorizedRoute>
+              <TaskWorkspaceCrud />
+            </UnauthorizedRoute>
+          )
+        },
         // 
         {
           path: "/user/quick-memo-ai",

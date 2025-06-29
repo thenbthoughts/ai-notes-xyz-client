@@ -17,8 +17,8 @@ export interface tsPageTask {
 
     // identification
     _id: string;
-    boardName: string;
-    taskStatus: string;
+    taskWorkspaceId: string;
+    taskStatusId: string;
 
     // auth
     username: string;
@@ -30,6 +30,12 @@ export interface tsPageTask {
     createdAtIpAddress: string;
     updatedAtUtc: Date;
     updatedAtIpAddress: string;
+
+    taskStatusList: {
+        _id: string;
+        statusTitle: string;
+        listPosition: number;
+    }[];
 }
 
 export interface tsTaskStatusArr {

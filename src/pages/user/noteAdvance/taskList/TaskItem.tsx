@@ -5,12 +5,16 @@ import { LucideClock, LucideEdit3, LucideInfo, LucideTrash2 } from "lucide-react
 
 const TaskItem = ({
     task,
-    taskStatusArr,
+    taskStatusList,
     setRefreshRandomNum,
     setIsTaskAddModalIsOpen,
 }: {
     task: tsPageTask;
-    taskStatusArr: string[],
+    taskStatusList: {
+        _id: string;
+        statusTitle: string;
+        listPosition: number;
+    }[],
     setRefreshRandomNum: (value: React.SetStateAction<number>) => void;
     setIsTaskAddModalIsOpen: React.Dispatch<React.SetStateAction<{
         openStatus: boolean;
@@ -18,25 +22,15 @@ const TaskItem = ({
         recordId: string;
     }>>
 }) => {
-    const axiosChangeTaskList = async (taskId: string, taskStatus: string): Promise<void> => {
-        const data = JSON.stringify({
-            id: taskId,
-            taskStatus: taskStatus
-        });
-
-        const config = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: '/api/task/crud/taskEdit',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            data: data
+    const axiosChangeTaskList = async (taskStatusId: string): Promise<void> => {
+        const data = {
+            id: task._id,
+            taskStatusId: taskStatusId,
+            taskWorkspaceId: task.taskWorkspaceId,
         };
 
         try {
-            const response = await axiosCustom.request(config);
-            console.log(JSON.stringify(response.data));
+            await axiosCustom.post('/api/task/crud/taskEdit', data);
             setRefreshRandomNum(
                 Math.floor(
                     Math.random() * 1_000_000
@@ -146,13 +140,16 @@ const TaskItem = ({
 
                 <div className="flex items-center mt-2 gap-2">
                     <select
-                        value={task.taskStatus}
-                        onChange={(e) => axiosChangeTaskList(task._id, e.target.value)}
+                        value={task.taskStatusId}
+                        onChange={(e) => {
+                            console.log(e.target.value);
+                            axiosChangeTaskList(e.target.value);
+                        }}
                         className="border border-gray-300 px-2 py-1 pr-4 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out hover:bg-blue-50 text-sm"
                     >
-                        {taskStatusArr.map((groupOption) => (
-                            <option key={groupOption} value={groupOption}>
-                                {groupOption}
+                        {taskStatusList.map((taskStatus) => (
+                            <option key={taskStatus._id} value={taskStatus._id}>
+                                {taskStatus.statusTitle}
                             </option>
                         ))}
                     </select>
