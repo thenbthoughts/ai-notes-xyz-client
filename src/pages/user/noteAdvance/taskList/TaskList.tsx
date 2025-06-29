@@ -17,7 +17,7 @@ const TaskList: React.FC = () => {
     const [loading, setLoading] = useState(false); // State to manage loading
     const [priority, setPriority] = useState('');
     const [isArchived, setIsArchived] = useState('not-archived');
-    const [isCompleted, setIsCompleted] = useState('');
+    const [isCompleted, setIsCompleted] = useState('not-completed');
 
     const [isTaskAddModalIsOpen, setIsTaskAddModalIsOpen] = useState({
         openStatus: false,
