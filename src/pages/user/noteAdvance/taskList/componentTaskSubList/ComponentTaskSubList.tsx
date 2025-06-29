@@ -1,6 +1,133 @@
 import React, { useEffect, useState } from 'react';
 import { CheckSquare, Square, Trash2, Plus } from 'lucide-react';
 import axiosCustom from '../../../../../config/axiosCustom';
+import { DebounceInput } from 'react-debounce-input';
+import toast from 'react-hot-toast';
+
+const ComponentSubTaskItem = ({
+    subtask,
+    setRandomNumLoading
+}: {
+    subtask: { _id: string; title: string; taskCompletedStatus: boolean };
+    setRandomNumLoading: React.Dispatch<React.SetStateAction<number>>;
+}) => {
+
+    const [axiosEditTitleLoading, setAxiosEditTitleLoading] = useState(false);
+
+    const [formData, setFormData] = useState({
+        title: subtask.title,
+    });
+
+    const updateSubCompleted = async ({
+        taskCompletedStatus,
+    }: {
+        taskCompletedStatus: boolean;
+    }) => {
+        const updatedSubtask = subtask;
+        if (updatedSubtask) {
+            try {
+                await axiosCustom.post('/api/task-sub/crud/taskSubEdit', {
+                    id: subtask._id,
+                    taskCompletedStatus: taskCompletedStatus,
+                });
+                setRandomNumLoading(Math.random() * 1000000);
+                // await fetchSubtasks();
+            } catch (error) {
+                console.error('Error updating subtask:', error);
+            }
+        }
+    };
+
+    const updateSubTitle = async ({
+        title,
+    }: {
+        title: string;
+    }) => {
+        if (title === subtask.title) {
+            return;
+        }
+        setAxiosEditTitleLoading(true);
+        try {
+            await axiosCustom.post('/api/task-sub/crud/taskSubEdit', {
+                id: subtask._id,
+                title: title
+            });
+
+            toast.success('Sub task title updated successfully');
+        } catch (error) {
+            console.error('Error updating subtask:', error);
+        } finally {
+            setAxiosEditTitleLoading(false);
+        }
+    };
+
+    const deleteSubtask = async () => {
+        try {
+            await axiosCustom.post(
+                '/api/task-sub/crud/taskSubDelete',
+                {
+                    id: subtask._id
+                }
+            );
+            setRandomNumLoading(Math.random() * 1000000);
+            // await fetchSubtasks();
+        } catch (error) {
+            console.error('Error deleting subtask:', error);
+        }
+    };
+
+    useEffect(() => {
+        updateSubTitle({ title: formData.title })
+    }, [formData.title])
+
+    return (
+        <div>
+            <div className="flex items-center gap-1 w-full">
+                {/* completed status */}
+                {subtask.taskCompletedStatus ? (
+                    <button
+                        onClick={() => updateSubCompleted({ taskCompletedStatus: false })}
+                        className="text-gray-500 hover:text-gray-700"
+                    >
+                        <CheckSquare size={16} className="text-green-500" />
+                    </button>
+                ) : (
+                    <button
+                        onClick={() => updateSubCompleted({ taskCompletedStatus: true })}
+                        className="text-gray-500 hover:text-gray-700"
+                    >
+                        <Square size={16} />
+
+                    </button>
+                )}
+
+                {/* input title */}
+                <DebounceInput
+                    debounceTimeout={1000}
+                    type="text"
+                    value={formData.title}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setFormData({ ...formData, title: e.target.value })
+                    }}
+                    className={subtask.taskCompletedStatus ? 'line-through text-gray-500 w-full' : 'w-full'}
+                />
+
+                {/* delete subtask button */}
+                <button
+                    onClick={() => deleteSubtask()}
+                    className="text-red-500 hover:text-red-700"
+                >
+                    <Trash2 size={16} />
+                </button>
+            </div>
+            {axiosEditTitleLoading && (
+                <div className="text-gray-500 text-xs">
+                    Saving title...
+                </div>
+            )}
+        </div>
+    )
+}
 
 const ComponentTaskSubList: React.FC<{
     parentTaskId: string;
@@ -9,10 +136,11 @@ const ComponentTaskSubList: React.FC<{
     const [subtasks, setSubtasks] = useState<{ _id: string; title: string; taskCompletedStatus: boolean }[]>([]);
     const [newSubtask, setNewSubtask] = useState('');
     const [loading, setLoading] = useState(true); // New loading state
+    const [randomNumLoading, setRandomNumLoading] = useState(0);
 
     useEffect(() => {
         fetchSubtasks();
-    }, [parentTaskId]);
+    }, [parentTaskId, randomNumLoading]);
 
     const fetchSubtasks = async () => {
         setLoading(true); // Set loading to true when fetching
@@ -46,41 +174,6 @@ const ComponentTaskSubList: React.FC<{
         }
     };
 
-    const updateSubtaskPosition = async ({
-        id,
-        taskCompletedStatus,
-    }: {
-        id: string;
-        taskCompletedStatus: boolean;
-    }) => {
-        const updatedSubtask = subtasks.find(subtask => subtask._id === id);
-        if (updatedSubtask) {
-            try {
-                await axiosCustom.post('/api/task-sub/crud/taskSubEdit', {
-                    id,
-                    taskCompletedStatus: taskCompletedStatus
-                });
-                await fetchSubtasks();
-            } catch (error) {
-                console.error('Error updating subtask:', error);
-            }
-        }
-    };
-
-    const deleteSubtask = async (id: string) => {
-        try {
-            await axiosCustom.post(
-                '/api/task-sub/crud/taskSubDelete',
-                {
-                    id
-                }
-            );
-            await fetchSubtasks();
-        } catch (error) {
-            console.error('Error deleting subtask:', error);
-        }
-    };
-
     return (
         <div>
             <div className="flex justify-between items-center mb-1">
@@ -93,33 +186,10 @@ const ComponentTaskSubList: React.FC<{
             </div>
             <div className="space-y-1">
                 {subtasks.map((subtask) => (
-                    <div key={subtask._id} className="flex items-center gap-1">
-                        {subtask.taskCompletedStatus ? (
-                            <button
-                                onClick={() => updateSubtaskPosition({ id: subtask._id, taskCompletedStatus: false })}
-                                className="text-gray-500 hover:text-gray-700"
-                            >
-                                <CheckSquare size={16} className="text-green-500" />
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => updateSubtaskPosition({ id: subtask._id, taskCompletedStatus: true })}
-                                className="text-gray-500 hover:text-gray-700"
-                            >
-                                <Square size={16} />
-
-                            </button>
-                        )}
-                        <span className={subtask.taskCompletedStatus ? 'line-through text-gray-500' : ''}>
-                            {subtask.title}
-                        </span>
-                        <button
-                            onClick={() => deleteSubtask(subtask._id)}
-                            className="text-red-500 hover:text-red-700"
-                        >
-                            <Trash2 size={16} />
-                        </button>
-                    </div>
+                    <ComponentSubTaskItem
+                        subtask={subtask}
+                        setRandomNumLoading={setRandomNumLoading}
+                    />
                 ))}
                 <div className="flex gap-2 mt-2">
                     <input
