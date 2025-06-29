@@ -2,10 +2,14 @@ export interface tsPageTask {
     // Task specific fields
     title: string;
     description: string;
-    priority: '' | 'low' | 'medium' | 'high';
     dueDate: Date;
     checklist: string[];
     comments: string[];
+
+    // status
+    priority: '' | 'very-low' | 'low' | 'medium' | 'high' | 'very-high';
+    isCompleted: boolean;
+    isArchived: boolean;
 
     // labels
     labels: string[];

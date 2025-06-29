@@ -25,6 +25,12 @@ const TaskAddOrEdit: React.FC<{
     const [newLabel, setNewLabel] = useState(''); // New state for new label
     const [isAddingLabel, setIsAddingLabel] = useState(false); // State to control label input visibility
 
+    const [formData, setFormData] = useState({
+        priority: '',
+        isArchived: false,
+        isCompleted: false,
+    });
+
     const [taskCommentsReloadRandomNum, setTaskCommentsReloadRandomNum] = useState(Math.random());
 
     const [taskAiSuggestionLoading, setTaskAiSuggestionLoading] = useState(false);
@@ -62,6 +68,12 @@ const TaskAddOrEdit: React.FC<{
                         setStatus(taskInfo.taskStatus || 'Uncategorized'); // Set status from task info
                         setDueDate(taskInfo.dueDate || ''); // Set due date from task info
                         setLabels(taskInfo?.labels); // Set labels from task info
+
+                        setFormData({
+                            isArchived: taskInfo.isArchived || false,
+                            isCompleted: taskInfo.isCompleted || false,
+                            priority: taskInfo.priority || '',
+                        });
                     } else {
                         toggleModal();
                     }
@@ -107,7 +119,12 @@ const TaskAddOrEdit: React.FC<{
             comments: comments.map(comment => comment.text), // Include comments in the task
             status: status, // Include status in the task
             dueDate: dueDate, // Include due date in the task
-            labels: labels // Include labels in the task
+            labels: labels, // Include labels in the task
+
+            // status
+            priority: formData.priority,
+            isArchived: formData.isArchived,
+            isCompleted: formData.isCompleted,
         } as {
             id?: string;
             title: string;
@@ -119,6 +136,11 @@ const TaskAddOrEdit: React.FC<{
             status: string;
             dueDate: string;
             labels: string[];
+
+            // status
+            priority: string;
+            isArchived: boolean;
+            isCompleted: boolean;
         };
 
         if (isTaskAddModalIsOpen.modalType === 'edit') {
@@ -193,18 +215,18 @@ const TaskAddOrEdit: React.FC<{
                                 padding: '5px',
                                 margin: '0 auto',
                             }}
-                            className="custom-scrollbar" // Added class for custom scrollbar styles
+                            className="custom-scrollbar"
                         >
                             <div className="bg-white rounded-lg shadow-lg p-1 relative w-full">
                                 <div
                                     style={{
                                         padding: '5px',
-                                        overflowY: 'auto', // Added to enable vertical scrolling
-                                        maxHeight: '80vh', // Set a maximum height for the modal
-                                        scrollbarWidth: 'thin', // For Firefox
-                                        scrollbarColor: '#4A90E2 #F5F5F5', // For Firefox
+                                        overflowY: 'auto',
+                                        maxHeight: '80vh',
+                                        scrollbarWidth: 'thin',
+                                        scrollbarColor: '#4A90E2 #F5F5F5',
                                     }}
-                                    className="custom-scrollbar" // Added class for custom scrollbar styles
+                                    className="custom-scrollbar"
                                 >
                                     <h2 className="text-lg font-bold mb-2 text-center">
                                         {isTaskAddModalIsOpen.modalType === 'add' ? 'Add Task' : 'Edit Task'}
@@ -255,6 +277,21 @@ const TaskAddOrEdit: React.FC<{
                                             </button>
                                             <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded-full">Status: {status}</span>
                                             <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-2 py-1 rounded-full">Due Date: {dueDate || 'No due date'}</span>
+                                            {formData.isCompleted && (
+                                                <span className={`bg-green-100 text-green-800 text-sm font-medium px-2 py-1 rounded-full`}>
+                                                    Completed
+                                                </span>
+                                            )}
+                                            {formData.isArchived && (
+                                                <span className={`bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded-full`}>
+                                                    Archived
+                                                </span>
+                                            )}
+                                            {formData.priority && (
+                                                <span className={`bg-green-100 text-green-800 text-sm font-medium px-2 py-1 rounded-full`}>
+                                                    Priority: {formData.priority.replace(' ', '-')}
+                                                </span>
+                                            )}
                                             {labels.map((label, index) => (
                                                 <span
                                                     key={index}
@@ -271,7 +308,7 @@ const TaskAddOrEdit: React.FC<{
                                                             top: '3px',
                                                         }}
                                                     >
-                                                            <LucideDelete className="w-4 h-4 text-red-500" />
+                                                        <LucideDelete className="w-4 h-4 text-red-500" />
                                                     </span>
                                                 </span>
                                             ))}
@@ -296,9 +333,50 @@ const TaskAddOrEdit: React.FC<{
                                         </div>
                                     )}
 
-                                    {/* <pre>
-                                        {JSON.stringify(taskAiSuggestion, null, 2)}
-                                    </pre> */}
+                                    {/* status */}
+                                    <div className="flex flex-wrap gap-2">
+                                        <div
+                                            className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2 cursor-pointer"
+                                            onClick={() => setFormData({ ...formData, isCompleted: !formData.isCompleted })}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                className="border border-gray-300 rounded-lg w-4 h-4 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                checked={formData.isCompleted}
+                                            />
+                                            <label className="block font-medium">Completed</label>
+                                        </div>
+
+                                        {/* archived */}
+                                        <div
+                                            className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2 cursor-pointer"
+                                            onClick={() => setFormData({ ...formData, isArchived: !formData.isArchived })}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                className="border border-gray-300 rounded-lg w-4 h-4 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                checked={formData.isArchived}
+                                            />
+                                            <label className="block font-medium">Archived</label>
+                                        </div>
+
+                                        {/* priority */}
+                                        <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2">
+                                            <label className="block font-medium">Priority:</label>
+                                            <select
+                                                className="border border-gray-300 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                value={formData.priority}
+                                                onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                                            >
+                                                <option value="">Select Priority</option>
+                                                <option value="very-high">Very High</option>
+                                                <option value="high">High</option>
+                                                <option value="medium">Medium</option>
+                                                <option value="low">Low</option>
+                                                <option value="very-low">Very Low</option>
+                                            </select>
+                                        </div>
+                                    </div>
 
                                     {isAddingLabel && (
                                         <div className="py-2">
