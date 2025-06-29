@@ -12,6 +12,7 @@ const ComponentSubTaskItem = ({
     setRandomNumLoading: React.Dispatch<React.SetStateAction<number>>;
 }) => {
 
+    const [shouldUpdateSubTitle, setShouldUpdateSubTitle] = useState(false);
     const [axiosEditTitleLoading, setAxiosEditTitleLoading] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -43,9 +44,6 @@ const ComponentSubTaskItem = ({
     }: {
         title: string;
     }) => {
-        if (title === subtask.title) {
-            return;
-        }
         setAxiosEditTitleLoading(true);
         try {
             await axiosCustom.post('/api/task-sub/crud/taskSubEdit', {
@@ -77,7 +75,9 @@ const ComponentSubTaskItem = ({
     };
 
     useEffect(() => {
-        updateSubTitle({ title: formData.title })
+        if (shouldUpdateSubTitle) {
+            updateSubTitle({ title: formData.title })
+        }
     }, [formData.title])
 
     return (
@@ -107,6 +107,7 @@ const ComponentSubTaskItem = ({
                     type="text"
                     value={formData.title}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setShouldUpdateSubTitle(true);
                         setFormData({ ...formData, title: e.target.value })
                     }}
                     className={subtask.taskCompletedStatus ? 'line-through text-gray-500 w-full' : 'w-full'}
