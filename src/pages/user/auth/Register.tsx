@@ -110,9 +110,9 @@ export default function Component() {
 
     return (
         <div className="min-h-screen py-6 flex flex-col justify-center sm:py-12">
-            <div className="container p-2 ">
+            <div className="container p-2 m-auto">
                 <div className="py-3 sm:max-w-xl md:max-w-4xl lg:max-w-5xl mx-auto">
-                    <div className="px-4 py-10 bg-white shadow-lg rounded-2xl sm:p-20">
+                    <div className="px-4 py-10 bg-white shadow-sm rounded sm:p-20">
                         <div className="max-w-md mx-auto md:max-w-full grid md:grid-cols-2 gap-8">
                             <div>
                                 <div className="bg-white shadow-lg rounded-2xl">
