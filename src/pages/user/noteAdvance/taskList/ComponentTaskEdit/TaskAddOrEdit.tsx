@@ -1,9 +1,11 @@
 import { Fragment, useEffect, useState } from 'react';
-import axiosCustom from '../../../../config/axiosCustom';
-import ComponentTaskSubList from './componentTaskSubList/ComponentTaskSubList';
-import ComponentTaskCommentList from './componentTaskCommentList/ComponentTaskCommentList';
 import { LucideDelete } from 'lucide-react';
-import ComponentSelectWorkspace from './ComponentTaskEdit/ComponentSelectWorkspace';
+
+import axiosCustom from '../../../../../config/axiosCustom';
+
+import ComponentTaskSubList from './ComponentTaskSubList';
+import ComponentTaskCommentList from './ComponentTaskCommentList';
+import ComponentSelectWorkspace from './ComponentSelectWorkspace';
 
 const TaskAddOrEdit: React.FC<{
     isTaskAddModalIsOpen: {

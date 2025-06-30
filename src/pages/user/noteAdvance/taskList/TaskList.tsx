@@ -7,7 +7,7 @@ import TaskListComponentSuggestAiGeneratedTask from './TaskListComponentSuggestA
 import TaskItem from './TaskItem';
 import { tsPageTask } from '../../../../types/pages/tsPageTaskList';
 import ComponentTaskListFooter from './ComponentTaskListFooter';
-import TaskAddOrEdit from './TaskAddOrEdit';
+import TaskAddOrEdit from './ComponentTaskEdit/TaskAddOrEdit';
 import ComponentTaskStatusListNames from './componentTaskStatusListNames/componentTaskStatusListNames';
 import ComponentTaskWorkspace from './componentTaskWorkspace/ComponentTaskWorkspace';
 import { jotaiStateTaskWorkspaceId } from './stateJotai/taskStateJotai';
