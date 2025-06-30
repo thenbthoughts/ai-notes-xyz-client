@@ -148,7 +148,7 @@ const TaskList: React.FC = () => {
 
                     {/* Archive Status Filter */}
                     <div className="mb-2">
-                        {isArchived === 'not-archived' && <label className="block text-xs font-medium text-gray-700 mb-1">Archive Status</label>}
+                        {isArchived === '' && <label className="block text-xs font-medium text-gray-700 mb-1">Archive Status</label>}
                         <select
                             value={isArchived}
                             onChange={(e) => setIsArchived(e.target.value)}
