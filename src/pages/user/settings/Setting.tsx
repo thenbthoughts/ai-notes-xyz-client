@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import SettingApiKey from './SettingApiKey';
 import SettingDefaultEnvKeys from "./SettingDefaultEnvKeys";
 import SettingSelectTimeZone from "./SettingSelectTimeZone";
+import SettingRevalidate from "./SettingRevalidate";
 
 const Setting = () => {
     // personal info
@@ -387,6 +388,8 @@ const Setting = () => {
             <SettingDefaultEnvKeys />
 
             <SettingSelectTimeZone />
+
+            <SettingRevalidate />
 
         </div>
     );
