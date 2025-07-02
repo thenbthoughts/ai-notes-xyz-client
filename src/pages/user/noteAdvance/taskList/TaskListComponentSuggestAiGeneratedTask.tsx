@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import axiosCustom from '../../../../config/axiosCustom.ts';
+import { useAtomValue } from 'jotai';
+import { jotaiStateTaskWorkspaceId } from './stateJotai/taskStateJotai';
 
+// interface for task
 interface Task {
     taskTitle: string;
     taskDescription: string;
@@ -16,6 +19,8 @@ const TaskListComponentSuggestAiGeneratedTask = ({
 }) => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+
+    const workspaceId = useAtomValue(jotaiStateTaskWorkspaceId);
 
     const fetchTasks = async () => {
         setLoading(true);
@@ -43,6 +48,9 @@ const TaskListComponentSuggestAiGeneratedTask = ({
             priority: task.taskPriority,
             dueDate: task.taskDueDate,
             tags: task.taskTags,
+
+            // workspace
+            taskWorkspaceId: workspaceId,
         };
 
         const config = {

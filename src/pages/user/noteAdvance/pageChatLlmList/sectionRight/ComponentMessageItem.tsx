@@ -58,26 +58,44 @@ const ComponentAiTaskByNotesId = ({
 
     const addTask = async (task: Task) => {
         // Logic to add the task to the main task list
-        console.log('Adding task:', task);
-
-        const newTask = {
-            title: task.taskTitle,
-            description: task.taskDescription,
-            priority: task.taskPriority,
-            dueDate: task.taskDueDate,
-            tags: task.taskTags,
-        };
-
-        const config = {
-            method: 'post',
-            url: '/api/task/crud/taskAdd',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            data: JSON.stringify(newTask),
-        };
 
         try {
+            console.log('Adding task:', task);
+
+            // get workspace id from api
+            let tempWorkspaceId = '000000000000000000000000';
+            const taskWorkspaceResult = await axiosCustom.post('/api/task-workspace/crud/taskWorkspaceGet');
+            if(taskWorkspaceResult.data?.docs.length > 0) {
+                // find the unassigned workspace id
+                for (let index = 0; index < taskWorkspaceResult.data.docs.length; index++) {
+                    const element = taskWorkspaceResult.data.docs[index];
+                    if(element?.title === 'Unassigned') {
+                        tempWorkspaceId = element._id;
+                        break;
+                    }
+                }
+            }
+    
+            const newTask = {
+                title: task.taskTitle,
+                description: task.taskDescription,
+                priority: task.taskPriority,
+                dueDate: task.taskDueDate,
+                tags: task.taskTags,
+
+                // workspace
+                taskWorkspaceId: tempWorkspaceId,
+            };
+    
+            const config = {
+                method: 'post',
+                url: '/api/task/crud/taskAdd',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: JSON.stringify(newTask),
+            };
+
             await axiosCustom.request(config);
             console.log('Task added successfully!');
             // Optionally, you can remove the task from the suggested list here if needed
