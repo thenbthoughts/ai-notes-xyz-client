@@ -44,23 +44,6 @@ const ComponentChatHistory = () => {
         searchTerm,
     ]);
 
-    const addNewThread = async () => {
-        try {
-            const result = await chatLlmThreadAddAxios();
-
-            if (result.success === 'Success') {
-                toast.success('New thread added successfully!');
-                navigate(`/user/chat?id=${result.recordId}`);
-            } else {
-                toast.error(result.error);
-            }
-
-            fetchChatThreads();
-        } catch (error) {
-            alert('Error adding new thread: ' + error);
-        }
-    };
-
     const deleteThread = async (argThreadId: string) => {
         try {
             if (!window.confirm('Are you sure you want to delete this thread?')) {
@@ -96,14 +79,12 @@ const ComponentChatHistory = () => {
 
             {/* New Chat Button */}
             <div className="mb-4">
-                <button
-                    className="w-full p-1 text-white bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 rounded-md shadow-sm hover:from-indigo-600 hover:via-purple-700 hover:to-pink-600 transition-colors duration-300"
-                    onClick={() => {
-                        addNewThread();
-                    }}
+                <Link
+                    to="/user/chat"
+                    className="w-full p-1 text-white bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 rounded-md shadow-sm hover:from-indigo-600 hover:via-purple-700 hover:to-pink-600 transition-colors duration-300 block text-center py-2"
                 >
-                    + Add
-                </button>
+                    + Add Chat
+                </Link>
             </div>
 
             {/* Search Input */}

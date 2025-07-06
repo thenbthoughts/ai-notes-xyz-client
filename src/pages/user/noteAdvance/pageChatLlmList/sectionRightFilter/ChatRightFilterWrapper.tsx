@@ -64,21 +64,20 @@ const ChatRightFilterWrapper = ({
                 </div>
             </div>
 
-            {/* add */}
+            {/* add chat */}
             <div
                 className='p-1 cursor-pointer'
-                onClick={() => {
-                    addNewThread();
-                }}
             >
                 <div className={`py-3 rounded bg-gray-600`}>
-                    <LucidePlus
-                        style={{
-                            width: '100%',
-                            color: 'white', // Set icon color to white
-                        }}
-                        className=''
-                    />
+                    <Link to={'/user/chat'}>
+                        <LucidePlus
+                            style={{
+                                width: '100%',
+                                color: 'white', // Set icon color to white
+                            }}
+                            className=''
+                        />
+                    </Link>
                 </div>
             </div>
 

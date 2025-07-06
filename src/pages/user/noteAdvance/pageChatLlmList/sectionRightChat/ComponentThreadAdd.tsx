@@ -51,7 +51,7 @@ const ComponentThreadAdd = () => {
                             className="w-5 h-5 text-gray-600"
                             style={{
                                 position: 'relative',
-                                top: '1px',
+                                top: '-0.5px',
                                 left: '1px',
                             }}
                         />
