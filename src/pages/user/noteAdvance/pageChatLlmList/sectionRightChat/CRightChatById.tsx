@@ -12,6 +12,7 @@ import {
 } from '../../../../../types/pages/tsNotesAdvanceList.ts'
 
 import ComponentAiGeneratedQuestionList from './ComponentAiGeneratedQuestionList.tsx';
+import ThreadSettingWrapper from './ThreadSetting/ThreadSettingWrapper.tsx';
 
 const CRightChatById = ({
     stateDisplayAdd,
@@ -198,6 +199,8 @@ const CRightChatById = ({
                     threadId={threadId}
                 />
             )}
+
+            <ThreadSettingWrapper />
         </div>
     )
 };
