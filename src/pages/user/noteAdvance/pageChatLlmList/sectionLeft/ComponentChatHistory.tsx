@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
+import { chatLlmThreadAddAxios } from '../utils/chatLlmThreadAxios.ts';
 
 /**
  * ComponentChatHistory displays the chat history section.
@@ -45,17 +46,14 @@ const ComponentChatHistory = () => {
 
     const addNewThread = async () => {
         try {
-            const result = await axiosCustom.post('/api/chat-llm/threads-crud/threadsAdd');
+            const result = await chatLlmThreadAddAxios();
 
-            const tempThreadId = result?.data?.thread?._id;
-            if (tempThreadId) {
-                if (typeof tempThreadId === 'string') {
-                    const redirectUrl = `/user/chat?id=${tempThreadId}`;
-                    navigate(redirectUrl);
-                }
+            if (result.success === 'Success') {
+                toast.success('New thread added successfully!');
+                navigate(`/user/chat?id=${result.recordId}`);
+            } else {
+                toast.error(result.error);
             }
-
-            toast.success('New thread added successfully!');
 
             fetchChatThreads();
         } catch (error) {
