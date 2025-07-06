@@ -6,14 +6,12 @@ import {
     LucideSettings,
     LucideSettings2
 } from 'lucide-react';
-import toast from 'react-hot-toast';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import useResponsiveScreen, {
     screenList
 } from '../../../../../hooks/useResponsiveScreen.tsx';
-import { chatLlmThreadAddAxios } from '../utils/chatLlmThreadAxios.ts';
 import { jotaiChatLlmThreadSetting } from '../jotai/jotaiChatLlmThreadSetting.ts';
 import { useAtom } from 'jotai';
 
@@ -27,23 +25,11 @@ const ChatRightFilterWrapper = ({
 
     // useState
     const screenWidth = useResponsiveScreen();
-    const navigate = useNavigate();
 
     const [
         chatLlmThreadSetting,
         setChatLlmThreadSetting,
     ] = useAtom(jotaiChatLlmThreadSetting);
-
-    const addNewThread = async () => {
-        const result = await chatLlmThreadAddAxios();
-
-        if (result.success === 'Success') {
-            toast.success('New thread added successfully!');
-            navigate(`/user/chat?id=${result.recordId}`);
-        } else {
-            toast.error(result.error);
-        }
-    }
 
     return (
         <div className='w-full'>

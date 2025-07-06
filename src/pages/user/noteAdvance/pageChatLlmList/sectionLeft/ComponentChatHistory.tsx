@@ -5,7 +5,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
-import { chatLlmThreadAddAxios } from '../utils/chatLlmThreadAxios.ts';
 
 /**
  * ComponentChatHistory displays the chat history section.
