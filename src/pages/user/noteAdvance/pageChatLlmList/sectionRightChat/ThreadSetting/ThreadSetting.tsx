@@ -3,6 +3,8 @@ import { useState } from "react";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import { AxiosRequestConfig } from "axios";
 import { toast } from "react-hot-toast";
+// import ThreadSettingContextSelected from "./ThreadSettingContextSelected";
+import ThreadSettingContextSelectNotes from "./ThreadSettingContextSelectNotes";
 
 const ThreadSetting = ({
     closeModal,
@@ -134,6 +136,25 @@ const ThreadSetting = ({
                         <span className="text-sm text-gray-700 cursor-pointer">Auto AI Context Enable</span>
                     </div>
                 </div>
+
+                {/* field -> notes list */}
+                {/*
+                // TODO: pending
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Context Selected:</label>
+                    <div>
+                        <ThreadSettingContextSelected
+                            threadId={threadSetting._id}
+                        />
+                    </div>
+                </div>
+                */}
+
+                {/* field -> notes list */}
+                <ThreadSettingContextSelectNotes
+                    threadId={threadSetting._id}
+                />
+
 
                 {/* button -> save */}
                 <div className="flex justify-end">
