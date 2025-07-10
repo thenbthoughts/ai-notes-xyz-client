@@ -5,6 +5,7 @@ import { AxiosRequestConfig } from "axios";
 import { toast } from "react-hot-toast";
 // import ThreadSettingContextSelected from "./ThreadSettingContextSelected";
 import ThreadSettingContextSelectNotes from "./ThreadSettingContextSelectNotes";
+import ThreadSettingContextSelectTask from "./ThreadSettingContextSelectTask";
 
 const ThreadSetting = ({
     closeModal,
@@ -27,6 +28,9 @@ const ThreadSetting = ({
         success: '',
         error: '',
     });
+
+    // note, task, chat, memo, lifeEvent, infoVault
+    const [selectedContextType, setSelectedContextType] = useState('note' as 'note' | 'task' | 'chat' | 'memo' | 'lifeEvent' | 'infoVault');
 
     const editRecord = async () => {
         setRequestEdit({
@@ -64,6 +68,72 @@ const ThreadSetting = ({
                 error: 'An error occurred while trying to edit the life event. Please try again later.',
             });
         }
+    }
+
+    const renderContextType = () => {
+        return (
+            <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Context Types</label>
+                <div className="border-b border-gray-200 overflow-x-auto">
+                    <nav className=" flex gap-2 sm:space-x-4 lg:space-x-8" aria-label="Tabs">
+                        <button
+                            className={`
+                                    text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 sm:px-2 border-b-2 font-medium text-xs sm:text-sm 
+                                    ${selectedContextType === 'note' ? 'border-indigo-500 text-indigo-600 font-bold' : ''}
+                                `}
+                            onClick={() => setSelectedContextType('note')}
+                        >
+                            Note
+                        </button>
+                        <button
+                            className={`
+                                    text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 sm:px-2 border-b-2 font-medium text-xs sm:text-sm 
+                                    ${selectedContextType === 'task' ? 'border-indigo-500 text-indigo-600 font-bold' : ''}
+                                `}
+                            onClick={() => setSelectedContextType('task')}
+                        >
+                            Task
+                        </button>
+                        <button
+                            className={`
+                                    text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 sm:px-2 border-b-2 font-medium text-xs sm:text-sm 
+                                    ${selectedContextType === 'chat' ? 'border-indigo-500 text-indigo-600 font-bold' : ''}
+                                `}
+                            onClick={() => setSelectedContextType('chat')}
+                        >
+                            Chat
+                        </button>
+                        <button
+                            className={`
+                                    text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 sm:px-2 border-b-2 font-medium text-xs sm:text-sm 
+                                    ${selectedContextType === 'memo' ? 'border-indigo-500 text-indigo-600 font-bold' : ''}
+                                `}
+                            onClick={() => setSelectedContextType('memo')}
+                        >
+                            Memo
+                        </button>
+                        <button
+                            className={`
+                                    text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 sm:px-2 border-b-2 font-medium text-xs sm:text-sm 
+                                    ${selectedContextType === 'lifeEvent' ? 'border-indigo-500 text-indigo-600 font-bold' : ''}
+                                `}
+                            onClick={() => setSelectedContextType('lifeEvent')}
+                        >
+                            Life Event
+                        </button>
+                        <button
+                            className={`
+                                    text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 sm:px-2 border-b-2 font-medium text-xs sm:text-sm 
+                                    ${selectedContextType === 'infoVault' ? 'border-indigo-500 text-indigo-600 font-bold' : ''}
+                                `}
+                            onClick={() => setSelectedContextType('infoVault')}
+                        >
+                            Info Vault
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        )
     }
 
     const renderMain = () => {
@@ -137,24 +207,28 @@ const ThreadSetting = ({
                     </div>
                 </div>
 
+                {/* Context Type Buttons */}
+                {renderContextType()}
+
                 {/* field -> notes list */}
-                {/*
-                // TODO: pending
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Context Selected:</label>
-                    <div>
-                        <ThreadSettingContextSelected
-                            threadId={threadSetting._id}
-                        />
+                {selectedContextType === 'note' && (
+                    <ThreadSettingContextSelectNotes
+                        threadId={threadSetting._id}
+                    />
+                )}
+
+                {selectedContextType === 'task' && (
+                    <ThreadSettingContextSelectTask
+                        threadId={threadSetting._id}
+                    />
+                )}
+
+                {/* still in development */}
+                {selectedContextType !== 'note' && (
+                    <div className="flex justify-center items-center h-full">
+                        <p className="text-gray-500">Still in development</p>
                     </div>
-                </div>
-                */}
-
-                {/* field -> notes list */}
-                <ThreadSettingContextSelectNotes
-                    threadId={threadSetting._id}
-                />
-
+                )}
 
                 {/* button -> save */}
                 <div className="flex justify-end">
