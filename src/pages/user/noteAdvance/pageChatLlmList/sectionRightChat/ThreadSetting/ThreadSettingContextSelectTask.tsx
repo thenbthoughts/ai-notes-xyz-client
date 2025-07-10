@@ -3,15 +3,17 @@ import axios from "axios";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import { AxiosRequestConfig, CancelTokenSource } from "axios";
 import { Link } from "react-router-dom";
-import { LucideExternalLink } from "lucide-react";
+import { LucideCheck, LucideExternalLink, LucideX } from "lucide-react";
 import toast from "react-hot-toast";
 
-interface NoteItem {
+interface TaskItem {
     _id: string;
     title: string;
     createdAtUtc: string;
-    notesWorkspaceId: string;
-
+    taskWorkspaceId: string;
+    isCompleted: boolean;
+    isArchived: boolean;
+    priority: string;
     selectedItems: SelectedItem[];
 }
 
@@ -20,13 +22,11 @@ interface SelectedItem {
     referenceId: string;
 }
 
-const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => {
+const ThreadSettingContextSelectTask = ({ threadId }: { threadId: string }) => {
 
     const [search, setSearch] = useState("");
-    const [list, setList] = useState([] as NoteItem[]);
+    const [list, setList] = useState([] as TaskItem[]);
 
-    const [page, setPage] = useState(1);
-    const perPage = 20;
     const [totalCount, setTotalCount] = useState(0);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
@@ -40,33 +40,30 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
 
     useEffect(() => {
         setRefreshRandomNum(Math.random());
-    }, [page]);
-
-    useEffect(() => {
-        setPage(1);
-        setRefreshRandomNum(Math.random());
     }, [search]);
 
     const fetchList = async ({ axiosCancelTokenSource }: { axiosCancelTokenSource: CancelTokenSource }) => {
         try {
             const config = {
                 method: 'post',
-                url: `/api/notes/crud/notesGet`,
+                url: `/api/task/crud/taskGet`,
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 data: {
-                    page: page,
-                    perPage: perPage,
-                    search: search,
+                    searchInput: search || '',
+                    priority: '',
+                    isArchived: '',
+                    isCompleted: '',
+                    taskWorkspaceId: ''
                 },
                 cancelToken: axiosCancelTokenSource.token,
             } as AxiosRequestConfig;
 
             const response = await axiosCustom.request(config);
-            let resultNotes = [];
+            let resultTasks = [];
             if (Array.isArray(response.data.docs)) {
-                resultNotes = response.data.docs;
+                resultTasks = response.data.docs;
             }
 
             let tempTotalCount = 0;
@@ -83,7 +80,7 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
 
             const resultContext = await axiosCustom.post('/api/chat-llm/threads-context-crud/contextGet', {
                 threadId: threadId,
-                contextType: 'note',
+                contextType: 'task',
             });
             let selectedArr = [] as {
                 _id: string;
@@ -95,8 +92,8 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
 
             // -----
 
-            let newList = [] as NoteItem[];
-            for (const item of resultNotes) {
+            let newList = [] as TaskItem[];
+            for (const item of resultTasks) {
                 let selectedItemArr = [] as SelectedItem[];
 
                 for (let index = 0; index < selectedArr.length; index++) {
@@ -121,16 +118,24 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
         }
     };
 
-    const handleAdd = async (noteId: string) => {
+    const handleAdd = async ({
+        taskId,
+        shouldLoad,
+    }: {
+        taskId: string;
+        shouldLoad: boolean;
+    }) => {
         const toastId = toast.loading('Loading...');
         try {
             const result = await axiosCustom.post('/api/chat-llm/threads-context-crud/contextUpsert', {
                 threadId: threadId,
-                referenceFrom: 'note',
-                referenceId: noteId,
+                referenceFrom: 'task',
+                referenceId: taskId,
             });
             console.log(result);
-            setRefreshRandomNum(Math.random());
+            if (shouldLoad) {
+                setRefreshRandomNum(Math.random());
+            }
         } catch (error) {
             console.error(error);
         } finally {
@@ -138,21 +143,81 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
         }
     }
 
-    const handleDelete = async (noteId: string) => {
+    const handleDelete = async ({
+        taskId,
+        shouldLoad,
+    }: {
+        taskId: string;
+        shouldLoad: boolean;
+    }) => {
         const toastId = toast.loading('Loading...');
         try {
             await axiosCustom.post('/api/chat-llm/threads-context-crud/contextDeleteById', {
-                recordId: noteId,
+                recordId: taskId,
             });
-            setRefreshRandomNum(Math.random());
 
-            toast.success('Note deleted successfully');
+            if (shouldLoad) {
+                setRefreshRandomNum(Math.random());
+            }
+
+            toast.success('Task deleted successfully');
         } catch (error) {
             console.error(error);
         } finally {
             toast.dismiss(toastId);
         }
     }
+
+    const handleSelectAll = async () => {
+        const toastId = toast.loading('Selecting all tasks...');
+        try {
+            // select all unselected items
+            for (const item of list) {
+                const isSelected = item.selectedItems && item.selectedItems.length > 0;
+                if (!isSelected) {
+                    await handleAdd({
+                        taskId: item._id,
+                        shouldLoad: false,
+                    });
+                }
+            }
+
+            setRefreshRandomNum(Math.random());
+
+            toast.success('All tasks selected successfully');
+        } catch (error) {
+            console.error(error);
+        } finally {
+            toast.dismiss(toastId);
+        }
+
+    }
+
+    const handleUnselectAll = async () => {
+        const toastId = toast.loading('Unselecting all tasks...');
+        try {
+            // select all unselected items
+            for (const item of list) {
+                const isSelected = item.selectedItems && item.selectedItems.length > 0;
+                if (isSelected) {
+                    await handleDelete({
+                        taskId: item.selectedItems[0]._id,
+                        shouldLoad: false,
+                    });
+                }
+            }
+
+            setRefreshRandomNum(Math.random());
+
+            toast.success('All tasks unselected successfully');
+        } catch (error) {
+            console.error(error);
+        } finally {
+            toast.dismiss(toastId);
+        }
+    }
+
+
 
     const renderList = () => {
         return (
@@ -179,8 +244,18 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
                             <div className="flex items-start justify-between mb-2">
                                 <h3 className="font-medium text-gray-900 text-sm truncate">
                                     {item.title}
+                                    {item.isCompleted && (
+                                        <span className="text-green-500 mx-1">(Completed)</span>
+                                    )}
+                                    {item.isArchived && (
+                                        <span className="text-red-500 mx-1">(Archived)</span>
+                                    )}
+                                    {item.priority && (
+                                        <span className={`text-blue-500 mx-1`}>
+                                            ({item.priority.replace('-', ' ')})
+                                        </span>
+                                    )}
                                 </h3>
-
                             </div>
                             <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
                                 <div className="flex items-center space-x-1">
@@ -192,21 +267,27 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
                                             if (isSelected) {
                                                 if(selectedItem) {
                                                     if (selectedItem?._id) {
-                                                        handleDelete(selectedItem._id);
+                                                        handleDelete({
+                                                            taskId: selectedItem._id,
+                                                            shouldLoad: true,
+                                                        });
                                                     }
                                                 }
                                             } else {
-                                                handleAdd(item._id);
+                                                handleAdd({
+                                                    taskId: item._id,
+                                                    shouldLoad: true,
+                                                });
                                             }
                                         }}
                                     />
                                     <Link
-                                        to={`/user/notes?action=edit&id=${item._id}&workspace=${item.notesWorkspaceId}`}
+                                        to={`/user/task?workspace=${item.taskWorkspaceId}`}
                                         className="inline-flex items-center px-2.5 py-1 text-xs font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-full hover:bg-indigo-100 hover:text-indigo-700 hover:border-indigo-300 transition-all duration-200 group"
                                         target="_blank"
                                     >
                                         <LucideExternalLink className="w-3 h-3 mr-1 group-hover:scale-110 transition-transform duration-200" />
-                                        View Note
+                                        View Task
                                     </Link>
                                 </div>
                                 <span>
@@ -220,38 +301,38 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
         );
     };
 
-    const renderPagination = () => {
-        return (
-            <div className="mt-4">
-                <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                        <button
-                            onClick={() => setPage(Math.max(1, page - 1))}
-                            disabled={page === 1}
-                            className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            Previous
-                        </button>
-                        <span className="text-sm text-gray-600">
-                            Page {page} of {Math.ceil(totalCount / perPage)}
-                        </span>
-                        <button
-                            onClick={() => setPage(page + 1)}
-                            disabled={page >= Math.ceil(totalCount / perPage)}
-                            className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            Next
-                        </button>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
     return (
         <div className="mb-4">
 
-            <h3 className="text-lg font-bold mb-4">Notes: {totalCount > 0 ? `(${totalCount})` : ''}</h3>
+            <h3 className="text-lg font-bold mb-4">Tasks: {totalCount > 0 ? `(${totalCount})` : ''}</h3>
+
+            <div>
+                <button
+                    className="mb-4 mr-3 px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+                    onClick={() => {
+                        // Select all unselected items
+                        handleSelectAll();
+                    }}
+                >
+                    <span className="flex items-center">
+                        <LucideCheck className="w-4 h-4 mr-2" />
+                        Select All
+                    </span>
+                </button>
+
+                <button
+                    className="mb-4 px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                    onClick={() => {
+                        // Select all unselected items
+                        handleUnselectAll();
+                    }}
+                >
+                    <span className="flex items-center">
+                        <LucideX className="w-4 h-4 mr-2" />
+                        Unselect All
+                    </span>
+                </button>
+            </div>
 
             <div className="mb-4">
                 <input
@@ -259,18 +340,15 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search notes"
+                    placeholder="Search tasks"
                 />
             </div>
 
             {renderList()}
-
-            {/* pagination */}
-            {renderPagination()}
 
 
         </div>
     )
 }
 
-export default ThreadSettingContextSelectNotes;
+export default ThreadSettingContextSelectTask;
