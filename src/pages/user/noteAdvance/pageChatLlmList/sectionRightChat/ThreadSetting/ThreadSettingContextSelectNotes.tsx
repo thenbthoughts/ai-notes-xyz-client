@@ -3,7 +3,7 @@ import axios from "axios";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import { AxiosRequestConfig, CancelTokenSource } from "axios";
 import { Link } from "react-router-dom";
-import { LucideExternalLink } from "lucide-react";
+import { LucideCheck, LucideExternalLink, LucideX } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface NoteItem {
@@ -121,7 +121,13 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
         }
     };
 
-    const handleAdd = async (noteId: string) => {
+    const handleAdd = async ({
+        noteId,
+        shouldLoad,
+    }: {
+        noteId: string;
+        shouldLoad: boolean;
+    }) => {
         const toastId = toast.loading('Loading...');
         try {
             const result = await axiosCustom.post('/api/chat-llm/threads-context-crud/contextUpsert', {
@@ -130,7 +136,9 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
                 referenceId: noteId,
             });
             console.log(result);
-            setRefreshRandomNum(Math.random());
+            if (shouldLoad) {
+                setRefreshRandomNum(Math.random());
+            }
         } catch (error) {
             console.error(error);
         } finally {
@@ -138,13 +146,22 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
         }
     }
 
-    const handleDelete = async (noteId: string) => {
+    const handleDelete = async ({
+        noteId,
+        shouldLoad,
+    }: {
+        noteId: string;
+        shouldLoad: boolean;
+    }) => {
         const toastId = toast.loading('Loading...');
         try {
             await axiosCustom.post('/api/chat-llm/threads-context-crud/contextDeleteById', {
                 recordId: noteId,
             });
-            setRefreshRandomNum(Math.random());
+
+            if (shouldLoad) {
+                setRefreshRandomNum(Math.random());
+            }
 
             toast.success('Note deleted successfully');
         } catch (error) {
@@ -192,11 +209,17 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
                                             if (isSelected) {
                                                 if(selectedItem) {
                                                     if (selectedItem?._id) {
-                                                        handleDelete(selectedItem._id);
+                                                        handleDelete({
+                                                            noteId: selectedItem._id,
+                                                            shouldLoad: true,
+                                                        });
                                                     }
                                                 }
                                             } else {
-                                                handleAdd(item._id);
+                                                handleAdd({
+                                                    noteId: item._id,
+                                                    shouldLoad: true,
+                                                });
                                             }
                                         }}
                                     />
@@ -248,10 +271,97 @@ const ThreadSettingContextSelectNotes = ({ threadId }: { threadId: string }) => 
         )
     }
 
+    const handleSelectAll = async () => {
+        const toastId = toast.loading('Selecting all notes...');
+        try {
+            const resultNotes = await axiosCustom.post('/api/notes/crud/notesGet', {
+                page: 1,
+                perPage: 1000,
+                search: '',
+            });
+            const listNotes = resultNotes.data.docs;
+
+            // select all unselected items
+            for (const item of listNotes) {
+                const isSelected = item.selectedItems && item.selectedItems.length > 0;
+                if (!isSelected) {
+                    await handleAdd({
+                        noteId: item._id,
+                        shouldLoad: false,
+                    });
+                }
+            }
+
+            setRefreshRandomNum(Math.random());
+
+            toast.success('All notes selected successfully');
+        } catch (error) {
+            console.error(error);
+        } finally {
+            toast.dismiss(toastId);
+        }
+
+    }
+
+    const handleUnselectAll = async () => {
+        const toastId = toast.loading('Unselecting all notes...');
+        try {
+            const resultContext = await axiosCustom.post('/api/chat-llm/threads-context-crud/contextGet', {
+                threadId: threadId,
+                contextType: 'note',
+            });
+            const selectedArr = resultContext.data.docs;
+
+            // select all unselected items
+            for (const item of selectedArr) {
+                await handleDelete({
+                    noteId: item._id,
+                    shouldLoad: false,
+                });
+            }
+
+            setRefreshRandomNum(Math.random());
+
+            toast.success('All notes unselected successfully');
+        } catch (error) {
+            console.error(error);
+        } finally {
+            toast.dismiss(toastId);
+        }
+    }
+
     return (
         <div className="mb-4">
 
             <h3 className="text-lg font-bold mb-4">Notes: {totalCount > 0 ? `(${totalCount})` : ''}</h3>
+
+            <div>
+                <button
+                    className="mb-4 mr-3 px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+                    onClick={() => {
+                        // Select all unselected items
+                        handleSelectAll();
+                    }}
+                >
+                    <span className="flex items-center">
+                        <LucideCheck className="w-4 h-4 mr-2" />
+                        Select All
+                    </span>
+                </button>
+
+                <button
+                    className="mb-4 px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                    onClick={() => {
+                        // Select all unselected items
+                        handleUnselectAll();
+                    }}
+                >
+                    <span className="flex items-center">
+                        <LucideX className="w-4 h-4 mr-2" />
+                        Unselect All
+                    </span>
+                </button>
+            </div>
 
             <div className="mb-4">
                 <input
