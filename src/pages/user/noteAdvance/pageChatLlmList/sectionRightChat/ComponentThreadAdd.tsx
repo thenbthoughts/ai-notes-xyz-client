@@ -8,16 +8,15 @@ import Select from "react-select";
 const ComponentThreadAdd = () => {
     const navigate = useNavigate();
 
-    const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq");
-    const [aiModelName, setAiModelName] = useState("openrouter/auto");
-
     const [formData, setFormData] = useState({
         isPersonalContextEnabled: true,
         isAutoAiContextSelectEnabled: true,
     });
-
+    
     const [isLoadingModel, setIsLoadingModel] = useState(true);
 
+    const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq");
+    const [aiModelName, setAiModelName] = useState("openrouter/auto");
     const [modelArr, setModelArr] = useState([] as {
         id: string;
         name: string;
@@ -138,6 +137,8 @@ const ComponentThreadAdd = () => {
                             <option value="groq">GROQ</option>
                         </select>
                     </div>
+
+                    {/* field -> select model -> openrouter */}
                     {aiModelProvider === 'openrouter' && (
                         <div className="mb-2">
                             <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
@@ -161,6 +162,8 @@ const ComponentThreadAdd = () => {
                             />
                         </div>
                     )}
+
+                    {/* field -> buttons */}
                     <div className="mt-2">
                         <Link to="/user/setting" className="text-sm text-gray-500 hover:text-gray-700 inline-block mr-5">
                             <ExternalLink className="w-4 h-4 mr-1 inline-block" />
