@@ -93,7 +93,7 @@ const UserHomepage = () => {
                                         </div>
                                         <div>Chat One</div>
                                     </Link>
-                                    <Link to="/user/chat-one" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/user/chat" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideMessageSquare size={32} />
                                         </div>
