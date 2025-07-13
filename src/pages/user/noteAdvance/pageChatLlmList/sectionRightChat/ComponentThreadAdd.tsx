@@ -4,26 +4,24 @@ import toast from "react-hot-toast";
 import { MessageCircle, Settings, ExternalLink } from "lucide-react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
+import { tsSchemaAiModelListGroq } from "../../../../../types/pages/settings/dataModelGroq";
+import { tsSchemaAiModelListOpenrouter } from "../../../../../types/pages/settings/dataModelOpenrouter";
 
-const ComponentThreadAdd = () => {
-    const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        isPersonalContextEnabled: true,
-        isAutoAiContextSelectEnabled: true,
-    });
-    
+const SelectAiModelOpenrouter = ({
+    aiModelName,
+    setAiModelName,
+
+    selectRandomModel,
+}: {
+    aiModelName: string;
+    setAiModelName: React.Dispatch<React.SetStateAction<string>>;
+
+    selectRandomModel: number;
+}) => {
+    const [modelArr, setModelArr] = useState([] as tsSchemaAiModelListOpenrouter[]);
     const [isLoadingModel, setIsLoadingModel] = useState(true);
 
-    const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq");
-    const [aiModelName, setAiModelName] = useState("openrouter/auto");
-    const [modelArr, setModelArr] = useState([] as {
-        id: string;
-        name: string;
-        description: string;
-    }[]);
-
-    // Fetch model data on component mount
     useEffect(() => {
         const fetchModelData = async () => {
             try {
@@ -37,12 +35,19 @@ const ComponentThreadAdd = () => {
                         name: string;
                         description: string;
                     }[];
-                
+
                     tempModelArr = tempModelArr.map((model) => ({
                         id: model.id,
                         name: `${model.name} (${model.id})`,
                         description: model.description,
                     })).sort((a, b) => a.name.localeCompare(b.name));
+
+                    // if aiModelName is empty, select a random model
+                    if (aiModelName === '') {
+                        if (tempModelArr.length > 0) {
+                            setAiModelName(tempModelArr[0].id);
+                        }
+                    }
 
                     setModelArr(tempModelArr);
                 }
@@ -53,9 +58,137 @@ const ComponentThreadAdd = () => {
                 setIsLoadingModel(false);
             }
         };
-
         fetchModelData();
     }, []);
+
+    useEffect(() => {
+        if (selectRandomModel >= 1) {
+            if (modelArr.length > 0) {
+                const randomModel = modelArr[Math.floor(Math.random() * modelArr.length)];
+                setAiModelName(randomModel.id);
+            }
+        }
+    }, [selectRandomModel]);
+
+    useEffect(() => {
+        if (aiModelName === '') {
+            if (modelArr.length > 0) {
+                setAiModelName(modelArr[0].id);
+            }
+        }
+    }, [aiModelName]);
+
+    return (
+        <div className="mb-2">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
+            <Select<{ value: string; label: string }>
+                value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.id === aiModelName)?.name || "" } : undefined}
+                onChange={(selectedOption: { value: string; label: string } | null) => {
+                    if (selectedOption) {
+                        setAiModelName(selectedOption.value);
+                    }
+                }}
+                options={
+                    modelArr.map((model: any) => ({
+                        value: model.id,
+                        label: `${model.name} (${model.id})`
+                    }))
+                }
+
+                placeholder="Select a model..."
+                isLoading={isLoadingModel}
+                isSearchable={true}
+            />
+        </div>
+    )
+}
+
+const SelectAiModelGroq = ({
+    aiModelName,
+    setAiModelName,
+
+    selectRandomModel,
+}: {
+    aiModelName: string;
+    setAiModelName: React.Dispatch<React.SetStateAction<string>>;
+
+    selectRandomModel: number;
+}) => {
+    const [modelArr, setModelArr] = useState([] as tsSchemaAiModelListGroq[]);
+    const [isLoadingModel, setIsLoadingModel] = useState(true);
+
+    useEffect(() => {
+        const fetchModelData = async () => {
+            setIsLoadingModel(true);
+            const response = await axiosCustom.get('/api/dynamic-data/model-groq/modelGroqGet');
+            setModelArr(response.data.docs);
+
+            // if aiModelName is empty, select a random model
+            if (aiModelName === '') {
+                if (modelArr.length > 0) {
+                    setAiModelName(modelArr[0].id);
+                }
+            }
+
+            setIsLoadingModel(false);
+        }
+        fetchModelData();
+    }, []);
+
+    useEffect(() => {
+        if (selectRandomModel >= 1) {
+            if (modelArr.length > 0) {
+                const randomModel = modelArr[Math.floor(Math.random() * modelArr.length)];
+                setAiModelName(randomModel.id);
+            }
+        }
+    }, [selectRandomModel]);
+
+    useEffect(() => {
+        if (aiModelName === '') {
+            if (modelArr.length > 0) {
+                setAiModelName(modelArr[0].id);
+            }
+        }
+    }, [aiModelName]);
+
+    return (
+        <div className="mb-2">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
+            <Select<{ value: string; label: string }>
+                value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.id === aiModelName)?.id || "" } : undefined}
+                onChange={(selectedOption: { value: string; label: string } | null) => {
+                    if (selectedOption) {
+                        setAiModelName(selectedOption.value);
+                    }
+                }}
+                options={
+                    modelArr.map((model: any) => ({
+                        value: model.id,
+                        label: `${model.owned_by} - ${model.id}`
+                    }))
+                }
+
+                placeholder="Select a model..."
+                isLoading={isLoadingModel}
+                isSearchable={true}
+            />
+        </div>
+    )
+}
+
+const ComponentThreadAdd = () => {
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
+        isPersonalContextEnabled: true,
+        isAutoAiContextSelectEnabled: true,
+    });
+
+    const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq");
+    const [aiModelName, setAiModelName] = useState("openrouter/auto");
+
+    const [selectRandomModel, setSelectRandomModel] = useState(0);
 
     const addNewThread = async () => {
         try {
@@ -131,7 +264,11 @@ const ComponentThreadAdd = () => {
                         <select
                             className="w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
                             value={aiModelProvider}
-                            onChange={(e) => setAiModelProvider(e.target.value as "openrouter" | "groq")}
+                            onChange={(e) => {
+                                setAiModelProvider(e.target.value as "openrouter" | "groq");
+                                setAiModelName('');
+                                setSelectRandomModel(Math.floor(Math.random() * 1000000));
+                            }}
                         >
                             <option value="openrouter">OpenRouter</option>
                             <option value="groq">GROQ</option>
@@ -140,27 +277,22 @@ const ComponentThreadAdd = () => {
 
                     {/* field -> select model -> openrouter */}
                     {aiModelProvider === 'openrouter' && (
-                        <div className="mb-2">
-                            <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
-                            <Select<{ value: string; label: string }>
-                                value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.id === aiModelName)?.name || "" } : undefined}
-                                onChange={(selectedOption: { value: string; label: string } | null) => {
-                                    if (selectedOption) {
-                                        setAiModelName(selectedOption.value);
-                                    }
-                                }}
-                                options={
-                                    modelArr.map((model: any) => ({
-                                        value: model.id,
-                                        label: model.name
-                                    }))
-                                }
-                                
-                                placeholder="Select a model..."
-                                isLoading={isLoadingModel}
-                                isSearchable={true}
-                            />
-                        </div>
+                        <SelectAiModelOpenrouter
+                            aiModelName={aiModelName}
+                            setAiModelName={setAiModelName}
+                            selectRandomModel={selectRandomModel}
+                            key={'select-model-openrouter'}
+                        />
+                    )}
+
+                    {/* field -> select model -> groq */}
+                    {aiModelProvider === 'groq' && (
+                        <SelectAiModelGroq
+                            aiModelName={aiModelName}
+                            setAiModelName={setAiModelName}
+                            selectRandomModel={selectRandomModel}
+                            key={'select-model-groq'}
+                        />
                     )}
 
                     {/* field -> buttons */}
@@ -172,13 +304,9 @@ const ComponentThreadAdd = () => {
 
                         <button
                             onClick={() => {
-                                if (aiModelProvider === 'openrouter' && modelArr.length > 0) {
-                                    const randomModel = modelArr[Math.floor(Math.random() * modelArr.length)];
-                                    setAiModelName(randomModel.id);
-                                }
+                                setSelectRandomModel(selectRandomModel + 1);
                             }}
                             className="mt-2 text-sm text-blue-500 hover:text-blue-700 inline-block"
-                            disabled={aiModelProvider !== 'openrouter' || modelArr.length === 0}
                         >
                             <span className="mr-1">🎲</span>
                             Random LLM

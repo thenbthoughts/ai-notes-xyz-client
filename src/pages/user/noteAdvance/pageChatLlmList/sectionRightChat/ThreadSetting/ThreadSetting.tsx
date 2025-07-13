@@ -7,6 +7,120 @@ import { toast } from "react-hot-toast";
 import ThreadSettingContextSelectNotes from "./ThreadSettingContextSelectNotes";
 import ThreadSettingContextSelectTask from "./ThreadSettingContextSelectTask";
 import Select from "react-select";
+import { tsSchemaAiModelListGroq } from "../../../../../../types/pages/settings/dataModelGroq";
+import { tsSchemaAiModelListOpenrouter } from "../../../../../../types/pages/settings/dataModelOpenrouter";
+
+const SelectAiModelOpenrouter = ({
+    aiModelName,
+    setAiModelName,
+}: {
+    aiModelName: string;
+    setAiModelName: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+    const [modelArr, setModelArr] = useState([] as tsSchemaAiModelListOpenrouter[]);
+    const [isLoadingModel, setIsLoadingModel] = useState(true);
+
+    useEffect(() => {
+        const fetchModelData = async () => {
+            try {
+                setIsLoadingModel(true);
+                const response = await axiosCustom.get('/api/dynamic-data/model-openrouter/modelOpenrouterGet');
+
+                if (response.data.docs && response.data.docs.length > 0) {
+
+                    let tempModelArr = response.data.docs as {
+                        id: string;
+                        name: string;
+                        description: string;
+                    }[];
+
+                    tempModelArr = tempModelArr.map((model) => ({
+                        id: model.id,
+                        name: `${model.name} (${model.id})`,
+                        description: model.description,
+                    })).sort((a, b) => a.name.localeCompare(b.name));
+
+                    setModelArr(tempModelArr);
+                }
+            } catch (error) {
+                console.error('Error fetching model data:', error);
+                // Keep default model if API fails
+            } finally {
+                setIsLoadingModel(false);
+            }
+        };
+        fetchModelData();
+    }, []);
+
+    return (
+        <div className="mb-2">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
+            <Select<{ value: string; label: string }>
+                value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.id === aiModelName)?.name || "" } : undefined}
+                onChange={(selectedOption: { value: string; label: string } | null) => {
+                    if (selectedOption) {
+                        setAiModelName(selectedOption.value);
+                    }
+                }}
+                options={
+                    modelArr.map((model: any) => ({
+                        value: model.id,
+                        label: `${model.name} (${model.id})`
+                    }))
+                }
+
+                placeholder="Select a model..."
+                isLoading={isLoadingModel}
+                isSearchable={true}
+            />
+        </div>
+    )
+}
+
+const SelectAiModelGroq = ({
+    aiModelName,
+    setAiModelName,
+}: {
+    aiModelName: string;
+    setAiModelName: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+    const [modelArr, setModelArr] = useState([] as tsSchemaAiModelListGroq[]);
+    const [isLoadingModel, setIsLoadingModel] = useState(true);
+
+    useEffect(() => {
+        const fetchModelData = async () => {
+            setIsLoadingModel(true);
+            const response = await axiosCustom.get('/api/dynamic-data/model-groq/modelGroqGet');
+            setModelArr(response.data.docs);
+            setIsLoadingModel(false);
+        }
+        fetchModelData();
+    }, []);
+
+    return (
+        <div className="mb-2">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
+            <Select<{ value: string; label: string }>
+                value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.id === aiModelName)?.id || "" } : undefined}
+                onChange={(selectedOption: { value: string; label: string } | null) => {
+                    if (selectedOption) {
+                        setAiModelName(selectedOption.value);
+                    }
+                }}
+                options={
+                    modelArr.map((model: any) => ({
+                        value: model.id,
+                        label: `${model.owned_by} - ${model.id}`
+                    }))
+                }
+
+                placeholder="Select a model..."
+                isLoading={isLoadingModel}
+                isSearchable={true}
+            />
+        </div>
+    )
+}
 
 const ThreadSetting = ({
     closeModal,
@@ -32,12 +146,6 @@ const ThreadSetting = ({
 
     const [aiModelProvider, setAiModelProvider] = useState(threadSetting.aiModelProvider || "openrouter" as "openrouter" | "groq");
     const [aiModelName, setAiModelName] = useState(threadSetting.aiModelName || "openrouter/auto");
-    const [isLoadingModel, setIsLoadingModel] = useState(true);
-    const [modelArr, setModelArr] = useState([] as {
-        id: string;
-        name: string;
-        description: string;
-    }[]);
 
     // note, task, chat, lifeEvent, infoVault
     const [selectedContextType, setSelectedContextType] = useState('note' as 'note' | 'task' | 'chat' | 'lifeEvent' | 'infoVault');
@@ -83,39 +191,6 @@ const ThreadSetting = ({
             });
         }
     }
-
-    useEffect(() => {
-        const fetchModelData = async () => {
-            try {
-                setIsLoadingModel(true);
-                const response = await axiosCustom.get('/api/dynamic-data/model-openrouter/modelOpenrouterGet');
-
-                if (response.data.docs && response.data.docs.length > 0) {
-
-                    let tempModelArr = response.data.docs as {
-                        id: string;
-                        name: string;
-                        description: string;
-                    }[];
-
-                    tempModelArr = tempModelArr.map((model) => ({
-                        id: model.id,
-                        name: `${model.name} (${model.id})`,
-                        description: model.description,
-                    })).sort((a, b) => a.name.localeCompare(b.name));
-
-                    setModelArr(tempModelArr);
-                }
-            } catch (error) {
-                console.error('Error fetching model data:', error);
-                // Keep default model if API fails
-            } finally {
-                setIsLoadingModel(false);
-            }
-        };
-
-        fetchModelData();
-    }, []);
 
     const renderContextType = () => {
         return (
@@ -228,44 +303,6 @@ const ThreadSetting = ({
                     </div>
                 </div>
 
-                {/* field -> aiModelProvider */}
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">AI Model Provider</label>
-                    <select
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        value={aiModelProvider}
-                        onChange={(e) => setAiModelProvider(e.target.value as "openrouter" | "groq")}
-                    >
-                        <option value="openrouter">OpenRouter</option>
-                        <option value="groq">GROQ</option>
-                    </select>
-                </div>
-
-                {/* field -> select model -> openrouter */}
-                {aiModelProvider === 'openrouter' && (
-                    <div className="mb-2">
-                        <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
-                        <Select<{ value: string; label: string }>
-                            value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.id === aiModelName)?.name || "" } : undefined}
-                            onChange={(selectedOption: { value: string; label: string } | null) => {
-                                if (selectedOption) {
-                                    setAiModelName(selectedOption.value);
-                                }
-                            }}
-                            options={
-                                modelArr.map((model: any) => ({
-                                    value: model.id,
-                                    label: model.name
-                                }))
-                            }
-
-                            placeholder="Select a model..."
-                            isLoading={isLoadingModel}
-                            isSearchable={true}
-                        />
-                    </div>
-                )}
-
                 {/* field -> isAutoAiContextSelectEnabled */}
                 <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Auto AI Context</label>
@@ -282,6 +319,35 @@ const ThreadSetting = ({
                         <span className="text-sm text-gray-700 cursor-pointer">Auto AI Context Enable</span>
                     </div>
                 </div>
+
+                {/* field -> aiModelProvider */}
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">AI Model Provider</label>
+                    <select
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        value={aiModelProvider}
+                        onChange={(e) => setAiModelProvider(e.target.value as "openrouter" | "groq")}
+                    >
+                        <option value="openrouter">OpenRouter</option>
+                        <option value="groq">GROQ</option>
+                    </select>
+                </div>
+
+                {/* field -> select model -> openrouter */}
+                {aiModelProvider === 'openrouter' && (
+                    <SelectAiModelOpenrouter
+                        aiModelName={aiModelName}
+                        setAiModelName={setAiModelName}
+                    />
+                )}
+
+                {/* field -> select model -> groq */}
+                {aiModelProvider === 'groq' && (
+                    <SelectAiModelGroq
+                        aiModelName={aiModelName}
+                        setAiModelName={setAiModelName}
+                    />
+                )}
 
                 {/* Context Type Buttons */}
                 {renderContextType()}
