@@ -32,7 +32,6 @@ const PageChatLlmListWrapper = lazy(() => import('./pages/user/noteAdvance/pageC
 const AiDeepResearchWrapper = lazy(() => import("./pages/user/noteAdvance/AiDeepResearch/AiDeepResearchWrapper.tsx"));
 
 // pages -> notes
-const MemoQuickAi = lazy(() => import('./pages/user/noteAdvance/MemoQuickAi/MemoQuickAi'));
 const NotesWrapper = lazy(() => import("./pages/user/noteAdvance/Notes/NotesWrapper.tsx"));
 const NotesWorkspaceCrud = lazy(() => import("./pages/user/noteAdvance/NotesWorkspaceCrud/NotesWorkspaceCrud.tsx"));
 const InfoVaultWrapper = lazy(() => import("./pages/user/noteAdvance/InfoVault/InfoVaultWrapper.tsx"));
@@ -138,15 +137,7 @@ function App() {
             </UnauthorizedRoute>
           )
         },
-        // 
-        {
-          path: "/user/quick-memo-ai",
-          element: (
-            <UnauthorizedRoute>
-              <MemoQuickAi />
-            </UnauthorizedRoute>
-          ),
-        },
+        //
         {
           path: "/user/notes",
           element: (
