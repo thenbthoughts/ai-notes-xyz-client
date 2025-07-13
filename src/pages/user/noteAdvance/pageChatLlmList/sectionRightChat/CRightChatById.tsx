@@ -149,19 +149,17 @@ const CRightChatById = ({
                         {/* section no result found */}
                         <div>
                             {loading === false && messages.length === 0 && (
-                                <div className='p-3'>
-                                    <div
-                                        className="flex flex-col items-center justify-center h-full"
-                                        style={{
-                                            paddingTop: '100px',
-                                            paddingBottom: '100px',
-                                            backgroundColor: 'rgba(240, 248, 255, 0.5)',
-                                            borderRadius: '10px',
-                                            width: '80%',
-                                            margin: '0 auto'
-                                        }}
-                                    >
-                                        <p className="text-gray-500 text-lg font-medium mb-4">No messages found for this month.</p>
+                                <div className='py-3 px-2'>
+                                    <div className='p-8 bg-white rounded-lg'>
+                                        <div className="flex flex-col items-center justify-center text-center">
+                                            <div className="text-4xl mb-4">💬</div>
+                                            <h3 className="text-gray-600 text-lg mb-2">
+                                                Start Your Conversation
+                                            </h3>
+                                            <p className="text-gray-400 text-sm">
+                                                Ask a question to begin
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             )}
