@@ -51,13 +51,8 @@ const ComponentUploadFile = ({
                 fileType = 'audio';
             }
 
-            const config = {
-                method: 'post',
-                url: `/api/chat-llm/chat-add/notesAdd`,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                data: {
+            try {
+                const response = await axiosCustom.post("/api/chat-llm/chat-add/notesAdd", {
                     threadId: threadId,
                     type: fileType,
                     content: `Image: ${tempFilePath}`,
@@ -65,12 +60,17 @@ const ComponentUploadFile = ({
                     tags: [],
                     fileUrl: tempFilePath,
                     fileUrlArr: [],
-                }
-            };
-
-            try {
-                const response = await axiosCustom.request(config);
+                });
                 console.log(JSON.stringify(response.data));
+
+                // refresh parent random num
+                setRefreshParentRandomNum(Math.random() * 1_000_000);
+
+                // process notes
+                await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
+                    threadId: threadId,
+                });
+
                 // Handle the response
                 toast.success(`Image added is added successfully!`);
             } catch (error) {
@@ -115,7 +115,7 @@ const ComponentUploadFile = ({
             toast.success('Audio uploaded successfully!', {
                 id: 'audio-upload',
             });
-            
+
             setRefreshParentRandomNum(Math.random() * 1_000_000);
 
             toast.dismiss(toastDismissId);

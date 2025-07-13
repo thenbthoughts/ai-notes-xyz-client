@@ -21,23 +21,27 @@ const ComponentNotesAdd = ({
         try {
             if (newNote.trim().length > 1) {
                 const toastLoadingId = toast.loading('Adding note...');
-                const config = {
-                    method: 'post',
-                    url: `/api/chat-llm/chat-add/notesAdd`,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    data: {
-                        threadId: threadId,
-                        type: "text",
-                        content: newNote,
-                        visibility: 'public',
-                        tags: [],
-                        imagePathsArr: []
-                    }
-                };
 
-                await axiosCustom.request(config);
+                await axiosCustom.post("/api/chat-llm/chat-add/notesAdd", {
+                    threadId: threadId,
+                    type: "text",
+                    content: newNote,
+                    visibility: 'public',
+                    tags: [],
+                    imagePathsArr: []
+                });
+
+                setRefreshParentRandomNum(
+                    Math.floor(
+                        Math.random() * 1_000_000
+                    )
+                )
+
+                // process notes
+                await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
+                    threadId: threadId,
+                });
+
                 toast.dismiss(toastLoadingId);
                 toast.success('Note added successfully!');
             }
