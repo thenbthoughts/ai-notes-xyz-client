@@ -150,17 +150,17 @@ const CRightChatById = ({
                         <div>
                             {loading === false && messages.length === 0 && (
                                 <div className='py-3 px-2'>
-                                        <div className='p-8 bg-white rounded-lg'>
-                                            <div className="flex flex-col items-center justify-center text-center">
-                                                <div className="text-4xl mb-4">💬</div>
-                                                <h3 className="text-gray-600 text-lg mb-2">
-                                                    Start Your Conversation
-                                                </h3>
-                                                <p className="text-gray-400 text-sm">
-                                                    Ask a question to begin
-                                                </p>
-                                            </div>
+                                    <div className='p-8 bg-white rounded-lg'>
+                                        <div className="flex flex-col items-center justify-center text-center">
+                                            <div className="text-4xl mb-4">💬</div>
+                                            <h3 className="text-gray-600 text-lg mb-2">
+                                                Start Your Conversation
+                                            </h3>
+                                            <p className="text-gray-400 text-sm">
+                                                Ask a question to begin
+                                            </p>
                                         </div>
+                                    </div>
                                 </div>
                             )}
                         </div>
