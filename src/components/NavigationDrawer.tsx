@@ -43,9 +43,6 @@ const NavigationDrawer = () => {
                                 <Link to="/user/chat" className="text-white block p-2" onClick={handleLinkClick}>📝 Chat</Link>
                             </li>
                             <li className="hover:bg-purple-700 rounded-lg mx-2 my-2">
-                                <Link to="/user/quick-memo-ai" className="text-white block p-2" onClick={handleLinkClick}>📝 Memo</Link>
-                            </li>
-                            <li className="hover:bg-purple-700 rounded-lg mx-2 my-2">
                                 <Link to="/user/notes" className="text-white block p-2" onClick={handleLinkClick}>📝 Notes</Link>
                             </li>
                             <li className="hover:bg-purple-700 rounded-lg mx-2 my-2">
