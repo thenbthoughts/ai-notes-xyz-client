@@ -47,6 +47,9 @@ const FinanceWrapper = lazy(() => import("./pages/user/noteAdvance/Finance/Finan
 // pages -> test
 const TestDevWrapper = lazy(() => import("./pages/test/testDev/TestDevWrapper.tsx"));
 
+// components -> settings
+const ModelOpenrouterInsertAll = lazy(() => import('./components/settings/ModelOpenrouterInsertAll.tsx'));
+
 function App() {
   const Layout = () => {
     return (
@@ -242,6 +245,9 @@ function App() {
       <RouterProvider router={router} />
       <RefreshToken />
       <LlmTaskBackgroundProcess />
+
+      {/* dynamic data */}
+      <ModelOpenrouterInsertAll />
     </>
   )
 }

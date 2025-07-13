@@ -1,16 +1,62 @@
 import { Link, useNavigate } from "react-router-dom";
 import axiosCustom from "../../../../../config/axiosCustom";
 import toast from "react-hot-toast";
-import { MessageCircle, Settings, ExternalLink, LucideBot } from "lucide-react";
-import { useState } from "react";
+import { MessageCircle, Settings, ExternalLink } from "lucide-react";
+import { useState, useEffect } from "react";
+import Select from "react-select";
 
 const ComponentThreadAdd = () => {
     const navigate = useNavigate();
+
+    const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq");
+    const [aiModelName, setAiModelName] = useState("openrouter/auto");
 
     const [formData, setFormData] = useState({
         isPersonalContextEnabled: true,
         isAutoAiContextSelectEnabled: true,
     });
+
+    const [isLoadingModel, setIsLoadingModel] = useState(true);
+
+    const [modelArr, setModelArr] = useState([] as {
+        id: string;
+        name: string;
+        description: string;
+    }[]);
+
+    // Fetch model data on component mount
+    useEffect(() => {
+        const fetchModelData = async () => {
+            try {
+                setIsLoadingModel(true);
+                const response = await axiosCustom.get('/api/dynamic-data/model-openrouter/modelOpenrouterGet');
+
+                if (response.data.docs && response.data.docs.length > 0) {
+
+                    let tempModelArr = response.data.docs as {
+                        id: string;
+                        name: string;
+                        description: string;
+                    }[];
+                
+                    tempModelArr = tempModelArr.map((model) => ({
+                        id: model.id,
+                        name: `${model.name} (${model.id})`,
+                        description: model.description,
+                    })).sort((a, b) => a.name.localeCompare(b.name));
+
+                    setModelArr(tempModelArr);
+                }
+            } catch (error) {
+                console.error('Error fetching model data:', error);
+                // Keep default model if API fails
+            } finally {
+                setIsLoadingModel(false);
+            }
+        };
+
+        fetchModelData();
+    }, []);
 
     const addNewThread = async () => {
         try {
@@ -19,6 +65,10 @@ const ComponentThreadAdd = () => {
                 {
                     isPersonalContextEnabled: formData.isPersonalContextEnabled,
                     isAutoAiContextSelectEnabled: formData.isAutoAiContextSelectEnabled,
+
+                    // selected model
+                    aiModelProvider: aiModelProvider,
+                    aiModelName: aiModelName,
                 }
             );
 
@@ -75,19 +125,61 @@ const ComponentThreadAdd = () => {
                             <Settings className="w-5 h-5" />
                         </button>
                     </div>
-                    <div className="flex items-center text-gray-800">
-                        <div className="w-4 h-4 bg-gray-300 rounded mr-2">
-                            <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 rounded flex items-center justify-center">
-                                <LucideBot className="w-2.5 h-2.5 text-white" />
-                            </div>
-                        </div>
-                        <span className="font-medium">openrouter/auto</span>
+
+                    {/* field -> modelProvider */}
+                    <div className="mb-2">
+                        <h3 className="text-sm font-medium text-gray-700 mb-2">Provider</h3>
+                        <select
+                            className="w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+                            value={aiModelProvider}
+                            onChange={(e) => setAiModelProvider(e.target.value as "openrouter" | "groq")}
+                        >
+                            <option value="openrouter">OpenRouter</option>
+                            <option value="groq">GROQ</option>
+                        </select>
                     </div>
+                    {aiModelProvider === 'openrouter' && (
+                        <div className="mb-2">
+                            <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
+                            <Select<{ value: string; label: string }>
+                                value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.id === aiModelName)?.name || "" } : undefined}
+                                onChange={(selectedOption: { value: string; label: string } | null) => {
+                                    if (selectedOption) {
+                                        setAiModelName(selectedOption.value);
+                                    }
+                                }}
+                                options={
+                                    modelArr.map((model: any) => ({
+                                        value: model.id,
+                                        label: model.name
+                                    }))
+                                }
+                                
+                                placeholder="Select a model..."
+                                isLoading={isLoadingModel}
+                                isSearchable={true}
+                            />
+                        </div>
+                    )}
                     <div className="mt-2">
-                        <Link to="/user/setting" className="text-sm text-gray-500 hover:text-gray-700 flex items-center">
-                            <ExternalLink className="w-4 h-4 mr-1" />
+                        <Link to="/user/setting" className="text-sm text-gray-500 hover:text-gray-700 inline-block mr-5">
+                            <ExternalLink className="w-4 h-4 mr-1 inline-block" />
                             Model page
                         </Link>
+
+                        <button
+                            onClick={() => {
+                                if (aiModelProvider === 'openrouter' && modelArr.length > 0) {
+                                    const randomModel = modelArr[Math.floor(Math.random() * modelArr.length)];
+                                    setAiModelName(randomModel.id);
+                                }
+                            }}
+                            className="mt-2 text-sm text-blue-500 hover:text-blue-700 inline-block"
+                            disabled={aiModelProvider !== 'openrouter' || modelArr.length === 0}
+                        >
+                            <span className="mr-1">🎲</span>
+                            Random LLM
+                        </button>
                     </div>
                 </div>
 
