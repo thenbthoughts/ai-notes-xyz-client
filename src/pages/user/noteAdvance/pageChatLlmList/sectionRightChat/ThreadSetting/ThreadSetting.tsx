@@ -1,5 +1,5 @@
 import { LucideSettings, LucideX } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import { AxiosRequestConfig } from "axios";
 import { toast } from "react-hot-toast";
@@ -349,27 +349,31 @@ const ThreadSetting = ({
                     />
                 )}
 
-                {/* Context Type Buttons */}
-                {renderContextType()}
+                {formData.isAutoAiContextSelectEnabled && (
+                    <Fragment>
+                        {/* Context Type Buttons */}
+                        {renderContextType()}
 
-                {/* field -> notes list */}
-                {selectedContextType === 'note' && (
-                    <ThreadSettingContextSelectNotes
-                        threadId={threadSetting._id}
-                    />
-                )}
+                        {/* field -> notes list */}
+                        {selectedContextType === 'note' && (
+                            <ThreadSettingContextSelectNotes
+                                threadId={threadSetting._id}
+                            />
+                        )}
 
-                {selectedContextType === 'task' && (
-                    <ThreadSettingContextSelectTask
-                        threadId={threadSetting._id}
-                    />
-                )}
+                        {selectedContextType === 'task' && (
+                            <ThreadSettingContextSelectTask
+                                threadId={threadSetting._id}
+                            />
+                        )}
 
-                {/* still in development */}
-                {selectedContextType !== 'note' && (
-                    <div className="flex justify-center items-center h-full">
-                        <p className="text-gray-500">Still in development</p>
-                    </div>
+                        {/* still in development */}
+                        {selectedContextType === 'chat' || selectedContextType === 'lifeEvent' || selectedContextType === 'infoVault' && (
+                            <div className="flex justify-center items-center h-full">
+                                <p className="text-gray-500">Still in development</p>
+                            </div>
+                        )}
+                    </Fragment>
                 )}
 
                 {/* button -> save */}
@@ -400,7 +404,6 @@ const ThreadSetting = ({
                 overflowY: 'auto',
             }}
         >
-
             {doesThreadExist ? (
                 <div>
                     {renderMain()}
