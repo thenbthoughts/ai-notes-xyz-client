@@ -188,6 +188,7 @@ const ComponentTaskSubList: React.FC<{
             <div className="space-y-1">
                 {subtasks.map((subtask) => (
                     <ComponentSubTaskItem
+                        key={subtask._id}
                         subtask={subtask}
                         setRandomNumLoading={setRandomNumLoading}
                     />
