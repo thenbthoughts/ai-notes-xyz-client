@@ -24,7 +24,9 @@ const About = lazy(() => import("./pages/other/About.tsx"));
 const UserHomepage = lazy(() => import("./pages/user/userhomepage/UserHomepage.tsx"));
 
 // pages -> setting
-const Setting = lazy(() => import("./pages/user/settings/Setting.tsx"));
+const SettingProfile = lazy(() => import("./pages/user/settings/settingProfile/SettingProfile.tsx"));
+const SettingApiKey = lazy(() => import("./pages/user/settings/settingApiKeys/SettingApiKey.tsx"));
+const SettingModelPreference = lazy(() => import("./pages/user/settings/settingModelPreference/SettingModelPreference.tsx"));
 
 // pages -> ai
 const PageChatOneList = lazy(() => import('./pages/user/noteAdvance/pageChatOneList/ChatOneList.tsx'));
@@ -196,7 +198,23 @@ function App() {
           path: "/user/setting",
           element: (
             <UnauthorizedRoute>
-              <Setting />
+              <SettingProfile />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
+          path: "/user/setting/api-key",
+          element: (
+            <UnauthorizedRoute>
+              <SettingApiKey />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
+          path: "/user/setting/model-preference",
+          element: (
+            <UnauthorizedRoute>
+              <SettingModelPreference />
             </UnauthorizedRoute>
           ),
         },

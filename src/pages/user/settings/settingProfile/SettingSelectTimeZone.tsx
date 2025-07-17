@@ -4,8 +4,8 @@ import {
     getAllTimezones
 } from 'countries-and-timezones';
 
-import { stateJotaiAuthReloadAtom } from '../../../jotai/stateJotaiAuth';
-import axiosCustom from "../../../config/axiosCustom";
+import { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
+import axiosCustom from "../../../../config/axiosCustom";
 
 const timeZoneArr = getAllTimezones();
 

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 
-import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../jotai/stateJotaiAuth';
-import axiosCustom from "../../../config/axiosCustom";
+import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
+import axiosCustom from "../../../../config/axiosCustom";
+import SettingHeader from "../SettingHeader";
+import SettingDefaultEnvKeys from "./SettingDefaultEnvKeys";
 
 const SettingApiKey = () => {
     // location
@@ -331,8 +333,18 @@ const SettingApiKey = () => {
     }
 
     return (
-        <div className="pt-5">
+        <div
+            className="p-4"
+            style={{
+                maxWidth: '800px',
+                margin: '0 auto'
+            }}
+        >
+            <SettingHeader />
+
             {renderApiKeys()}
+
+            <SettingDefaultEnvKeys />
         </div>
     );
 };

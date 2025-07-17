@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useSetAtom } from "jotai";
 
-import { stateJotaiAuthReloadAtom } from '../../../jotai/stateJotaiAuth';
-import axiosCustom from "../../../config/axiosCustom";
+import { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
+import axiosCustom from "../../../../config/axiosCustom";
 
 const SettingRevalidate = () => {
     // location
