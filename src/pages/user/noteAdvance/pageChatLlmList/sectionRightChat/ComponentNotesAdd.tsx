@@ -124,7 +124,7 @@ const ComponentNotesAdd = ({
 
                 {/* auto select context notes */}
                 <button
-                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 py-2 focus:outline-none focus:shadow-outline mr-2 rounded transition-colors duration-200"
+                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded whitespace-nowrap"
                     style={{
                         height: '40px'
                     }}
@@ -137,7 +137,7 @@ const ComponentNotesAdd = ({
 
                 {/* auto select context task */}
                 <button
-                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 py-2 focus:outline-none focus:shadow-outline mr-2 rounded transition-colors duration-200"
+                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded whitespace-nowrap"
                     style={{
                         height: '40px'
                     }}
