@@ -5,6 +5,7 @@ import axiosCustom from '../../../../../config/axiosCustom';
 import ComponentUploadFile from './ComponentUploadFile';
 import ComponentRecordAudio from './ComponentRecordAudio';
 import { LucideSend } from 'lucide-react';
+import { handleAutoSelectContextMotes } from '../utils/chatLlmThreadAxios';
 
 const ComponentNotesAdd = ({
     setRefreshParentRandomNum,
@@ -30,6 +31,15 @@ const ComponentNotesAdd = ({
                     tags: [],
                     imagePathsArr: []
                 });
+
+                // select auto context notes
+                const isAutoSelectContextNotes = localStorage.getItem(`isAutoSelectContextNotes-${threadId}`);
+                if (!isAutoSelectContextNotes) {
+                    localStorage.setItem(`isAutoSelectContextNotes-${threadId}`, 'true');
+                    await handleAutoSelectContextMotes({
+                        threadId: threadId,
+                    });
+                }
 
                 setRefreshParentRandomNum(
                     Math.floor(
@@ -108,6 +118,30 @@ const ComponentNotesAdd = ({
                     setRefreshParentRandomNum={setRefreshParentRandomNum}
                     threadId={threadId}
                 />
+
+                {/* auto select context notes */}
+                <button
+                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 py-2 focus:outline-none focus:shadow-outline mr-2 rounded transition-colors duration-200"
+                    style={{
+                        height: '40px'
+                    }}
+                    onClick={() => {
+                        handleAutoSelectContextMotes({
+                            threadId: threadId,
+                        });
+                    }}
+                >AI: Select Notes</button>
+
+                {/* auto select context task */}
+                <button
+                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 py-2 focus:outline-none focus:shadow-outline mr-2 rounded transition-colors duration-200"
+                    style={{
+                        height: '40px'
+                    }}
+                    onClick={() => {
+                        // handleAutoSelectContext();
+                    }}
+                >AI: Select Tasks</button>
 
                 {/* public or private */}
                 <button

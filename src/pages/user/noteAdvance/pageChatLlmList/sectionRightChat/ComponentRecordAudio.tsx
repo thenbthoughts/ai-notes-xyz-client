@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import axiosCustom from "../../../../../config/axiosCustom";
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { LucideMic, LucidePause, LucidePlay, LucideMicOff } from "lucide-react";
+import { handleAutoSelectContextMotes } from "../utils/chatLlmThreadAxios";
 
 const ComponentUploadFile = ({
     setRefreshParentRandomNum,
@@ -65,6 +66,15 @@ const ComponentUploadFile = ({
 
                 // refresh parent random num
                 setRefreshParentRandomNum(Math.random() * 1_000_000);
+
+                // select auto context notes
+                const isAutoSelectContextNotes = localStorage.getItem(`isAutoSelectContextNotes-${threadId}`);
+                if (!isAutoSelectContextNotes) {
+                    localStorage.setItem(`isAutoSelectContextNotes-${threadId}`, 'true');
+                    await handleAutoSelectContextMotes({
+                        threadId: threadId,
+                    });
+                }
 
                 // process notes
                 await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
