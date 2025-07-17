@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
-import axiosCustom from "../../../config/axiosCustom";
-import { Link } from "react-router-dom";
+import axiosCustom from "../../../../config/axiosCustom";
 
-import SettingApiKey from './SettingApiKey';
-import SettingDefaultEnvKeys from "./SettingDefaultEnvKeys";
 import SettingSelectTimeZone from "./SettingSelectTimeZone";
 import SettingRevalidate from "./SettingRevalidate";
+import SettingHeader from "../SettingHeader";
 
 const Setting = () => {
     // personal info
@@ -22,21 +20,9 @@ const Setting = () => {
     const [zipCode, setZipCode] = useState("");
     const [country, setCountry] = useState("");
 
-    // model preferences
-    const [preferredModelProvider, setPreferredModelProvider] = useState("");
-    const [preferredModelName, setPreferredModelName] = useState("");
-
     // success or failed
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
-
-    const modelNamesOpenRouter = [
-        "openrouter/auto",
-        "inflection/inflection-3-pi",
-        "inflection/inflection-3-productivity",
-        "perplexity/llama-3.1-sonar-small-128k-online",
-        "google/gemma-3-27b-it"
-    ];
 
     useEffect(() => {
         fetchUser();
@@ -63,8 +49,6 @@ const Setting = () => {
             setState(response.data.state);
             setZipCode(response.data.zipCode);
             setCountry(response.data.country);
-            setPreferredModelProvider(response.data.preferredModelProvider); // Set model provider from response
-            setPreferredModelName(response.data.preferredModelName); // Set model name from response
         } catch (error) {
             console.error("Error fetching user:", error);
             setError("Error fetching user. Please try again.");
@@ -79,7 +63,7 @@ const Setting = () => {
         try {
             const response = await axiosCustom.post(
                 `/api/user/crud/updateUser`,
-                { name, dateOfBirth, profilePictureLink, bio, city, state, zipCode, country, preferredModelProvider, preferredModelName },
+                { name, dateOfBirth, profilePictureLink, bio, city, state, zipCode, country },
                 {
                     headers: {
                         'Content-Type': 'application/json'
@@ -216,135 +200,7 @@ const Setting = () => {
             </div>
         )
     }
-
-    const renderModelPreferences = () => {
-        return (
-            <div>
-                <h2 className="text-xl font-bold text-gray-900 py-2">Model Preferences</h2>
-
-                {/* openrouter */}
-                <div className="mb-4 bg-blue-100 text-blue-400 p-2 rounded">
-                    <label className="font-bold mb-2">
-                        Info: 
-                    </label>
-                    <a 
-                        href="https://openrouter.ai/models" 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className=" hover:underline px-2"
-                    >
-                        View available models on OpenRouter
-                    </a>
-                </div>
-
-                {/* groq */}
-                <div className="mb-4 bg-blue-100 text-blue-400 p-2 rounded">
-                    <label className="font-bold mb-2">
-                        Info: 
-                    </label>
-                    <a 
-                        href="https://console.groq.com/docs/models" 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className=" hover:underline px-2"
-                    >
-                        View available models on Groq
-                    </a>
-                </div>
-
-                <div className="mb-4">
-                    <label htmlFor="preferredModelProvider" className="block text-gray-700 font-bold mb-2">
-                        Preferred Model Provider
-                    </label>
-                    <select
-                        id="preferredModelProvider"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        value={preferredModelProvider}
-                        onChange={(e) => setPreferredModelProvider(e.target.value)}
-                    >
-                        <option value="">Select a model provider</option>
-                        <option value="groq">GROQ</option>
-                        <option value="openrouter">OpenRouter</option>
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label htmlFor="preferredModelName" className="block text-gray-700 font-bold mb-2">
-                        Preferred Model Name
-                    </label>
-                    <input
-                        type="text"
-                        id="preferredModelName"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        value={preferredModelName}
-                        onChange={(e) => setPreferredModelName(e.target.value)}
-                    />
-
-                </div>
-
-                <div className="mb-4">
-                    <label htmlFor="preferredModelName" className="block text-gray-700 font-bold mb-2">
-                        Model Names for GROQ
-                    </label>
-                    <div className="bg-white shadow-md rounded-lg p-4">
-                        <div className="flex flex-wrap mt-2">
-                            <span
-                                onClick={() => {
-                                    setPreferredModelProvider("groq");
-                                    setPreferredModelName("llama-3.1-8b-instant");
-                                }}
-                                className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-full mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
-                            >
-                                llama-3.1-8b-instant
-                            </span>
-                            <span
-                                onClick={() => {
-                                    setPreferredModelProvider("groq");
-                                    setPreferredModelName("llama-3.2-11b-vision-preview");
-                                }}
-                                className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-full mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
-                            >
-                                llama-3.2-11b-vision-preview
-                            </span>
-                            <span
-                                onClick={() => {
-                                    setPreferredModelProvider("groq");
-                                    setPreferredModelName("mistral-saba-24b");
-                                }}
-                                className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-full mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
-                            >
-                                mistral-saba-24b
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mb-4">
-                    <label htmlFor="preferredModelName" className="block text-gray-700 font-bold mb-2">
-                        Model Names for Openrouter
-                    </label>
-                    <div className="bg-white shadow-md rounded-lg p-4">
-                        <div className="flex flex-wrap mt-2">
-
-                            {modelNamesOpenRouter.map(modelName => {
-                                return (
-                                    <span
-                                        onClick={() => {
-                                            setPreferredModelProvider("openrouter");
-                                            setPreferredModelName(modelName);
-                                        }}
-                                        className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-full mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
-                                    >
-                                        {modelName}
-                                    </span>
-                                )
-                            })}                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
+    
     return (
         <div
             className="p-4"
@@ -353,23 +209,11 @@ const Setting = () => {
                 margin: '0 auto'
             }}
         >
-            <h1 className="text-2xl font-bold text-gray-900 py-5 text-white">Setting</h1>
-
-            <div className="border-b border-gray-300  mb-5" />
-
-            <p className="text-gray-500 text-sm pb-1 text-white">Customize your profile and preferences.</p>
-
-            <div className="mb-5">
-                <Link to="#profile" className="text-white hover:underline mr-2">Profile Settings</Link>{'|'}
-                <Link to="#security" className="text-white hover:underline mx-2">Location</Link>{'|'}
-                <Link to="#model-preferences" className="text-white hover:underline mx-2">Model Preferences</Link>{'|'}
-                <Link to="#api-keys" className="text-white hover:underline mx-2">API Keys</Link>
-            </div>
+            <SettingHeader />
 
             <form onSubmit={handleSubmit}>
                 {renderPersonalInfo()}
                 {renderLocation()}
-                {renderModelPreferences()}
 
                 {error && <p className="text-red-500 text-sm py-3">{error}</p>}
 
@@ -382,10 +226,6 @@ const Setting = () => {
                     Update
                 </button>
             </form>
-
-            <SettingApiKey />
-
-            <SettingDefaultEnvKeys />
 
             <SettingSelectTimeZone />
 
