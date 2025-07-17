@@ -5,7 +5,7 @@ import axiosCustom from '../../../../../config/axiosCustom';
 import ComponentUploadFile from './ComponentUploadFile';
 import ComponentRecordAudio from './ComponentRecordAudio';
 import { LucideSend } from 'lucide-react';
-import { handleAutoSelectContextMotes } from '../utils/chatLlmThreadAxios';
+import { handleAutoSelectContextNotes, handleAutoSelectContextTasks } from '../utils/chatLlmThreadAxios';
 
 const ComponentNotesAdd = ({
     setRefreshParentRandomNum,
@@ -36,7 +36,10 @@ const ComponentNotesAdd = ({
                 const isAutoSelectContextNotes = localStorage.getItem(`isAutoSelectContextNotes-${threadId}`);
                 if (!isAutoSelectContextNotes) {
                     localStorage.setItem(`isAutoSelectContextNotes-${threadId}`, 'true');
-                    await handleAutoSelectContextMotes({
+                    await handleAutoSelectContextNotes({
+                        threadId: threadId,
+                    });
+                    await handleAutoSelectContextTasks({
                         threadId: threadId,
                     });
                 }
@@ -126,7 +129,7 @@ const ComponentNotesAdd = ({
                         height: '40px'
                     }}
                     onClick={() => {
-                        handleAutoSelectContextMotes({
+                        handleAutoSelectContextNotes({
                             threadId: threadId,
                         });
                     }}
@@ -139,7 +142,9 @@ const ComponentNotesAdd = ({
                         height: '40px'
                     }}
                     onClick={() => {
-                        // handleAutoSelectContext();
+                        handleAutoSelectContextTasks({
+                            threadId: threadId,
+                        });
                     }}
                 >AI: Select Tasks</button>
 

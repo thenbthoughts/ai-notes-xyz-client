@@ -40,7 +40,7 @@ export const chatLlmThreadAddAxios = async () => {
     }
 }
 
-export const handleAutoSelectContextMotes = async ({
+export const handleAutoSelectContextNotes = async ({
     threadId,
 }: {
     threadId: string;
@@ -48,6 +48,26 @@ export const handleAutoSelectContextMotes = async ({
     const toastLoadingId = toast.loading('Auto selecting context...');
     try {
         await axiosCustom.post("/api/chat-llm/threads-context-crud/contextSelectAutoContextNotes", {
+            threadId: threadId,
+        });
+
+        toast.success('Context selected successfully!');
+    } catch (error) {
+        console.error(error);
+        toast.error('Error auto selecting context. Please try again.');
+    } finally {
+        toast.dismiss(toastLoadingId);
+    }
+}
+
+export const handleAutoSelectContextTasks = async ({
+    threadId,
+}: {
+    threadId: string;
+}) => {
+    const toastLoadingId = toast.loading('Auto selecting context...');
+    try {
+        await axiosCustom.post("/api/chat-llm/threads-context-crud/contextSelectAutoContextTasks", {
             threadId: threadId,
         });
 
