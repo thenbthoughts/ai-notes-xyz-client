@@ -328,6 +328,10 @@ const SettingApiKey = () => {
                         Verify and save
                     </button>
                 </div>
+
+                {/* Ollama */}
+
+                {/* qdrant */}
             </div>
         )
     }
