@@ -5,7 +5,7 @@ import axiosCustom from '../../../../../config/axiosCustom';
 import ComponentUploadFile from './ComponentUploadFile';
 import ComponentRecordAudio from './ComponentRecordAudio';
 import { LucideSend } from 'lucide-react';
-import { handleAutoSelectContextNotes, handleAutoSelectContextTasks } from '../utils/chatLlmThreadAxios';
+import { handleAutoSelectContextFirstMessage, handleAutoSelectContextNotes, handleAutoSelectContextTasks } from '../utils/chatLlmThreadAxios';
 
 const ComponentNotesAdd = ({
     setRefreshParentRandomNum,
@@ -32,23 +32,17 @@ const ComponentNotesAdd = ({
                     imagePathsArr: []
                 });
 
-                // select auto context notes
-                const isAutoSelectContextNotes = localStorage.getItem(`isAutoSelectContextNotes-${threadId}`);
-                if (!isAutoSelectContextNotes) {
-                    localStorage.setItem(`isAutoSelectContextNotes-${threadId}`, 'true');
-                    await handleAutoSelectContextNotes({
-                        threadId: threadId,
-                    });
-                    await handleAutoSelectContextTasks({
-                        threadId: threadId,
-                    });
-                }
-
                 setRefreshParentRandomNum(
                     Math.floor(
                         Math.random() * 1_000_000
                     )
                 )
+
+                // select auto context first message
+                await handleAutoSelectContextFirstMessage({
+                    threadId: threadId,
+                    messageCount: 1,
+                });
 
                 // process notes
                 await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
