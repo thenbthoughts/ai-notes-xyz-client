@@ -5,7 +5,6 @@ import axios from "axios";
 import { ChangeEvent, useRef } from "react";
 import axiosCustom from "../../../../../config/axiosCustom";
 import { LucideFile } from "lucide-react";
-import { handleAutoSelectContextFirstMessage } from "../utils/chatLlmThreadAxios";
 
 const ComponentUploadFile = ({
     setRefreshParentRandomNum,
