@@ -6,6 +6,8 @@ type AuthState = {
     apiKeyGroqValid: boolean;
     apiKeyOpenrouterValid: boolean;
     apiKeyS3Valid: boolean;
+    apiKeyOllamaValid: boolean;
+    apiKeyQdrantValid: boolean;
 };
 
 const stateJotaiAuthAtom = atom<AuthState>({
@@ -14,6 +16,8 @@ const stateJotaiAuthAtom = atom<AuthState>({
     apiKeyGroqValid: false,
     apiKeyOpenrouterValid: false,
     apiKeyS3Valid: false,
+    apiKeyOllamaValid: false,
+    apiKeyQdrantValid: false,
 });
 
 const stateJotaiAuthReloadAtom = atom<number>(0);

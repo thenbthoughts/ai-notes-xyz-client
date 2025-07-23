@@ -37,6 +37,8 @@ export default function Component() {
                 apiKeyGroqValid: false,
                 apiKeyOpenrouterValid: false,
                 apiKeyS3Valid: false,
+                apiKeyOllamaValid: false,
+                apiKeyQdrantValid: false,
             });
 
             // redirect to /login using react router dom
@@ -53,6 +55,8 @@ export default function Component() {
                 apiKeyGroqValid: false,
                 apiKeyOpenrouterValid: false,
                 apiKeyS3Valid: false,
+                apiKeyOllamaValid: false,
+                apiKeyQdrantValid: false,
             });
         }
     }

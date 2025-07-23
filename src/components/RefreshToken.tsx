@@ -29,6 +29,8 @@ const RefreshToken = () => {
             apiKeyGroqValid: false,
             apiKeyOpenrouterValid: false,
             apiKeyS3Valid: false,
+            apiKeyOllamaValid: false,
+            apiKeyQdrantValid: false,
         };
 
         try {
@@ -48,6 +50,12 @@ const RefreshToken = () => {
                 if (typeof userInfoFromApi?.apiKeyS3Valid === 'boolean') {
                     tempData.apiKeyS3Valid = userInfoFromApi?.apiKeyS3Valid;
                 }
+                if (typeof userInfoFromApi?.apiKeyOllamaValid === 'boolean') {
+                    tempData.apiKeyOllamaValid = userInfoFromApi?.apiKeyOllamaValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyQdrantValid === 'boolean') {
+                    tempData.apiKeyQdrantValid = userInfoFromApi?.apiKeyQdrantValid;
+                }
             }
 
             setAuthState(tempData);
@@ -58,6 +66,8 @@ const RefreshToken = () => {
                 apiKeyGroqValid: false,
                 apiKeyOpenrouterValid: false,
                 apiKeyS3Valid: false,
+                apiKeyOllamaValid: false,
+                apiKeyQdrantValid: false,
             });
         }
     };
