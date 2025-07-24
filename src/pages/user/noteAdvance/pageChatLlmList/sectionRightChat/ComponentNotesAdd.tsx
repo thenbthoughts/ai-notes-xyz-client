@@ -5,7 +5,7 @@ import axiosCustom from '../../../../../config/axiosCustom';
 import ComponentUploadFile from './ComponentUploadFile';
 import ComponentRecordAudio from './ComponentRecordAudio';
 import { LucideSend } from 'lucide-react';
-import { handleAutoSelectContextFirstMessage, handleAutoSelectContextNotes, handleAutoSelectContextTasks } from '../utils/chatLlmThreadAxios';
+import { handleAutoSelectContextFirstMessage, handleAutoSelectContext } from '../utils/chatLlmThreadAxios';
 
 const ComponentNotesAdd = ({
     setRefreshParentRandomNum,
@@ -123,24 +123,11 @@ const ComponentNotesAdd = ({
                         height: '40px'
                     }}
                     onClick={() => {
-                        handleAutoSelectContextNotes({
+                        handleAutoSelectContext({
                             threadId: threadId,
                         });
                     }}
-                >AI: Select Notes</button>
-
-                {/* auto select context task */}
-                <button
-                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded whitespace-nowrap"
-                    style={{
-                        height: '40px'
-                    }}
-                    onClick={() => {
-                        handleAutoSelectContextTasks({
-                            threadId: threadId,
-                        });
-                    }}
-                >AI: Select Tasks</button>
+                >AI: Auto Context</button>
 
                 {/* public or private */}
                 <button
