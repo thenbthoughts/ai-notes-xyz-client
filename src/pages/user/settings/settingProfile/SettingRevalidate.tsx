@@ -23,7 +23,7 @@ const SettingRevalidate = () => {
 
         try {
             const response = await axiosCustom.post(
-                `/api/notes/crud/notesAiRevalidate`,
+                `/api/user/revalidate/aiRevalidateNotesTask`,
                 {
                     
                 },
