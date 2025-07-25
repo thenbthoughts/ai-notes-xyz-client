@@ -46,13 +46,28 @@ export const handleAutoSelectContext = async ({
 }: {
     threadId: string;
 }) => {
+    const startTime = new Date().valueOf();
+    const toastLoadingId = toast.loading('Auto selecting context. It may take around 15 seconds...');
     try {
         await axiosCustom.post("/api/chat-llm/threads-context-crud/contextSelectAutoContext", {
             threadId: threadId,
         });
+
+        const endTime = new Date().valueOf();
+        const duration = endTime - startTime;
+        console.log('duration', duration);
+
+        toast.success(
+            `Context selected successfully! It took ${parseFloat((duration/1000).toString()).toFixed(2)} seconds.`,
+            {
+                duration: 3000,
+            }
+        );
     } catch (error) {
         console.error(error);
         toast.error('Error auto selecting context. Please try again.');
+    } finally {
+        toast.dismiss(toastLoadingId);
     }
 }
 
@@ -63,7 +78,7 @@ export const handleAutoSelectContextFirstMessage = async ({
     threadId: string;
     messageCount: 1 | 2;
 }) => {
-    const toastLoadingId = toast.loading('Auto selecting context...');
+    
     try {
 
         // check if thread is exist
@@ -122,7 +137,5 @@ export const handleAutoSelectContextFirstMessage = async ({
     } catch (error) {
         console.error(error);
         toast.error('Error auto selecting context. Please try again.');
-    } finally {
-        toast.dismiss(toastLoadingId);
     }
 }

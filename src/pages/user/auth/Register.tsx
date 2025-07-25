@@ -19,7 +19,7 @@ export default function Component() {
     useEffect(() => {
         if (authState.isLoggedIn === 'true') {
             // redirect to /home
-            navigate('/user/chat-one')
+            navigate('/user/chat')
         }
     }, []);
 
@@ -96,7 +96,7 @@ export default function Component() {
             await new Promise(resolve => setTimeout(resolve, 750));
 
             // redirect to /home
-            navigate('/user/chat-one');
+            navigate('/user/chat');
         } catch (error) {
             console.error("Register failed:", error)
             setError("Register failed. Please check your credentials and try again.");

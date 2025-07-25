@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import cssNoteAdvanceList from './scss/noteAdvanceList.module.scss';
 import toast from 'react-hot-toast';
+import { LucideSend } from 'lucide-react';
 import axiosCustom from '../../../../../config/axiosCustom';
+
+import cssNoteAdvanceList from './scss/noteAdvanceList.module.scss';
 import ComponentUploadFile from './ComponentUploadFile';
 import ComponentRecordAudio from './ComponentRecordAudio';
-import { LucideSend } from 'lucide-react';
 import { handleAutoSelectContextFirstMessage, handleAutoSelectContext } from '../utils/chatLlmThreadAxios';
 
 const ComponentNotesAdd = ({
@@ -128,22 +129,6 @@ const ComponentNotesAdd = ({
                         });
                     }}
                 >AI: Auto Context</button>
-
-                {/* public or private */}
-                <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                    style={{
-                        height: '40px'
-                    }}
-                >Private</button>
-
-                {/* advance */}
-                <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                    style={{
-                        height: '40px'
-                    }}
-                >Advance</button>
             </div>
         </div>
     )
