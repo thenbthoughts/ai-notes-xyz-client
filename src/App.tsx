@@ -29,7 +29,6 @@ const SettingApiKey = lazy(() => import("./pages/user/settings/settingApiKeys/Se
 const SettingModelPreference = lazy(() => import("./pages/user/settings/settingModelPreference/SettingModelPreference.tsx"));
 
 // pages -> ai
-const PageChatOneList = lazy(() => import('./pages/user/noteAdvance/pageChatOneList/ChatOneList.tsx'));
 const PageChatLlmListWrapper = lazy(() => import('./pages/user/noteAdvance/pageChatLlmList/ChatLlmListWrapper.tsx'));
 const AiDeepResearchWrapper = lazy(() => import("./pages/user/noteAdvance/AiDeepResearch/AiDeepResearchWrapper.tsx"));
 
@@ -99,14 +98,6 @@ function App() {
         },
 
         // protected route
-        {
-          path: "/user/chat-one",
-          element: (
-            <UnauthorizedRoute>
-              <PageChatOneList />
-            </UnauthorizedRoute>
-          ),
-        },
         {
           path: '/user/chat',
           element: (

@@ -56,7 +56,7 @@ export default function Component() {
             await new Promise(resolve => setTimeout(resolve, 750));
 
             // redirect to /home
-            navigate('/user/chat-one')
+            navigate('/user/chat')
         } catch (error) {
             console.error("Login failed:", error)
             setError("Login failed. Please check your credentials and try again.");
