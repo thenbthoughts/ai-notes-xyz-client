@@ -1,7 +1,7 @@
 import { tsPageTask } from "../../../../types/pages/tsPageTaskList";
 
 import axiosCustom from '../../../../config/axiosCustom';
-import { LucideClock, LucideEdit3, LucideInfo, LucideTrash2 } from "lucide-react";
+import { LucideClock, LucideEdit3, LucideInfo, LucidePin, LucideTrash2 } from "lucide-react";
 
 const TaskItem = ({
     task,
@@ -26,6 +26,29 @@ const TaskItem = ({
         const data = {
             id: task._id,
             taskStatusId: taskStatusId,
+            taskWorkspaceId: task.taskWorkspaceId,
+        };
+
+        try {
+            await axiosCustom.post('/api/task/crud/taskEdit', data);
+            setRefreshRandomNum(
+                Math.floor(
+                    Math.random() * 1_000_000
+                )
+            )
+        } catch (error) {
+            console.error('Error updating task group:', error);
+        }
+    };
+
+    const axiosChangeTaskPin = async ({
+        isTaskPinned,
+    }: {
+        isTaskPinned: boolean,
+    }): Promise<void> => {
+        const data = {
+            id: task._id,
+            isTaskPinned,
             taskWorkspaceId: task.taskWorkspaceId,
         };
 
@@ -89,7 +112,7 @@ const TaskItem = ({
         const now = new Date();
         const dueDate = new Date(task.dueDate);
         const isOverdue = task.dueDate && dueDate < now && !task.isCompleted;
-        
+
         return (
             <div
                 className="bg-white p-3 rounded-lg shadow-sm mb-2 hover:shadow-md transition-shadow group cursor-pointer"
@@ -129,9 +152,8 @@ const TaskItem = ({
                     )}
 
                     {task.dueDate && (
-                        <div className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
-                            isOverdue ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
-                        }`}>
+                        <div className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${isOverdue ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                            }`}>
                             <LucideClock size={12} />
                             <span>{dueDate.toLocaleDateString()}</span>
                         </div>
@@ -174,6 +196,20 @@ const TaskItem = ({
                             aria-label="View task details"
                         >
                             <LucideInfo size={16} />
+                        </button>
+                        <button
+                            onClick={() => {
+                                axiosChangeTaskPin({
+                                    isTaskPinned: !task.isTaskPinned,
+                                })
+                            }}
+                            className={`text-gray-600 p-1 rounded hover:bg-gray-50 transition`}
+                            aria-label="Pin task"
+                        >
+                            <LucidePin
+                                size={24}
+                                className={`p-1 rounded-full ${task.isTaskPinned ? 'text-blue-600 bg-blue-100' : 'text-gray-600'}`}
+                            />
                         </button>
                     </div>
                 </div>

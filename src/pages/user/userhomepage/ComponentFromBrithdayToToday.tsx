@@ -74,7 +74,7 @@ const ComponentFromBrithdayToToday = () => {
     };
 
     return (
-        <div className="pb-2">
+        <div>
             {/* Birthday set */}
             {birthday !== '0000-00-00' && (
                 <Fragment>
