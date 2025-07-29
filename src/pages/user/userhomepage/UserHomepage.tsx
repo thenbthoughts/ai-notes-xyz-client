@@ -12,13 +12,15 @@ import {
     LucideFileText
 } from 'lucide-react'; // Importing lucide icons
 import { useAtomValue } from 'jotai';
+import { Fragment, useEffect, useState } from 'react';
+import axiosCustom from '../../../config/axiosCustom';
+
+import useResponsiveScreen from '../../../hooks/useResponsiveScreen';
 import stateJotaiAuthAtom from '../../../jotai/stateJotaiAuth'; // Adjust the import path as necessary
 import iconGit from './iconGit.svg';
+
 import ComponentFromBrithdayToToday from './ComponentFromBrithdayToToday';
-import useResponsiveScreen from '../../../hooks/useResponsiveScreen';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import axiosCustom from '../../../config/axiosCustom';
+import ComponentPinnedTask from './ComponentPinnedTask';
 
 const UserHomepage = () => {
     const authState = useAtomValue(stateJotaiAuthAtom);
@@ -69,7 +71,12 @@ const UserHomepage = () => {
                         }}
                     >
                         {authState.isLoggedIn === 'true' && (
-                            <ComponentFromBrithdayToToday />
+                            <Fragment>
+                                <div className="pb-2">
+                                    <ComponentFromBrithdayToToday />
+                                    <ComponentPinnedTask />
+                                </div>
+                            </Fragment>
                         )}
                     </div>
                     {/* right */}

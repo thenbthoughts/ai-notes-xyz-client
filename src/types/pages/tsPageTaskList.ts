@@ -11,6 +11,9 @@ export interface tsPageTask {
     isCompleted: boolean;
     isArchived: boolean;
 
+    // task homepage pinned
+    isTaskPinned: boolean;
+    
     // labels
     labels: string[];
     labelsAi: string[];
