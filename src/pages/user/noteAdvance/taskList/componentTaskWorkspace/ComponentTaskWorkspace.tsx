@@ -25,8 +25,28 @@ const ComponentTaskWorkspace = () => {
                 }>('/api/task-workspace/crud/taskWorkspaceGet');
                 setWorkspaces(result.data.docs);
 
-                if (result.data.docs.length >= 1) {
-                    setWorkspaceId(result.data.docs[0]._id);
+                const resultWorkspaceArr = result.data.docs;
+
+                let tempWorkspaceId = '';
+
+                if (resultWorkspaceArr.length >= 1) {
+                    tempWorkspaceId = resultWorkspaceArr[0]._id;
+                }
+
+
+                const searchParams = new URLSearchParams(window.location.search);
+                const workspaceQuery = searchParams.get('workspace');
+                if (workspaceQuery) {
+                    for (const workspaceId of resultWorkspaceArr) {
+                        if (workspaceId._id === workspaceQuery) {
+                            tempWorkspaceId = workspaceId._id;
+                            break;
+                        }
+                    }
+                }
+
+                if (tempWorkspaceId === '') {
+                    setWorkspaceId(tempWorkspaceId);
                 }
             } catch (err) {
                 toast.error('Failed to load workspaces');

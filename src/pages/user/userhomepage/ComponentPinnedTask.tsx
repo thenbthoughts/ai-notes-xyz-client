@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LucideList, LucideCheck, LucidePlus, LucideChevronRight, LucideChevronLeft, LucidePin } from 'lucide-react';
+import { LucideList, LucidePlus, LucideChevronRight, LucideChevronLeft, LucidePin, LucideEdit } from 'lucide-react';
 import { Link } from "react-router-dom";
 
 import axiosCustom from "../../../config/axiosCustom";
@@ -37,18 +37,13 @@ const ComponentPinnedTask = () => {
                     </h2>
                     <div>
                         <div className="flex items-center gap-2 mb-2 pt-2">
-                            <button
+                            <Link
                                 className="p-1 border border-purple-400 rounded bg-purple-100 hover:bg-purple-200 transition duration-200"
                                 title="Add Task"
-                                onClick={() => {
-                                    console.log("Add Task");
-                                }}
+                                to="/user/task?add-task-dialog=yes"
                             >
                                 <LucidePlus size={16} className="text-purple-600" />
-                            </button>
-                            <button className="p-1 border border-purple-400 rounded bg-purple-100 hover:bg-purple-200 transition duration-200" title="Mark Completed">
-                                <LucideCheck size={16} className="text-purple-600" />
-                            </button>
+                            </Link>
                             <button
                                 className="p-1 border border-purple-400 rounded bg-purple-100 hover:bg-purple-200 transition duration-200" title="Previous Task"
                                 disabled={currentTaskIndex <= 0}
@@ -75,12 +70,24 @@ const ComponentPinnedTask = () => {
                     </div>
                     {taskArr.length > 0 && (
                         <div>
-                            <p className="text-sm font-semibold text-purple-700">
+                            <p
+                                className="text-sm font-semibold text-purple-700"
+                            >
                                 {taskArr[currentTaskIndex]?.isTaskPinned && (
                                     <LucidePin size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
                                 )}
                                 {taskArr[currentTaskIndex]?.title}
                             </p>
+                            <div className="mt-2">
+                                <Link
+                                    to={`/user/task?workspace=${taskArr[currentTaskIndex]?.taskWorkspaceId}&edit-task-id=${taskArr[currentTaskIndex]?._id}`}
+                                    className="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-50 border border-purple-300 rounded hover:bg-purple-100 transition duration-200"
+                                    title="Edit Task"
+                                >
+                                    <LucideEdit size={14} className="mr-1" />
+                                    Edit
+                                </Link>
+                            </div>
                             {/* TODO sub task list */}
                         </div>
                     )}
