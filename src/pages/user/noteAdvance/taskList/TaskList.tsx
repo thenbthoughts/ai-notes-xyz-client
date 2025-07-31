@@ -51,6 +51,40 @@ const TaskList: React.FC = () => {
         workspaceId,
     ])
 
+    useEffect(() => {
+        // if query has add-task-dialog, then open the dialog
+        const searchParams = new URLSearchParams(window.location.search);
+        const addTaskDialog = searchParams.get('add-task-dialog');
+        if (addTaskDialog === 'yes') {
+            setIsTaskAddModalIsOpen({
+                openStatus: true,
+                modalType: 'add',
+                recordId: '',
+            });
+
+            // remove the query add-task-dialog from the url
+            searchParams.delete('add-task-dialog');
+            window.history.replaceState({}, '', window.location.pathname + '?' + searchParams.toString());
+        }
+    }, []);
+
+    useEffect(() => {
+        // if query has edit-task-id, then open the dialog
+        const searchParams = new URLSearchParams(window.location.search);
+        const editTaskId = searchParams.get('edit-task-id');
+        if (editTaskId) {
+            setIsTaskAddModalIsOpen({
+                openStatus: true,
+                modalType: 'edit',
+                recordId: editTaskId,
+            });
+
+            // remove the query add-task-dialog from the url
+            searchParams.delete('edit-task-id');
+            window.history.replaceState({}, '', window.location.pathname + '?' + searchParams.toString());
+        }
+    }, []);
+
     const fetchTasks = async () => {
         setLoading(true); // Set loading to true when fetching starts
         const config = {
