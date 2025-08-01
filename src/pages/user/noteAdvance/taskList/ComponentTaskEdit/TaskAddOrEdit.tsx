@@ -6,6 +6,7 @@ import axiosCustom from '../../../../../config/axiosCustom';
 import ComponentTaskSubList from './ComponentTaskSubList';
 import ComponentTaskCommentList from './ComponentTaskCommentList';
 import ComponentSelectWorkspace from './ComponentSelectWorkspace';
+import ComponentSelectTaskStatus from './ComponentSelectTaskStatus';
 
 const TaskAddOrEdit: React.FC<{
     isTaskAddModalIsOpen: {
@@ -76,6 +77,7 @@ const TaskAddOrEdit: React.FC<{
                         setLabels(taskInfo?.labels); // Set labels from task info
 
                         setWorkspaceId(taskInfo.taskWorkspaceId || '');
+                        setTaskStatusId(taskInfo.taskStatusId || '');
 
                         setFormData({
                             isArchived: taskInfo.isArchived || false,
@@ -136,6 +138,7 @@ const TaskAddOrEdit: React.FC<{
 
             // workspace
             taskWorkspaceId: workspaceId,
+            taskStatusId: taskStatusId,
         } as {
             id?: string;
             title: string;
@@ -157,10 +160,6 @@ const TaskAddOrEdit: React.FC<{
             taskWorkspaceId: string;
             taskStatusId: string;
         };
-
-        if (taskStatusId !== 'EMPTY') {
-            newTask.taskStatusId = '';
-        }
 
         if (isTaskAddModalIsOpen.modalType === 'edit') {
             newTask.id = isTaskAddModalIsOpen.recordId;
@@ -438,9 +437,24 @@ const TaskAddOrEdit: React.FC<{
                                                 workspaceId={workspaceId}
                                                 setWorkspaceIdFunc={(workspaceId: string) => {
                                                     setWorkspaceId(workspaceId);
-                                                    setTaskStatusId('EMPTY');
                                                 }}
+                                                modalType={isTaskAddModalIsOpen.modalType}
                                             />
+                                        </div>
+
+                                        {/* status */}
+                                        <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2">
+                                            <label className="block font-medium">Status:</label>
+                                            {workspaceId.length === 24 && (
+                                                <ComponentSelectTaskStatus
+                                                    workspaceId={workspaceId}
+                                                    taskStatusId={taskStatusId}
+                                                    setTaskStatusId={(taskStatusId: string) => {
+                                                        setTaskStatusId(taskStatusId);
+                                                    }}
+                                                    modalType={isTaskAddModalIsOpen.modalType}
+                                                />
+                                            )}
                                         </div>
                                     </div>
 
