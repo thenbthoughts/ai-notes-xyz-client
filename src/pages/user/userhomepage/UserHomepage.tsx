@@ -21,6 +21,7 @@ import iconGit from './iconGit.svg';
 
 import ComponentFromBrithdayToToday from './ComponentFromBrithdayToToday';
 import ComponentPinnedTask from './ComponentPinnedTask';
+import ComponentCurrentDateTime from './ComponentCurrentDateTime';
 
 const UserHomepage = () => {
     const authState = useAtomValue(stateJotaiAuthAtom);
@@ -73,6 +74,7 @@ const UserHomepage = () => {
                         {authState.isLoggedIn === 'true' && (
                             <Fragment>
                                 <div className="pb-2">
+                                    <ComponentCurrentDateTime />
                                     <ComponentFromBrithdayToToday />
                                     <ComponentPinnedTask />
                                 </div>

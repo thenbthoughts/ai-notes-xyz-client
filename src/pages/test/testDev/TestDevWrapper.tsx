@@ -21,6 +21,10 @@ const TestDevWrapper = () => {
                 <Link to="/user/ai-deep-search" target="_blank" rel="noopener noreferrer">Go to AI Deep Search</Link>
             </p>
 
+            <p>
+                <Link to="/test/homepage-backup-delete" target="_blank" rel="noopener noreferrer">Go to Homepage Backup Delete</Link>
+            </p>
+
             <TestReactQuill />
         </div>
     )
