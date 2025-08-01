@@ -4,8 +4,8 @@ import {
     ChevronRight,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { jotaiStateNotesWorkspaceId, jotaiStateNotesWorkspaceRefresh } from '../stateJotai/notesStateJotai.ts';
-import { useAtom, useAtomValue } from 'jotai';
+import { jotaiNotesModalOpenStatus, jotaiStateNotesWorkspaceId, jotaiStateNotesWorkspaceRefresh } from '../stateJotai/notesStateJotai.ts';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 
 // TypeScript type for menu items
@@ -19,6 +19,8 @@ export type MenuItem = {
 
 const ComponentFolderAndFileList = () => {
     const [workspaceId] = useAtom(jotaiStateNotesWorkspaceId);
+
+    const setStateNotesModalOpenStatus  = useSetAtom(jotaiNotesModalOpenStatus);
 
     // Use _id instead of name for active and expanded items
     const [activeItem, setActiveItem] = useState<string>('8'); // '8' is the _id for 'Getting Started'
@@ -217,6 +219,8 @@ const ComponentFolderAndFileList = () => {
                             to={`/user/notes?action=edit&id=${item._id}&workspace=${workspaceId}`}
                             onClick={() => {
                                 setActiveItem(item._id);
+                                // on selecting an item, close modal
+                                setStateNotesModalOpenStatus(false);
                                 // if (hasChildren) toggleExpanded(item._id);
                             }}
                             style={{
