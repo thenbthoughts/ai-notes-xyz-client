@@ -45,7 +45,7 @@ const ComponentTaskWorkspace = () => {
                     }
                 }
 
-                if (tempWorkspaceId === '') {
+                if (tempWorkspaceId !== '') {
                     setWorkspaceId(tempWorkspaceId);
                 }
             } catch (err) {
