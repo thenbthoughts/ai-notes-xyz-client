@@ -46,6 +46,7 @@ const FinanceWrapper = lazy(() => import("./pages/user/noteAdvance/Finance/Finan
 
 // pages -> test
 const TestDevWrapper = lazy(() => import("./pages/test/testDev/TestDevWrapper.tsx"));
+const TestUserHomepageBackupDelete = lazy(() => import("./pages/user/userhomepage/backup-delete/UserHomepage-backup-delete.tsx"));
 
 // components -> settings
 const ModelOpenrouterInsertAll = lazy(() => import('./components/settings/ModelOpenrouterInsertAll.tsx'));
@@ -228,6 +229,14 @@ function App() {
           element:  (
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
               <TestDevWrapper />
+            </Suspense>
+          )
+        },
+        {
+          path: '/test/homepage-backup-delete',
+          element: (
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+              <TestUserHomepageBackupDelete />
             </Suspense>
           )
         }
