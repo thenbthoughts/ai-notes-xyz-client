@@ -183,7 +183,13 @@ const TaskAddOrEdit: React.FC<{
             setStatus('todo'); // Reset status
             setDueDate(''); // Reset due date
             setLabels([]); // Reset labels
-            toggleModal();
+
+            if (isTaskAddModalIsOpen.modalType === 'add') {
+                // Redirect to task list with workspace parameter
+                window.location.href = `/user/task?workspace=${workspaceId}`;
+            } else {
+                toggleModal();
+            }
         } catch (error) {
             console.error('Error adding task:', error);
             alert('Oops! Something went wrong. Please try again. 😢');
@@ -529,8 +535,20 @@ const TaskAddOrEdit: React.FC<{
                                 </div>
 
                                 <div className="flex justify-end space-x-1 mt-3">
-                                    <button type="button" onClick={toggleModal} className="bg-gray-300 text-gray-700 py-1 px-2 rounded hover:bg-gray-400">Cancel</button>
-                                    <button type="button" onClick={handleSubmit} className="bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-600">Save</button>
+                                    <button
+                                        type="button"
+                                        onClick={toggleModal}
+                                        className="bg-gray-300 text-gray-700 py-1 px-2 rounded hover:bg-gray-400"
+                                    >Cancel</button>
+                                    <button
+                                        type="button"
+                                        onClick={handleSubmit}
+                                        className="bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-600"
+                                    >
+                                        {
+                                            isTaskAddModalIsOpen.modalType === 'add' ? 'Add' : 'Save'
+                                        }
+                                    </button>
                                 </div>
                             </div>
                         </div>
