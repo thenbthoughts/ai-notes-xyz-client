@@ -25,7 +25,10 @@ import { notesAddAxios } from './utils/notesListAxios.ts';
 
 import axiosCustom from '../../../../config/axiosCustom.ts';
 
-import { jotaiStateNotesWorkspaceId } from './stateJotai/notesStateJotai.ts';
+import {
+    jotaiNotesModalOpenStatus,
+    jotaiStateNotesWorkspaceId
+} from './stateJotai/notesStateJotai.ts';
 
 const NotesWrapper = () => {
 
@@ -34,11 +37,11 @@ const NotesWrapper = () => {
     const navigate = useNavigate();
 
     const [workspaceId, setWorkspaceId] = useAtom(jotaiStateNotesWorkspaceId);
-    
+
     const [
         stateDisplayChatHistory,
         setStateDisplayChatHistory,
-    ] = useState(false);
+    ] = useAtom(jotaiNotesModalOpenStatus);
 
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
