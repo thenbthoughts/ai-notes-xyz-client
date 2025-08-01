@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
@@ -10,10 +10,12 @@ interface Workspace {
 
 const ComponentSelectWorkspace = ({
     workspaceId,
-    setWorkspaceIdFunc
+    setWorkspaceIdFunc,
+    modalType
 }: {
     workspaceId: string;
     setWorkspaceIdFunc: (workspaceId: string) => void;
+    modalType: 'add' | 'edit';
 }) => {
     const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
 
@@ -28,10 +30,8 @@ const ComponentSelectWorkspace = ({
 
                 setWorkspaces(docs);
 
-                if(docs.length >= 1) {
-                    if (workspaceId.length === 24) {
-                        // ignore
-                    } else {
+                if (modalType === 'add') {
+                    if (workspaceId.length !== 24) {
                         setWorkspaceIdFunc(docs[0]._id);
                     }
                 }
@@ -44,20 +44,30 @@ const ComponentSelectWorkspace = ({
     }, []);
 
     return (
-        <select
-            className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={workspaceId}
-            onChange={(e) => {
-                // Handle workspace selection
-                setWorkspaceIdFunc(e.target.value);
-            }}
-        >
-            {workspaces.map((workspace) => (
-                <option key={workspace._id} value={workspace._id}>
-                    {workspace.title}
-                </option>
-            ))}
-        </select>
+        <Fragment>
+            {workspaces.length > 0 && (
+                <select
+                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={workspaceId}
+                    onChange={(e) => {
+                        // Handle workspace selection
+                        setWorkspaceIdFunc(e.target.value);
+                    }}
+                >
+                    {workspaces.map((workspace) => (
+                        <option key={workspace._id} value={workspace._id}>
+                            {workspace.title}
+                        </option>
+                    ))}
+                </select>
+
+            )}
+            {workspaces.length === 0 && (
+                <div className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    No workspaces found
+                </div>
+            )}
+        </Fragment>
     );
 };
 
