@@ -66,9 +66,9 @@ const UserHomepage = () => {
                     {/* left */}
                     <div
                         style={{
-                            width: `${screenSize === 'sm' ? '100%' : '40%' }`,
-                            paddingLeft: `${screenSize === 'sm' ? '10px' : '20px' }`,
-                            paddingRight: `${screenSize === 'sm' ? '10px' : '20px' }`,
+                            width: `${screenSize === 'sm' ? '100%' : '40%'}`,
+                            paddingLeft: `${screenSize === 'sm' ? '10px' : '20px'}`,
+                            paddingRight: `${screenSize === 'sm' ? '10px' : '20px'}`,
                         }}
                     >
                         {authState.isLoggedIn === 'true' && (
@@ -80,13 +80,48 @@ const UserHomepage = () => {
                                 </div>
                             </Fragment>
                         )}
+                        {authState.isLoggedIn === 'false' && (
+                            <Fragment>
+                                <div className="pb-2">
+                                    {/* login */}
+                                    <Link to="/login">
+                                        <div
+                                            className="text-left p-3 border border-blue-400 rounded-md shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300"
+                                        >
+                                            <div className="flex justify-between items-center ">
+                                                <h2 className="text-lg font-bold text-blue-800 cursor-pointer">
+                                                    <LucideLogIn size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
+                                                    Login
+                                                </h2>
+                                            </div>
+                                        </div>
+                                    </Link>
+
+                                    {/* register */}
+                                    <Link to="/register">
+                                        <div
+                                            className="text-left p-3 border border-blue-400 rounded-md shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300"
+                                        >
+                                            <div className="flex justify-between items-center ">
+                                                <h2 className="text-lg font-bold text-blue-800 cursor-pointer">
+                                                    <LucideUserPlus size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
+                                                    Register
+                                                </h2>
+                                            </div>
+                                        </div>
+                                    </Link>
+
+                                    <ComponentCurrentDateTime />
+                                </div>
+                            </Fragment>
+                        )}
                     </div>
                     {/* right */}
                     <div
                         style={{
-                            width: `${screenSize === 'sm' ? '100%' : '60%' }`,
-                            paddingLeft: `${screenSize === 'sm' ? '10px' : '20px' }`,
-                            paddingRight: `${screenSize === 'sm' ? '10px' : '20px' }`,
+                            width: `${screenSize === 'sm' ? '100%' : '60%'}`,
+                            paddingLeft: `${screenSize === 'sm' ? '10px' : '20px'}`,
+                            paddingRight: `${screenSize === 'sm' ? '10px' : '20px'}`,
                         }}
                     >
                         <div
