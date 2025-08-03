@@ -1,14 +1,239 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import axiosCustom from "../../../../config/axiosCustom";
 
 import SettingSelectTimeZone from "./SettingSelectTimeZone";
 import SettingRevalidate from "./SettingRevalidate";
 import SettingHeader from "../SettingHeader";
 
+const InputEmailVerify = ({
+    setReloadRandomNum
+}: {
+    setReloadRandomNum: React.Dispatch<React.SetStateAction<number>>;
+}) => {
+
+    const [disableEmailField, setDisableEmailField] = useState(false);
+    const [showOtp, setShowOtp] = useState(false);
+
+    const [email, setEmail] = useState("");
+    const [otp, setOtp] = useState("");
+
+    const [requestSendOtp, setRequestSendOtp] = useState({
+        loading: false,
+        error: "",
+        success: "",
+    });
+
+    const [requestVerifyOtp, setRequestVerifyOtp] = useState({
+        loading: false,
+        error: "",
+        success: "",
+    });
+
+    const sendOtp = async () => {
+        try {
+            setRequestSendOtp({
+                loading: true,
+                error: "",
+                success: "",
+            });
+
+            const response = await axiosCustom.post(
+                `/api/user/api-keys/userEmailVerifySendOtp`,
+                { email },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true,
+                }
+            );
+
+            if (response.data.success) {
+                setShowOtp(true);
+                setDisableEmailField(true);
+            }
+
+            setRequestSendOtp({
+                loading: false,
+                error: "",
+                success: "OTP sent successfully.",
+            });
+            setRequestVerifyOtp({
+                loading: false,
+                error: "",
+                success: "",
+            });
+        } catch (error: any) {
+            console.error("Error sending OTP:", error);
+            if (typeof error.response?.data?.error === 'string') {
+                setRequestSendOtp({
+                    loading: false,
+                    error: error.response.data.error,
+                    success: "",
+                });
+            } else {
+                setRequestSendOtp({
+                    loading: false,
+                    error: "Error sending OTP. Please try again.",
+                    success: "",
+                });
+            }
+        }
+    };
+
+    const verifyOtp = async () => {
+        try {
+            setRequestVerifyOtp({
+                loading: true,
+                error: "",
+                success: "",
+            });
+
+            const response = await axiosCustom.post(
+                `/api/user/api-keys/userEmailVerifyVerifyOtp`,
+                { otp: parseInt(otp) },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true,
+                }
+            );
+
+            if (response.data.success) {
+                setShowOtp(false);
+                setDisableEmailField(false);
+                setEmail("");
+                setOtp("");
+            }
+
+            setRequestVerifyOtp({
+                loading: false,
+                error: "",
+                success: "OTP verified successfully.",
+            });
+            setRequestSendOtp({
+                loading: false,
+                error: "",
+                success: "",
+            });
+
+            // revalidate user
+            setReloadRandomNum(prev => prev + 1);
+        } catch (error) {
+            console.error("Error verifying OTP:", error);
+            setRequestVerifyOtp({
+                loading: false,
+                error: "Error verifying OTP. Please try again.",
+                success: "",
+            });
+        }
+    };
+
+    return (
+        <Fragment>
+            {/* send otp */}
+            <div>
+                <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
+                    Email
+                    <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                        Not set
+                    </span>
+                </label>
+                <input
+                    type="email"
+                    id="email"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={disableEmailField}
+                />
+                <div>
+                    <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded mt-2">
+                        <strong>Warning:</strong> Please ensure your email address is correct if provided,
+                        as it will be used for login notifications, daily AI summaries,
+                        server status updates, and other important communications.
+                    </p>
+                </div>
+
+                {requestSendOtp.loading && (
+                    <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded mt-2">
+                        Sending OTP...
+                    </p>
+                )}
+
+                {requestSendOtp.error && (
+                    <p className="text-sm text-red-500 bg-red-50 p-2 rounded mt-2">
+                        {requestSendOtp.error}
+                    </p>
+                )}
+
+                {requestSendOtp.success && (
+                    <p className="text-sm text-green-500 bg-green-50 p-2 rounded mt-2">
+                        {requestSendOtp.success}
+                    </p>
+                )}
+
+                <button
+                    type="button"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    onClick={sendOtp}
+                >
+                    Send OTP
+                </button>
+            </div>
+
+            {requestVerifyOtp.success && (
+                <p className="text-sm text-green-500 bg-green-50 p-2 rounded mt-2">
+                    {requestVerifyOtp.success}
+                </p>
+            )}
+
+            {/* verify otp */}
+            {showOtp && (
+                <div>
+                    <label htmlFor="otp" className="block text-gray-700 font-bold mb-2">
+                        OTP
+                    </label>
+                    <input
+                        type="number"
+                        id="otp"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                    />
+
+                    {requestVerifyOtp.loading && (
+                        <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded mt-2">
+                            Verifying OTP...
+                        </p>
+                    )}
+
+                    {requestVerifyOtp.error && (
+                        <p className="text-sm text-red-500 bg-red-50 p-2 rounded mt-2">
+                            {requestVerifyOtp.error}
+                        </p>
+                    )}
+
+                    <button
+                        type="button"
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        onClick={verifyOtp}
+                    >
+                        Verify OTP
+                    </button>
+                </div>
+            )}
+        </Fragment>
+    )
+}
+
 const Setting = () => {
     // personal info
-
+    const [reloadRandomNum, setReloadRandomNum] = useState(0);
     const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [emailVerified, setEmailVerified] = useState(false);
     const [username, setUsername] = useState(""); // Added username state
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [profilePictureLink, setProfilePictureLink] = useState("");
@@ -26,7 +251,7 @@ const Setting = () => {
 
     useEffect(() => {
         fetchUser();
-    }, []);
+    }, [reloadRandomNum]);
 
     const fetchUser = async () => {
         try {
@@ -41,6 +266,8 @@ const Setting = () => {
                 }
             );
             setName(response.data.name);
+            setEmail(response.data.email);
+            setEmailVerified(response.data.emailVerified);
             setUsername(response.data.username); // Set username from response
             setDateOfBirth(response.data.dateOfBirth);
             setProfilePictureLink(response.data.profilePictureLink);
@@ -55,6 +282,27 @@ const Setting = () => {
         }
     };
 
+    const clearEmail = async () => {
+        try {
+            const response = await axiosCustom.post(
+                `/api/user/api-keys/userEmailVerifyClear`,
+                {},
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true,
+                }
+            );
+
+            if (response.data.success) {
+                setReloadRandomNum(prev => prev + 1);
+            }
+        } catch (error) {
+            console.error("Error clearing email:", error);
+        }
+    }
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError("");
@@ -63,7 +311,7 @@ const Setting = () => {
         try {
             const response = await axiosCustom.post(
                 `/api/user/crud/updateUser`,
-                { name, dateOfBirth, profilePictureLink, bio, city, state, zipCode, country },
+                { name, email, dateOfBirth, profilePictureLink, bio, city, state, zipCode, country },
                 {
                     headers: {
                         'Content-Type': 'application/json'
@@ -106,6 +354,73 @@ const Setting = () => {
                         onChange={(e) => setName(e.target.value)}
                     />
                 </div>
+                {!emailVerified && (
+                    <InputEmailVerify
+                        setReloadRandomNum={setReloadRandomNum}
+                    />
+                )}
+                {emailVerified && (
+                    <Fragment>
+                        <div className="mb-4">
+                            <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
+                                Email
+                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                                    Valid
+                                </span>
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                value={email}
+                                disabled
+                            />
+                            <div className="mb-2">
+                                <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded mt-2">
+                                    <strong>Warning:</strong> Please ensure your email address is correct if provided,
+                                    as it will be used for login notifications, daily AI summaries,
+                                    server status updates, and other important communications.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                onClick={clearEmail}
+                            >
+                                Clear
+                            </button>
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
+                                Email
+                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                                    Valid
+                                </span>
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                value={email}
+                                disabled
+                            />
+                            <div className="mb-2">
+                                <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded mt-2">
+                                    <strong>Warning:</strong> Please ensure your email address is correct if provided,
+                                    as it will be used for login notifications, daily AI summaries,
+                                    server status updates, and other important communications.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                onClick={clearEmail}
+                            >
+                                Clear
+                            </button>
+                        </div>
+                    </Fragment>
+                )}
                 <div className="mb-4">
                     <label htmlFor="dateOfBirth" className="block text-gray-700 font-bold mb-2">
                         Date of Birth
@@ -200,7 +515,7 @@ const Setting = () => {
             </div>
         )
     }
-    
+
     return (
         <div
             className="p-4"
