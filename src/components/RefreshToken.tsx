@@ -31,6 +31,7 @@ const RefreshToken = () => {
             apiKeyS3Valid: false,
             apiKeyOllamaValid: false,
             apiKeyQdrantValid: false,
+            smtpValid: false,
         };
 
         try {
@@ -56,6 +57,9 @@ const RefreshToken = () => {
                 if (typeof userInfoFromApi?.apiKeyQdrantValid === 'boolean') {
                     tempData.apiKeyQdrantValid = userInfoFromApi?.apiKeyQdrantValid;
                 }
+                if (typeof userInfoFromApi?.smtpValid === 'boolean') {
+                    tempData.smtpValid = userInfoFromApi?.smtpValid;
+                }
             }
 
             setAuthState(tempData);
@@ -68,6 +72,7 @@ const RefreshToken = () => {
                 apiKeyS3Valid: false,
                 apiKeyOllamaValid: false,
                 apiKeyQdrantValid: false,
+                smtpValid: false,
             });
         }
     };

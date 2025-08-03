@@ -39,6 +39,7 @@ export default function Component() {
                 apiKeyS3Valid: false,
                 apiKeyOllamaValid: false,
                 apiKeyQdrantValid: false,
+                smtpValid: false,
             });
 
             // redirect to /login using react router dom
@@ -57,6 +58,7 @@ export default function Component() {
                 apiKeyS3Valid: false,
                 apiKeyOllamaValid: false,
                 apiKeyQdrantValid: false,
+                smtpValid: false,
             });
         }
     }
