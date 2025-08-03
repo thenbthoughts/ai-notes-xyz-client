@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { LucideList, LucidePlus, LucideChevronRight, LucideChevronLeft, LucidePin, LucideEdit } from 'lucide-react';
+import {
+    LucideList,
+    LucidePlus,
+    LucideChevronRight,
+    LucideChevronLeft,
+    LucidePin,
+    LucideEdit,
+    LucideSquare,
+    LucideSquareCheck,
+} from 'lucide-react';
 import { Link } from "react-router-dom";
 
 import axiosCustom from "../../../config/axiosCustom";
@@ -71,13 +80,37 @@ const ComponentPinnedTask = () => {
                     {taskArr.length > 0 && (
                         <div>
                             <p
-                                className="text-sm font-semibold text-purple-700"
+                                className="text-sm font-semibold text-purple-700 mb-2"
                             >
                                 {taskArr[currentTaskIndex]?.isTaskPinned && (
                                     <LucidePin size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
                                 )}
                                 {taskArr[currentTaskIndex]?.title}
                             </p>
+                            {/* sub task list */}
+                            <p className="text-xs text-purple-600 mb-2">
+                                {taskArr[currentTaskIndex]?.subTaskArr.length > 0 && (
+                                    <>
+                                        {taskArr[currentTaskIndex]?.subTaskArr.filter(subTask => subTask.taskCompletedStatus).length} / {taskArr[currentTaskIndex]?.subTaskArr.length} completed
+                                    </>
+                                )}
+                            </p>
+                            <ul>
+                                {taskArr[currentTaskIndex]?.subTaskArr.map((subTask) => (
+                                    <li
+                                        key={subTask._id}
+                                        className={`flex items-center gap-2 text-sm font-semibold ${subTask.taskCompletedStatus ? "text-purple-400" : "text-purple-600"}`}
+                                    >
+                                        {subTask.taskCompletedStatus && (
+                                            <LucideSquareCheck size={16} className="text-purple-400" style={{ position: 'relative', top: '2px' }} />
+                                        )}
+                                        {!subTask.taskCompletedStatus && (
+                                            <LucideSquare size={16} className="text-purple-600" style={{ position: 'relative', top: '2px' }} />
+                                        )}
+                                        {subTask.title}
+                                    </li>
+                                ))}
+                            </ul>
                             <div className="mt-2">
                                 <Link
                                     to={`/user/task?workspace=${taskArr[currentTaskIndex]?.taskWorkspaceId}&edit-task-id=${taskArr[currentTaskIndex]?._id}`}
@@ -88,7 +121,6 @@ const ComponentPinnedTask = () => {
                                     Edit
                                 </Link>
                             </div>
-                            {/* TODO sub task list */}
                         </div>
                     )}
                 </div>

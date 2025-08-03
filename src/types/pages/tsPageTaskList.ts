@@ -13,7 +13,7 @@ export interface tsPageTask {
 
     // task homepage pinned
     isTaskPinned: boolean;
-    
+
     // labels
     labels: string[];
     labelsAi: string[];
@@ -38,6 +38,18 @@ export interface tsPageTask {
         _id: string;
         statusTitle: string;
         listPosition: number;
+    }[];
+
+    // sub task list
+    subTaskArr: {
+        _id: string;
+        title: string;
+        parentTaskId: string;
+        taskCompletedStatus: boolean;
+        taskPosition: number;
+
+        // auth
+        username: string;
     }[];
 }
 
