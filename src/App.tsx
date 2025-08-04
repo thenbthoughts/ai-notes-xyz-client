@@ -27,6 +27,7 @@ const UserHomepage = lazy(() => import("./pages/user/userhomepage/UserHomepage.t
 const SettingProfile = lazy(() => import("./pages/user/settings/settingProfile/SettingProfile.tsx"));
 const SettingApiKey = lazy(() => import("./pages/user/settings/settingApiKeys/SettingApiKey.tsx"));
 const SettingModelPreference = lazy(() => import("./pages/user/settings/settingModelPreference/SettingModelPreference.tsx"));
+const LoginHistory = lazy(() => import("./pages/user/settings/loginHistory/loginHistory.tsx"));
 
 // pages -> ai
 const PageChatLlmListWrapper = lazy(() => import('./pages/user/noteAdvance/pageChatLlmList/ChatLlmListWrapper.tsx'));
@@ -210,7 +211,14 @@ function App() {
             </UnauthorizedRoute>
           ),
         },
-
+        {
+          path: "/user/setting/login-history",
+          element: (
+            <UnauthorizedRoute>
+              <LoginHistory />
+            </UnauthorizedRoute>
+          ),
+        },
         // -----
 
         {
