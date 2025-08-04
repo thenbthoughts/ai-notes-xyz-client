@@ -115,7 +115,7 @@ const TaskWorkspaceCrud = () => {
                         {taskWorkspace.map((workspace) => (
                             <div key={workspace._id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
                                 <div className="p-4 sm:p-6">
-                                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-1">{workspace.title}</h3>
+                                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{workspace.title}</h3>
                                     <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">{workspace.description}</p>
                                     
                                     <div className="flex flex-col sm:flex-row gap-2">

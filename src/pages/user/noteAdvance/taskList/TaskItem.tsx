@@ -118,7 +118,7 @@ const TaskItem = ({
                 className="bg-white p-3 rounded-lg shadow-sm mb-2 hover:shadow-md transition-shadow group cursor-pointer"
             >
                 <div className="flex justify-between items-start">
-                    <h3 className="font-medium text-gray-800 line-clamp-1">{task.title}</h3>
+                    <h3 className="font-medium text-gray-800">{task.title}</h3>
                 </div>
 
                 <div className="flex flex-wrap gap-2 mt-2 items-center">
