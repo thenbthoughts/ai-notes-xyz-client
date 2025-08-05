@@ -16,6 +16,8 @@ export default function Component() {
     const [successMessage, setSuccessMessage] = useState("")
     const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
 
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         if (authState.isLoggedIn === 'true') {
             // redirect to /home
@@ -29,6 +31,7 @@ export default function Component() {
         setSuccessMessage("")
 
         try {
+            setIsLoading(true)
             const response = await axiosCustom.post(
                 `/api/user/auth/login`,
                 {
@@ -64,6 +67,8 @@ export default function Component() {
                 Math.random() * 1_000_000
             )
             setAuthStateReload(randomNum)
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -119,7 +124,14 @@ export default function Component() {
                                             {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
                                         </div>
                                         <div className="p-6 flex flex-col space-y-4">
-                                            <button type="submit" className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">Login</button>
+                                            <button
+                                                type="submit"
+                                                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300"
+                                                disabled={isLoading}
+                                                onClick={handleSubmit}
+                                            >
+                                                {isLoading ? "Loading..." : "Login"}
+                                            </button>
                                             <div className="text-center">
                                                 <div className="text-center">
                                                     <Link
