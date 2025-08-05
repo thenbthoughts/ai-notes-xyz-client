@@ -44,6 +44,7 @@ const TaskList = lazy(() => import("./pages/user/noteAdvance/taskList/TaskList.t
 const TaskWorkspaceCrud = lazy(() => import("./pages/user/noteAdvance/TaskWorkspaceCrud/TaskWorkspaceCrud.tsx"));
 const CalendarWrapper = lazy(() => import("./pages/user/noteAdvance/Calendar/CalendarWrapper.tsx"));
 const FinanceWrapper = lazy(() => import("./pages/user/noteAdvance/Finance/FinanceWrapper.tsx"));
+const TaskScheduleWrapper = lazy(() => import("./pages/user/noteAdvance/taskSchedule/TaskScheduleWrapper.tsx"));
 
 // pages -> test
 const TestDevWrapper = lazy(() => import("./pages/test/testDev/TestDevWrapper.tsx"));
@@ -165,7 +166,14 @@ function App() {
             </UnauthorizedRoute>
           ),
         },
-
+        {
+          path: "/user/task-schedule",
+          element: (
+            <UnauthorizedRoute>
+              <TaskScheduleWrapper />
+            </UnauthorizedRoute>
+          ),
+        },
         // -----
 
         {

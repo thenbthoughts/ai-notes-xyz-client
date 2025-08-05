@@ -25,6 +25,10 @@ const TestDevWrapper = () => {
                 <Link to="/test/homepage-backup-delete" target="_blank" rel="noopener noreferrer">Go to Homepage Backup Delete</Link>
             </p>
 
+            <p>
+                <Link to="/user/task-schedule" target="_blank" rel="noopener noreferrer">Go to Task Schedule</Link>
+            </p>
+
             <TestReactQuill />
         </div>
     )
