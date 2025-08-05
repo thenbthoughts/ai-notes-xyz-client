@@ -124,7 +124,12 @@ export default function Component() {
                                             {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
                                         </div>
                                         <div className="p-6 flex flex-col space-y-4">
-                                            <button type="submit" className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300" disabled={isLoading}>
+                                            <button
+                                                type="submit"
+                                                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300"
+                                                disabled={isLoading}
+                                                onClick={handleSubmit}
+                                            >
                                                 {isLoading ? "Loading..." : "Login"}
                                             </button>
                                             <div className="text-center">
