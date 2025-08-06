@@ -1,27 +1,24 @@
 import { DebounceInput } from 'react-debounce-input';
 import { useNavigate } from 'react-router-dom';
 
-import { notesAddAxios } from '../utils/notesListAxios.ts';
+import { taskScheduleAddAxios } from '../utils/taskScheduleListAxios.ts';
 
-import { jotaiStateNotesSearch, jotaiStateNotesIsStar, jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
-import { useAtom, useAtomValue } from 'jotai';
+import { jotaiStateNotesSearch, jotaiStateNotesIsStar } from '../stateJotai/notesStateJotai.ts';
+import { useAtom } from 'jotai';
 
 import ComponentFolderAndFileList from './ComponentFolderAndFileList.tsx';
 import ComponentNotesWorkspace from './ComponentNotesWorkspace.tsx';
 
 const ComponentNotesLeft = () => {
     const navigate = useNavigate();
-    const workspaceId = useAtomValue(jotaiStateNotesWorkspaceId);
     const [searchTerm, setSearchTerm] = useAtom(jotaiStateNotesSearch);
     const [isStar, setIsStar] = useAtom(jotaiStateNotesIsStar);
 
     // Fetch chat threads from API
 
-    const notesAddAxiosLocal = async () => {
+    const taskScheduleAddAxiosLocal = async () => {
         try {
-            const result = await notesAddAxios({
-                notesWorkspaceId: workspaceId,
-            });
+            const result = await taskScheduleAddAxios();
             if (result.success !== '') {
                 navigate(`/user/task-schedule?action=edit&id=${result.recordId}`)
             }
@@ -43,7 +40,7 @@ const ComponentNotesLeft = () => {
             <div className="flex space-x-2 mb-4">
                 <button
                     className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
-                    onClick={notesAddAxiosLocal}
+                    onClick={taskScheduleAddAxiosLocal}
                 >+ Add</button>
                 <button
                     className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"

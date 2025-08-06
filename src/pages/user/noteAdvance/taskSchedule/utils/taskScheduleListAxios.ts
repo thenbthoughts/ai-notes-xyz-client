@@ -1,20 +1,17 @@
 import { AxiosRequestConfig } from "axios";
 import axiosCustom from "../../../../../config/axiosCustom";
 
-export const notesAddAxios = async ({
-    notesWorkspaceId,
-}: {
-    notesWorkspaceId: string;
-}) => {
+export const taskScheduleAddAxios = async () => {
     try {
         const config = {
             method: 'post',
-            url: `/api/notes/crud/notesAdd`,
+            url: `/api/task-schedule/crud/taskScheduleAdd`,
             headers: {
                 'Content-Type': 'application/json',
             },
             data: {
-                notesWorkspaceId: notesWorkspaceId,
+                title: `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+                taskType: 'taskAdd',
             },
         } as AxiosRequestConfig;
 
@@ -33,7 +30,7 @@ export const notesAddAxios = async ({
 
         return {
             success: '',
-            error: 'An error occurred while adding the life event. Please try again.',
+            error: 'An error occurred while adding the task schedule. Please try again.',
             recordId: '',
         };
     } catch (error) {

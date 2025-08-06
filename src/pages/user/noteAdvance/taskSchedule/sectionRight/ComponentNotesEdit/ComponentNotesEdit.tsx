@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { AxiosRequestConfig } from 'axios';
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
 import { Link, useNavigate } from 'react-router-dom';
-import { LucideArrowLeft, LucideCopy, LucidePlus, LucideSave, LucideTrash, LucideX } from 'lucide-react';
+import { LucideArrowLeft, LucidePlus, LucideSave, LucideTrash } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSetAtom } from 'jotai';
 import { getAllTimezones } from 'countries-and-timezones';
@@ -460,10 +460,10 @@ const ComponentNotesEdit = ({
         description: notesObj.description,
 
         // Schedule fields
-        scheduleTimeArrTimezone: 0,
+        timezoneName: notesObj.timezoneName,
+        timezoneOffset: notesObj.timezoneOffset,
         scheduleTimeArr: scheduleTimeArr,
         cronExpressionArr: cronExpressionArr,
-
 
         // UI helper fields
         tagsInput: '', // Temporary field for tag input
@@ -478,7 +478,8 @@ const ComponentNotesEdit = ({
         description: string;
 
         // Schedule fields
-        scheduleTimeArrTimezone: number;
+        timezoneName: string;
+        timezoneOffset: number;
         scheduleTimeArr: string[];
         cronExpressionArr: string[];
 
@@ -502,9 +503,18 @@ const ComponentNotesEdit = ({
             error: '',
         });
         try {
+            let tempScheduleTimeArr: string[] = [];
+            let tempCronExpressionArr: string[] = [
+                '0 9 * * *',
+            ];
+            if (formData.taskType === 'taskAdd' || formData.taskType === 'notesAdd') {
+                tempScheduleTimeArr = formData.scheduleTimeArr;
+                tempCronExpressionArr = formData.cronExpressionArr;
+            }
+
             const config = {
                 method: 'post',
-                url: `/api/notes/crud/notesEdit`,
+                url: `/api/task-schedule/crud/taskScheduleEdit`,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -516,9 +526,13 @@ const ComponentNotesEdit = ({
                     title: formData.title,
                     description: formData.description,
 
+                    // schedule time
+                    timezoneName: formData.timezoneName,
+                    timezoneOffset: formData.timezoneOffset,
+
                     // Schedule fields
-                    scheduleTimeArr: scheduleTimeArr,
-                    cronExpressionArr: cronExpressionArr,
+                    scheduleTimeArr: tempScheduleTimeArr,
+                    cronExpressionArr: tempCronExpressionArr,
 
                     // Notes fields
                     isStar: formData.isStar,
@@ -606,11 +620,11 @@ const ComponentNotesEdit = ({
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, taskType: e.target.value })}
                     >
-                        <option value="">Select Task Type</option>
-                        <option value="task-add">Task Add</option>
-                        <option value="notes-add">Notes Add</option>
-                        <option value="custom-rest-api-call">Custom REST API Call</option>
-                        <option value="custom-ai-summary">Custom AI Summary</option>
+                        <option value="taskAdd">Task Add</option>
+                        <option value="notesAdd">Notes Add</option>
+                        <option value="restApiCall">REST API Call</option>
+                        <option value="generatedDailySummaryByAi">Generated Daily Summary (AI)</option>
+                        <option value="suggestDailyTasksByAi">Suggest Daily Tasks (AI)</option>
                     </select>
                 </div>
 
@@ -623,57 +637,11 @@ const ComponentNotesEdit = ({
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     />
-                    <div className="flex items-center mt-1">
-                        {formData?.title.length >= 1 && formData.title.includes("Empty Note") && (
-                            <button
-                                type="button"
-                                className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-md"
-                                onClick={() => setFormData({ ...formData, title: '' })}
-                                aria-label="Clear title"
-                            >
-                                Clear
-                                <LucideX
-                                    className="w-4 h-4 inline-block ml-2"
-                                    style={{
-                                        position: 'relative',
-                                        top: '-2px',
-                                    }}
-                                />
-                            </button>
-                        )}
-                        {formData?.title.length >= 1 && (
-                            <button
-                                type="button"
-                                className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-md ml-2"
-                                onClick={() => {
-                                    navigator.clipboard.writeText(formData.title);
-                                    toast.success('Title copied to clipboard!');
-                                }}
-                                aria-label="Copy title"
-                            >
-                                Copy
-                                <LucideCopy
-                                    className="w-4 h-4 inline-block ml-2"
-                                    style={{
-                                        position: 'relative',
-                                        top: '-2px',
-                                    }}
-                                />
-                            </button>
-                        )}
-                    </div>
-
                 </div>
 
                 {/* field -> description */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Description</label>
-                    {/* <textarea
-                        value={formData.description}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        rows={10}
-                    /> */}
                     <QuillEditorCustom1
                         value={formData.description}
                         setValue={(value) => setFormData({ ...formData, description: value })}
@@ -701,39 +669,56 @@ const ComponentNotesEdit = ({
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Schedule Timezone</label>
                     <select
-                        value={formData.scheduleTimeArrTimezone}
+                        value={formData.timezoneName}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        onChange={(e) => setFormData({ ...formData, scheduleTimeArrTimezone: parseInt(e.target.value) })}
+                        onChange={(e) => {
+                            const tempTimezoneName = e.target.value;
+                            let timezoneName = 'Asia/Kolkata';
+                            let timezoneOffset = 330;
+                            Object.values(timeZoneArr).forEach(tz => {
+                                if (tz.name === tempTimezoneName) {
+                                    timezoneName = tz.name;
+                                    timezoneOffset = tz.utcOffset;
+                                }
+                            });
+                            setFormData({
+                                ...formData,
+                                timezoneName: timezoneName,
+                                timezoneOffset: timezoneOffset
+                            });
+                        }}
                     >
                         {Object.values(timeZoneArr).map((tz) => (
-                            <option key={tz.name} value={tz.utcOffset}>
+                            <option key={tz.name} value={tz.name}>
                                 {tz.name} (UTC{tz.utcOffsetStr})
                             </option>
                         ))}
                     </select>
                 </div>
 
-                {/* JSON display */}
-                {/*
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">JSON</label>
-                    <pre className="text-xs bg-gray-100 p-2 rounded-md">{JSON.stringify(formData, null, 2)}</pre>
-                    <pre className="text-xs bg-gray-100 p-2 rounded-md">{JSON.stringify(scheduleTimeArr, null, 2)}</pre>
-                    <pre className="text-xs bg-gray-100 p-2 rounded-md">{JSON.stringify(cronExpressionArr, null, 2)}</pre>
-                </div>
-                */}
-
                 {/* field -> schedule times */}
-                <ScheduleTimeArr
-                    scheduleTimeArr={scheduleTimeArr}
-                    setScheduleTimeArr={setScheduleTimeArr}
-                />
+                <Fragment>
+                    {(
+                        formData.taskType === 'taskAdd' ||
+                        formData.taskType === 'notesAdd'
+                    ) && (
+                            <ScheduleTimeArr
+                                scheduleTimeArr={scheduleTimeArr}
+                                setScheduleTimeArr={setScheduleTimeArr}
+                            />
+                        )}
+                </Fragment>
 
                 {/* field -> cron expressions */}
-                <CronExpressionArr
-                    cronExpressionArr={cronExpressionArr}
-                    setCronExpressionArr={setCronExpressionArr}
-                />
+                {(
+                    formData.taskType === 'taskAdd' ||
+                    formData.taskType === 'notesAdd'
+                ) && (
+                        <CronExpressionArr
+                            cronExpressionArr={cronExpressionArr}
+                            setCronExpressionArr={setCronExpressionArr}
+                        />
+                    )}
             </div>
         )
     }
@@ -822,7 +807,7 @@ const ComponentNotesEditWrapper = ({
         try {
             const config = {
                 method: 'post',
-                url: `/api/notes/crud/notesGet`,
+                url: `/api/task-schedule/crud/taskScheduleGet`,
                 headers: {
                     'Content-Type': 'application/json',
                 },

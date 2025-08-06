@@ -21,7 +21,7 @@ import useResponsiveScreen, {
 
 import ComponentRightWrapper from './sectionRight/ComponentRightWrapper.tsx';
 
-import { notesAddAxios } from './utils/notesListAxios.ts';
+import { taskScheduleAddAxios } from './utils/taskScheduleListAxios.ts';
 
 import axiosCustom from '../../../../config/axiosCustom.ts';
 
@@ -45,12 +45,9 @@ const ScheduleActionWrapper = () => {
 
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
-    const notesAddAxiosLocal = async () => {
+    const taskScheduleAddAxiosLocal = async () => {
         try {
-            console.log('workspaceId 1234', workspaceId);
-            const result = await notesAddAxios({
-                notesWorkspaceId: workspaceId,
-            });
+            const result = await taskScheduleAddAxios();
             if (result.success !== '') {
                 navigate(`/user/task-schedule?action=edit&id=${result.recordId}&workspace=${workspaceId}`)
             }
@@ -180,7 +177,7 @@ const ScheduleActionWrapper = () => {
                     <div
                         className='p-1 cursor-pointer'
                         onClick={() => {
-                            notesAddAxiosLocal();
+                            taskScheduleAddAxiosLocal();
                         }}
                     >
                         <div className={`py-3 rounded bg-gray-600`}>

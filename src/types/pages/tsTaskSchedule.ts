@@ -22,10 +22,11 @@ export interface ITaskSchedule extends Document {
     description: string;
 
     // schedule time
+    timezoneName: string;
+    timezoneOffset: number;
     scheduleTimeArr: string[];
-
-    // cron
     cronExpressionArr: string[];
+    scheduleExecutionTimeArr: string[];
 
     // auto
     createdAtUtc: Date;

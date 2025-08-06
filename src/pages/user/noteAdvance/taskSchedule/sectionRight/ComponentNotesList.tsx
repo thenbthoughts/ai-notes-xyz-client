@@ -5,7 +5,7 @@ import { INotes } from '../../../../../types/pages/tsNotes.ts';
 import ComponentNotesItem from './ComponentNotesItem.tsx';
 import ReactPaginate from 'react-paginate';
 import { PlusCircle } from 'lucide-react';
-import { notesAddAxios } from '../utils/notesListAxios.ts';
+import { taskScheduleAddAxios } from '../utils/taskScheduleListAxios.ts';
 import { useNavigate } from 'react-router-dom';
 import { jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
 import { useAtomValue } from 'jotai';
@@ -37,7 +37,7 @@ const ComponentNotesList = () => {
         try {
             const config = {
                 method: 'post',
-                url: `/api/notes/crud/notesGet`,
+                url: `/api/task-schedule/crud/taskScheduleGet`,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -66,11 +66,9 @@ const ComponentNotesList = () => {
         }
     };
 
-    const notesAddAxiosLocal = async () => {
+    const taskScheduleAddAxiosLocal = async () => {
         try {
-            const result = await notesAddAxios({
-                notesWorkspaceId: workspaceId,
-            });
+            const result = await taskScheduleAddAxios();
             if (result.success !== '') {
                 navigate(`/user/task-schedule?action=edit&id=${result.recordId}`);
             }
@@ -83,7 +81,7 @@ const ComponentNotesList = () => {
         return (
             <div className="mb-4 flex items-center gap-3">
                 <div className="flex items-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-lg px-4 py-2 shadow-sm border border-blue-200">
-                    <button onClick={notesAddAxiosLocal}>
+                    <button onClick={taskScheduleAddAxiosLocal}>
                         <PlusCircle className="w-6 h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
                     </button>
                     <span className="text-lg font-bold text-blue-700 tracking-wide">{totalCount}</span>
