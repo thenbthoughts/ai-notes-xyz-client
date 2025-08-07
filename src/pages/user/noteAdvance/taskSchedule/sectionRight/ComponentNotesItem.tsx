@@ -20,7 +20,7 @@ const ComponentNotesItem = ({
 
             const config = {
                 method: 'post',
-                url: `/api/notes/crud/notesDelete`,
+                url: `/api/task-schedule/crud/taskScheduleDelete`,
                 headers: {
                     'Content-Type': 'application/json',
                 },

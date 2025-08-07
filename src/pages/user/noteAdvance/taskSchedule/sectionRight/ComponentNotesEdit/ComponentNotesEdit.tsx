@@ -462,8 +462,6 @@ const ComponentNotesEdit = ({
         // Schedule fields
         timezoneName: notesObj.timezoneName,
         timezoneOffset: notesObj.timezoneOffset,
-        scheduleTimeArr: scheduleTimeArr,
-        cronExpressionArr: cronExpressionArr,
 
         // UI helper fields
         tagsInput: '', // Temporary field for tag input
@@ -508,8 +506,8 @@ const ComponentNotesEdit = ({
                 '0 9 * * *',
             ];
             if (formData.taskType === 'taskAdd' || formData.taskType === 'notesAdd') {
-                tempScheduleTimeArr = formData.scheduleTimeArr;
-                tempCronExpressionArr = formData.cronExpressionArr;
+                tempScheduleTimeArr = scheduleTimeArr;
+                tempCronExpressionArr = cronExpressionArr;
             }
 
             const config = {
@@ -573,7 +571,7 @@ const ComponentNotesEdit = ({
 
             const config = {
                 method: 'post',
-                url: `/api/notes/crud/notesDelete`,
+                url: `/api/task-schedule/crud/taskScheduleDelete`,
                 headers: {
                     'Content-Type': 'application/json',
                 },
