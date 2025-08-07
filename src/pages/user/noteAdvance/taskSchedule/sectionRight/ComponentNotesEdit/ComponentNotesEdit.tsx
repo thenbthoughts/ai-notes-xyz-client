@@ -503,7 +503,8 @@ const ComponentNotesEdit = ({
         try {
             let tempScheduleTimeArr: string[] = [];
             let tempCronExpressionArr: string[] = [
-                '0 9 * * *',
+                // '0 9 * * *',
+                '0 */1 * * *' // temporary cron expression
             ];
             if (formData.taskType === 'taskAdd' || formData.taskType === 'notesAdd') {
                 tempScheduleTimeArr = scheduleTimeArr;
