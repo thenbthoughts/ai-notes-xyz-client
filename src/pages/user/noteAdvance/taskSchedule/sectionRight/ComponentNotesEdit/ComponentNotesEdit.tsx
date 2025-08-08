@@ -477,15 +477,6 @@ const ComponentNotesEdit = ({
             error: '',
         });
         try {
-            let tempScheduleTimeArr: string[] = [];
-            let tempCronExpressionArr: string[] = [
-                '0 9 * * *',
-            ];
-            if (formData.taskType === 'taskAdd' || formData.taskType === 'notesAdd') {
-                tempScheduleTimeArr = scheduleTimeArr;
-                tempCronExpressionArr = cronExpressionArr;
-            }
-
             const config = {
                 method: 'post',
                 url: `/api/task-schedule/crud/taskScheduleEdit`,
@@ -505,8 +496,8 @@ const ComponentNotesEdit = ({
                     timezoneOffset: formData.timezoneOffset,
 
                     // Schedule fields
-                    scheduleTimeArr: tempScheduleTimeArr,
-                    cronExpressionArr: tempCronExpressionArr,
+                    scheduleTimeArr: scheduleTimeArr,
+                    cronExpressionArr: cronExpressionArr,
 
                     // Notes fields
                     isStar: formData.isStar,
