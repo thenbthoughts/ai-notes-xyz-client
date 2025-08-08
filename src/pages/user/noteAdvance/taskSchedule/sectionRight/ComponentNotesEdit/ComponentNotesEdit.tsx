@@ -114,8 +114,7 @@ const CronExpressionArr = ({
 
     // Cron Builder State
     const [cronBuilder, setCronBuilder] = useState({
-        type: 'daily', // minute, hour, daily, weekly, monthly
-        minuteInterval: 1,
+        type: 'daily', // hour, daily, weekly, monthly
         hourInterval: 1,
         dailyTime: '09:00',
         weeklyDay: 1, // Monday
@@ -126,12 +125,9 @@ const CronExpressionArr = ({
 
     // Generate cron expression from builder state
     const generateCronExpression = () => {
-        const { type, minuteInterval, hourInterval, dailyTime, weeklyDay, weeklyTime, monthlyDay, monthlyTime } = cronBuilder;
+        const { type, hourInterval, dailyTime, weeklyDay, weeklyTime, monthlyDay, monthlyTime } = cronBuilder;
 
         switch (type) {
-            case 'minute':
-                return `*/${minuteInterval} * * * *`;
-
             case 'hour':
                 return `0 */${hourInterval} * * *`;
 
@@ -154,13 +150,10 @@ const CronExpressionArr = ({
 
     // Get cron description
     const getCronDescription = () => {
-        const { type, minuteInterval, hourInterval, dailyTime, weeklyDay, weeklyTime, monthlyDay, monthlyTime } = cronBuilder;
+        const { type, hourInterval, dailyTime, weeklyDay, weeklyTime, monthlyDay, monthlyTime } = cronBuilder;
         const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
         switch (type) {
-            case 'minute':
-                return `Every ${minuteInterval} minute${minuteInterval > 1 ? 's' : ''}`;
-
             case 'hour':
                 return `Every ${hourInterval} hour${hourInterval > 1 ? 's' : ''}`;
 
@@ -267,8 +260,8 @@ const CronExpressionArr = ({
                         {/* Type Selector */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700 mb-2">Schedule Type</label>
-                            <div className="grid grid-cols-5 gap-2">
-                                {['minute', 'hour', 'daily', 'weekly', 'monthly'].map((type) => (
+                            <div className="grid grid-cols-4 gap-2">
+                                {['hour', 'daily', 'weekly', 'monthly'].map((type) => (
                                     <button
                                         key={type}
                                         type="button"
@@ -286,23 +279,6 @@ const CronExpressionArr = ({
 
                         {/* Dynamic Options Based on Type */}
                         <div className="mb-4">
-                            {cronBuilder.type === 'minute' && (
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Every N Minutes</label>
-                                    <div className="flex items-center gap-2">
-                                        <input
-                                            type="number"
-                                            min="1"
-                                            max="59"
-                                            value={cronBuilder.minuteInterval}
-                                            onChange={(e) => setCronBuilder({ ...cronBuilder, minuteInterval: parseInt(e.target.value) || 1 })}
-                                            className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
-                                        <span className="text-sm text-gray-600">minute(s)</span>
-                                    </div>
-                                </div>
-                            )}
-
                             {cronBuilder.type === 'hour' && (
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Every N Hours</label>
@@ -616,7 +592,15 @@ const ComponentNotesEdit = ({
                     <select
                         value={formData.taskType}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        onChange={(e) => setFormData({ ...formData, taskType: e.target.value })}
+                        onChange={(e) => {
+                            setFormData({ ...formData, taskType: e.target.value });
+                            if (e.target.value === 'taskAdd' || e.target.value === 'notesAdd') {
+                                // do nothing
+                            } else {
+                                setScheduleTimeArr([]);
+                                setCronExpressionArr(['0 9 * * *']);
+                            }
+                        }}
                     >
                         <option value="taskAdd">Task Add</option>
                         <option value="notesAdd">Notes Add</option>
@@ -696,27 +680,17 @@ const ComponentNotesEdit = ({
 
                 {/* field -> schedule times */}
                 <Fragment>
-                    {(
-                        formData.taskType === 'taskAdd' ||
-                        formData.taskType === 'notesAdd'
-                    ) && (
-                            <ScheduleTimeArr
-                                scheduleTimeArr={scheduleTimeArr}
-                                setScheduleTimeArr={setScheduleTimeArr}
-                            />
-                        )}
+                    <ScheduleTimeArr
+                        scheduleTimeArr={scheduleTimeArr}
+                        setScheduleTimeArr={setScheduleTimeArr}
+                    />
                 </Fragment>
 
                 {/* field -> cron expressions */}
-                {(
-                    formData.taskType === 'taskAdd' ||
-                    formData.taskType === 'notesAdd'
-                ) && (
-                        <CronExpressionArr
-                            cronExpressionArr={cronExpressionArr}
-                            setCronExpressionArr={setCronExpressionArr}
-                        />
-                    )}
+                <CronExpressionArr
+                    cronExpressionArr={cronExpressionArr}
+                    setCronExpressionArr={setCronExpressionArr}
+                />
             </div>
         )
     }
