@@ -214,7 +214,7 @@ const ComponentFolderAndFileList = () => {
         return (
             <div key={item._id} style={{ paddingLeft: indent, width: '100%', marginTop: 0, marginBottom: 0, ...borderStyle }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 0 }}>
-                    <div style={{ width: '80%', display: 'flex', alignItems: 'center', minWidth: 0 }}>
+                    <div style={{ width: '100%', display: 'flex', alignItems: 'center', minWidth: 0 }}>
                         <Link
                             to={`/user/notes?action=edit&id=${item._id}&workspace=${workspaceId}`}
                             onClick={() => {
@@ -225,7 +225,7 @@ const ComponentFolderAndFileList = () => {
                             }}
                             style={{
                                 width: '100%',
-                                background: isActive ? '#e5e7eb' : 'transparent', // light gray for active
+                                background: isActive ? '#e5e7eb' : '#f3f4f6', // light gray for active
                                 color: isActive ? '#111' : '#111', // always black text
                                 border: item.isStar && level === 0 ? '2px solid #fbbf24' : 'none',
                                 borderRadius: '0.5rem',
@@ -243,15 +243,12 @@ const ComponentFolderAndFileList = () => {
                             <span style={{
                                 flex: 1,
                                 minWidth: 0,
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
                                 verticalAlign: 'middle',
                                 display: 'block',
                             }}>{item.title}</span>
                         </Link>
                     </div>
-                    {hasChildren && (
+                    {/* {hasChildren && (
                         <div
                             style={{ width: '10%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', }}
                             onClick={() => {
@@ -263,7 +260,7 @@ const ComponentFolderAndFileList = () => {
                                 {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                             </span>
                         </div>
-                    )}
+                    )} */}
                 </div>
                 {/* Children */}
                 {hasChildren && isExpanded && (
