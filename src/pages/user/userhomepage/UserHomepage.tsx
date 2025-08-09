@@ -9,7 +9,8 @@ import {
     LucideLogOut,
     LucideLoader,
     LucideCalendar1,
-    LucideFileText
+    LucideFileText,
+    LucideClock
 } from 'lucide-react'; // Importing lucide icons
 import { useAtomValue } from 'jotai';
 import { Fragment, useEffect, useState } from 'react';
@@ -171,6 +172,12 @@ const UserHomepage = () => {
                                             <LucideInfo size={32} />
                                         </div>
                                         <div>Info Vault</div>
+                                    </Link>
+                                    <Link to="/user/task-schedule" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>    
+                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                            <LucideClock size={32} />
+                                        </div>
+                                        <div>Schedule</div>
                                     </Link>
                                     <Link to="/user/setting" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>

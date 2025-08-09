@@ -49,6 +49,9 @@ const NavigationDrawer = () => {
                                 <Link to="/user/task" className="text-white block p-2" onClick={handleLinkClick}>📝 Task</Link>
                             </li>
                             <li className="hover:bg-purple-700 rounded-lg mx-2 my-2">
+                                <Link to="/user/task-schedule" className="text-white block p-2" onClick={handleLinkClick}>📝 Schedule</Link>
+                            </li>
+                            <li className="hover:bg-purple-700 rounded-lg mx-2 my-2">
                                 <Link to="/user/info-vault" className="text-white block p-2" onClick={handleLinkClick}>📝 Info Vault</Link>
                             </li>
                         </Fragment>
