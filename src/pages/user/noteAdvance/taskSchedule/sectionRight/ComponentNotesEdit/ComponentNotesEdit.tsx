@@ -8,8 +8,8 @@ import { useSetAtom } from 'jotai';
 import { getAllTimezones } from 'countries-and-timezones';
 
 import { jotaiStateNotesWorkspaceRefresh } from '../../stateJotai/notesStateJotai.ts';
-import { ITaskSchedule } from '../../../../../../types/pages/tsTaskSchedule.ts';
-import QuillEditorCustom1 from '../../../../../../components/quillJs/QuillEditorCustom1/QuillEditorCustom1.tsx';
+import { ITaskSchedule, ITaskScheduleTaskAdd } from '../../../../../../types/pages/tsTaskSchedule.ts';
+import ComponentScheduleTaskAdd from './ComponentScheduleTaskAdd.tsx';
 
 const timeZoneArr = getAllTimezones();
 
@@ -120,12 +120,14 @@ const CronExpressionArr = ({
         weeklyDay: 1, // Monday
         weeklyTime: '09:00',
         monthlyDay: 1,
-        monthlyTime: '09:00'
+        monthlyTime: '09:00',
+        monthlyType: 'all', // 'all' or 'specific'
+        specificMonths: [] as number[] // Array of month numbers (1-12)
     });
 
     // Generate cron expression from builder state
     const generateCronExpression = () => {
-        const { type, hourInterval, dailyTime, weeklyDay, weeklyTime, monthlyDay, monthlyTime } = cronBuilder;
+        const { type, hourInterval, dailyTime, weeklyDay, weeklyTime, monthlyDay, monthlyTime, monthlyType, specificMonths } = cronBuilder;
 
         switch (type) {
             case 'hour':
@@ -141,7 +143,9 @@ const CronExpressionArr = ({
 
             case 'monthly':
                 const [monthlyHour, monthlyMin] = monthlyTime.split(':');
-                return `${parseInt(monthlyMin)} ${parseInt(monthlyHour)} ${monthlyDay} * *`;
+                // If no specific months selected or monthlyType is 'all', use '*' for all months
+                const monthsStr = (monthlyType === 'all' || specificMonths.length === 0) ? '*' : specificMonths.join(',');
+                return `${parseInt(monthlyMin)} ${parseInt(monthlyHour)} ${monthlyDay} ${monthsStr} *`;
 
             default:
                 return '0 9 * * *';
@@ -150,8 +154,9 @@ const CronExpressionArr = ({
 
     // Get cron description
     const getCronDescription = () => {
-        const { type, hourInterval, dailyTime, weeklyDay, weeklyTime, monthlyDay, monthlyTime } = cronBuilder;
+        const { type, hourInterval, dailyTime, weeklyDay, weeklyTime, monthlyDay, monthlyTime, monthlyType, specificMonths } = cronBuilder;
         const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
         switch (type) {
             case 'hour':
@@ -164,7 +169,11 @@ const CronExpressionArr = ({
                 return `Weekly on ${dayNames[weeklyDay]} at ${weeklyTime}`;
 
             case 'monthly':
-                return `Monthly on day ${monthlyDay} at ${monthlyTime}`;
+                // If no specific months selected or monthlyType is 'all', default to all months
+                const monthsDesc = (monthlyType === 'all' || specificMonths.length === 0)
+                    ? 'every month' 
+                    : `in ${specificMonths.map(m => monthNames[m - 1]).join(', ')}`;
+                return `On day ${monthlyDay} at ${monthlyTime} ${monthsDesc}`;
 
             default:
                 return 'Custom expression';
@@ -339,26 +348,93 @@ const CronExpressionArr = ({
                             )}
 
                             {cronBuilder.type === 'monthly' && (
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Day of Month</label>
-                                        <input
-                                            type="number"
-                                            min="1"
-                                            max="31"
-                                            value={cronBuilder.monthlyDay}
-                                            onChange={(e) => setCronBuilder({ ...cronBuilder, monthlyDay: parseInt(e.target.value) || 1 })}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Day of Month</label>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                max="31"
+                                                value={cronBuilder.monthlyDay}
+                                                onChange={(e) => setCronBuilder({ ...cronBuilder, monthlyDay: parseInt(e.target.value) || 1 })}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                                            <input
+                                                type="time"
+                                                value={cronBuilder.monthlyTime}
+                                                onChange={(e) => setCronBuilder({ ...cronBuilder, monthlyTime: e.target.value })}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
                                     </div>
+                                    
+                                    {/* Month Selection */}
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
-                                        <input
-                                            type="time"
-                                            value={cronBuilder.monthlyTime}
-                                            onChange={(e) => setCronBuilder({ ...cronBuilder, monthlyTime: e.target.value })}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Months</label>
+                                        <div className="space-y-2">
+                                            <div className="flex gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setCronBuilder({ ...cronBuilder, monthlyType: 'all', specificMonths: [] })}
+                                                    className={`px-3 py-2 text-sm rounded-md border ${cronBuilder.monthlyType === 'all'
+                                                        ? 'bg-blue-600 text-white border-blue-600'
+                                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                        }`}
+                                                >
+                                                    All Months
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setCronBuilder({ ...cronBuilder, monthlyType: 'specific' })}
+                                                    className={`px-3 py-2 text-sm rounded-md border ${cronBuilder.monthlyType === 'specific'
+                                                        ? 'bg-blue-600 text-white border-blue-600'
+                                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                        }`}
+                                                >
+                                                    Specific Months
+                                                </button>
+                                            </div>
+                                            
+                                            {cronBuilder.monthlyType === 'specific' && (
+                                                <div>
+                                                    <div className="grid grid-cols-3 gap-2 mt-2">
+                                                        {[
+                                                            { num: 1, name: 'Jan' }, { num: 2, name: 'Feb' }, { num: 3, name: 'Mar' },
+                                                            { num: 4, name: 'Apr' }, { num: 5, name: 'May' }, { num: 6, name: 'Jun' },
+                                                            { num: 7, name: 'Jul' }, { num: 8, name: 'Aug' }, { num: 9, name: 'Sep' },
+                                                            { num: 10, name: 'Oct' }, { num: 11, name: 'Nov' }, { num: 12, name: 'Dec' }
+                                                        ].map((month) => (
+                                                            <button
+                                                                key={month.num}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const isSelected = cronBuilder.specificMonths.includes(month.num);
+                                                                    const newMonths = isSelected
+                                                                        ? cronBuilder.specificMonths.filter(m => m !== month.num)
+                                                                        : [...cronBuilder.specificMonths, month.num].sort((a, b) => a - b);
+                                                                    setCronBuilder({ ...cronBuilder, specificMonths: newMonths });
+                                                                }}
+                                                                className={`px-2 py-1 text-xs rounded border ${cronBuilder.specificMonths.includes(month.num)
+                                                                    ? 'bg-green-600 text-white border-green-600'
+                                                                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                                    }`}
+                                                            >
+                                                                {month.name}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                    {cronBuilder.specificMonths.length === 0 && (
+                                                        <div className="text-xs text-amber-600 mt-2 bg-amber-50 p-2 rounded border border-amber-200">
+                                                            No months selected. Will default to all months when added.
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -403,9 +479,11 @@ const CronExpressionArr = ({
 }
 
 const ComponentNotesEdit = ({
-    notesObj
+    notesObj,
+    parentFormDataTaskAdd,
 }: {
-    notesObj: ITaskSchedule
+    notesObj: ITaskSchedule;
+    parentFormDataTaskAdd: ITaskScheduleTaskAdd;
 }) => {
     const setWorkspaceRefresh = useSetAtom(jotaiStateNotesWorkspaceRefresh);
     const navigate = useNavigate();
@@ -426,6 +504,8 @@ const ComponentNotesEdit = ({
         setCronExpressionArr,
     ] = useState<string[]>(notesObj.cronExpressionArr || []);
 
+    const [formDataTaskAdd, setFormDataTaskAdd] = useState(parentFormDataTaskAdd);
+
     const [formData, setFormData] = useState({
         // Core task schedule fields
         isActive: notesObj.isActive,
@@ -433,7 +513,6 @@ const ComponentNotesEdit = ({
         shouldSendEmail: notesObj.shouldSendEmail,
 
         title: notesObj.title,
-        description: notesObj.description,
 
         // Schedule fields
         timezoneName: notesObj.timezoneName,
@@ -449,7 +528,6 @@ const ComponentNotesEdit = ({
         taskType: string;
         shouldSendEmail: boolean;
         title: string;
-        description: string;
 
         // Schedule fields
         timezoneName: string;
@@ -489,7 +567,6 @@ const ComponentNotesEdit = ({
                     taskType: formData.taskType,
                     shouldSendEmail: formData.shouldSendEmail,
                     title: formData.title,
-                    description: formData.description,
 
                     // schedule time
                     timezoneName: formData.timezoneName,
@@ -508,6 +585,9 @@ const ComponentNotesEdit = ({
 
                     // ID for update
                     "_id": notesObj._id,
+
+                    // schedule type -> taskAdd
+                    taskAddObj: formDataTaskAdd,
                 },
             } as AxiosRequestConfig;
             await axiosCustom.request(config);
@@ -612,15 +692,6 @@ const ComponentNotesEdit = ({
                     />
                 </div>
 
-                {/* field -> description */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Description</label>
-                    <QuillEditorCustom1
-                        value={formData.description}
-                        setValue={(value) => setFormData({ ...formData, description: value })}
-                    />
-                </div>
-
                 {/* field -> should send email */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-3">Send Email Notifications</label>
@@ -637,6 +708,19 @@ const ComponentNotesEdit = ({
                         </label>
                     </div>
                 </div>
+
+                {/* selected -> task add */}
+                {formData.taskType === 'taskAdd' && (
+                    <div>
+                        <ComponentScheduleTaskAdd
+                            formDataTaskAdd={formDataTaskAdd}
+                            setFormDataTaskAdd={setFormDataTaskAdd}
+                        />
+                    </div>
+                )}
+
+                {/* heading -> schedule */}
+                <h1 className="text-2xl font-bold text-gray-800 my-4">Schedule</h1>
 
                 {/* field -> scheduleTimeArrTimezone */}
                 <div>
@@ -756,6 +840,13 @@ const ComponentNotesEditWrapper = ({
 }) => {
     const navigate = useNavigate();
     const [list, setList] = useState([] as ITaskSchedule[]);
+    const [formDataTaskAdd, setFormDataTaskAdd] = useState<ITaskScheduleTaskAdd>({
+        taskTitle: '',
+        taskDatePrefix: false,
+        taskDeadline: '',
+        taskAiSummary: false,
+        taskAiContext: '',
+    });
     const [loading, setLoading] = useState(false);
     const setWorkspaceRefresh = useSetAtom(jotaiStateNotesWorkspaceRefresh);
 
@@ -787,6 +878,13 @@ const ComponentNotesEditWrapper = ({
             if (Array.isArray(response.data.docs)) {
                 tempArr = response.data.docs;
             }
+
+            if (tempArr.length === 1) {
+                if (tempArr[0]?.taskAddArr?.length === 1) {
+                    setFormDataTaskAdd(tempArr[0].taskAddArr[0]);
+                }
+            }
+
             setLoading(false);
             setList(tempArr);
             setWorkspaceRefresh(prev => prev + 1);
@@ -825,6 +923,7 @@ const ComponentNotesEditWrapper = ({
                 <div>
                     <ComponentNotesEdit
                         notesObj={list[0]}
+                        parentFormDataTaskAdd={formDataTaskAdd}
                     />
                 </div>
             )}

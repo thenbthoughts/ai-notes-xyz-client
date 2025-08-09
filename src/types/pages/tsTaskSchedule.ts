@@ -1,5 +1,5 @@
-// Notes type for edit form and schema
-export interface ITaskSchedule extends Document {
+// Task Schedule type for edit form and schema
+export interface ITaskSchedule {
     // identification
     _id: string;
     username: string;
@@ -35,4 +35,12 @@ export interface ITaskSchedule extends Document {
     updatedAtUtc: Date;
     updatedAtIpAddress: string;
     updatedAtUserAgent: string;
+}
+
+export interface ITaskScheduleTaskAdd {
+    taskTitle: string;
+    taskDatePrefix: boolean;
+    taskDeadline: string;
+    taskAiSummary: boolean;
+    taskAiContext: string;
 }
