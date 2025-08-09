@@ -1,15 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
     LucideList,
     LucideMoveDown,
     LucideMoveUp,
-    LucidePlus,
     LucideRefreshCcw,
     LucideSettings
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAtom } from 'jotai';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import {
     ComponentNotesLeftModelRender,
@@ -21,22 +20,14 @@ import useResponsiveScreen, {
 
 import ComponentRightWrapper from './sectionRight/ComponentRightWrapper.tsx';
 
-import { taskScheduleAddAxios } from './utils/taskScheduleListAxios.ts';
-
-import axiosCustom from '../../../../config/axiosCustom.ts';
-
 import {
     jotaiNotesModalOpenStatus,
-    jotaiStateNotesWorkspaceId
 } from './stateJotai/notesStateJotai.ts';
 
 const ScheduleActionWrapper = () => {
 
     // useState
     const screenWidth = useResponsiveScreen();
-    const navigate = useNavigate();
-
-    const [workspaceId, setWorkspaceId] = useAtom(jotaiStateNotesWorkspaceId);
 
     const [
         stateDisplayChatHistory,
@@ -44,58 +35,6 @@ const ScheduleActionWrapper = () => {
     ] = useAtom(jotaiNotesModalOpenStatus);
 
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
-
-    const taskScheduleAddAxiosLocal = async () => {
-        try {
-            const result = await taskScheduleAddAxios();
-            if (result.success !== '') {
-                navigate(`/user/task-schedule?action=edit&id=${result.recordId}&workspace=${workspaceId}`)
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    useEffect(() => {
-        // from query
-        const searchParams = new URLSearchParams(window.location.search);
-        const workspace = searchParams.get('workspace');
-        console.log('workspace', workspace);
-        if (workspace) {
-            setWorkspaceId(workspace);
-        } else {
-            redirectToDefaultWorkspace();
-        }
-    }, []);
-
-    const redirectToDefaultWorkspace = async () => {
-        try {
-            const result = await axiosCustom.post('/api/notes-workspace/crud/notesWorkspaceGet');
-
-            if (result.data.docs) {
-                if (result.data.docs.length > 0) {
-                    const firstWorkspace = result.data.docs[0];
-                    setWorkspaceId(firstWorkspace._id);
-                    navigate(`/user/task-schedule?workspace=${firstWorkspace._id}`);
-                } else {
-                    toast.error('No workspace found, creating default workspace...');
-                    try {
-                        const createResult = await axiosCustom.post('/api/notes-workspace/crud/notesWorkspaceAddDefault');
-                        if (createResult.data.doc) {
-                            setWorkspaceId(createResult.data.doc._id);
-                            navigate(`/user/task-schedule?workspace=${createResult.data.doc._id}`);
-                        }
-                    } catch (createError) {
-                        console.error('Failed to create default workspace:', createError);
-                        toast.error('Failed to create default workspace');
-                    }
-                }
-            }
-
-        } catch (error) {
-            console.error(error);
-        }
-    }
 
     return (
         <div style={{ display: 'flex', width: '100%' }}>
@@ -170,24 +109,6 @@ const ScheduleActionWrapper = () => {
                                     className=''
                                 />
                             </Link>
-                        </div>
-                    </div>
-
-                    {/* add */}
-                    <div
-                        className='p-1 cursor-pointer'
-                        onClick={() => {
-                            taskScheduleAddAxiosLocal();
-                        }}
-                    >
-                        <div className={`py-3 rounded bg-gray-600`}>
-                            <LucidePlus
-                                style={{
-                                    width: '100%',
-                                    color: 'white',
-                                }}
-                                className=''
-                            />
                         </div>
                     </div>
 

@@ -4,10 +4,8 @@ import axiosCustom from '../../../../../../config/axiosCustom.ts';
 import { Link, useNavigate } from 'react-router-dom';
 import { LucideArrowLeft, LucidePlus, LucideSave, LucideTrash } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useSetAtom } from 'jotai';
 import { getAllTimezones } from 'countries-and-timezones';
 
-import { jotaiStateNotesWorkspaceRefresh } from '../../stateJotai/notesStateJotai.ts';
 import { ITaskSchedule, ITaskScheduleTaskAdd } from '../../../../../../types/pages/tsTaskSchedule.ts';
 import ComponentScheduleTaskAdd from './scheduleTaskAdd/ComponentScheduleTaskAdd.tsx';
 
@@ -485,7 +483,6 @@ const ComponentNotesEdit = ({
     notesObj: ITaskSchedule;
     parentFormDataTaskAdd: ITaskScheduleTaskAdd;
 }) => {
-    const setWorkspaceRefresh = useSetAtom(jotaiStateNotesWorkspaceRefresh);
     const navigate = useNavigate();
 
     const [requestEdit, setRequestEdit] = useState({
@@ -597,7 +594,6 @@ const ComponentNotesEdit = ({
                 error: '',
             });
             toast.success('Note updated successfully!');
-            setWorkspaceRefresh(prev => prev + 1);
         } catch (error) {
             console.error(error);
             toast.error('An error occurred while trying to edit the note. Please try again later.')
@@ -629,7 +625,6 @@ const ComponentNotesEdit = ({
 
             await axiosCustom.request(config);
 
-            setWorkspaceRefresh(prev => prev + 1);
             toast.success('Note deleted successfully!');
             navigate('/user/task-schedule');
         } catch (error) {
@@ -851,7 +846,6 @@ const ComponentNotesEditWrapper = ({
         taskStatusId: '',
     });
     const [loading, setLoading] = useState(false);
-    const setWorkspaceRefresh = useSetAtom(jotaiStateNotesWorkspaceRefresh);
 
     useEffect(() => {
         fetchList();
@@ -890,7 +884,6 @@ const ComponentNotesEditWrapper = ({
 
             setLoading(false);
             setList(tempArr);
-            setWorkspaceRefresh(prev => prev + 1);
         } catch (error) {
             console.error(error);
         } finally {

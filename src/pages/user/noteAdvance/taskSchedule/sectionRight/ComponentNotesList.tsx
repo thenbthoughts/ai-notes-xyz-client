@@ -7,8 +7,6 @@ import ReactPaginate from 'react-paginate';
 import { PlusCircle } from 'lucide-react';
 import { taskScheduleAddAxios } from '../utils/taskScheduleListAxios.ts';
 import { useNavigate } from 'react-router-dom';
-import { jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
-import { useAtomValue } from 'jotai';
     
 const perPage = 20;
 
@@ -17,7 +15,6 @@ const ComponentNotesList = () => {
     const [totalCount, setTotalCount] = useState(0 as number);
     const [list, setList] = useState([] as INotes[]);
     const [page, setPage] = useState(1);
-    const workspaceId = useAtomValue(jotaiStateNotesWorkspaceId);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
     useEffect(() => {
@@ -31,7 +28,7 @@ const ComponentNotesList = () => {
     useEffect(() => {
         setPage(1);
         setRefreshRandomNum(Math.random());
-    }, [page, workspaceId]);
+    }, [page]);
 
     const fetchList = async ({ axiosCancelTokenSource }: { axiosCancelTokenSource: CancelTokenSource }) => {
         try {
@@ -44,7 +41,6 @@ const ComponentNotesList = () => {
                 data: {
                     page: page,
                     perPage: perPage,
-                    notesWorkspaceId: workspaceId,
                 },
                 cancelToken: axiosCancelTokenSource.token,
             } as AxiosRequestConfig;
@@ -85,7 +81,7 @@ const ComponentNotesList = () => {
                         <PlusCircle className="w-6 h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
                     </button>
                     <span className="text-lg font-bold text-blue-700 tracking-wide">{totalCount}</span>
-                    <span className="ml-2 text-gray-700 font-medium">Notes</span>
+                    <span className="ml-2 text-gray-700 font-medium">Schedule</span>
                     {totalCount === 0 && (
                         <span className="ml-4 text-red-500 font-semibold">No result</span>
                     )}
