@@ -4,10 +4,8 @@ import axiosCustom from '../../../../../../config/axiosCustom.ts';
 import { Link, useNavigate } from 'react-router-dom';
 import { LucideArrowLeft, LucidePlus, LucideSave, LucideTrash } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useSetAtom } from 'jotai';
 import { getAllTimezones } from 'countries-and-timezones';
 
-import { jotaiStateNotesWorkspaceRefresh } from '../../stateJotai/notesStateJotai.ts';
 import { ITaskSchedule, ITaskScheduleTaskAdd } from '../../../../../../types/pages/tsTaskSchedule.ts';
 import ComponentScheduleTaskAdd from './scheduleTaskAdd/ComponentScheduleTaskAdd.tsx';
 
@@ -479,13 +477,12 @@ const CronExpressionArr = ({
 }
 
 const ComponentNotesEdit = ({
-    notesObj,
+    taskScheduleObj,
     parentFormDataTaskAdd,
 }: {
-    notesObj: ITaskSchedule;
+    taskScheduleObj: ITaskSchedule;
     parentFormDataTaskAdd: ITaskScheduleTaskAdd;
 }) => {
-    const setWorkspaceRefresh = useSetAtom(jotaiStateNotesWorkspaceRefresh);
     const navigate = useNavigate();
 
     const [requestEdit, setRequestEdit] = useState({
@@ -497,26 +494,26 @@ const ComponentNotesEdit = ({
     const [
         scheduleTimeArr,
         setScheduleTimeArr,
-    ] = useState<string[]>(notesObj.scheduleTimeArr || []);
+    ] = useState<string[]>(taskScheduleObj.scheduleTimeArr || []);
 
     const [
         cronExpressionArr,
         setCronExpressionArr,
-    ] = useState<string[]>(notesObj.cronExpressionArr || []);
+    ] = useState<string[]>(taskScheduleObj.cronExpressionArr || []);
 
     const [formDataTaskAdd, setFormDataTaskAdd] = useState(parentFormDataTaskAdd);
 
     const [formData, setFormData] = useState({
         // Core task schedule fields
-        isActive: notesObj.isActive,
-        taskType: notesObj.taskType,
-        shouldSendEmail: notesObj.shouldSendEmail,
+        isActive: taskScheduleObj.isActive,
+        taskType: taskScheduleObj.taskType,
+        shouldSendEmail: taskScheduleObj.shouldSendEmail,
 
-        title: notesObj.title,
+        title: taskScheduleObj.title,
 
         // Schedule fields
-        timezoneName: notesObj.timezoneName,
-        timezoneOffset: notesObj.timezoneOffset,
+        timezoneName: taskScheduleObj.timezoneName,
+        timezoneOffset: taskScheduleObj.timezoneOffset,
 
         // UI helper fields
         tagsInput: '', // Temporary field for tag input
@@ -584,7 +581,7 @@ const ComponentNotesEdit = ({
                     aiSuggestions: formData.aiSuggestions,
 
                     // ID for update
-                    "_id": notesObj._id,
+                    "_id": taskScheduleObj._id,
 
                     // schedule type -> taskAdd
                     taskAddObj: formDataTaskAdd,
@@ -597,7 +594,6 @@ const ComponentNotesEdit = ({
                 error: '',
             });
             toast.success('Note updated successfully!');
-            setWorkspaceRefresh(prev => prev + 1);
         } catch (error) {
             console.error(error);
             toast.error('An error occurred while trying to edit the note. Please try again later.')
@@ -623,13 +619,12 @@ const ComponentNotesEdit = ({
                     'Content-Type': 'application/json',
                 },
                 data: {
-                    _id: notesObj._id,
+                    _id: taskScheduleObj._id,
                 },
             };
 
             await axiosCustom.request(config);
 
-            setWorkspaceRefresh(prev => prev + 1);
             toast.success('Note deleted successfully!');
             navigate('/user/task-schedule');
         } catch (error) {
@@ -851,7 +846,6 @@ const ComponentNotesEditWrapper = ({
         taskStatusId: '',
     });
     const [loading, setLoading] = useState(false);
-    const setWorkspaceRefresh = useSetAtom(jotaiStateNotesWorkspaceRefresh);
 
     useEffect(() => {
         fetchList();
@@ -890,7 +884,6 @@ const ComponentNotesEditWrapper = ({
 
             setLoading(false);
             setList(tempArr);
-            setWorkspaceRefresh(prev => prev + 1);
         } catch (error) {
             console.error(error);
         } finally {
@@ -900,7 +893,7 @@ const ComponentNotesEditWrapper = ({
 
     return (
         <div className='bg-white rounded p-4'>
-            <h1 className="text-3xl font-bold text-gray-800 my-4">Notes {'->'} Edit</h1>
+            <h1 className="text-3xl font-bold text-gray-800 my-4">Schedule {'->'} Edit</h1>
             {loading && (
                 <div className="text-center">
                     <p className="text-lg text-blue-500">Loading...</p>
@@ -925,7 +918,7 @@ const ComponentNotesEditWrapper = ({
             {!loading && list.length === 1 && (
                 <div>
                     <ComponentNotesEdit
-                        notesObj={list[0]}
+                        taskScheduleObj={list[0]}
                         parentFormDataTaskAdd={formDataTaskAdd}
                     />
                 </div>

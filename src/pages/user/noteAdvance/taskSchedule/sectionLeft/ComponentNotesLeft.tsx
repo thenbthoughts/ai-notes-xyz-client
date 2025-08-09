@@ -1,77 +1,16 @@
-import { DebounceInput } from 'react-debounce-input';
-import { useNavigate } from 'react-router-dom';
-
-import { taskScheduleAddAxios } from '../utils/taskScheduleListAxios.ts';
-
-import { jotaiStateNotesSearch, jotaiStateNotesIsStar } from '../stateJotai/notesStateJotai.ts';
+import { jotaiStateNotesIsStar } from '../stateJotai/notesStateJotai.ts';
 import { useAtom } from 'jotai';
 
-import ComponentFolderAndFileList from './ComponentFolderAndFileList.tsx';
-import ComponentNotesWorkspace from './ComponentNotesWorkspace.tsx';
-
 const ComponentNotesLeft = () => {
-    const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = useAtom(jotaiStateNotesSearch);
     const [isStar, setIsStar] = useAtom(jotaiStateNotesIsStar);
-
-    // Fetch chat threads from API
-
-    const taskScheduleAddAxiosLocal = async () => {
-        try {
-            const result = await taskScheduleAddAxios();
-            if (result.success !== '') {
-                navigate(`/user/task-schedule?action=edit&id=${result.recordId}`)
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    const clearFilters = () => {
-        setSearchTerm('');
-        setIsStar('');
-    };
 
     return (
         <div className="py-6 px-2">
 
-            <h1 className="text-2xl font-bold mb-5 text-indigo-700">Notes</h1>
-
-            <div className="flex space-x-2 mb-4">
-                <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
-                    onClick={taskScheduleAddAxiosLocal}
-                >+ Add</button>
-                <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
-                    onClick={clearFilters}
-                >Clear Filters</button>
-            </div>
-
-            {/* Workspace */}
-            <ComponentNotesWorkspace />
-
-            {/* Notes */}
-            <div className="mb-4">
-                <h2 className="text-xl font-semibold mb-4 text-indigo-600">Notes:</h2>
-                <ComponentFolderAndFileList />
-            </div>
+            <h1 className="text-2xl font-bold mb-5 text-indigo-700">Schedule</h1>
 
             {/* Chat Options Title */}
             <h2 className="text-xl font-semibold mb-4 text-indigo-600">Filters</h2>
-
-            {/* filter */}
-            <div className="mb-4">
-                <label className="block text-sm font-medium">Search:</label>
-                <DebounceInput
-                    debounceTimeout={500}
-                    type="text"
-                    placeholder="Search..."
-                    className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    value={searchTerm}
-                />
-            </div>
 
             <div className="mb-4">
                 <span className="mr-2 text-lg font-semibold">Is Started</span>
@@ -187,4 +126,3 @@ export {
     ComponentNotesLeftRender,
     ComponentNotesLeftModelRender,
 };
-// export default ComponentChatHistoryModelRender;

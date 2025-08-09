@@ -1,13 +1,13 @@
 import { LucideEdit, LucideTrash2 } from "lucide-react";
-import { INotes } from "../../../../../types/pages/tsNotes";
+import { ITaskSchedule } from "../../../../../types/pages/tsTaskSchedule";
 import { Link } from "react-router-dom";
 import axiosCustom from "../../../../../config/axiosCustom";
 import { Fragment, useState } from "react";
 
 const ComponentNotesItem = ({
-    noteObj,
+    taskScheduleObj,
 }: {
-    noteObj: INotes
+    taskScheduleObj: ITaskSchedule
 }) => {
     const [isDeleted, setIsDeleted] = useState(false);
 
@@ -25,7 +25,7 @@ const ComponentNotesItem = ({
                     'Content-Type': 'application/json',
                 },
                 data: {
-                    _id: noteObj._id,
+                    _id: taskScheduleObj._id,
                 },
             };
 
@@ -41,13 +41,13 @@ const ComponentNotesItem = ({
         return (
             <Fragment>
                 {/* title */}
-                <h3>{noteObj.title}</h3>
+                <h3>{taskScheduleObj.title}</h3>
 
                 {/* actions */}
                 <div>
                     <div className="action-buttons my-4">
                         <Link
-                            to={`/user/task-schedule?action=edit&id=${noteObj._id}`}
+                            to={`/user/task-schedule?action=edit&id=${taskScheduleObj._id}`}
                             className="px-3 py-1 rounded bg-green-100 text-green-800 text-sm font-semibold hover:bg-green-200 mr-1"
                         >
                             <LucideEdit
