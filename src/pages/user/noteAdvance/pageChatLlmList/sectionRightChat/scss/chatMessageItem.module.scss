@@ -1,0 +1,56 @@
+.chatMessageMtemMontainer {
+    &.prose {
+        margin: 0;
+        padding: 0;
+    }
+
+    :global(.prose-sm) {
+        // font-size: 14px;
+        max-width: none;
+        margin-top: 3px;
+        margin-bottom: 3px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        line-height: 1.2;
+
+        :global(h1),
+        :global(h2),
+        :global(h3),
+        :global(h4),
+        :global(h5),
+        :global(h6),
+        :global(ul),
+        :global(ol),
+        :global(li),
+        :global(blockquote),
+        :global(pre),
+        :global(code),
+        :global(table),
+        :global(thead),
+        :global(tbody),
+        :global(tr),
+        :global(td),
+        :global(th),
+        :global(hr),
+        :global(strong),
+        :global(em),
+        :global(a),
+        :global(img) {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+
+            line-height: 1.5;
+
+            word-break: break-word;
+        }
+
+        :global(p) {
+            margin-top: 3px !important;
+            margin-bottom: 3px !important;
+            padding-top: 3px !important;
+            padding-bottom: 3px !important;
+        }
+    }
+}
