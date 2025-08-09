@@ -113,9 +113,23 @@ const TaskItem = ({
         const dueDate = new Date(task.dueDate);
         const isOverdue = task.dueDate && dueDate < now && !task.isCompleted;
 
+        let isUpdatedNow = false;
+        if (task.updatedAtUtc) {
+            const updatedAt = new Date(task.updatedAtUtc);
+            const now = new Date();
+            const timeDiff = now.getTime() - updatedAt.getTime();
+            const minutesDiff = Math.floor(timeDiff / (1000 * 60));
+            if (minutesDiff < 5) {
+                isUpdatedNow = true;
+            }
+        }
+
         return (
             <div
-                className="bg-white p-3 rounded-lg shadow-sm mb-2 hover:shadow-md transition-shadow group cursor-pointer"
+                className={`
+                    bg-white p-3 rounded-lg shadow-sm mb-2 hover:shadow-md transition-shadow group cursor-pointer
+                    ${isUpdatedNow ? 'border-2 border-blue-500' : ''}
+                `}
             >
                 <div className="flex justify-between items-start">
                     <h3 className="font-medium text-gray-800">{task.title}</h3>
