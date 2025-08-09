@@ -8,6 +8,9 @@ import axiosCustom from "../../../../../config/axiosCustom";
 import { LucideAudioLines, LucideClipboard, LucideTrash } from "lucide-react";
 
 import { tsMessageItem } from '../../../../../types/pages/tsNotesAdvanceList';
+import ReactMarkdown from "react-markdown";
+
+import cssChatMessageItem from './scss/chatMessageItem.module.scss';
 
 const ComponentAiTaskByNotesId = ({
     itemMessageId,
@@ -65,17 +68,17 @@ const ComponentAiTaskByNotesId = ({
             // get workspace id from api
             let tempWorkspaceId = '000000000000000000000000';
             const taskWorkspaceResult = await axiosCustom.post('/api/task-workspace/crud/taskWorkspaceGet');
-            if(taskWorkspaceResult.data?.docs.length > 0) {
+            if (taskWorkspaceResult.data?.docs.length > 0) {
                 // find the unassigned workspace id
                 for (let index = 0; index < taskWorkspaceResult.data.docs.length; index++) {
                     const element = taskWorkspaceResult.data.docs[index];
-                    if(element?.title === 'Unassigned') {
+                    if (element?.title === 'Unassigned') {
                         tempWorkspaceId = element._id;
                         break;
                     }
                 }
             }
-    
+
             const newTask = {
                 title: task.taskTitle,
                 description: task.taskDescription,
@@ -86,7 +89,7 @@ const ComponentAiTaskByNotesId = ({
                 // workspace
                 taskWorkspaceId: tempWorkspaceId,
             };
-    
+
             const config = {
                 method: 'post',
                 url: '/api/task/crud/taskAdd',
@@ -291,7 +294,15 @@ const ComponentMessageItem = ({
     const renderText = () => {
         return (
             <div>
-                <p className="text-sm break-all">{itemMessage.content}</p>
+                <p className="text-sm break-all">
+                    <div className={`${cssChatMessageItem.chatMessageMtemMontainer}`}>
+                        <div className={`prose prose-sm break-words max-w-none`}>
+                            <ReactMarkdown
+
+                            >{itemMessage.content.replace('AI: #', '').replace(/\n\n/g, '\n')}</ReactMarkdown>
+                        </div>
+                    </div>
+                </p>
             </div>
         );
     };
