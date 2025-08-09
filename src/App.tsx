@@ -11,7 +11,6 @@ import Header from './components/Header';
 import NavigationDrawer from './components/NavigationDrawer.tsx';
 import UnauthorizedRoute from "./components/UnauthorizedRoute.tsx";
 import RefreshToken from "./components/RefreshToken.tsx";
-import LlmTaskBackgroundProcess from "./components/LlmTaskBackgroundProcess.tsx";
 import AuthorizedRoute from "./components/AuthorizedRoute.tsx";
 
 // pages -> auth
@@ -269,7 +268,6 @@ function App() {
       />
       <RouterProvider router={router} />
       <RefreshToken />
-      <LlmTaskBackgroundProcess />
 
       {/* dynamic data */}
       <ModelOpenrouterInsertAll />
