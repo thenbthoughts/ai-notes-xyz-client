@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
 import axiosCustom from '../../../../../config/axiosCustom.ts';
-import { INotes } from '../../../../../types/pages/tsNotes.ts';
+import { ITaskSchedule } from '../../../../../types/pages/tsTaskSchedule.ts';
 import ComponentNotesItem from './ComponentNotesItem.tsx';
 import ReactPaginate from 'react-paginate';
 import { PlusCircle } from 'lucide-react';
@@ -13,7 +13,7 @@ const perPage = 20;
 const ComponentNotesList = () => {
     const navigate = useNavigate();
     const [totalCount, setTotalCount] = useState(0 as number);
-    const [list, setList] = useState([] as INotes[]);
+    const [list, setList] = useState([] as ITaskSchedule[]);
     const [page, setPage] = useState(1);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
@@ -95,9 +95,9 @@ const ComponentNotesList = () => {
             {/* div scroll up */}
             <div id='messagesScrollUp' />
             {renderCount()}
-            {list.map((noteObj) => (
-                <div key={noteObj._id}>
-                    <ComponentNotesItem noteObj={noteObj} />
+            {list.map((taskScheduleObj) => (
+                <div key={taskScheduleObj._id}>
+                    <ComponentNotesItem taskScheduleObj={taskScheduleObj} />
                 </div>
             ))}
             {totalCount >= 1 && (

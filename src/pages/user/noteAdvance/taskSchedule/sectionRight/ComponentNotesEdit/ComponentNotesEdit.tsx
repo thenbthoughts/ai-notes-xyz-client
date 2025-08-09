@@ -477,10 +477,10 @@ const CronExpressionArr = ({
 }
 
 const ComponentNotesEdit = ({
-    notesObj,
+    taskScheduleObj,
     parentFormDataTaskAdd,
 }: {
-    notesObj: ITaskSchedule;
+    taskScheduleObj: ITaskSchedule;
     parentFormDataTaskAdd: ITaskScheduleTaskAdd;
 }) => {
     const navigate = useNavigate();
@@ -494,26 +494,26 @@ const ComponentNotesEdit = ({
     const [
         scheduleTimeArr,
         setScheduleTimeArr,
-    ] = useState<string[]>(notesObj.scheduleTimeArr || []);
+    ] = useState<string[]>(taskScheduleObj.scheduleTimeArr || []);
 
     const [
         cronExpressionArr,
         setCronExpressionArr,
-    ] = useState<string[]>(notesObj.cronExpressionArr || []);
+    ] = useState<string[]>(taskScheduleObj.cronExpressionArr || []);
 
     const [formDataTaskAdd, setFormDataTaskAdd] = useState(parentFormDataTaskAdd);
 
     const [formData, setFormData] = useState({
         // Core task schedule fields
-        isActive: notesObj.isActive,
-        taskType: notesObj.taskType,
-        shouldSendEmail: notesObj.shouldSendEmail,
+        isActive: taskScheduleObj.isActive,
+        taskType: taskScheduleObj.taskType,
+        shouldSendEmail: taskScheduleObj.shouldSendEmail,
 
-        title: notesObj.title,
+        title: taskScheduleObj.title,
 
         // Schedule fields
-        timezoneName: notesObj.timezoneName,
-        timezoneOffset: notesObj.timezoneOffset,
+        timezoneName: taskScheduleObj.timezoneName,
+        timezoneOffset: taskScheduleObj.timezoneOffset,
 
         // UI helper fields
         tagsInput: '', // Temporary field for tag input
@@ -581,7 +581,7 @@ const ComponentNotesEdit = ({
                     aiSuggestions: formData.aiSuggestions,
 
                     // ID for update
-                    "_id": notesObj._id,
+                    "_id": taskScheduleObj._id,
 
                     // schedule type -> taskAdd
                     taskAddObj: formDataTaskAdd,
@@ -619,7 +619,7 @@ const ComponentNotesEdit = ({
                     'Content-Type': 'application/json',
                 },
                 data: {
-                    _id: notesObj._id,
+                    _id: taskScheduleObj._id,
                 },
             };
 
@@ -893,7 +893,7 @@ const ComponentNotesEditWrapper = ({
 
     return (
         <div className='bg-white rounded p-4'>
-            <h1 className="text-3xl font-bold text-gray-800 my-4">Notes {'->'} Edit</h1>
+            <h1 className="text-3xl font-bold text-gray-800 my-4">Schedule {'->'} Edit</h1>
             {loading && (
                 <div className="text-center">
                     <p className="text-lg text-blue-500">Loading...</p>
@@ -918,7 +918,7 @@ const ComponentNotesEditWrapper = ({
             {!loading && list.length === 1 && (
                 <div>
                     <ComponentNotesEdit
-                        notesObj={list[0]}
+                        taskScheduleObj={list[0]}
                         parentFormDataTaskAdd={formDataTaskAdd}
                     />
                 </div>
