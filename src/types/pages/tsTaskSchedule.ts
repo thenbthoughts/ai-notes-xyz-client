@@ -38,6 +38,11 @@ export interface ITaskSchedule {
 }
 
 export interface ITaskScheduleTaskAdd {
+    // identification
+    taskWorkspaceId: string;
+    taskStatusId: string;
+
+    // task fields
     taskTitle: string;
     taskDatePrefix: boolean;
     taskDeadline: string;

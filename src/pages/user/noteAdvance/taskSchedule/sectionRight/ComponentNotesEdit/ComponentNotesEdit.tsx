@@ -9,7 +9,7 @@ import { getAllTimezones } from 'countries-and-timezones';
 
 import { jotaiStateNotesWorkspaceRefresh } from '../../stateJotai/notesStateJotai.ts';
 import { ITaskSchedule, ITaskScheduleTaskAdd } from '../../../../../../types/pages/tsTaskSchedule.ts';
-import ComponentScheduleTaskAdd from './ComponentScheduleTaskAdd.tsx';
+import ComponentScheduleTaskAdd from './scheduleTaskAdd/ComponentScheduleTaskAdd.tsx';
 
 const timeZoneArr = getAllTimezones();
 
@@ -846,6 +846,9 @@ const ComponentNotesEditWrapper = ({
         taskDeadline: '',
         taskAiSummary: false,
         taskAiContext: '',
+
+        taskWorkspaceId: '',
+        taskStatusId: '',
     });
     const [loading, setLoading] = useState(false);
     const setWorkspaceRefresh = useSetAtom(jotaiStateNotesWorkspaceRefresh);

@@ -1,4 +1,8 @@
-import { ITaskScheduleTaskAdd } from '../../../../../../types/pages/tsTaskSchedule.ts';
+import { ITaskScheduleTaskAdd } from '../../../../../../../types/pages/tsTaskSchedule.ts';
+import ComponentSelectTaskStatus from './ComponentSelectTaskStatus.tsx';
+import ComponentSelectWorkspace from './ComponentSelectWorkspace.tsx';
+
+
 
 const ComponentScheduleTaskAdd = ({
     formDataTaskAdd,
@@ -35,8 +39,31 @@ const ComponentScheduleTaskAdd = ({
                     onChange={(e) => setFormDataTaskAdd({ ...formDataTaskAdd, taskDatePrefix: e.target.checked })}
                 />
                 <label htmlFor="taskDatePrefix" className="ml-2 text-sm text-gray-600">
-                    Include date prefix in task title (e.g., "2025-08-09 Take files backup once in a month")
+                    Include date prefix in task title (e.g., "{new Date().toLocaleDateString()} {formDataTaskAdd.taskTitle || 'Take files backup once in a month'}")
                 </label>
+            </div>
+
+            {/* field -> task workspace */}
+            <div className="py-2">
+                <label className="block text-sm font-medium text-gray-700">Task Workspace *</label>
+                <ComponentSelectWorkspace
+                    workspaceId={formDataTaskAdd.taskWorkspaceId}
+                    setWorkspaceIdFunc={(workspaceId: string) => {
+                        setFormDataTaskAdd({ ...formDataTaskAdd, taskWorkspaceId: workspaceId });
+                    }}
+                />
+            </div>
+
+            {/* field -> task status */}
+            <div className="py-2">
+                <label className="block text-sm font-medium text-gray-700">Task Status *</label>
+                <ComponentSelectTaskStatus
+                    workspaceId={formDataTaskAdd.taskWorkspaceId}
+                    taskStatusId={formDataTaskAdd.taskStatusId}
+                    setTaskStatusId={(taskStatusId: string) => {
+                        setFormDataTaskAdd({ ...formDataTaskAdd, taskStatusId: taskStatusId });
+                    }}
+                />
             </div>
 
             {/* field -> deadline */}
