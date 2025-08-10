@@ -66,16 +66,36 @@ const ComponentScheduleTaskAdd = ({
                 />
             </div>
 
-            {/* field -> deadline */}
+            {/* field -> task deadline enabled */}
             <div className="py-2">
-                <label className="block text-sm font-medium text-gray-700">Deadline</label>
+                <label className="block text-sm font-medium text-gray-700">Task Deadline Enabled</label>
                 <input
-                    type="datetime-local"
-                    value={formDataTaskAdd.taskDeadline ? formDataTaskAdd.taskDeadline : new Date().toISOString().slice(0, 16)}
-                    onChange={(e) => setFormDataTaskAdd({ ...formDataTaskAdd, taskDeadline: e.target.value })}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    type="checkbox"
+                    id="taskDeadlineEnabled"
+                    checked={formDataTaskAdd.taskDeadlineEnabled}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    onChange={(e) => setFormDataTaskAdd({ ...formDataTaskAdd, taskDeadlineEnabled: e.target.checked })}
                 />
+                <label htmlFor="taskDeadlineEnabled" className="ml-2 text-sm text-gray-600">
+                    Task Deadline Enabled
+                </label>
             </div>
+
+            {/* field -> deadline */}
+            {formDataTaskAdd.taskDeadlineEnabled && (
+                <div className="py-2">
+                    <label className="block text-sm font-medium text-gray-700">Deadline (number of days)</label>
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="number"
+                            value={formDataTaskAdd.taskDeadlineDays}
+                            onChange={(e) => setFormDataTaskAdd({ ...formDataTaskAdd, taskDeadlineDays: Number(e.target.value) })}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        />
+                        <label htmlFor="taskDeadlineDays" className="ml-2 text-sm text-gray-600">days</label>
+                    </div>
+                </div>
+            )}
 
             {/* field -> task ai summary and subtask -> checkbox */}
             <div className="py-2">

@@ -836,12 +836,19 @@ const ComponentNotesEditWrapper = ({
     const navigate = useNavigate();
     const [list, setList] = useState([] as ITaskSchedule[]);
     const [formDataTaskAdd, setFormDataTaskAdd] = useState<ITaskScheduleTaskAdd>({
+        // task fields
         taskTitle: '',
         taskDatePrefix: false,
-        taskDeadline: '',
+
+        // deadline enabled
+        taskDeadlineEnabled: false,
+        taskDeadlineDays: 1,
+
+        // task ai fields
         taskAiSummary: false,
         taskAiContext: '',
 
+        // identification
         taskWorkspaceId: '',
         taskStatusId: '',
     });
