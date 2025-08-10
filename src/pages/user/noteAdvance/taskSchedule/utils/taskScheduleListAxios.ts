@@ -10,13 +10,13 @@ export const taskScheduleAddAxios = async () => {
                 'Content-Type': 'application/json',
             },
             data: {
-                title: `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+                title: `Schedule ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
                 taskType: 'taskAdd',
             },
         } as AxiosRequestConfig;
 
         const response = await axiosCustom.request(config);
-        const doc = response.data.doc;
+        const doc = response.data;
         
         if (typeof doc._id === 'string') {
             if (doc._id.length === 24) {
@@ -35,10 +35,10 @@ export const taskScheduleAddAxios = async () => {
         };
     } catch (error) {
         console.error(error);
-        alert('An error occurred while adding the life event. Please try again.');
+        alert('An error occurred while adding the task schedule. Please try again.');
         return {
             success: false,
-            error: 'An error occurred while adding the life event. Please try again.',
+            error: 'An error occurred while adding the task schedule. Please try again.',
             recordId: '',
         };
     }

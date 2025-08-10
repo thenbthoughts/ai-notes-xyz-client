@@ -33,15 +33,15 @@ export const notesAddAxios = async ({
 
         return {
             success: '',
-            error: 'An error occurred while adding the life event. Please try again.',
+            error: 'An error occurred while adding the notes. Please try again.',
             recordId: '',
         };
     } catch (error) {
         console.error(error);
-        alert('An error occurred while adding the life event. Please try again.');
+        alert('An error occurred while adding the notes. Please try again.');
         return {
             success: false,
-            error: 'An error occurred while adding the life event. Please try again.',
+            error: 'An error occurred while adding the notes. Please try again.',
             recordId: '',
         };
     }
