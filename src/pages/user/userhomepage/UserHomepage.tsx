@@ -23,6 +23,7 @@ import iconGit from './iconGit.svg';
 import ComponentFromBrithdayToToday from './ComponentFromBrithdayToToday';
 import ComponentPinnedTask from './ComponentPinnedTask';
 import ComponentCurrentDateTime from './ComponentCurrentDateTime';
+import ComponentApiKeySet from './ComponentApiKeySet';
 
 const UserHomepage = () => {
     const authState = useAtomValue(stateJotaiAuthAtom);
@@ -78,6 +79,7 @@ const UserHomepage = () => {
                                     <ComponentCurrentDateTime />
                                     <ComponentFromBrithdayToToday />
                                     <ComponentPinnedTask />
+                                    <ComponentApiKeySet />
                                 </div>
                             </Fragment>
                         )}
