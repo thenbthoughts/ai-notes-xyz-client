@@ -6,6 +6,8 @@ import axiosCustom from "../../../../config/axiosCustom";
 import SettingHeader from "../SettingHeader";
 import SettingDefaultEnvKeys from "./SettingDefaultEnvKeys";
 
+import ComponentApiKeySet from "../../userhomepage/ComponentApiKeySet";
+
 const SettingApiKey = () => {
     // location
     const [apiKeyGroq, setApiKeyGroq] = useState("");
@@ -315,6 +317,10 @@ const SettingApiKey = () => {
                 id="api-keys"
             >
                 <h2 className="text-xl font-bold text-gray-900 py-2">Api Keys</h2>
+
+                <div className="my-4">
+                    <ComponentApiKeySet />
+                </div>
 
                 {/* Groq */}
                 <div className="mb-4">
