@@ -113,15 +113,17 @@ const ComponentScheduleTaskAdd = ({
             </div>
 
             {/* field -> task ai context */}
-            <div className="py-2">
-                <label className="block text-sm font-medium text-gray-700">Task AI Context</label>
-                <textarea
-                    value={formDataTaskAdd.taskAiContext}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 min-h-[100px] resize-vertical"
-                    onChange={(e) => setFormDataTaskAdd({ ...formDataTaskAdd, taskAiContext: e.target.value })}
-                    placeholder="Enter task AI context..."
-                />
-            </div>
+            {formDataTaskAdd.taskAiSummary && (
+                <div className="py-2">
+                    <label className="block text-sm font-medium text-gray-700">Task AI Context</label>
+                    <textarea
+                        value={formDataTaskAdd.taskAiContext}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 min-h-[100px] resize-vertical"
+                        onChange={(e) => setFormDataTaskAdd({ ...formDataTaskAdd, taskAiContext: e.target.value })}
+                        placeholder="Enter task AI context..."
+                    />
+                </div>
+            )}
 
 
         </div>

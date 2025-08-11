@@ -115,8 +115,9 @@ const CronExpressionArr = ({
         type: 'daily', // hour, daily, weekly, monthly
         hourInterval: 1,
         dailyTime: '09:00',
-        weeklyDay: 1, // Monday
         weeklyTime: '09:00',
+        weeklyType: 'all', // 'all' or 'specific'
+        specificWeekdays: [] as number[], // Array of weekday numbers (0-6)
         monthlyDay: 1,
         monthlyTime: '09:00',
         monthlyType: 'all', // 'all' or 'specific'
@@ -125,7 +126,7 @@ const CronExpressionArr = ({
 
     // Generate cron expression from builder state
     const generateCronExpression = () => {
-        const { type, hourInterval, dailyTime, weeklyDay, weeklyTime, monthlyDay, monthlyTime, monthlyType, specificMonths } = cronBuilder;
+        const { type, hourInterval, dailyTime, weeklyTime, weeklyType, specificWeekdays, monthlyDay, monthlyTime, monthlyType, specificMonths } = cronBuilder;
 
         switch (type) {
             case 'hour':
@@ -137,7 +138,9 @@ const CronExpressionArr = ({
 
             case 'weekly':
                 const [weeklyHour, weeklyMin] = weeklyTime.split(':');
-                return `${parseInt(weeklyMin)} ${parseInt(weeklyHour)} * * ${weeklyDay}`;
+                // If no specific weekdays selected or weeklyType is 'all', use '*' for all days
+                const weekdaysStr = (weeklyType === 'all' || specificWeekdays.length === 0) ? '*' : specificWeekdays.join(',');
+                return `${parseInt(weeklyMin)} ${parseInt(weeklyHour)} * * ${weekdaysStr}`;
 
             case 'monthly':
                 const [monthlyHour, monthlyMin] = monthlyTime.split(':');
@@ -152,7 +155,7 @@ const CronExpressionArr = ({
 
     // Get cron description
     const getCronDescription = () => {
-        const { type, hourInterval, dailyTime, weeklyDay, weeklyTime, monthlyDay, monthlyTime, monthlyType, specificMonths } = cronBuilder;
+        const { type, hourInterval, dailyTime, weeklyTime, weeklyType, specificWeekdays, monthlyDay, monthlyTime, monthlyType, specificMonths } = cronBuilder;
         const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -164,7 +167,11 @@ const CronExpressionArr = ({
                 return `Daily at ${dailyTime}`;
 
             case 'weekly':
-                return `Weekly on ${dayNames[weeklyDay]} at ${weeklyTime}`;
+                // If no specific weekdays selected or weeklyType is 'all', default to all days
+                const weekdaysDesc = (weeklyType === 'all' || specificWeekdays.length === 0)
+                    ? 'every day' 
+                    : `on ${specificWeekdays.map(d => dayNames[d]).join(', ')}`;
+                return `Weekly ${weekdaysDesc} at ${weeklyTime}`;
 
             case 'monthly':
                 // If no specific months selected or monthlyType is 'all', default to all months
@@ -316,31 +323,78 @@ const CronExpressionArr = ({
                             )}
 
                             {cronBuilder.type === 'weekly' && (
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Day of Week</label>
-                                        <select
-                                            value={cronBuilder.weeklyDay}
-                                            onChange={(e) => setCronBuilder({ ...cronBuilder, weeklyDay: parseInt(e.target.value) })}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        >
-                                            <option value={0}>Sunday</option>
-                                            <option value={1}>Monday</option>
-                                            <option value={2}>Tuesday</option>
-                                            <option value={3}>Wednesday</option>
-                                            <option value={4}>Thursday</option>
-                                            <option value={5}>Friday</option>
-                                            <option value={6}>Saturday</option>
-                                        </select>
-                                    </div>
+                                <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
                                         <input
                                             type="time"
                                             value={cronBuilder.weeklyTime}
                                             onChange={(e) => setCronBuilder({ ...cronBuilder, weeklyTime: e.target.value })}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
+                                    </div>
+                                    
+                                    {/* Weekday Selection */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Days of Week</label>
+                                        <div className="space-y-2">
+                                            <div className="flex gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setCronBuilder({ ...cronBuilder, weeklyType: 'all', specificWeekdays: [] })}
+                                                    className={`px-3 py-2 text-sm rounded-md border ${cronBuilder.weeklyType === 'all'
+                                                        ? 'bg-blue-600 text-white border-blue-600'
+                                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                        }`}
+                                                >
+                                                    All Days
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setCronBuilder({ ...cronBuilder, weeklyType: 'specific' })}
+                                                    className={`px-3 py-2 text-sm rounded-md border ${cronBuilder.weeklyType === 'specific'
+                                                        ? 'bg-blue-600 text-white border-blue-600'
+                                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                        }`}
+                                                >
+                                                    Specific Days
+                                                </button>
+                                            </div>
+                                            
+                                            {cronBuilder.weeklyType === 'specific' && (
+                                                <div>
+                                                    <div className="grid grid-cols-4 gap-2 mt-2">
+                                                        {[
+                                                            { num: 0, name: 'Sun' }, { num: 1, name: 'Mon' }, { num: 2, name: 'Tue' }, { num: 3, name: 'Wed' },
+                                                            { num: 4, name: 'Thu' }, { num: 5, name: 'Fri' }, { num: 6, name: 'Sat' }
+                                                        ].map((day) => (
+                                                            <button
+                                                                key={day.num}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const isSelected = cronBuilder.specificWeekdays.includes(day.num);
+                                                                    const newWeekdays = isSelected
+                                                                        ? cronBuilder.specificWeekdays.filter(d => d !== day.num)
+                                                                        : [...cronBuilder.specificWeekdays, day.num].sort((a, b) => a - b);
+                                                                    setCronBuilder({ ...cronBuilder, specificWeekdays: newWeekdays });
+                                                                }}
+                                                                className={`px-2 py-1 text-xs rounded border ${cronBuilder.specificWeekdays.includes(day.num)
+                                                                    ? 'bg-green-600 text-white border-green-600'
+                                                                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                                    }`}
+                                                            >
+                                                                {day.name}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                    {cronBuilder.specificWeekdays.length === 0 && (
+                                                        <div className="text-xs text-amber-600 mt-2 bg-amber-50 p-2 rounded border border-amber-200">
+                                                            No days selected. Will default to all days when added.
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -838,7 +892,7 @@ const ComponentNotesEditWrapper = ({
     const [formDataTaskAdd, setFormDataTaskAdd] = useState<ITaskScheduleTaskAdd>({
         // task fields
         taskTitle: '',
-        taskDatePrefix: false,
+        taskDatePrefix: true,
 
         // deadline enabled
         taskDeadlineEnabled: false,
