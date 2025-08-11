@@ -815,6 +815,50 @@ const ComponentNotesEdit = ({
                     cronExpressionArr={cronExpressionArr}
                     setCronExpressionArr={setCronExpressionArr}
                 />
+
+                {/* field -> schedule execution times */}
+                <div className="py-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Schedule Execution Times</label>
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 max-h-[200px] overflow-y-auto">
+                        {taskScheduleObj.scheduleExecutionTimeArr.length === 0 ? (
+                            <div className="text-sm text-gray-500 italic">No execution times scheduled</div>
+                        ) : (
+                            <div className="space-y-2">
+                                {taskScheduleObj.scheduleExecutionTimeArr.map((time, index) => (
+                                    <div key={index} className="text-sm text-gray-700 bg-white p-2 rounded border">
+                                        {index + 1}: {new Date(time).toLocaleString()}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* field -> schedule executed times */}
+                <div className="py-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Schedule Executed Times</label>
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 max-h-[200px] overflow-y-auto">
+                        {taskScheduleObj.scheduleExecutedTimeArr.length === 0 ? (
+                            <div className="text-sm text-gray-500 italic">No executions completed yet</div>
+                        ) : (
+                            <div className="space-y-2">
+                                {taskScheduleObj.scheduleExecutedTimeArr.map((time, index) => (
+                                    <div key={index} className="text-sm text-gray-700 bg-white p-2 rounded border">
+                                        {index + 1}: {new Date(time).toLocaleString()}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* field -> executed times count */}
+                <div className="py-2">
+                    <label className="block text-sm font-medium text-gray-700">Total Executed Times</label>
+                    <div className="mt-1 text-lg font-semibold text-blue-600">
+                        {taskScheduleObj.executedTimes}
+                    </div>
+                </div>
             </div>
         )
     }

@@ -26,7 +26,11 @@ export interface ITaskSchedule {
     timezoneOffset: number;
     scheduleTimeArr: string[];
     cronExpressionArr: string[];
+    
+    // executed
     scheduleExecutionTimeArr: string[];
+    scheduleExecutedTimeArr: string[];
+    executedTimes: number;
 
     // auto
     createdAtUtc: Date;
