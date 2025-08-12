@@ -4,17 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { notesAddAxios } from '../utils/notesListAxios.ts';
 
 import { jotaiStateNotesSearch, jotaiStateNotesIsStar, jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 
 import ComponentFolderAndFileList from './ComponentFolderAndFileList.tsx';
 import ComponentNotesWorkspace from './ComponentNotesWorkspace.tsx';
+import axiosCustom from '../../../../../config/axiosCustom.ts';
+import { AxiosRequestConfig } from 'axios';
+import { LucideList, LucidePlus, LucideRefreshCcw } from 'lucide-react';
 
 const ComponentNotesLeft = () => {
     const navigate = useNavigate();
-    const workspaceId = useAtomValue(jotaiStateNotesWorkspaceId);
     const [searchTerm, setSearchTerm] = useAtom(jotaiStateNotesSearch);
     const [isStar, setIsStar] = useAtom(jotaiStateNotesIsStar);
-
+    const [workspaceId, setWorkspaceId] = useAtom(jotaiStateNotesWorkspaceId);
     // Fetch chat threads from API
 
     const notesAddAxiosLocal = async () => {
@@ -30,6 +32,46 @@ const ComponentNotesLeft = () => {
         }
     }
 
+    const openRandomNote = async () => {
+        try {
+            const config = {
+                method: 'post',
+                url: `/api/notes/crud/notesGet`,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    openRandomNotes: 'true',
+                },
+            } as AxiosRequestConfig;
+    
+            const response = await axiosCustom.request(config);
+
+            if(response.data.docs.length === 0) {
+                return {
+                    success: '',
+                    error: 'No notes found. Please add a note first.',
+                    recordId: '',
+                };
+            }
+
+            const doc = response.data.docs[0];
+            
+            if (typeof doc._id === 'string') {
+                if (doc._id.length === 24) {
+                    // redirect to edit page
+                    navigate(`/user/notes?action=edit&id=${doc._id}`)
+
+                    // set workspace id
+                    setWorkspaceId(doc.notesWorkspaceId);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred while adding the notes. Please try again.');
+        }
+    }
+
     const clearFilters = () => {
         setSearchTerm('');
         setIsStar('');
@@ -40,15 +82,29 @@ const ComponentNotesLeft = () => {
 
             <h1 className="text-2xl font-bold mb-5 text-indigo-700">Notes</h1>
 
-            <div className="flex space-x-2 mb-4">
+            {/* buttons -> add, random, clear */}
+            <div className="flex flex-wrap gap-2 mb-4">
                 <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
+                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300"
                     onClick={notesAddAxiosLocal}
-                >+ Add</button>
+                >
+                    <LucidePlus size={14} />
+                    Add
+                </button>
                 <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
+                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300"
+                    onClick={openRandomNote}
+                >
+                    <LucideRefreshCcw size={14} />
+                    Random
+                </button>
+                <button
+                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300"
                     onClick={clearFilters}
-                >Clear Filters</button>
+                >
+                    <LucideList size={14} />
+                    Clear
+                </button>
             </div>
 
             {/* Workspace */}
