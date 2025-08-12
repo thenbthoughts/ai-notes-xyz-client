@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 import {
     ComponentChatHistoryModelRender,
@@ -13,6 +14,7 @@ import ChatRightFilterWrapper from './sectionRightFilter/ChatRightFilterWrapper.
 import { jotaiChatLlmThreadSetting } from './jotai/jotaiChatLlmThreadSetting.ts';
 import { useAtom } from 'jotai';
 import { useLocation } from 'react-router-dom';
+import siteInfo from '../../../../config/siteInfo.ts';
 
 const ChatLlmListWrapper = () => {
 
@@ -53,8 +55,17 @@ const ChatLlmListWrapper = () => {
         });
     }, [location]);
 
+    const renderSeo = () => {
+        return (
+            <Helmet>
+                <title>Chat | {siteInfo.name}</title>
+            </Helmet>
+        )
+    }
+
     return (
         <div style={{ display: 'flex', width: '100%' }}>
+            {renderSeo()}
             <div
                 style={{
                     width: 'calc(100vw - 50px)'

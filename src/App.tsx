@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { lazy, Suspense } from "react";
+import { HelmetProvider } from 'react-helmet-async';
 
 // component
 import Header from './components/Header';
@@ -263,7 +264,7 @@ function App() {
   });
 
   return (
-    <>
+    <HelmetProvider>
       <Toaster
         position="top-center"
       />
@@ -273,7 +274,7 @@ function App() {
       {/* dynamic data */}
       <ModelOpenrouterInsertAll />
       <UpdateUserApiClientFrontendUrl />
-    </>
+    </HelmetProvider>
   )
 }
 
