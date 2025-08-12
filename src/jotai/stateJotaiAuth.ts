@@ -9,6 +9,8 @@ type AuthState = {
     apiKeyOllamaValid: boolean;
     apiKeyQdrantValid: boolean;
     smtpValid: boolean;
+
+    clientFrontendUrl: string;
 };
 
 const stateJotaiAuthAtom = atom<AuthState>({
@@ -20,6 +22,8 @@ const stateJotaiAuthAtom = atom<AuthState>({
     apiKeyOllamaValid: false,
     apiKeyQdrantValid: false,
     smtpValid: false,
+
+    clientFrontendUrl: '',
 });
 
 const stateJotaiAuthReloadAtom = atom<number>(0);

@@ -40,7 +40,11 @@ export default function Component() {
                 apiKeyOllamaValid: false,
                 apiKeyQdrantValid: false,
                 smtpValid: false,
+                clientFrontendUrl: '',
             });
+
+            // delete all local storage
+            localStorage.clear();
 
             // redirect to /login using react router dom
             navigate('/login', { replace: true });
@@ -59,7 +63,11 @@ export default function Component() {
                 apiKeyOllamaValid: false,
                 apiKeyQdrantValid: false,
                 smtpValid: false,
+                clientFrontendUrl: '',
             });
+        } finally {
+            // delete all local storage
+            localStorage.clear();
         }
     }
 
