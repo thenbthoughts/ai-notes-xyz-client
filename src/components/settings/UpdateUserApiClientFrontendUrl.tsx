@@ -20,7 +20,7 @@ const UpdateUserApiClientFrontendUrl = () => {
 
             const today = new Date().toDateString();
             console.log('today', today)
-            const lastFetchDate = localStorage.getItem('modelOpenrouterLastFetch');
+            const lastFetchDate = localStorage.getItem('updateUserApiClientFrontendUrl');
             if (lastFetchDate === today) {
                 return; // Skip fetch if already done today
             }

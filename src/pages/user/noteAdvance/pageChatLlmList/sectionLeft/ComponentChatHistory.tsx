@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import ReactPaginate from 'react-paginate';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 
@@ -16,32 +17,63 @@ const ComponentChatHistory = () => {
 
     const [activeChatId, setActiveChatId] = useState('');
 
-    // 
+    // pagination
+    const perPage = 20;
+    const [totalCount, setTotalCount] = useState(0 as number);
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
     const [items, setItems] = useState([] as {
         _id: string;
         threadTitle: string;
         createdAtUtc: string;
     }[]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
     // Fetch chat threads from API
     const fetchChatThreads = async () => {
         try {
-            const response = await axiosCustom.post('/api/chat-llm/threads-crud/threadsGet', {});
+            setLoading(true);
+            const response = await axiosCustom.post(
+                '/api/chat-llm/threads-crud/threadsGet', {
+                page: page,
+                perPage: perPage,
+                search: searchTerm,
+            }
+            );
             if (response.data && response.data.docs) {
                 // Map API data to expected format
                 setItems(response.data.docs);
+                setTotalCount(response.data.count);
+
+                // scroll to top
+                const chatHistoryTop = document.getElementById('chat-history-top');
+                if (chatHistoryTop) {
+                    chatHistoryTop.scrollIntoView({ behavior: 'smooth' });
+                }
             }
         } catch (error) {
             console.error('Failed to fetch chat threads:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         fetchChatThreads();
     }, [
-        searchTerm,
+        page,
+        refreshRandomNum,
     ]);
+
+    useEffect(() => {
+        setPage(1);
+        setRefreshRandomNum(
+            Math.floor(
+                Math.random() * 1_000_000
+            )
+        );
+    }, [searchTerm]);
 
     const deleteThread = async (argThreadId: string) => {
         try {
@@ -72,9 +104,17 @@ const ComponentChatHistory = () => {
     }, [location.search]);
 
     return (
-        <div className="py-4 px-2 text-black">
+        <div className="py-10 px-2 text-black">
+
+            <div id="chat-history-top" />
+
             {/* Chat Options Title */}
-            <h2 className="text-lg font-bold mb-4 text-black">Chat History</h2>
+            <h2 className="text-lg font-bold mb-4 text-black flex justify-between items-center">
+                Chat History
+                <span className="text-sm text-gray-500">
+                    {totalCount} thread{totalCount !== 1 ? 's' : ''}
+                </span>
+            </h2>
 
             {/* New Chat Button */}
             <div className="mb-4">
@@ -100,6 +140,11 @@ const ComponentChatHistory = () => {
 
             {/* History Items List */}
             <div className="space-y-3">
+                {loading && (
+                    <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+                    </div>
+                )}
                 {items.map((item) => (
                     <div key={item._id}>
                         <Link
@@ -132,6 +177,34 @@ const ComponentChatHistory = () => {
                     </div>
                 ))}
             </div>
+
+            {/* pagination */}
+            {totalCount >= 1 && (
+                <ReactPaginate
+                    breakLabel="..."
+                    nextLabel="next >"
+                    forcePage={page - 1}
+                    onPageChange={(e) => {
+                        console.log('e.selected', e.selected);
+                        setPage(e.selected + 1);
+                    }}
+                    marginPagesDisplayed={1}
+                    pageRangeDisplayed={2}
+                    pageCount={Math.ceil(totalCount / perPage)}
+                    previousLabel="< previous"
+                    renderOnZeroPageCount={null}
+                    containerClassName="flex flex-wrap justify-center items-center gap-1 sm:space-x-1"
+                    pageClassName="border border-gray-300 rounded-md hover:bg-gray-200 text-base sm:text-lg m-0.5"
+                    previousClassName="border border-gray-300 rounded-md hover:bg-gray-200 text-base sm:text-lg m-0.5"
+                    previousLinkClassName="text-gray-700 px-2 sm:px-3"
+                    nextClassName="border border-gray-300 rounded-md hover:bg-gray-200 text-base sm:text-lg m-0.5"
+                    nextLinkClassName="text-gray-700 px-2 sm:px-3"
+                    breakClassName="border border-gray-300 rounded-md text-base sm:text-lg m-0.5"
+                    breakLinkClassName="text-gray-700 px-2 sm:px-3"
+                    activeLinkClassName="bg-blue-500 text-white"
+                    pageLinkClassName="text-gray-700 px-2 sm:px-3"
+                />
+            )}
         </div>
     );
 };
@@ -175,21 +248,17 @@ const ComponentChatHistoryModelRender = () => {
                 left: 0,
                 top: '60px',
                 width: '300px',
-                maxWidth: 'calc(100% - 50px)',
+                maxWidth: 'calc(100% - 60px)',
                 zIndex: 1001,
             }}
         >
             <div>
                 <div
                     className="bg-gray-100 shadow-md"
-                    style={{
-                        paddingTop: '10px',
-                        paddingBottom: '10px',
-                    }}
                 >
                     <div
                         style={{
-                            height: 'calc(100vh)',
+                            height: 'calc(100vh - 60px)',
                             overflowY: 'auto',
                         }}
                         className="pt-3 pb-5"
