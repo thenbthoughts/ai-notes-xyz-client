@@ -30,6 +30,13 @@ const ComponentChatHistory = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
+    const goToTop = () => {
+        const chatHistoryTop = document.getElementById('chat-history-top');
+        if (chatHistoryTop) {
+            chatHistoryTop.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
     // Fetch chat threads from API
     const fetchChatThreads = async () => {
         try {
@@ -45,12 +52,6 @@ const ComponentChatHistory = () => {
                 // Map API data to expected format
                 setItems(response.data.docs);
                 setTotalCount(response.data.count);
-
-                // scroll to top
-                const chatHistoryTop = document.getElementById('chat-history-top');
-                if (chatHistoryTop) {
-                    chatHistoryTop.scrollIntoView({ behavior: 'smooth' });
-                }
             }
         } catch (error) {
             console.error('Failed to fetch chat threads:', error);
@@ -187,6 +188,7 @@ const ComponentChatHistory = () => {
                     onPageChange={(e) => {
                         console.log('e.selected', e.selected);
                         setPage(e.selected + 1);
+                        goToTop();
                     }}
                     marginPagesDisplayed={1}
                     pageRangeDisplayed={2}
