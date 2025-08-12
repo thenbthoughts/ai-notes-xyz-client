@@ -51,6 +51,7 @@ const TestUserHomepageBackupDelete = lazy(() => import("./pages/user/userhomepag
 
 // components -> settings
 const ModelOpenrouterInsertAll = lazy(() => import('./components/settings/ModelOpenrouterInsertAll.tsx'));
+const UpdateUserApiClientFrontendUrl = lazy(() => import('./components/settings/UpdateUserApiClientFrontendUrl.tsx'));
 
 function App() {
   const Layout = () => {
@@ -271,6 +272,7 @@ function App() {
 
       {/* dynamic data */}
       <ModelOpenrouterInsertAll />
+      <UpdateUserApiClientFrontendUrl />
     </>
   )
 }

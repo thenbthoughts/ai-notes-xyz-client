@@ -54,7 +54,6 @@ const ScheduleTimeArr = ({
                 {/* Date and Time */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Date & Time</label>
-                    <div>{scheduleTimeInput}</div>
                     <input
                         type='datetime-local'
                         value={scheduleTimeInput || ''}
