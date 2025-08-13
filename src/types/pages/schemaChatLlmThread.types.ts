@@ -1,4 +1,7 @@
 export interface IChatLlmThread {
+    // identification
+    _id: string;
+
     // fields
     threadTitle: string,
 
