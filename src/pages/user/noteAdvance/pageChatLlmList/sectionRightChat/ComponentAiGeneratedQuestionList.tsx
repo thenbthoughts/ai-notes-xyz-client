@@ -132,8 +132,11 @@ const ComponentAiGeneratedQuestionList = ({
 
             if (Array.isArray(responseChatLlm.data.docs) && responseChatLlm.data.docs.length > 0) {
                 let chatList = responseChatLlm.data.docs;
-                for (let chat of chatList) {
+                for (let i = 0; i < chatList.length; i++) {
+                    const chat = chatList[i];
+                    threadStr += `Message ${i + 1}:\n`;
                     threadStr += `Chat ID: ${chat._id}\n`;
+
                     if (chat.content.includes('AI:')) {
                         threadStr += `AI: ${chat.content.replace('AI: #', '').replace(/\n\n/g, '\n')}`;
                     } else {
