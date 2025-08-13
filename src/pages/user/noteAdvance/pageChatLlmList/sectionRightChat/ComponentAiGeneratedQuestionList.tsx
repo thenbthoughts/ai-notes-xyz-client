@@ -271,6 +271,7 @@ const ComponentAiGeneratedQuestionList = ({
                         <button
                             onClick={() => {
                                 setTab('info');
+                                fetchThreadInfo();
                                 fetchThreadInfoAndDownload();
                             }}
                             className="mb-2 mt-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white px-3 py-1.5 rounded-md shadow-sm hover:from-purple-600 hover:to-blue-700 transition duration-200 transform hover:scale-105 inline-flex items-center gap-1.5 text-sm font-medium mr-2"
