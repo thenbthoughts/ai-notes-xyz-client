@@ -149,7 +149,7 @@ const ComponentAiGeneratedQuestionList = ({
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `threadInfo-${threadInfo.threadTitle}-${threadInfo._id}.txt`;
+            a.download = `chat-thread-${threadInfo.threadTitle}-${threadInfo._id}-${new Date().toLocaleDateString()}.txt`;
             a.click();
         } catch (error) {
             console.error('Error fetching thread info:', error);
