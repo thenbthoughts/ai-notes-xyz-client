@@ -724,7 +724,7 @@ const ComponentNotesEdit = ({
                         <option value="taskAdd">Task Add</option>
                         <option value="notesAdd">Notes Add</option>
                         <option value="restApiCall">REST API Call</option>
-                        <option value="generatedDailySummaryByAi">Generated Daily Summary (AI)</option>
+                        <option value="generatedDailySummaryByAi">Generated User Daily Summary (AI)</option>
                         <option value="suggestDailyTasksByAi">Suggest Daily Tasks (AI)</option>
                     </select>
                 </div>
