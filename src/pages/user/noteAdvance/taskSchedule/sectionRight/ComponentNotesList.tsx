@@ -7,7 +7,7 @@ import ReactPaginate from 'react-paginate';
 import { PlusCircle } from 'lucide-react';
 import { taskScheduleAddAxios } from '../utils/taskScheduleListAxios.ts';
 import { useNavigate } from 'react-router-dom';
-    
+
 const perPage = 20;
 
 const ComponentNotesList = () => {
@@ -95,11 +95,13 @@ const ComponentNotesList = () => {
             {/* div scroll up */}
             <div id='messagesScrollUp' />
             {renderCount()}
-            {list.map((taskScheduleObj) => (
-                <div key={taskScheduleObj._id}>
-                    <ComponentNotesItem taskScheduleObj={taskScheduleObj} />
-                </div>
-            ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {list.map((taskScheduleObj) => (
+                    <div key={taskScheduleObj._id}>
+                        <ComponentNotesItem taskScheduleObj={taskScheduleObj} />
+                    </div>
+                ))}
+            </div>
             {totalCount >= 1 && (
                 <div className="w-full flex justify-center items-center">
                     <ReactPaginate
