@@ -28,6 +28,7 @@ const SettingProfile = lazy(() => import("./pages/user/settings/settingProfile/S
 const SettingApiKey = lazy(() => import("./pages/user/settings/settingApiKeys/SettingApiKey.tsx"));
 const SettingModelPreference = lazy(() => import("./pages/user/settings/settingModelPreference/SettingModelPreference.tsx"));
 const LoginHistory = lazy(() => import("./pages/user/settings/loginHistory/loginHistory.tsx"));
+const SettingChangePassword = lazy(() => import("./pages/user/settings/changePassword/SettingChangePassword.tsx"));
 
 // pages -> ai
 const PageChatLlmListWrapper = lazy(() => import('./pages/user/noteAdvance/pageChatLlmList/ChatLlmListWrapper.tsx'));
@@ -225,6 +226,14 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <LoginHistory />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
+          path: "/user/setting/change-password",
+          element: (
+            <UnauthorizedRoute>
+              <SettingChangePassword />
             </UnauthorizedRoute>
           ),
         },
