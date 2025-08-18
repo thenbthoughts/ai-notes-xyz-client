@@ -33,7 +33,7 @@ const getFileIcon = (fileType: string, fileUrl: string) => {
 const getFileUrl = (fileUrl: string) =>
     `${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${fileUrl}`;
 
-const ComponentLifeEventsEditFileUpload = ({ lifeEventId }: { lifeEventId: string }) => {
+const ComponentNotesEditFileUpload = ({ noteId }: { noteId: string }) => {
     const [files, setFiles] = useState<ILifeEventsFileUpload[]>([]);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -42,10 +42,10 @@ const ComponentLifeEventsEditFileUpload = ({ lifeEventId }: { lifeEventId: strin
 
     // Fetch files
     const fetchFiles = async () => {
-        if (!lifeEventId) return;
+        if (!noteId) return;
         setLoading(true);
         try {
-            const res = await axiosCustom.post("/api/life-events/file-upload-crud/lifeEventsFileUploadGet", { lifeEventId });
+            const res = await axiosCustom.post("/api/notes/file-upload-crud/notesFileUploadGet", { noteId });
             setFiles(Array.isArray(res.data.docs) ? res.data.docs : []);
         } catch {
             toast.error("Failed to load files");
@@ -53,11 +53,11 @@ const ComponentLifeEventsEditFileUpload = ({ lifeEventId }: { lifeEventId: strin
         setLoading(false);
     };
 
-    useEffect(() => { fetchFiles(); }, [lifeEventId]);
+    useEffect(() => { fetchFiles(); }, [noteId]);
 
     // Upload files
     const uploadFiles = async (fileList: FileList | File[]) => {
-        if (!fileList || !lifeEventId) return;
+        if (!fileList || !noteId) return;
         setUploading(true);
         for (let i = 0; i < fileList.length; i++) {
             const file = fileList[i];
@@ -72,13 +72,13 @@ const ComponentLifeEventsEditFileUpload = ({ lifeEventId }: { lifeEventId: strin
                 );
                 const fileUrl = uploadRes.data.fileName;
                 const fileType = getFileType(file);
-                await axiosCustom.post("/api/life-events/file-upload-crud/lifeEventsFileUploadAdd", {
+                await axiosCustom.post("/api/notes/file-upload-crud/notesFileUploadAdd", {
                     fileType,
                     fileUrl,
                     fileTitle: file.name,
                     fileDescription: file.name,
                     aiTags: [],
-                    lifeEventId,
+                    noteId,
                 });
                 toast.success("File uploaded!", { id: `upload-${i}` });
             } catch {
@@ -94,7 +94,7 @@ const ComponentLifeEventsEditFileUpload = ({ lifeEventId }: { lifeEventId: strin
     const handleDelete = async (_id: string) => {
         if (!window.confirm("Delete this file?")) return;
         try {
-            await axiosCustom.post("/api/life-events/file-upload-crud/lifeEventsFileUploadDelete", { _id });
+            await axiosCustom.post("/api/notes/file-upload-crud/notesFileUploadDelete", { _id });
             toast.success("File deleted");
             fetchFiles();
         } catch {
@@ -266,4 +266,4 @@ const ComponentLifeEventsEditFileUpload = ({ lifeEventId }: { lifeEventId: strin
     );
 };
 
-export default ComponentLifeEventsEditFileUpload;
+export default ComponentNotesEditFileUpload;
