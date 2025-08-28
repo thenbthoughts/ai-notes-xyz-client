@@ -145,7 +145,6 @@ const TaskList: React.FC = () => {
     const renderLeft = () => {
         return (
             <div className="bg-white shadow-md rounded-lg p-4">
-                {/* Tasks Board Names List */}
                 {/* <TasksBoardNamesList /> */}
                 <ComponentTaskWorkspace />
 
@@ -220,28 +219,13 @@ const TaskList: React.FC = () => {
                 </div>
 
                 {/* Section 3: Labels with Search Functionality */}
-                <div className="mb-6">
-                    <h2 className="text-xl font-semibold mb-2 text-blue-600">Labels</h2>
-                    <input
-                        type="text"
-                        placeholder="Search labels..."
-                        className="border border-gray-300 p-3 rounded-lg mb-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                {workspaceId.length === 24 && (
+                    <ComponentTaskListLabels
+                        workspaceId={workspaceId}
+                        selectedLabels={selectedLabels}
+                        setSelectedLabels={setSelectedLabels}
                     />
-                    <div className="flex flex-wrap gap-2">
-                        {/* Example labels, replace with dynamic labels as needed */}
-                        {['Urgent', 'Important', 'Work', 'Personal'].map((label) => (
-                            <span key={label} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
-                                {label}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-
-                <ComponentTaskListLabels
-                    workspaceId={workspaceId}
-                    selectedLabels={selectedLabels}
-                    setSelectedLabels={setSelectedLabels}
-                />
+                )}
             </div>
         )
     }
