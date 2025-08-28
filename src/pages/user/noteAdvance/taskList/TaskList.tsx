@@ -144,7 +144,10 @@ const TaskList: React.FC = () => {
 
     const renderLeft = () => {
         return (
-            <div className="bg-white shadow-md rounded-lg p-4">
+            <div
+                className="bg-white shadow-md rounded-lg p-4"
+                id='task-filter'
+            >
                 {/* <TasksBoardNamesList /> */}
                 <ComponentTaskWorkspace />
 
@@ -157,7 +160,9 @@ const TaskList: React.FC = () => {
                 )}
 
                 {/* Filter */}
-                <div className="mb-6">
+                <div
+                    className="mb-6"
+                >
                     <h2 className="text-xl font-semibold mb-2 text-blue-600">Filter</h2>
 
                     {/* Search */}
@@ -169,6 +174,7 @@ const TaskList: React.FC = () => {
                             className="border border-gray-300 p-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
+                            id='task-search'
                         />
                     </div>
 
@@ -232,7 +238,9 @@ const TaskList: React.FC = () => {
 
     const renderRight = () => {
         return (
-            <div>
+            <div
+                id='task-list'
+            >
                 {loading && (
                     <div className="text-center mt-4">
                         <button className="bg-blue-500 text-white p-2 rounded-lg" disabled>
