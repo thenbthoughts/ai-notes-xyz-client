@@ -12,6 +12,7 @@ import TaskAddOrEdit from './ComponentTaskEdit/TaskAddOrEdit';
 import ComponentTaskStatusListNames from './componentTaskStatusListNames/componentTaskStatusListNames';
 import ComponentTaskWorkspace from './componentTaskWorkspace/ComponentTaskWorkspace';
 import { jotaiStateTaskWorkspaceId } from './stateJotai/taskStateJotai';
+import ComponentTaskListLabels from './ComponentTaskListLabels';
 
 const TaskList: React.FC = () => {
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
@@ -21,6 +22,7 @@ const TaskList: React.FC = () => {
     const [priority, setPriority] = useState('');
     const [isArchived, setIsArchived] = useState('not-archived');
     const [isCompleted, setIsCompleted] = useState('not-completed');
+    const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
 
     const [workspaceId, setWorkspaceId] = useAtom(jotaiStateTaskWorkspaceId);
 
@@ -54,6 +56,7 @@ const TaskList: React.FC = () => {
         isCompleted,
         workspaceId,
         searchInput,
+        selectedLabels
     ])
 
     useEffect(() => {
@@ -103,7 +106,8 @@ const TaskList: React.FC = () => {
                 priority: priority || '',
                 isArchived: isArchived || '',
                 isCompleted: isCompleted || '',
-                taskWorkspaceId: workspaceId || ''
+                taskWorkspaceId: workspaceId || '',
+                labelArr: selectedLabels || []
             }
         };
 
@@ -232,6 +236,12 @@ const TaskList: React.FC = () => {
                         ))}
                     </div>
                 </div>
+
+                <ComponentTaskListLabels
+                    workspaceId={workspaceId}
+                    selectedLabels={selectedLabels}
+                    setSelectedLabels={setSelectedLabels}
+                />
             </div>
         )
     }
