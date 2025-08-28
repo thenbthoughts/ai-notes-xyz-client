@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
+import { DebounceInput } from 'react-debounce-input';
 
 import axiosCustom from '../../../../config/axiosCustom';
 import TaskListComponentSuggestAiGeneratedTask from './TaskListComponentSuggestAiGeneratedTask';
@@ -11,6 +12,7 @@ import TaskAddOrEdit from './ComponentTaskEdit/TaskAddOrEdit';
 import ComponentTaskStatusListNames from './componentTaskStatusListNames/componentTaskStatusListNames';
 import ComponentTaskWorkspace from './componentTaskWorkspace/ComponentTaskWorkspace';
 import { jotaiStateTaskWorkspaceId } from './stateJotai/taskStateJotai';
+import ComponentTaskListLabels from './ComponentTaskListLabels';
 
 const TaskList: React.FC = () => {
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
@@ -20,6 +22,7 @@ const TaskList: React.FC = () => {
     const [priority, setPriority] = useState('');
     const [isArchived, setIsArchived] = useState('not-archived');
     const [isCompleted, setIsCompleted] = useState('not-completed');
+    const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
 
     const [workspaceId, setWorkspaceId] = useAtom(jotaiStateTaskWorkspaceId);
 
@@ -46,9 +49,14 @@ const TaskList: React.FC = () => {
             )
         )
     }, [
-        isTaskAddModalIsOpen, taskStatusList,
-        priority, isArchived, isCompleted,
+        isTaskAddModalIsOpen,
+        taskStatusList,
+        priority,
+        isArchived,
+        isCompleted,
         workspaceId,
+        searchInput,
+        selectedLabels
     ])
 
     useEffect(() => {
@@ -98,7 +106,8 @@ const TaskList: React.FC = () => {
                 priority: priority || '',
                 isArchived: isArchived || '',
                 isCompleted: isCompleted || '',
-                taskWorkspaceId: workspaceId || ''
+                taskWorkspaceId: workspaceId || '',
+                labelArr: selectedLabels || []
             }
         };
 
@@ -136,7 +145,6 @@ const TaskList: React.FC = () => {
     const renderLeft = () => {
         return (
             <div className="bg-white shadow-md rounded-lg p-4">
-                {/* Tasks Board Names List */}
                 {/* <TasksBoardNamesList /> */}
                 <ComponentTaskWorkspace />
 
@@ -154,7 +162,8 @@ const TaskList: React.FC = () => {
 
                     {/* Search */}
                     <div className="mb-2">
-                        <input
+                        <DebounceInput
+                            debounceTimeout={750}
                             type="text"
                             placeholder="Search tasks..."
                             className="border border-gray-300 p-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
@@ -210,22 +219,13 @@ const TaskList: React.FC = () => {
                 </div>
 
                 {/* Section 3: Labels with Search Functionality */}
-                <div className="mb-6">
-                    <h2 className="text-xl font-semibold mb-2 text-blue-600">Labels</h2>
-                    <input
-                        type="text"
-                        placeholder="Search labels..."
-                        className="border border-gray-300 p-3 rounded-lg mb-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                {workspaceId.length === 24 && (
+                    <ComponentTaskListLabels
+                        workspaceId={workspaceId}
+                        selectedLabels={selectedLabels}
+                        setSelectedLabels={setSelectedLabels}
                     />
-                    <div className="flex flex-wrap gap-2">
-                        {/* Example labels, replace with dynamic labels as needed */}
-                        {['Urgent', 'Important', 'Work', 'Personal'].map((label) => (
-                            <span key={label} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
-                                {label}
-                            </span>
-                        ))}
-                    </div>
-                </div>
+                )}
             </div>
         )
     }
@@ -294,16 +294,6 @@ const TaskList: React.FC = () => {
             >
                 <div className="h-full">
                     {renderHeading()}
-
-                    <div className='px-2'>
-                        <input
-                            type="text"
-                            placeholder="Search tasks..."
-                            value={searchInput}
-                            onChange={(e) => setSearchInput(e.target.value)}
-                            className="border border-gray-300 p-3 rounded-lg mb-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
 
                     <div className='px-2'>
                         <TaskListComponentSuggestAiGeneratedTask
