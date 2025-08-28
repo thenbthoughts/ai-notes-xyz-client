@@ -5,6 +5,7 @@ import axiosCustom from '../../../../../config/axiosCustom';
 import { DateTime } from 'luxon';
 import toast from 'react-hot-toast';
 import envKeys from '../../../../../config/envKeys';
+import ComponentTaskCommentListAudioInput from './ComponentTaskCommentListAudioInput';
 
 interface TaskComment {
     _id: string;
@@ -280,6 +281,14 @@ const ComponentTaskCommentList: React.FC<{
             {/* upload file */}
             <div>
                 <ComponentTaskCommentListFileUpload
+                    taskId={parentTaskId}
+                    setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
+                />
+            </div>
+
+            {/* audio input */}
+            <div>
+                <ComponentTaskCommentListAudioInput
                     taskId={parentTaskId}
                     setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
                 />

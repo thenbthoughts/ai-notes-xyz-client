@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import TestReactQuill from './TestReactQuill';
+import TestChatInput from './TestChatInput';
 
 const TestDevWrapper = () => {
     return (
@@ -30,6 +31,8 @@ const TestDevWrapper = () => {
             </p>
 
             <TestReactQuill />
+
+            <TestChatInput />
         </div>
     )
 };
