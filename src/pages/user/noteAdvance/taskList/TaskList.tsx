@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
+import { DebounceInput } from 'react-debounce-input';
 
 import axiosCustom from '../../../../config/axiosCustom';
 import TaskListComponentSuggestAiGeneratedTask from './TaskListComponentSuggestAiGeneratedTask';
@@ -46,9 +47,13 @@ const TaskList: React.FC = () => {
             )
         )
     }, [
-        isTaskAddModalIsOpen, taskStatusList,
-        priority, isArchived, isCompleted,
+        isTaskAddModalIsOpen,
+        taskStatusList,
+        priority,
+        isArchived,
+        isCompleted,
         workspaceId,
+        searchInput,
     ])
 
     useEffect(() => {
@@ -154,7 +159,8 @@ const TaskList: React.FC = () => {
 
                     {/* Search */}
                     <div className="mb-2">
-                        <input
+                        <DebounceInput
+                            debounceTimeout={750}
                             type="text"
                             placeholder="Search tasks..."
                             className="border border-gray-300 p-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
@@ -294,16 +300,6 @@ const TaskList: React.FC = () => {
             >
                 <div className="h-full">
                     {renderHeading()}
-
-                    <div className='px-2'>
-                        <input
-                            type="text"
-                            placeholder="Search tasks..."
-                            value={searchInput}
-                            onChange={(e) => setSearchInput(e.target.value)}
-                            className="border border-gray-300 p-3 rounded-lg mb-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
 
                     <div className='px-2'>
                         <TaskListComponentSuggestAiGeneratedTask
