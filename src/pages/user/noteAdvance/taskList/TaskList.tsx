@@ -13,6 +13,9 @@ import ComponentTaskStatusListNames from './componentTaskStatusListNames/compone
 import ComponentTaskWorkspace from './componentTaskWorkspace/ComponentTaskWorkspace';
 import { jotaiStateTaskWorkspaceId } from './stateJotai/taskStateJotai';
 import ComponentTaskListLabels from './ComponentTaskListLabels';
+import { atomWithStorage } from 'jotai/utils';
+
+const expandedSectionsAtom = atomWithStorage(`taskList-expanded`, [] as string[]);
 
 const TaskList: React.FC = () => {
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
@@ -37,6 +40,8 @@ const TaskList: React.FC = () => {
         modalType: 'add' as 'add' | 'edit',
         recordId: ''
     });
+
+    const [expandedSections, setExpandedSections] = useAtom(expandedSectionsAtom);
 
     useEffect(() => {
         fetchTasks();
@@ -145,7 +150,7 @@ const TaskList: React.FC = () => {
     const renderLeft = () => {
         return (
             <div
-                className="bg-white shadow-md rounded-lg p-4"
+                className="bg-white shadow rounded p-4"
                 id='task-filter'
             >
                 {/* <TasksBoardNamesList /> */}
@@ -235,7 +240,6 @@ const TaskList: React.FC = () => {
             </div>
         )
     }
-
     const renderRight = () => {
         return (
             <div
@@ -256,30 +260,77 @@ const TaskList: React.FC = () => {
                                 let tempTaskList = tasks.filter(filterTask => itemTaskStatus._id === filterTask.taskStatusId);
                                 // let tempTaskList = tasks;
 
+                                const isExpanded = expandedSections.includes(itemTaskStatus._id);
+
+                                const toggleExpanded = () => {
+                                    setExpandedSections(prev => {
+                                        let returnArr = [];
+                                        if (prev.includes(itemTaskStatus._id)) {
+                                            // Remove the item if it exists
+                                            returnArr = prev.filter(id => id !== itemTaskStatus._id);
+                                        } else {
+                                            // Add the item if it doesn't exist
+                                            returnArr = [...prev, itemTaskStatus._id];
+                                        }
+                                        // last 50 items
+                                        if (returnArr.length > 50) {
+                                            returnArr = returnArr.slice(-50);
+                                        }
+                                        return returnArr;
+                                    });
+                                };
+
                                 return (
-                                    <div key={itemTaskStatus._id} className="mb-4 p-4 rounded-lg shadow-md bg-gray-100">
-                                        <h2 className="text-xl font-semibold mb-2 text-blue-600">{itemTaskStatus.statusTitle}</h2>
-                                        {tempTaskList.length === 0 && (
-                                            <div className="text-center">
-                                                <p>No tasks available in this group.</p>
-                                            </div>
+                                    <div key={itemTaskStatus._id} className="mb-4 p-4 rounded shadow bg-gray-100">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h2 className="text-xl font-semibold text-blue-600">
+                                                {itemTaskStatus.statusTitle}{' '}
+                                                {tempTaskList.length > 0 && (
+                                                    <span className="text-gray-500">
+                                                        ({tempTaskList.length})
+                                                    </span>
+                                                )}
+                                            </h2>
+                                            <button
+                                                onClick={toggleExpanded}
+                                                className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                                            >
+                                                {isExpanded === false ? (
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                    </svg>
+                                                ) : (
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                    </svg>
+                                                )}
+                                            </button>
+                                        </div>
+                                        {isExpanded === false && (
+                                            <>
+                                                {tempTaskList.length === 0 && (
+                                                    <div className="text-center">
+                                                        <p>No tasks available in this group.</p>
+                                                    </div>
+                                                )}
+                                                <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                    {
+                                                        tempTaskList.map(task => {
+                                                            return (
+                                                                <div key={task._id}>
+                                                                    <TaskItem
+                                                                        task={task}
+                                                                        taskStatusList={taskStatusList}
+                                                                        setRefreshRandomNum={setRefreshRandomNum}
+                                                                        setIsTaskAddModalIsOpen={setIsTaskAddModalIsOpen}
+                                                                    />
+                                                                </div>
+                                                            )
+                                                        })
+                                                    }
+                                                </ul>
+                                            </>
                                         )}
-                                        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                            {
-                                                tempTaskList.map(task => {
-                                                    return (
-                                                        <div>
-                                                            <TaskItem
-                                                                task={task}
-                                                                taskStatusList={taskStatusList}
-                                                                setRefreshRandomNum={setRefreshRandomNum}
-                                                                setIsTaskAddModalIsOpen={setIsTaskAddModalIsOpen}
-                                                            />
-                                                        </div>
-                                                    )
-                                                })
-                                            }
-                                        </ul>
                                     </div>
                                 )
                             })}
