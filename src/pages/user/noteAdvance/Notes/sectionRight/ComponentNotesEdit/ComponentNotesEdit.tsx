@@ -9,7 +9,7 @@ import { useSetAtom } from 'jotai';
 import { jotaiStateNotesWorkspaceRefresh } from '../../stateJotai/notesStateJotai.ts';
 import { INotes } from '../../../../../../types/pages/tsNotes.ts';
 import QuillEditorCustom1 from '../../../../../../components/quillJs/QuillEditorCustom1/QuillEditorCustom1.tsx';
-import ComponentNotesEditFileUpload from '../ComponentNotesEditFileUpload/ComponentNotesEditFileUpload.tsx';
+import ComponentNotesCommentList from './ComponentNotesCommentList.tsx';
 
 const ComponentNotesEdit = ({
     notesObj
@@ -192,8 +192,8 @@ const ComponentNotesEdit = ({
 
                 {/* field -> file upload */}
                 <div>
-                    <ComponentNotesEditFileUpload
-                        noteId={notesObj._id}
+                    <ComponentNotesCommentList
+                        parentNotesId={notesObj._id}
                     />
                 </div>
 
