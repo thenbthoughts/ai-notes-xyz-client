@@ -94,14 +94,26 @@ const componentTaskStatusListNames = ({
         }
     };
 
-    const revalidatePositionById = async ({ id, upOrDown }: { id: string; upOrDown: 'up' | 'down' }) => {
+    const revalidatePositionById = async ({
+        id,
+        upOrDown,
+        taskWorkspaceId,
+    }: {
+        id: string;
+        upOrDown: 'up' | 'down';
+        taskWorkspaceId: string;
+    }) => {
         const config = {
             method: 'post',
             url: '/api/task-status-list/crud/taskStatusListRevalidatePositionById',
             headers: {
                 'Content-Type': 'application/json',
             },
-            data: { _id: id, upOrDown },
+            data: {
+                _id: id,
+                upOrDown,
+                taskWorkspaceId,
+            },
         };
 
         try {
@@ -134,10 +146,10 @@ const componentTaskStatusListNames = ({
                                 <div>
                                     {list.statusTitle !== 'Uncategorized' && (
                                         <Fragment>
-                                            <button onClick={() => revalidatePositionById({ id: list._id, upOrDown: 'up' })} className="text-red-600 hover:text-red-700 ml-1 mr-1">
+                                            <button onClick={() => revalidatePositionById({ id: list._id, upOrDown: 'up', taskWorkspaceId: workspaceId })} className="text-red-600 hover:text-red-700 ml-1 mr-1">
                                                 <LucideMoveUp size={16} />
                                             </button>
-                                            <button onClick={() => revalidatePositionById({ id: list._id, upOrDown: 'down' })} className="text-red-600 hover:text-red-700 ml-1 mr-1">
+                                            <button onClick={() => revalidatePositionById({ id: list._id, upOrDown: 'down', taskWorkspaceId: workspaceId })} className="text-red-600 hover:text-red-700 ml-1 mr-1">
                                                 <LucideMoveDown size={16} />
                                             </button>
                                             <button onClick={() => deleteGroup(list._id)} className="text-red-600 hover:text-red-700 ml-1">
