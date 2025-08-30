@@ -182,6 +182,9 @@ const TaskItem = ({
                             axiosChangeTaskList(e.target.value);
                         }}
                         className="border border-gray-300 px-2 py-1 pr-4 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out hover:bg-blue-50 text-sm"
+                        style={{
+                            width: '100px',
+                        }}
                     >
                         {taskStatusList.map((taskStatus) => (
                             <option key={taskStatus._id} value={taskStatus._id}>
