@@ -25,7 +25,7 @@ const ComponentNotesLeft = () => {
                 notesWorkspaceId: workspaceId,
             });
             if (result.success !== '') {
-                navigate(`/user/notes?action=edit&id=${result.recordId}`)
+                navigate(`/user/notes?action=edit&id=${result.recordId}&workspace=${workspaceId}`)
             }
         } catch (error) {
             console.error(error);
@@ -60,7 +60,7 @@ const ComponentNotesLeft = () => {
             if (typeof doc._id === 'string') {
                 if (doc._id.length === 24) {
                     // redirect to edit page
-                    navigate(`/user/notes?action=edit&id=${doc._id}`)
+                    navigate(`/user/notes?action=edit&id=${doc._id}&workspace=${doc.notesWorkspaceId}`)
 
                     // set workspace id
                     setWorkspaceId(doc.notesWorkspaceId);

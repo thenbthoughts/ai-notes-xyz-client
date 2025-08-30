@@ -72,7 +72,7 @@ const ComponentNotesList = () => {
                 notesWorkspaceId: workspaceId,
             });
             if (result.success !== '') {
-                navigate(`/user/notes?action=edit&id=${result.recordId}`);
+                navigate(`/user/notes?action=edit&id=${result.recordId}&workspace=${workspaceId}`);
             }
         } catch (error) {
             console.error(error);
