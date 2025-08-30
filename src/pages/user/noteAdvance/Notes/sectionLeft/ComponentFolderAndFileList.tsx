@@ -142,6 +142,13 @@ const ComponentFolderAndFileList = () => {
 
     const axiosGetMenuItems = async () => {
         try {
+            if(workspaceId.length === 24) {
+                // valid
+            } else {
+                // invalid
+                return;
+            }
+
             const result = await axiosCustom.post('/api/notes/crud/notesGet', {
                 notesWorkspaceId: workspaceId,
             });

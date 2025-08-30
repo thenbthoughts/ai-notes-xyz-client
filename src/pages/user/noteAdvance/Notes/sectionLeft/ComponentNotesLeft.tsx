@@ -44,10 +44,10 @@ const ComponentNotesLeft = () => {
                     openRandomNotes: 'true',
                 },
             } as AxiosRequestConfig;
-    
+
             const response = await axiosCustom.request(config);
 
-            if(response.data.docs.length === 0) {
+            if (response.data.docs.length === 0) {
                 return {
                     success: '',
                     error: 'No notes found. Please add a note first.',
@@ -56,7 +56,7 @@ const ComponentNotesLeft = () => {
             }
 
             const doc = response.data.docs[0];
-            
+
             if (typeof doc._id === 'string') {
                 if (doc._id.length === 24) {
                     // redirect to edit page
@@ -113,7 +113,9 @@ const ComponentNotesLeft = () => {
             {/* Notes */}
             <div className="mb-4">
                 <h2 className="text-xl font-semibold mb-4 text-indigo-600">Notes:</h2>
-                <ComponentFolderAndFileList />
+                {workspaceId.length === 24 && (
+                    <ComponentFolderAndFileList />
+                )}
             </div>
 
             {/* Chat Options Title */}
