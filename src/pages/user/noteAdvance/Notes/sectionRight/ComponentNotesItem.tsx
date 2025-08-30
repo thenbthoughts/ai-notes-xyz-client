@@ -102,7 +102,7 @@ const ComponentNotesItem = ({
                             </button>
                         )}
                         <Link
-                            to={`/user/notes?action=edit&id=${noteObj._id}`}
+                            to={`/user/notes?action=edit&id=${noteObj._id}&workspace=${noteObj.notesWorkspaceId}`}
                             className="px-3 py-1 rounded bg-green-100 text-green-800 text-sm font-semibold hover:bg-green-200 mr-1"
                         >
                             <LucideEdit

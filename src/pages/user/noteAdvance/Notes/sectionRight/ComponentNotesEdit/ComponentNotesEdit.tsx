@@ -104,7 +104,7 @@ const ComponentNotesEdit = ({
 
             setWorkspaceRefresh(prev => prev + 1);
             toast.success('Note deleted successfully!');
-            navigate('/user/notes');
+            navigate(`/user/notes?workspace=${notesObj.notesWorkspaceId}`);
         } catch (error) {
             console.error(error);
         }
@@ -320,7 +320,7 @@ const ComponentNotesEdit = ({
             {!requestEdit.loading && (
                 <div className="flex justify-between my-4">
                     <Link
-                        to={'/user/notes'}
+                        to={`/user/notes?workspace=${notesObj.notesWorkspaceId}`}
                         className="px-3 py-1 rounded bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
                     >
                         <LucideArrowLeft className="w-4 h-4 inline-block mr-2" />
