@@ -31,8 +31,14 @@ const UserHomepage = () => {
 
     const [name, setName] = useState('');
 
+    const [dashboardStats, setDashboardStats] = useState({
+        taskRemainingCount: 0,
+        totalCount: 0,
+    });
+
     useEffect(() => {
         fetchUser();
+        fetchStats();
     }, [])
 
     const fetchUser = async () => {
@@ -57,6 +63,30 @@ const UserHomepage = () => {
             console.error("Error fetching user:", error);
         }
     };
+
+    const fetchStats = async () => {
+        try {
+            const response = await axiosCustom.get('/api/dashboard/crud/get-dashboard-stats');
+            const data = response.data.docs;
+            console.log("Dashboard stats:", data);
+
+            let tempDashboardStats = {
+                taskRemainingCount: 0,
+                totalCount: 0,
+            };
+
+            if (typeof data.taskRemainingCount === 'number') {
+                tempDashboardStats.taskRemainingCount = data.taskRemainingCount;
+            }
+            if (typeof data.totalCount === 'number') {
+                tempDashboardStats.totalCount = data.totalCount;
+            }
+
+            setDashboardStats(tempDashboardStats);
+        } catch (error) {
+            console.error("Error fetching stats:", error);
+        }
+    }
 
     return (
         <div>
@@ -151,11 +181,55 @@ const UserHomepage = () => {
                                         </div>
                                         <div>Chat</div>
                                     </Link>
-                                    <Link to="/user/task" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link
+                                        to="/user/task"
+                                        className='block p-3 border bg-cyan-100 rounded hover:shadow-md'
+                                    >
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideList size={32} />
                                         </div>
                                         <div>Task</div>
+                                        {dashboardStats.taskRemainingCount > 0 && dashboardStats.totalCount > 0 && (
+                                            <Fragment>
+
+                                                <div>{dashboardStats.taskRemainingCount} / {dashboardStats.totalCount}</div>
+                                                <div
+                                                    style={{
+                                                        height: '8px',
+                                                        backgroundColor: '#f5f3f0',
+                                                        width: '100%',
+                                                        marginTop: '8px',
+                                                        borderRadius: '10px',
+                                                        overflow: 'hidden',
+                                                        boxShadow: 'inset 0 2px 4px rgba(139,117,85,0.1)',
+                                                    }}
+                                                >
+                                                    <div
+                                                        style={{
+                                                            height: '8px',
+                                                            background: 'linear-gradient(90deg, #d4a574 0%, #c49660 50%, #b8864d 100%)',
+                                                            width: `${Math.round((dashboardStats.taskRemainingCount / dashboardStats.totalCount) * 100)}%`,
+                                                            borderRadius: '10px',
+                                                            transition: 'width 0.6s ease-in-out',
+                                                            boxShadow: '0 2px 8px rgba(212, 165, 116, 0.3)',
+                                                            position: 'relative',
+                                                        }}
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                position: 'absolute',
+                                                                top: '0',
+                                                                left: '0',
+                                                                right: '0',
+                                                                bottom: '0',
+                                                                background: 'linear-gradient(90deg, transparent 0%, rgba(255,248,240,0.4) 50%, transparent 100%)',
+                                                                animation: 'shimmer 2s infinite',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </Fragment>
+                                        )}
                                     </Link>
                                     <Link to="/user/notes" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -175,7 +249,7 @@ const UserHomepage = () => {
                                         </div>
                                         <div>Info Vault</div>
                                     </Link>
-                                    <Link to="/user/task-schedule" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>    
+                                    <Link to="/user/task-schedule" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideClock size={32} />
                                         </div>
