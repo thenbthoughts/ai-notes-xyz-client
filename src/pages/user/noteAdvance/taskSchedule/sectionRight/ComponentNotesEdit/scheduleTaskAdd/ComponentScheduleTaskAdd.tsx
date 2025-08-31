@@ -1,6 +1,7 @@
 import { ITaskScheduleTaskAdd } from '../../../../../../../types/pages/tsTaskSchedule.ts';
 import ComponentSelectTaskStatus from './ComponentSelectTaskStatus.tsx';
 import ComponentSelectWorkspace from './ComponentSelectWorkspace.tsx';
+import { LucideTrash2 } from 'lucide-react';
 
 
 
@@ -64,6 +65,49 @@ const ComponentScheduleTaskAdd = ({
                         setFormDataTaskAdd({ ...formDataTaskAdd, taskStatusId: taskStatusId });
                     }}
                 />
+            </div>
+
+            {/* field -> subtask list */}
+            <div className="py-2">
+                <label className="block text-sm font-medium text-gray-700">Subtask</label>
+                <div className="space-y-2">
+                    {formDataTaskAdd.subtaskArr.map((subtask, index) => (
+                        <div key={index} className="flex items-center gap-1 rounded">
+                            <textarea
+                                value={subtask}
+                                onChange={(e) => {
+                                    const newSubtaskList = [...formDataTaskAdd.subtaskArr];
+                                    newSubtaskList[index] = e.target.value;
+                                    setFormDataTaskAdd({ ...formDataTaskAdd, subtaskArr: newSubtaskList });
+                                }}
+                                className="flex-1 border border-gray-300 rounded px-1 p-1 w-full"
+                                placeholder="Enter subtask"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const newSubtaskList = formDataTaskAdd.subtaskArr.filter((_, i) => i !== index);
+                                    setFormDataTaskAdd({ ...formDataTaskAdd, subtaskArr: newSubtaskList });
+                                }}
+                                className="px-1 py-0.5 bg-red-500 text-white rounded hover:bg-red-600 flex items-center"
+                            >
+                                <LucideTrash2 className="w-4 h-4" />
+                            </button>
+                        </div>
+                    ))}
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setFormDataTaskAdd({
+                                ...formDataTaskAdd,
+                                subtaskArr: [...formDataTaskAdd.subtaskArr, '']
+                            });
+                        }}
+                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                        Add Subtask
+                    </button>
+                </div>
             </div>
 
             {/* field -> task deadline enabled */}

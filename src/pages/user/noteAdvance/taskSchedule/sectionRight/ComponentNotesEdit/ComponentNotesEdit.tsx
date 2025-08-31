@@ -948,6 +948,9 @@ const ComponentNotesEditWrapper = ({
         // identification
         taskWorkspaceId: '',
         taskStatusId: '',
+
+        // subtask list
+        subtaskArr: [],
     });
     const [loading, setLoading] = useState(false);
 

@@ -57,4 +57,7 @@ export interface ITaskScheduleTaskAdd {
     // task ai fields
     taskAiSummary: boolean;
     taskAiContext: string;
+
+    // subtask list
+    subtaskArr: string[];
 }
