@@ -32,7 +32,7 @@ const UserHomepage = () => {
     const [name, setName] = useState('');
 
     const [dashboardStats, setDashboardStats] = useState({
-        taskRemainingCount: 0,
+        taskCompletedCount: 0,
         totalCount: 0,
     });
 
@@ -71,12 +71,12 @@ const UserHomepage = () => {
             console.log("Dashboard stats:", data);
 
             let tempDashboardStats = {
-                taskRemainingCount: 0,
+                taskCompletedCount: 0,
                 totalCount: 0,
             };
 
-            if (typeof data.taskRemainingCount === 'number') {
-                tempDashboardStats.taskRemainingCount = data.taskRemainingCount;
+            if (typeof data.taskCompletedCount === 'number') {
+                tempDashboardStats.taskCompletedCount = data.taskCompletedCount;
             }
             if (typeof data.totalCount === 'number') {
                 tempDashboardStats.totalCount = data.totalCount;
@@ -189,10 +189,12 @@ const UserHomepage = () => {
                                             <LucideList size={32} />
                                         </div>
                                         <div>Task</div>
-                                        {dashboardStats.taskRemainingCount > 0 && dashboardStats.totalCount > 0 && (
+                                        {dashboardStats.taskCompletedCount > 0 && dashboardStats.totalCount > 0 && (
                                             <Fragment>
 
-                                                <div>{dashboardStats.taskRemainingCount} / {dashboardStats.totalCount}</div>
+                                                <div>{dashboardStats.taskCompletedCount} / {dashboardStats.totalCount}</div>
+
+                                                {/* cool up progress bar */}
                                                 <div
                                                     style={{
                                                         height: '8px',
@@ -208,7 +210,7 @@ const UserHomepage = () => {
                                                         style={{
                                                             height: '8px',
                                                             background: 'linear-gradient(90deg, #d4a574 0%, #c49660 50%, #b8864d 100%)',
-                                                            width: `${Math.round((dashboardStats.taskRemainingCount / dashboardStats.totalCount) * 100)}%`,
+                                                            width: `${Math.round((dashboardStats.taskCompletedCount / dashboardStats.totalCount) * 100)}%`,
                                                             borderRadius: '10px',
                                                             transition: 'width 0.6s ease-in-out',
                                                             boxShadow: '0 2px 8px rgba(212, 165, 116, 0.3)',
