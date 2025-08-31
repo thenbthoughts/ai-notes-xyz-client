@@ -985,7 +985,11 @@ const ComponentNotesEditWrapper = ({
 
             if (tempArr.length === 1) {
                 if (tempArr[0]?.taskAddArr?.length === 1) {
-                    setFormDataTaskAdd(tempArr[0].taskAddArr[0]);
+                    let tempTask = tempArr[0].taskAddArr[0]
+                    setFormDataTaskAdd({
+                        ...tempTask,
+                        subtaskArr: tempTask.subtaskArr || [],
+                    });
                 }
             }
 
