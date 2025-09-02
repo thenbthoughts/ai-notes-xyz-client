@@ -32,16 +32,47 @@ const ComponentScheduleTaskAdd = ({
             {/* field -> taskDatePrefix */}
             <div className="py-2">
                 <label className="block text-sm font-medium text-gray-700">Task Date Prefix</label>
-                <input
-                    type="checkbox"
-                    id="taskDatePrefix"
-                    checked={formDataTaskAdd.taskDatePrefix}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    onChange={(e) => setFormDataTaskAdd({ ...formDataTaskAdd, taskDatePrefix: e.target.checked })}
-                />
-                <label htmlFor="taskDatePrefix" className="ml-2 text-sm text-gray-600">
-                    Include date prefix in task title (e.g., "{new Date().toLocaleDateString()} {formDataTaskAdd.taskTitle || 'Take files backup once in a month'}")
-                </label>
+                <div className="space-y-2">
+                    <div className="flex items-center">
+                        <input
+                            type="radio"
+                            id="noDatePrefix"
+                            name="datePrefix"
+                            checked={!formDataTaskAdd.taskDatePrefix && !formDataTaskAdd.taskDateTimePrefix}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                            onChange={() => setFormDataTaskAdd({ ...formDataTaskAdd, taskDatePrefix: false, taskDateTimePrefix: false })}
+                        />
+                        <label htmlFor="noDatePrefix" className="ml-2 text-sm text-gray-600">
+                            No date prefix
+                        </label>
+                    </div>
+                    <div className="flex items-center">
+                        <input
+                            type="radio"
+                            id="taskDatePrefix"
+                            name="datePrefix"
+                            checked={formDataTaskAdd.taskDatePrefix}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                            onChange={() => setFormDataTaskAdd({ ...formDataTaskAdd, taskDatePrefix: true, taskDateTimePrefix: false })}
+                        />
+                        <label htmlFor="taskDatePrefix" className="ml-2 text-sm text-gray-600">
+                            Date prefix (e.g., "{new Date().toLocaleDateString()} {formDataTaskAdd.taskTitle || 'Take files backup once in a month'}")
+                        </label>
+                    </div>
+                    <div className="flex items-center">
+                        <input
+                            type="radio"
+                            id="taskDateTimePrefix"
+                            name="datePrefix"
+                            checked={formDataTaskAdd.taskDateTimePrefix}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                            onChange={() => setFormDataTaskAdd({ ...formDataTaskAdd, taskDatePrefix: false, taskDateTimePrefix: true })}
+                        />
+                        <label htmlFor="taskDateTimePrefix" className="ml-2 text-sm text-gray-600">
+                            Date and time prefix (e.g., "{new Date().toLocaleString()} {formDataTaskAdd.taskTitle || 'Take files backup once in a month'}")
+                        </label>
+                    </div>
+                </div>
             </div>
 
             {/* field -> task workspace */}

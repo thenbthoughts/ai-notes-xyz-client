@@ -49,6 +49,7 @@ export interface ITaskScheduleTaskAdd {
     // task fields
     taskTitle: string;
     taskDatePrefix: boolean;
+    taskDateTimePrefix: boolean;
 
     // deadline enabled
     taskDeadlineEnabled: boolean;
