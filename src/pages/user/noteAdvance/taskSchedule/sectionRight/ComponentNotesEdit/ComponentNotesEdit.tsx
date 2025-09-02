@@ -936,6 +936,7 @@ const ComponentNotesEditWrapper = ({
         // task fields
         taskTitle: '',
         taskDatePrefix: true,
+        taskDateTimePrefix: false,
 
         // deadline enabled
         taskDeadlineEnabled: false,
