@@ -6,8 +6,9 @@ import { LucideArrowLeft, LucidePlus, LucideSave, LucideTrash } from 'lucide-rea
 import toast from 'react-hot-toast';
 import { getAllTimezones } from 'countries-and-timezones';
 
-import { ITaskSchedule, ITaskScheduleTaskAdd } from '../../../../../../types/pages/tsTaskSchedule.ts';
+import { ITaskSchedule, ITaskScheduleTaskAdd, ISendMyselfEmailForm } from '../../../../../../types/pages/tsTaskSchedule.ts';
 import ComponentScheduleTaskAdd from './scheduleTaskAdd/ComponentScheduleTaskAdd.tsx';
+import ComponentScheduleSendMyselfEmail from './scheduleSendMyselfEmail/ComponentScheduleSendMyselfEmail.tsx';
 
 const timeZoneArr = getAllTimezones();
 
@@ -532,9 +533,11 @@ const CronExpressionArr = ({
 const ComponentNotesEdit = ({
     taskScheduleObj,
     parentFormDataTaskAdd,
+    parentFormDataSendMyselfEmail,
 }: {
     taskScheduleObj: ITaskSchedule;
     parentFormDataTaskAdd: ITaskScheduleTaskAdd;
+    parentFormDataSendMyselfEmail: ISendMyselfEmailForm;
 }) => {
     const navigate = useNavigate();
 
@@ -555,6 +558,8 @@ const ComponentNotesEdit = ({
     ] = useState<string[]>(taskScheduleObj.cronExpressionArr || []);
 
     const [formDataTaskAdd, setFormDataTaskAdd] = useState(parentFormDataTaskAdd);
+
+    const [formDataSendMyselfEmail, setFormDataSendMyselfEmail] = useState(parentFormDataSendMyselfEmail as ISendMyselfEmailForm);
 
     const [formData, setFormData] = useState({
         // Core task schedule fields
@@ -638,6 +643,9 @@ const ComponentNotesEdit = ({
 
                     // schedule type -> taskAdd
                     taskAddObj: formDataTaskAdd,
+
+                    // schedule type -> sendMyselfEmail
+                    sendMyselfEmailObj: formDataSendMyselfEmail,
                 },
             } as AxiosRequestConfig;
             await axiosCustom.request(config);
@@ -723,6 +731,7 @@ const ComponentNotesEdit = ({
                     >
                         <option value="taskAdd">Task Add</option>
                         <option value="notesAdd">Notes Add</option>
+                        <option value="sendMyselfEmail">Send Myself Email</option>
                         <option value="restApiCall">REST API Call</option>
                         <option value="generatedDailySummaryByAi">Generated User Daily Summary (AI)</option>
                         <option value="suggestDailyTasksByAi">Suggest Daily Tasks (AI)</option>
@@ -763,6 +772,14 @@ const ComponentNotesEdit = ({
                         <ComponentScheduleTaskAdd
                             formDataTaskAdd={formDataTaskAdd}
                             setFormDataTaskAdd={setFormDataTaskAdd}
+                        />
+                    </div>
+                )}
+                {formData.taskType === 'sendMyselfEmail' && (
+                    <div>
+                        <ComponentScheduleSendMyselfEmail
+                            formDataSendMyselfEmail={formDataSendMyselfEmail}
+                            setFormDataSendMyselfEmail={setFormDataSendMyselfEmail}
                         />
                     </div>
                 )}
@@ -953,6 +970,18 @@ const ComponentNotesEditWrapper = ({
         // subtask list
         subtaskArr: [],
     });
+    const [formDataSendMyselfEmail, setFormDataSendMyselfEmail] = useState<ISendMyselfEmailForm>({
+        username: '',
+        taskScheduleId: '',
+        emailSubject: '',
+        emailContent: '',
+        aiEnabled: false,
+        passAiContextEnabled: false,
+        systemPrompt: '',
+        userPrompt: '',
+        aiModelName: 'openrouter',
+        aiModelProvider: 'openrouter/auto',
+    });
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -990,6 +1019,12 @@ const ComponentNotesEditWrapper = ({
                     setFormDataTaskAdd({
                         ...tempTask,
                         subtaskArr: tempTask.subtaskArr || [],
+                    });
+                }
+                if (tempArr[0]?.sendMyselfEmailArr?.length === 1) {
+                    let tempSendMyselfEmail = tempArr[0].sendMyselfEmailArr[0]
+                    setFormDataSendMyselfEmail({
+                        ...tempSendMyselfEmail,
                     });
                 }
             }
@@ -1032,6 +1067,7 @@ const ComponentNotesEditWrapper = ({
                     <ComponentNotesEdit
                         taskScheduleObj={list[0]}
                         parentFormDataTaskAdd={formDataTaskAdd}
+                        parentFormDataSendMyselfEmail={formDataSendMyselfEmail}
                     />
                 </div>
             )}
