@@ -49,6 +49,7 @@ export interface ITaskScheduleTaskAdd {
     // task fields
     taskTitle: string;
     taskDatePrefix: boolean;
+    taskDateTimePrefix: boolean;
 
     // deadline enabled
     taskDeadlineEnabled: boolean;
@@ -60,4 +61,26 @@ export interface ITaskScheduleTaskAdd {
 
     // subtask list
     subtaskArr: string[];
+}
+
+export interface ISendMyselfEmailForm {
+    // auth
+    username: string;
+
+    // identification
+    taskScheduleId: string;
+
+    // email fields -> staticContent
+    emailSubject: string;
+    emailContent: string;
+    
+    // ai fields -> aiConversationMail
+    aiEnabled: boolean;
+    passAiContextEnabled: boolean;
+    systemPrompt: string;
+    userPrompt: string;
+
+    // model info
+    aiModelName: string;
+    aiModelProvider: string;
 }
