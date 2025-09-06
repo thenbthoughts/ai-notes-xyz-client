@@ -15,6 +15,7 @@ const SettingHeader = () => {
                 <Link to="/user/setting/login-history" className="text-white hover:underline mx-2">Login History</Link>{'|'}
                 <Link to="/user/setting/api-key" className="text-white hover:underline mx-2">API Keys</Link> {'|'}
                 <Link to="/user/setting/change-password" className="text-white hover:underline mx-2">Change Password</Link>
+                <Link to="/user/setting/notification" className="text-white hover:underline mx-2">Notification</Link>
             </div>
         </div>
     );
