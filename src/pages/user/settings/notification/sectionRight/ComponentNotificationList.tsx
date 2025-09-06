@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
+import ReactPaginate from 'react-paginate';
+
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { IUserNotification } from '../../../../../types/pages/tsUserNotification.ts';
 import ComponentNotificationItem from './ComponentNotificationItem.tsx';
-import ReactPaginate from 'react-paginate';
 
 const perPage = 20;
 
