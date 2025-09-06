@@ -228,6 +228,8 @@ const ComponentScheduleSendMyselfEmail = ({
             {formDataSendMyselfEmail.aiEnabled && (
                 <>
                     {/* field -> pass ai context enabled */}
+                    {/*
+                    // TODO future feature
                     <div className="py-2">
                         <label className="block text-sm font-medium text-gray-700">Pass AI Context</label>
                         <input
@@ -241,6 +243,7 @@ const ComponentScheduleSendMyselfEmail = ({
                             Pass AI context to the model
                         </label>
                     </div>
+                    */}
 
                     {/* field -> system prompt */}
                     <div className="py-2">
