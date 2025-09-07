@@ -177,6 +177,70 @@ const SelectAiModelGroq = ({
     )
 }
 
+const LastUsedLlmModel = ({
+    aiModelName,
+    setAiModelName,
+    setAiModelProvider,
+}: {
+    aiModelName: string;
+    setAiModelName: React.Dispatch<React.SetStateAction<string>>;
+    setAiModelProvider: React.Dispatch<React.SetStateAction<"openrouter" | "groq">>;
+}) => {
+    const [topLlmModels, setTopLlmModels] = useState<Array<{aiModelProvider: string, aiModelName: string}>>([]);
+
+    const [showMoreModels, setShowMoreModels] = useState(false);
+
+    useEffect(() => {
+        const fetchTopLlmModels = async () => {
+            try {
+                const response = await axiosCustom.get('/api/chat-llm/threads-crud/topLlmConversationModel');
+                setTopLlmModels(response.data.modelArr || []);
+            } catch (error) {
+                console.error('Error fetching top LLM models:', error);
+            }
+        };
+
+        fetchTopLlmModels();
+    }, []);
+
+    const handleModelSelect = (model: {aiModelProvider: string, aiModelName: string}) => {
+        if (model.aiModelProvider === 'openrouter' || model.aiModelProvider === 'groq') {
+            setAiModelProvider(model.aiModelProvider as "openrouter" | "groq");
+        }
+        setAiModelName(model.aiModelName);
+    };
+
+    return (
+        <div className="mb-2">
+            {topLlmModels.slice(0, showMoreModels ? topLlmModels.length : 4).map((model, index) => (
+                <button
+                    key={index}
+                    onClick={() => handleModelSelect(model)}
+                    className={`text-left px-2 py-1 text-sm rounded border hover:bg-gray-50 ${
+                        aiModelName === model.aiModelName ? 'bg-blue-50 border-blue-200' : 'border-gray-200'
+                    }`}
+                >
+                    <div>
+                        <span className="inline-block text-gray-700 text-sm">
+                            {model?.aiModelName?.replace('/', ' / ').replace('/', ' / ') || ''}
+                        </span>
+                    </div>
+                </button>
+            ))}
+
+            {topLlmModels.length > 4 && (
+                <button
+                    onClick={() => setShowMoreModels(!showMoreModels)}
+                    className="text-sm text-gray-500 hover:text-gray-700 inline-block border border-gray-200 px-2 py-1 rounded"
+                >
+                    <span className="mr-1">🔍</span>
+                    {showMoreModels ? 'Show Less' : 'Show More'}
+                </button>
+            )}
+        </div>
+    );
+}
+
 const ComponentThreadAdd = () => {
     const navigate = useNavigate();
 
@@ -294,6 +358,14 @@ const ComponentThreadAdd = () => {
                             key={'select-model-groq'}
                         />
                     )}
+
+                    {/* field -> select model -> llm */}
+                    <LastUsedLlmModel
+                        aiModelName={aiModelName}
+                        setAiModelProvider={setAiModelProvider}
+                        setAiModelName={setAiModelName}
+                        key={'select-model-last-used-llm'}
+                    />
 
                     {/* field -> buttons */}
                     <div className="mt-2">
