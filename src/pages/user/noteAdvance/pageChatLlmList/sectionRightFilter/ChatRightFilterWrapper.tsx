@@ -12,19 +12,18 @@ import { Link } from 'react-router-dom';
 import useResponsiveScreen, {
     screenList
 } from '../../../../../hooks/useResponsiveScreen.tsx';
-import { jotaiChatLlmThreadSetting } from '../jotai/jotaiChatLlmThreadSetting.ts';
+import { jotaiChatHistoryModalOpen, jotaiChatLlmThreadSetting } from '../jotai/jotaiChatLlmThreadSetting.ts';
 import { useAtom } from 'jotai';
 
-const ChatRightFilterWrapper = ({
-    stateDisplayChatHistory,
-    setStateDisplayChatHistory,
-}: {
-    stateDisplayChatHistory: boolean;
-    setStateDisplayChatHistory: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+const ChatRightFilterWrapper = () => {
 
     // useState
     const screenWidth = useResponsiveScreen();
+
+    const [
+        chatHistoryModalOpen,
+        setChatHistoryModalOpen,
+    ] = useAtom(jotaiChatHistoryModalOpen);
 
     const [
         chatLlmThreadSetting,
@@ -115,10 +114,12 @@ const ChatRightFilterWrapper = ({
                 <div
                     className='p-1 cursor-pointer'
                     onClick={() => {
-                        setStateDisplayChatHistory(!stateDisplayChatHistory);
+                        setChatHistoryModalOpen({
+                            isOpen: !chatHistoryModalOpen.isOpen,
+                        });
                     }}
                 >
-                    <div className={`py-3 rounded ${stateDisplayChatHistory ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                    <div className={`py-3 rounded ${chatHistoryModalOpen.isOpen ? 'bg-blue-600' : 'bg-gray-600'}`}>
                         <LucideList
                             style={{
                                 width: '100%',
