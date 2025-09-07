@@ -11,8 +11,8 @@ import useResponsiveScreen, {
 import ComponentRightChatWrapper from './sectionRightChat/ComponentRightWrapper.tsx';
 
 import ChatRightFilterWrapper from './sectionRightFilter/ChatRightFilterWrapper.tsx';
-import { jotaiChatLlmThreadSetting } from './jotai/jotaiChatLlmThreadSetting.ts';
-import { useAtom } from 'jotai';
+import { jotaiChatHistoryModalOpen, jotaiChatLlmThreadSetting } from './jotai/jotaiChatLlmThreadSetting.ts';
+import { useAtom, useAtomValue } from 'jotai';
 import { useLocation } from 'react-router-dom';
 import siteInfo from '../../../../config/siteInfo.ts';
 
@@ -22,15 +22,13 @@ const ChatLlmListWrapper = () => {
     const location = useLocation();
     const screenWidth = useResponsiveScreen();
 
+    const chatHistoryModalOpen = useAtomValue(jotaiChatHistoryModalOpen);
+
     const [
         chatLlmThreadSetting,
         setChatLlmThreadSetting,
     ] = useAtom(jotaiChatLlmThreadSetting);
 
-    const [
-        stateDisplayChatHistory,
-        setStateDisplayChatHistory,
-    ] = useState(false);
     const [
         stateDisplayAdd,
         // setStateDisplayAdd,
@@ -119,16 +117,13 @@ const ChatLlmListWrapper = () => {
                 }}
                 className='text-center flex flex-col items-center justify-center'
             >
-                <ChatRightFilterWrapper
-                    stateDisplayChatHistory={stateDisplayChatHistory}
-                    setStateDisplayChatHistory={setStateDisplayChatHistory}
-                />
+                <ChatRightFilterWrapper />
             </div>
 
             {/* screen list */}
             {screenWidth === screenList.sm && (
                 <div>
-                    {stateDisplayChatHistory && (
+                    {chatHistoryModalOpen.isOpen && (
                         <ComponentChatHistoryModelRender />
                     )}
                 </div>

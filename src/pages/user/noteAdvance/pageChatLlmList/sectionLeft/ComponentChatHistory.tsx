@@ -4,8 +4,10 @@ import { DebounceInput } from 'react-debounce-input';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import ReactPaginate from 'react-paginate';
+import { useSetAtom } from 'jotai';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
+import { jotaiChatHistoryModalOpen } from '../jotai/jotaiChatLlmThreadSetting.ts';
 
 /**
  * ComponentChatHistory displays the chat history section.
@@ -14,6 +16,8 @@ import axiosCustom from '../../../../../config/axiosCustom.ts';
 const ComponentChatHistory = () => {
     const location = useLocation();
     const navigate = useNavigate();
+
+    const setChatHistoryModalOpen = useSetAtom(jotaiChatHistoryModalOpen); 
 
     const [activeChatId, setActiveChatId] = useState('');
 
@@ -155,7 +159,13 @@ const ComponentChatHistory = () => {
                                 ${item._id === activeChatId
                                     ? 'bg-blue-100 border-blue-600'
                                     : 'bg-gray-100 border-gray-300 hover:border-gray-600'
-                                }`}
+                                }`
+                            }
+                            onClick={() => {
+                                setChatHistoryModalOpen({
+                                    isOpen: true,
+                                });
+                            }}
                         >
                             {/* Chat Title */}
                             <span className="block text-base font-semibold text-black mb-1">
