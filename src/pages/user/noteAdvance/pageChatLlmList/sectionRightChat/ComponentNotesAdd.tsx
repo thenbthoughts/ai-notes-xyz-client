@@ -7,6 +7,7 @@ import cssNoteAdvanceList from './scss/noteAdvanceList.module.scss';
 import ComponentUploadFile from './ComponentUploadFile';
 import ComponentRecordAudio from './ComponentRecordAudio';
 import { handleAutoSelectContextFirstMessage, handleAutoSelectContext } from '../utils/chatLlmThreadAxios';
+import FileUploadEnvCheck from '../../../../../components/FileUploadEnvCheck';
 
 const ComponentNotesAdd = ({
     setRefreshParentRandomNum,
@@ -106,16 +107,24 @@ const ComponentNotesAdd = ({
                 </button>
 
                 {/* file */}
-                <ComponentUploadFile
-                    setRefreshParentRandomNum={setRefreshParentRandomNum}
-                    threadId={threadId}
-                />
+                <FileUploadEnvCheck
+                    iconType="file"
+                >
+                    <ComponentUploadFile
+                        setRefreshParentRandomNum={setRefreshParentRandomNum}
+                        threadId={threadId}
+                    />
+                </FileUploadEnvCheck>
 
                 {/* audio */}
-                <ComponentRecordAudio
-                    setRefreshParentRandomNum={setRefreshParentRandomNum}
-                    threadId={threadId}
-                />
+                <FileUploadEnvCheck
+                    iconType="audio"
+                >
+                    <ComponentRecordAudio
+                        setRefreshParentRandomNum={setRefreshParentRandomNum}
+                        threadId={threadId}
+                    />
+                </FileUploadEnvCheck>
 
                 {/* auto select context notes */}
                 <button

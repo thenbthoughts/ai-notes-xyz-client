@@ -13,6 +13,7 @@ import ComponentInfoVaultPhone from './ComponentInfoVaultPhone.tsx';
 import ComponentInfoVaultWebsite from './ComponentInfoVaultWebsite.tsx';
 import ComponentInfoVaultSignificantDate from './ComponentInfoVaultSignificantDate.tsx';
 import ComponentInfoVaultAddress from './ComponentInfoVaultAddress.tsx';
+import FileUploadEnvCheck from '../../../../../../components/FileUploadEnvCheck.tsx';
 
 const ComponentInfoVaultEdit = ({
     infoVaultObj
@@ -269,7 +270,11 @@ const ComponentInfoVaultEdit = ({
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Files</label>
-                    <ComponentInfoVaultEditFileUpload infoVaultId={infoVaultObj._id} />
+                    <FileUploadEnvCheck
+                        iconType="file"
+                    >
+                        <ComponentInfoVaultEditFileUpload infoVaultId={infoVaultObj._id} />
+                    </FileUploadEnvCheck>
                 </div>
 
                 <div>

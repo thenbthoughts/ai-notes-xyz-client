@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import ComponentLifeEventsEditCategory from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategory.tsx';
 import ComponentLifeEventsEditCategorySub from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategorySub.tsx';
 import ComponentLifeEventsEditFileUpload from './ComponentLifeEventsEditFileUpload/ComponentLifeEventsEditFileUpload.tsx';
+import FileUploadEnvCheck from '../../../../../components/FileUploadEnvCheck.tsx';
 
 const ComponentLifeEventsEdit = ({
     lifeEventObj
@@ -257,9 +258,13 @@ const ComponentLifeEventsEdit = ({
                 {/* field -> file upload crud component */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">File Upload</label>
-                    <ComponentLifeEventsEditFileUpload
-                        lifeEventId={lifeEventObj._id}
-                    />
+                    <FileUploadEnvCheck
+                        iconType="file"
+                    >
+                        <ComponentLifeEventsEditFileUpload
+                            lifeEventId={lifeEventObj._id}
+                        />
+                    </FileUploadEnvCheck>
                 </div>
 
                 {/* field -> ai tags */}

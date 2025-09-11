@@ -6,6 +6,7 @@ import { DateTime } from 'luxon';
 import toast from 'react-hot-toast';
 import envKeys from '../../../../../../config/envKeys';
 import ComponentNotesCommentListAudioInput from './ComponentNotesCommentListAudioInput';
+import FileUploadEnvCheck from '../../../../../../components/FileUploadEnvCheck';
 
 interface NotesComment {
     _id: string;
@@ -279,18 +280,26 @@ const ComponentNotesCommentList: React.FC<{
 
             {/* upload file */}
             <div>
-                <ComponentNotesCommentListFileUpload
-                    notesId={parentNotesId}
-                    setNotesCommentsReloadRandomNumCurrent={setNotesCommentsReloadRandomNumCurrent}
-                />
+                <FileUploadEnvCheck
+                    iconType="file"
+                >
+                    <ComponentNotesCommentListFileUpload
+                        notesId={parentNotesId}
+                        setNotesCommentsReloadRandomNumCurrent={setNotesCommentsReloadRandomNumCurrent}
+                    />
+                </FileUploadEnvCheck>
             </div>
 
             {/* audio input */}
             <div>
-                <ComponentNotesCommentListAudioInput
-                    notesId={parentNotesId}
-                    setNotesCommentsReloadRandomNumCurrent={setNotesCommentsReloadRandomNumCurrent}
-                />
+                <FileUploadEnvCheck
+                    iconType="audio"
+                >
+                    <ComponentNotesCommentListAudioInput
+                        notesId={parentNotesId}
+                        setNotesCommentsReloadRandomNumCurrent={setNotesCommentsReloadRandomNumCurrent}
+                    />
+                </FileUploadEnvCheck>
             </div>
 
             <div className="space-y-1 mt-2">
