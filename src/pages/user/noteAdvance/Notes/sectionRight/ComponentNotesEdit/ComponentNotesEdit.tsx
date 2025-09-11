@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { AxiosRequestConfig } from 'axios';
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
 import { Link, useNavigate } from 'react-router-dom';
-import { LucideArrowLeft, LucideCopy, LucidePlus, LucideSave, LucideTrash, LucideX } from 'lucide-react';
+import { LucideArrowLeft, LucideCopy, LucideMessageSquare, LucidePlus, LucideSave, LucideTrash, LucideX } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSetAtom } from 'jotai';
+import htmlToMarkdown from '@wcj/html-to-markdown';
 
 import { jotaiStateNotesWorkspaceRefresh } from '../../stateJotai/notesStateJotai.ts';
 import { INotes } from '../../../../../../types/pages/tsNotes.ts';
@@ -108,6 +109,59 @@ const ComponentNotesEdit = ({
         } catch (error) {
             console.error(error);
         }
+    }
+
+    const openAiChatWithNote = async () => {
+        try {
+            const resultThread = await axiosCustom.post(
+                '/api/chat-llm/threads-crud/threadsAdd',
+                {
+                    isPersonalContextEnabled: false,
+                    isAutoAiContextSelectEnabled: false,
+
+                    // selected model
+                    aiModelProvider: 'openrouter',
+                    aiModelName: 'openrouter/auto',
+                }
+            );
+
+            const tempThreadId = resultThread?.data?.thread?._id;
+           
+            const markdownContent = await htmlToMarkdown({
+                html: formData.description,
+            });
+            const content = `Note: ${markdownContent}`;
+            await axiosCustom.post("/api/chat-llm/chat-add/notesAdd", {
+                threadId: tempThreadId,
+                type: "text",
+                content: content,
+                visibility: 'public',
+                tags: [],
+                imagePathsArr: []
+            });
+
+            // redirect
+            const redirectUrl = `/user/chat?id=${tempThreadId}`;
+            navigate(redirectUrl);
+        } catch (error) {
+            console.error(error);
+            toast.error('Error chatting with AI. Please try again.');
+        }
+    }
+
+    const renderButtonAction = () => {
+        return (
+            <div className="flex gap-2 pt-3 pb-5">
+                <button
+                    type="button"
+                    className="px-4 py-2 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 text-white rounded-lg hover:from-purple-600 hover:via-blue-600 hover:to-cyan-600 disabled:opacity-50 flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    onClick={openAiChatWithNote}
+                >
+                    <LucideMessageSquare className="w-4 h-4" />
+                    Open AI Chat with Note
+                </button>
+            </div>
+        )
     }
 
     const renderEditFields = () => {
@@ -361,6 +415,8 @@ const ComponentNotesEdit = ({
                     </div>
                 </div>
             )}
+
+            {renderButtonAction()}
 
             {renderEditFields()}
 
