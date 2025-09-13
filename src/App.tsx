@@ -32,14 +32,14 @@ const SettingChangePassword = lazy(() => import("./pages/user/settings/changePas
 const NotificationWrapper = lazy(() => import("./pages/user/settings/notification/NotificationWrapper.tsx"));
 
 // pages -> ai
-const PageChatLlmListWrapper = lazy(() => import('./pages/user/noteAdvance/pageChatLlmList/ChatLlmListWrapper.tsx'));
+const ChatLlmListWrapper = lazy(() => import('./pages/user/noteAdvance/ChatLlmList/ChatLlmListWrapper.tsx'));
 const AiDeepResearchWrapper = lazy(() => import("./pages/user/noteAdvance/AiDeepResearch/AiDeepResearchWrapper.tsx"));
 
 // pages -> notes
 const NotesWrapper = lazy(() => import("./pages/user/noteAdvance/Notes/NotesWrapper.tsx"));
 const NotesWorkspaceCrud = lazy(() => import("./pages/user/noteAdvance/NotesWorkspaceCrud/NotesWorkspaceCrud.tsx"));
 const InfoVaultWrapper = lazy(() => import("./pages/user/noteAdvance/InfoVault/InfoVaultWrapper.tsx"));
-const PageLifeEventsWrapper = lazy(() => import('./pages/user/noteAdvance/pageLifeEventsList/LifeEventWrapper.tsx'));
+const LifeEventWrapper = lazy(() => import('./pages/user/noteAdvance/LifeEventsList/LifeEventWrapper.tsx'));
 
 // pages -> productivity
 const TaskList = lazy(() => import("./pages/user/noteAdvance/taskList/TaskList.tsx"));
@@ -108,7 +108,7 @@ function App() {
           path: '/user/chat',
           element: (
             <UnauthorizedRoute>
-              <PageChatLlmListWrapper />
+              <ChatLlmListWrapper />
             </UnauthorizedRoute>
           )
         },
@@ -116,7 +116,7 @@ function App() {
           path: '/user/life-events',
           element: (
             <UnauthorizedRoute>
-              <PageLifeEventsWrapper />
+              <LifeEventWrapper />
             </UnauthorizedRoute>
           )
         },
