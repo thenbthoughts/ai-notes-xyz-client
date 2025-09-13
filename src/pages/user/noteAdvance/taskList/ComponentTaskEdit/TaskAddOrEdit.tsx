@@ -514,24 +514,20 @@ const TaskAddOrEdit: React.FC<{
                                     </div>
 
                                     {/* Subtasks */}
-                                    {
-                                        isTaskAddModalIsOpen.modalType === 'edit' && (
-                                            <ComponentTaskSubList
-                                                parentTaskId={isTaskAddModalIsOpen.recordId}
-                                                newTaskSubtasks={taskAiSuggestion.newTaskSubtasks}
-                                            />
-                                        )
-                                    }
+                                    {isTaskAddModalIsOpen.modalType === 'edit' && (
+                                        <ComponentTaskSubList
+                                            parentTaskId={isTaskAddModalIsOpen.recordId}
+                                            newTaskSubtasks={taskAiSuggestion.newTaskSubtasks}
+                                        />
+                                    )}
 
                                     {/* comments */}
-                                    {
-                                        isTaskAddModalIsOpen.modalType === 'edit' && (
-                                            <ComponentTaskCommentList
-                                                parentTaskId={isTaskAddModalIsOpen.recordId}
-                                                taskCommentsReloadRandomNum={taskCommentsReloadRandomNum}
-                                            />
-                                        )
-                                    }
+                                    {isTaskAddModalIsOpen.modalType === 'edit' && (
+                                        <ComponentTaskCommentList
+                                            parentTaskId={isTaskAddModalIsOpen.recordId}
+                                            taskCommentsReloadRandomNum={taskCommentsReloadRandomNum}
+                                        />
+                                    )}
                                 </div>
 
                                 <div className="flex justify-end space-x-1 mt-3">
