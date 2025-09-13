@@ -24,6 +24,7 @@ import ComponentFromBrithdayToToday from './ComponentFromBrithdayToToday';
 import ComponentPinnedTask from './ComponentPinnedTask';
 import ComponentCurrentDateTime from './ComponentCurrentDateTime';
 import ComponentApiKeySet from './ComponentApiKeySet';
+import ComponentQuickActions from './ComponentQuickActions';
 
 const UserHomepage = () => {
     const authState = useAtomValue(stateJotaiAuthAtom);
@@ -108,6 +109,7 @@ const UserHomepage = () => {
                                 <div className="pb-2">
                                     <ComponentCurrentDateTime />
                                     <ComponentFromBrithdayToToday />
+                                    <ComponentQuickActions />
                                     <ComponentPinnedTask />
                                     <ComponentApiKeySet />
                                 </div>
