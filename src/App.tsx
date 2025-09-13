@@ -56,6 +56,9 @@ const TestUserHomepageBackupDelete = lazy(() => import("./pages/user/userhomepag
 const ModelOpenrouterInsertAll = lazy(() => import('./components/settings/ModelOpenrouterInsertAll.tsx'));
 const UpdateUserApiClientFrontendUrl = lazy(() => import('./components/settings/UpdateUserApiClientFrontendUrl.tsx'));
 
+// pages -> maps
+const MapsWrapper = lazy(() => import("./pages/user/noteAdvance/Maps/Maps.tsx"));
+
 function App() {
   const Layout = () => {
     return (
@@ -272,6 +275,14 @@ function App() {
           element: (
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
               <TestUserHomepageBackupDelete />
+            </Suspense>
+          )
+        },
+        {
+          path: '/user/maps',
+          element: (
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+              <MapsWrapper />
             </Suspense>
           )
         }
