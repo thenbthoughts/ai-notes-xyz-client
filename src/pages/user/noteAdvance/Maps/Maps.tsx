@@ -4,6 +4,7 @@ import { DebounceInput } from 'react-debounce-input';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import styles from './css/map.module.scss';
+import indiaGeoJson from './india-land-simplified.json';
 
 // Fix for default markers in Vite
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -312,6 +313,7 @@ const MapSearchProduct = () => {
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<L.Map | null>(null);
     const markersRef = useRef<L.Marker[]>([]);
+    const indiaLayerRef = useRef<L.GeoJSON | null>(null);
 
     // Initialize map
     useEffect(() => {
@@ -326,6 +328,17 @@ const MapSearchProduct = () => {
             // Add tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors',
+            }).addTo(mapInstanceRef.current);
+
+            // Add India boundaries GeoJSON layer
+            indiaLayerRef.current = L.geoJSON(indiaGeoJson as any, {
+                style: {
+                    color: '#ff4444',
+                    weight: 2,
+                    opacity: 0.8,
+                    fillColor: '#ff4444',
+                    fillOpacity: 0.1
+                }
             }).addTo(mapInstanceRef.current);
 
             // Handle map events
