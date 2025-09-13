@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { CheckSquare, Square, Trash2, Plus } from 'lucide-react';
+import { CheckSquare, Square, Trash2, Plus, Edit, Save } from 'lucide-react';
 import axiosCustom from '../../../../../config/axiosCustom';
-import { DebounceInput } from 'react-debounce-input';
 import toast from 'react-hot-toast';
 
 const ComponentSubTaskItem = ({
     subtask,
-    setRandomNumLoading
+    setRandomNumLoading,
 }: {
     subtask: { _id: string; title: string; taskCompletedStatus: boolean };
     setRandomNumLoading: React.Dispatch<React.SetStateAction<number>>;
 }) => {
-
-    const [shouldUpdateSubTitle, setShouldUpdateSubTitle] = useState(false);
     const [axiosEditTitleLoading, setAxiosEditTitleLoading] = useState(false);
+    const [showEditTitle, setShowEditTitle] = useState(false);
 
     const [formData, setFormData] = useState({
         title: subtask.title,
@@ -74,58 +72,74 @@ const ComponentSubTaskItem = ({
         }
     };
 
-    useEffect(() => {
-        if (shouldUpdateSubTitle) {
-            updateSubTitle({ title: formData.title })
-        }
-    }, [formData.title])
-
     return (
         <div>
-            <div className="flex items-center gap-1 w-full">
-                {/* completed status */}
-                {subtask.taskCompletedStatus ? (
-                    <button
-                        onClick={() => updateSubCompleted({ taskCompletedStatus: false })}
-                        className="text-gray-500 hover:text-gray-700"
-                    >
-                        <CheckSquare size={16} className="text-green-500" />
-                    </button>
-                ) : (
-                    <button
-                        onClick={() => updateSubCompleted({ taskCompletedStatus: true })}
-                        className="text-gray-500 hover:text-gray-700"
-                    >
-                        <Square size={16} />
-
-                    </button>
-                )}
-
-                {/* input title */}
-                <DebounceInput
-                    debounceTimeout={1000}
-                    type="text"
-                    value={formData.title}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setShouldUpdateSubTitle(true);
-                        setFormData({ ...formData, title: e.target.value })
-                    }}
-                    className={subtask.taskCompletedStatus ? 'line-through text-gray-500 w-full' : 'w-full'}
-                />
-
-                {/* delete subtask button */}
-                <button
-                    onClick={() => deleteSubtask()}
-                    className="text-red-500 hover:text-red-700"
+            <div
+                className="w-full border p-1"
+            >
+                <div
+                    className='px-3'
                 >
-                    <Trash2 size={16} />
-                </button>
-            </div>
-            {axiosEditTitleLoading && (
-                <div className="text-gray-500 text-xs">
-                    Saving title...
+                    {showEditTitle ? (
+                        <textarea
+                            value={formData.title}
+                            placeholder="Enter subtask"
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                                setFormData({ ...formData, title: e.target.value })
+                            }}
+                            className="w-full text-sm border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 mt-1"
+                            rows={2}
+                        />
+                    ) : (
+                        formData.title
+                    )}
                 </div>
-            )}
+
+                {/* Actions */}
+                <div className="">
+                    <button
+                        onClick={() => updateSubCompleted({ taskCompletedStatus: !subtask.taskCompletedStatus })}
+                        className="text-gray-500 hover:text-gray-700 mr-1 p-3"
+                    >
+                        {subtask.taskCompletedStatus ? (
+                            <CheckSquare size={20} className="text-green-500" />
+                        ) : (
+                            <Square size={20} />
+                        )}
+                    </button>
+                    {showEditTitle ? (
+                        <button
+                            onClick={() => {
+                                updateSubTitle({ title: formData.title })
+                                setShowEditTitle(!showEditTitle)
+                            }}
+                            className="text-gray-500 hover:text-gray-700 mr-1 p-3"
+                        >
+                            <Save size={20} />
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => {
+                                setShowEditTitle(!showEditTitle)
+                            }}
+                            className="text-gray-500 hover:text-gray-700 mr-1 p-3"
+                        >
+                            <Edit size={20} />
+                        </button>
+                    )}
+                    <button
+                        onClick={() => deleteSubtask()}
+                        className="text-red-500 hover:text-red-700 mr-1 p-3"
+                    >
+                        <Trash2 size={20} />
+                    </button>
+                </div>
+
+                {/* loading */}
+                {axiosEditTitleLoading && (
+                    <div className="text-sm text-gray-500">Saving...</div>
+                )}
+            </div>
         </div>
     )
 }
@@ -194,12 +208,12 @@ const ComponentTaskSubList: React.FC<{
                     />
                 ))}
                 <div className="flex gap-2 mt-2">
-                    <input
-                        type="text"
+                    <textarea
                         value={newSubtask}
-                        onChange={(e) => setNewSubtask(e.target.value)}
                         placeholder="✨ Add a new subtask..."
+                        onChange={(e) => setNewSubtask(e.target.value)}
                         className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                        rows={2}
                     />
                     <button
                         onClick={() => {
