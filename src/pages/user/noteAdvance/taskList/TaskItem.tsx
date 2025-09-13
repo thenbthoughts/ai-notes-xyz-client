@@ -1,7 +1,8 @@
 import { tsPageTask } from "../../../../types/pages/tsPageTaskList";
 
 import axiosCustom from '../../../../config/axiosCustom';
-import { LucideClock, LucideEdit3, LucideInfo, LucidePin, LucideTrash2 } from "lucide-react";
+import { LucideClock, LucideEdit3, LucideInfo, LucideMessageCircle, LucidePin, LucideTrash2 } from "lucide-react";
+import { taskChatWithAi } from "./utils/taskCrudUtils";
 
 const TaskItem = ({
     task,
@@ -229,6 +230,26 @@ const TaskItem = ({
                             />
                         </button>
                     </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div>
+                    <button
+                        onClick={() => {
+                            // Handle chat with LLM functionality
+                            console.log('Chat with LLM for task:', task._id);
+                            taskChatWithAi(task._id);
+                        }}
+                        className="text-purple-600 p-1 rounded hover:bg-purple-50 transition mt-2"
+                    >
+                        <LucideMessageCircle
+                            size={16}
+                            className="inline-block mr-2"
+                            style={{
+                                marginBottom: '5px',
+                            }}
+                        /> AI chat with task
+                    </button>
                 </div>
             </div>
         )
