@@ -1,7 +1,7 @@
 import { DebounceInput } from 'react-debounce-input';
 import { useNavigate } from 'react-router-dom';
 
-import { notesAddAxios } from '../utils/notesListAxios.ts';
+import { notesAddAxios, notesQuickDailyNotesAddAxios } from '../utils/notesListAxios.ts';
 
 import { jotaiStateNotesSearch, jotaiStateNotesIsStar, jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
 import { useAtom } from 'jotai';
@@ -29,6 +29,13 @@ const ComponentNotesLeft = () => {
             }
         } catch (error) {
             console.error(error);
+        }
+    }
+
+    const notesQuickDailyNotesAddAxiosLocal = async () => {
+        const result = await notesQuickDailyNotesAddAxios();
+        if (result.success.length > 0) {
+            navigate(`/user/notes?action=edit&id=${result.recordId}&workspace=${result.workspaceId}`)
         }
     }
 
@@ -104,6 +111,13 @@ const ComponentNotesLeft = () => {
                 >
                     <LucideList size={14} />
                     Clear
+                </button>
+                <button
+                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300"
+                    onClick={notesQuickDailyNotesAddAxiosLocal}
+                >
+                    <LucidePlus size={14} />
+                    Quick Daily Notes
                 </button>
             </div>
 
