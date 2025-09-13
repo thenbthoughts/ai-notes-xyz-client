@@ -170,7 +170,11 @@ const TaskItem = ({
                         <div className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${isOverdue ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
                             }`}>
                             <LucideClock size={12} />
-                            <span>{dueDate.toLocaleDateString()}</span>
+                            <span>
+                                {dueDate.toLocaleDateString()}
+                                {' '}
+                                {dueDate.toLocaleTimeString()}
+                            </span>
                         </div>
                     )}
                 </div>

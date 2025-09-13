@@ -8,6 +8,8 @@ import ComponentTaskCommentList from './ComponentTaskCommentList';
 import ComponentSelectWorkspace from './ComponentSelectWorkspace';
 import ComponentSelectTaskStatus from './ComponentSelectTaskStatus';
 
+import getDateTimeForInputTypeDateTimeLocal from '../../../../../utils/getDateTimeForInputTypeDateTimeLocal';
+
 const TaskAddOrEdit: React.FC<{
     isTaskAddModalIsOpen: {
         openStatus: boolean;
@@ -331,7 +333,13 @@ const TaskAddOrEdit: React.FC<{
                                                 }
                                             </button>
                                             <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded-full">Status: {status}</span>
-                                            <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-2 py-1 rounded-full">Due Date: {dueDate || 'No due date'}</span>
+                                            {
+                                                dueDate && (
+                                                    <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-2 py-1 rounded-full">
+                                                        Due Date: {new Date(dueDate).toLocaleDateString()} {new Date(dueDate).toLocaleTimeString()}
+                                                    </span>
+                                                )
+                                            }
                                             {formData.isCompleted && (
                                                 <span className={`bg-green-100 text-green-800 text-sm font-medium px-2 py-1 rounded-full`}>
                                                     Completed
@@ -460,6 +468,29 @@ const TaskAddOrEdit: React.FC<{
                                                     }}
                                                     modalType={isTaskAddModalIsOpen.modalType}
                                                 />
+                                            )}
+                                        </div>
+
+                                        {/* due date */}
+                                        <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2">
+                                            <label className="block font-medium">Due Date:</label>
+                                            <input
+                                                type="datetime-local"
+                                                className="border border-gray-300 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                value={getDateTimeForInputTypeDateTimeLocal(dueDate)}
+                                                onChange={(e) => {
+                                                    console.log(e.target.value);
+                                                    const newDueDate = new Date(`${e.target.value}`);
+                                                    setDueDate(newDueDate.toISOString());
+                                                }}
+                                            />
+                                            {dueDate && (
+                                                <button
+                                                    onClick={() => setDueDate('')}
+                                                    className="ml-2 px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition duration-200"
+                                                >
+                                                    Clear
+                                                </button>
                                             )}
                                         </div>
                                     </div>
