@@ -1,122 +1,155 @@
 import { Fragment } from "react/jsx-runtime";
-import envKeys from "../../../../../config/envKeys";
 import toast from "react-hot-toast";
-import axios from "axios";
 import { ChangeEvent, useRef } from "react";
 import axiosCustom from "../../../../../config/axiosCustom";
 import { LucideFile } from "lucide-react";
+import envKeys from "../../../../../config/envKeys";
+import axios from "axios";
+
+// Simple utility to extract text from any file type
+const extractTextFromFile = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            const result = e.target?.result;
+            if (typeof result === 'string') {
+                resolve(result);
+            } else {
+                resolve(`[Binary file: ${file.name}]`);
+            }
+        };
+        
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        
+        // For text files, read as text
+        if (file.type.startsWith('text/') || 
+            file.name.endsWith('.txt') || 
+            file.name.endsWith('.md') || 
+            file.name.endsWith('.json') || 
+            file.name.endsWith('.csv') ||
+            file.name.endsWith('.xml') ||
+            file.name.endsWith('.html') ||
+            file.name.endsWith('.css') ||
+            file.name.endsWith('.js') ||
+            file.name.endsWith('.ts') ||
+            file.name.endsWith('.py') ||
+            file.name.endsWith('.java') ||
+            file.name.endsWith('.cpp') ||
+            file.name.endsWith('.c') ||
+            file.name.endsWith('.sql')) {
+            reader.readAsText(file);
+        } else {
+            // For other files, just return filename info
+            resolve(`[File: ${file.name} (${file.type || 'unknown type'})]`);
+        }
+    });
+};
 
 const ComponentUploadFile = ({
     setRefreshParentRandomNum,
     threadId,
+    // files,
+    setFiles,
 }: {
     setRefreshParentRandomNum: React.Dispatch<React.SetStateAction<number>>,
     threadId: string;
+    // files: string[];
+    setFiles: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
-
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const apiAddNote = async ({
-        tempFilePath
-    }: {
-        tempFilePath: string,
-    }) => {
-        try {
-            // Call axios
+    const uploadFileToStorage = async (file: File): Promise<string> => {
+        const formData = new FormData();
+        formData.append('file', file);
 
-            // fileType (text, image, video, location, contacts, file)
-            let fileType = 'file';
-            if (tempFilePath.endsWith('.jpg') || tempFilePath.endsWith('.jpeg') || tempFilePath.endsWith('.png')) {
+        const config = {
+            method: 'post',
+            url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
+            data: formData,
+            withCredentials: true,
+        };
+
+        const response = await axios.request(config);
+        return response.data.fileName;
+    };
+
+    const addFileAsNote = async (file: File, content: string, fileUrl?: string) => {
+        try {
+            // Determine file type
+            let fileType = 'text';
+            if (file.type.startsWith('image/')) {
                 fileType = 'image';
-            } else if (tempFilePath.endsWith('.mp4') || tempFilePath.endsWith('.mov') || tempFilePath.endsWith('.avi')) {
+            } else if (file.type.startsWith('video/')) {
                 fileType = 'video';
-            } else if (tempFilePath.endsWith('.pdf') || tempFilePath.endsWith('.doc') || tempFilePath.endsWith('.docx') || tempFilePath.endsWith('.txt')) {
-                fileType = 'file';
-            } else if (tempFilePath.endsWith('.webm') || tempFilePath.endsWith('.mp3') || tempFilePath.endsWith('.wav')) {
+            } else if (file.type.startsWith('audio/')) {
                 fileType = 'audio';
             }
+            
+            await axiosCustom.post("/api/chat-llm/chat-add/notesAdd", {
+                threadId: threadId,
+                type: fileType,
+                content: content,
+                visibility: 'public',
+                tags: [],
+                fileUrl: fileUrl || undefined,
+                fileUrlArr: [],
+                imagePathsArr: []
+            });
 
-            try {
-                const response = await axiosCustom.post("/api/chat-llm/chat-add/notesAdd", {
-                    threadId: threadId,
-                    type: fileType,
-                    content: `Image: ${tempFilePath}`,
-                    visibility: 'public',
-                    tags: [],
-                    fileUrl: tempFilePath,
-                    fileUrlArr: [],
-                });
-                console.log(JSON.stringify(response.data));
+            setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
 
-                setRefreshParentRandomNum(
-                    Math.floor(
-                        Math.random() * 1_000_000
-                    )
-                )
+            // process notes
+            await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
+                threadId: threadId,
+            });
 
-                // process notes
-                await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
-                    threadId: threadId,
-                });
-
-                // Handle the response
-                toast.success(`File added is added successfully!`);
-            } catch (error) {
-                console.error(error);
-                toast.error('Error adding note. Please try again.');
-                // Handle the error
-            }
-
+            toast.success(`File "${file.name}" added successfully!`);
         } catch (error) {
             console.error(error);
-            toast.error('Error adding note. Please try again.');
+            toast.error('Error adding file. Please try again.');
         }
     };
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files) {
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const formData = new FormData();
-                formData.append('file', file);
-
-                const config = {
-                    method: 'post',
-                    url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
-                    data: formData,
-                    withCredentials: true,
-                };
-
-                toast.loading('Uploading file...', {
+        const uploadedFiles = e.target.files;
+        if (uploadedFiles) {
+            for (let i = 0; i < uploadedFiles.length; i++) {
+                const file = uploadedFiles[i];
+                
+                toast.loading(`Processing ${file.name}...`, {
                     id: `upload-${i}`,
                 });
 
                 try {
-                    const response = await axios.request(config);
-
-                    setRefreshParentRandomNum(Math.random() * 1_000_000);
-
-                    const tempFilePath = response.data.fileName;
-
-                    await apiAddNote({
-                        tempFilePath
-                    })
-
-                    toast.success('File uploaded successfully!', {
-                        id: `upload-${i}`,
-                    });
-
-                    setRefreshParentRandomNum(Math.random() * 1_000_000);
+                    if (file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/')) {
+                        // Upload media files and store URLs
+                        const fileUrl = await uploadFileToStorage(file);
+                        setFiles(prev => [...prev, fileUrl]);
+                        await addFileAsNote(file, `File: ${file.name}`, fileUrl);
+                        
+                        toast.success(`File "${file.name}" uploaded successfully!`, {
+                            id: `upload-${i}`,
+                        });
+                    } else {
+                        // Convert other files to text
+                        const fileText = await extractTextFromFile(file);
+                        const content = `--- File: ${file.name} ---\n${fileText}`;
+                        await addFileAsNote(file, content);
+                        
+                        toast.success(`File "${file.name}" processed successfully!`, {
+                            id: `upload-${i}`,
+                        });
+                    }
                 } catch (error) {
                     console.error(error);
-                    toast.error('Error uploading file!', {
+                    toast.error(`Error processing "${file.name}"!`, {
                         id: `upload-${i}`,
                     });
                 }
             }
 
-            // Clear the input after function handleFileChange called
+            // Clear the input after processing
             e.target.value = '';
         }
     };

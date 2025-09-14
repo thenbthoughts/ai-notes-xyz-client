@@ -10,3 +10,5 @@ export const jotaiChatHistoryModalOpen = atom({
     // true mean open
     // false mean not open
 });
+
+export const jotaiChatLlmFooterHeight = atom(165);

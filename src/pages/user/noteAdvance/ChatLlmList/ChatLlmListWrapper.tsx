@@ -30,11 +30,6 @@ const ChatLlmListWrapper = () => {
     ] = useAtom(jotaiChatLlmThreadSetting);
 
     const [
-        stateDisplayAdd,
-        // setStateDisplayAdd,
-    ] = useState(true);
-
-    const [
         refreshRandomNum,
         // setRefreshRandomNum
     ] = useState(0);
@@ -100,7 +95,6 @@ const ChatLlmListWrapper = () => {
                                     }}
                                 >
                                     <ComponentRightChatWrapper
-                                        stateDisplayAdd={stateDisplayAdd}
                                         refreshRandomNumParent={refreshRandomNum}
                                     />
                                 </div>
