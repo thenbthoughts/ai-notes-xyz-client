@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 import envKeys from "../../../../../config/envKeys";
 import axiosCustom from "../../../../../config/axiosCustom";
-import { LucideAudioLines, LucideClipboard, LucideTrash } from "lucide-react";
+import { LucideAudioLines, LucideClipboard, LucideInfo, LucideTrash, LucideEyeOff } from "lucide-react";
 
 import { tsMessageItem } from '../../../../../types/pages/tsNotesAdvanceList';
 import ReactMarkdown from "react-markdown";
@@ -168,6 +168,7 @@ const ComponentMessageItem = ({
     const [isDeleted, setIsDeleted] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [showAllTags, setShowAllTags] = useState(false);
+    const [showAiGeneratedFileInfo, setShowAiGeneratedFileInfo] = useState(false);
     const [
         callGenerateAiTaskListRandomNum,
         setCallGenerateAiTaskListRandomNum, // whenever the func is called 
@@ -421,6 +422,45 @@ const ComponentMessageItem = ({
                             🚀 Tasks
                         </button>
                     )}
+
+                    {/* ai generated image info */}
+                    {itemMessage.type === 'image' && itemMessage.fileContentAi.length > 0 && (
+                        <button
+                            onClick={() => {
+                                setShowAiGeneratedFileInfo(!showAiGeneratedFileInfo);
+                            }}
+                            className="px-2 py-1 rounded bg-blue-500 text-white mb-1 mr-1"
+                        >
+                            {showAiGeneratedFileInfo ? (
+                                <LucideInfo
+                                    style={{
+                                        color: '#FFFFFF',
+                                        marginBottom: '0',
+                                        display: 'inline-block',
+                                        lineHeight: '24px',
+                                        width: "19px",
+                                        height: "19px",
+                                        position: 'relative',
+                                        top: '-2px',
+                                    }}
+                                />
+                            ) : (
+                                <LucideEyeOff
+                                    style={{
+                                        color: '#FFFFFF',
+                                        marginBottom: '0',
+                                        display: 'inline-block',
+                                        lineHeight: '24px',
+                                        width: "19px",
+                                        height: "19px",
+                                        position: 'relative',
+                                        top: '-2px',
+                                    }}
+                                />
+                            )}
+                            <span className="ml-1">AI Details</span>
+                        </button>
+                    )}
                 </div>
             </div>
         )
@@ -463,6 +503,18 @@ const ComponentMessageItem = ({
         )
     }
 
+    const renderAiGeneratedFileInfo = () => {
+        return (
+            <Fragment>
+                {showAiGeneratedFileInfo && (
+                    <div className="my-2 border border-gray-300 rounded-lg p-2 bg-gray-50">
+                        <p className="text-xs text-gray-600 leading-relaxed">{itemMessage.fileContentAi}</p>
+                    </div>
+                )}
+            </Fragment>
+        )
+    }
+
     return (
         <div
             id={`message-id-${itemMessage._id}`}
@@ -488,6 +540,7 @@ const ComponentMessageItem = ({
                             </p>
                         )}
                     {renderMessageContent()}
+                    {renderAiGeneratedFileInfo()}
                     {renderButtons()}
                     <ComponentAiTaskByNotesId
                         itemMessageId={itemMessage._id}
