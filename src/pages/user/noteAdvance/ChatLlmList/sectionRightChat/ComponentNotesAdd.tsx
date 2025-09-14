@@ -264,6 +264,42 @@ const ComponentNotesAdd = ({
 
     const handleAddNote = async () => {
         try {
+            if (files.length > 0) {
+                await Promise.all(
+                    files.map(async (file) => {
+                        try {
+                            // Determine file type based on extension
+                            const extension = file.split('.').pop()?.toLowerCase();
+                            let fileType = 'file';
+                            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(extension || '')) {
+                                fileType = 'image';
+                            } else if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'].includes(extension || '')) {
+                                fileType = 'video';
+                            } else if (['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(extension || '')) {
+                                fileType = 'audio';
+                            }
+
+                            await axiosCustom.post("/api/chat-llm/chat-add/notesAdd", {
+                                threadId: threadId,
+                                type: fileType,
+                                content: `File: ${file.split('/').pop() || file}`,
+                                visibility: 'public',
+                                tags: [],
+                                fileUrl: file,
+                                fileUrlArr: [],
+                                imagePathsArr: []
+                            });
+                        } catch (error) {
+                            console.error(error);
+                            toast.error('Error adding file. Please try again.');
+                        }
+                    })
+                );
+
+                toast.success('Files added successfully!');
+                setFiles([]);
+            }
+
             if (newNote.trim().length > 1) {
                 const toastLoadingId = toast.loading('Adding note...');
 
