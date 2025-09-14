@@ -4,10 +4,8 @@ import CRightChatById from "./CRightChatById";
 import ComponentThreadAdd from "./ComponentThreadAdd";
 
 const ComponentRightWrapper = ({
-    stateDisplayAdd,
     refreshRandomNumParent,
 }: {
-    stateDisplayAdd: boolean;
     refreshRandomNumParent: number;
 }) => {
     const location = useLocation();
@@ -30,7 +28,6 @@ const ComponentRightWrapper = ({
             ) : (
                 <CRightChatById
                     key={threadId}
-                    stateDisplayAdd={stateDisplayAdd}
                     threadId={threadId}
                     refreshRandomNumParent={refreshRandomNumParent}
                 />

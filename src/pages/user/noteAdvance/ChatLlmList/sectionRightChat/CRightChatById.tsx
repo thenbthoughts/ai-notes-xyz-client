@@ -13,13 +13,13 @@ import {
 
 import ComponentAiGeneratedQuestionList from './ComponentAiGeneratedQuestionList.tsx';
 import ThreadSettingWrapper from './ThreadSetting/ThreadSettingWrapper.tsx';
+import { useAtomValue } from 'jotai';
+import { jotaiChatLlmFooterHeight } from '../jotai/jotaiChatLlmThreadSetting';
 
 const CRightChatById = ({
-    stateDisplayAdd,
     threadId,
     refreshRandomNumParent,
 }: {
-    stateDisplayAdd: boolean;
     threadId: string;
     refreshRandomNumParent: number;
 }) => {
@@ -33,6 +33,8 @@ const CRightChatById = ({
         loading,
         setLoading,
     ] = useState(true);
+
+    const chatLlmFooterHeight = useAtomValue(jotaiChatLlmFooterHeight);
 
     // useState - old
     const [messages, setMessages] = useState<tsMessageItem[]>([]);
@@ -81,13 +83,7 @@ const CRightChatById = ({
     const getCssHeightForMessages = () => {
         let returnHeight = 0;
         returnHeight = 60; // header height
-
-        if (
-            stateDisplayAdd === true
-        ) {
-            returnHeight += 165;
-        }
-
+        returnHeight += chatLlmFooterHeight;
         return `calc(100vh - ${returnHeight}px)`;
     }
 
@@ -136,7 +132,6 @@ const CRightChatById = ({
         <div>
             <div
                 style={{
-                    // height: 'calc(100vh - 155px - 120px - 50px)',
                     height: `${getCssHeightForMessages()}`,
                     overflowY: 'scroll'
                 }}
@@ -191,12 +186,10 @@ const CRightChatById = ({
             </div>
 
             {/* component add */}
-            {stateDisplayAdd && (
-                <ComponentNotesAdd
-                    setRefreshParentRandomNum={setRefreshRandomNum}
-                    threadId={threadId}
-                />
-            )}
+            <ComponentNotesAdd
+                setRefreshParentRandomNum={setRefreshRandomNum}
+                threadId={threadId}
+            />
 
             <ThreadSettingWrapper />
         </div>
