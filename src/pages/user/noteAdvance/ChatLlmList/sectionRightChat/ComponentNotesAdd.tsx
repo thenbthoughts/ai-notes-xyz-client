@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideSend, LucideVideo, LucideX } from 'lucide-react';
+import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideSend, LucideVideo, LucideX } from 'lucide-react';
 import envKeys from '../../../../../config/envKeys';
 import axios from 'axios';
 import axiosCustom from '../../../../../config/axiosCustom';
@@ -253,6 +253,7 @@ const ComponentNotesAdd = ({
     const actionContainerRef = useRef<HTMLDivElement>(null);
     const setChatLlmFooterHeight = useSetAtom(jotaiChatLlmFooterHeight);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [newNote, setNewNote] = useState('');
     const [files, setFiles] = useState<string[]>([]);
 
@@ -263,6 +264,8 @@ const ComponentNotesAdd = ({
     }, [newNote, files]);
 
     const handleAddNote = async () => {
+        setIsSubmitting(true);
+
         try {
             if (files.length > 0) {
                 await Promise.all(
@@ -334,6 +337,8 @@ const ComponentNotesAdd = ({
         } catch (error) {
             console.error(error);
             toast.error('Error adding note. Please try again.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -364,8 +369,13 @@ const ComponentNotesAdd = ({
                     className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
                     style={{ height: '40px' }}
                     onClick={handleAddNote}
+                    disabled={isSubmitting}
                 >
-                    <LucideSend style={{ height: '20px' }} />
+                    {isSubmitting ? (
+                        <LucideLoader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                        <LucideSend style={{ height: '20px' }} />
+                    )}
                 </button>
 
                 {/* file */}

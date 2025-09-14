@@ -122,30 +122,19 @@ const ComponentUploadFile = ({
                 });
 
                 try {
-                    if (file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/')) {
-                        // Upload media files and store URLs
-                        const fileUrl = await uploadFileToStorage(file);
-                        setFiles(prev => [...prev, fileUrl]);
-                        await addFileAsNote(file, `File: ${file.name}`, fileUrl);
-                        
-                        toast.success(`File "${file.name}" uploaded successfully!`, {
-                            id: `upload-${i}`,
-                        });
-                    } else {
-                        // Convert other files to text
-                        const fileText = await extractTextFromFile(file);
-                        const content = `--- File: ${file.name} ---\n${fileText}`;
-                        await addFileAsNote(file, content);
-                        
-                        toast.success(`File "${file.name}" processed successfully!`, {
-                            id: `upload-${i}`,
-                        });
-                    }
+                    const fileUrl = await uploadFileToStorage(file);
+                    setFiles(prev => [...prev, fileUrl]);
+                    
+                    toast.success(`File "${file.name}" processed successfully!`, {
+                        id: `upload-${i}`,
+                    });
                 } catch (error) {
                     console.error(error);
                     toast.error(`Error processing "${file.name}"!`, {
                         id: `upload-${i}`,
                     });
+                } finally {
+                    toast.dismiss(`upload-${i}`);
                 }
             }
 
