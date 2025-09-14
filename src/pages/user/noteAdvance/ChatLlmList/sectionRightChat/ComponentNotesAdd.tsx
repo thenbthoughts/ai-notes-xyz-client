@@ -381,8 +381,6 @@ const ComponentNotesAdd = ({
                 {/* file */}
                 <FileUploadEnvCheck iconType="file">
                     <ComponentUploadFile
-                        setRefreshParentRandomNum={setRefreshParentRandomNum}
-                        threadId={threadId}
                         setFiles={setFiles}
                     />
                 </FileUploadEnvCheck>
