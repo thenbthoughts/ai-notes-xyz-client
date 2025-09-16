@@ -54,6 +54,9 @@ const Header = () => {
                                 to="/user/info-vault" className="hover:underline"
                             >Info Vault</Link>
                             <Link
+                                to="/user/maps" className="hover:underline"
+                            >Maps</Link>
+                            <Link
                                 to="/user/task-schedule" className="hover:underline"
                             >Schedule</Link>
                         </Fragment>

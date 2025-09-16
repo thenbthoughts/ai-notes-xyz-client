@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'; // Importing Link from react-router-dom
+import { Link } from 'react-router-dom';
 import {
     LucideInfo,
     LucideList,
@@ -10,7 +10,8 @@ import {
     LucideLoader,
     LucideCalendar1,
     LucideFileText,
-    LucideClock
+    LucideClock,
+    LucideMap
 } from 'lucide-react'; // Importing lucide icons
 import { useAtomValue } from 'jotai';
 import { Fragment, useEffect, useState } from 'react';
@@ -252,6 +253,12 @@ const UserHomepage = () => {
                                             <LucideInfo size={32} />
                                         </div>
                                         <div>Info Vault</div>
+                                    </Link>
+                                    <Link to="/user/maps" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                            <LucideMap size={32} />
+                                        </div>
+                                        <div>Maps</div>
                                     </Link>
                                     <Link to="/user/task-schedule" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>

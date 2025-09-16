@@ -10,6 +10,8 @@ import indiaGeoJson from './india-land-simplified.json';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { AxiosRequestConfig } from 'axios';
+import axiosCustom from '../../../../config/axiosCustom';
 
 // Configure default marker icons
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -295,6 +297,17 @@ const ProductItem: React.FC<{ itemProduct: tsInterfaceProductItem }> = ({ itemPr
     );
 };
 
+interface tsInterfaceMapsData {
+    _id: string;
+    name: string;
+    description: string;
+
+    infoVaultAddress: {
+        latitude: number;
+        longitude: number;
+    }[]
+}
+
 // ===============================
 // MAIN MAP COMPONENT
 // ===============================
@@ -308,6 +321,9 @@ const MapSearchProduct = () => {
     const [currentCoords, setCurrentCoords] = useState({ latitude: 28.6139, longitude: 77.2090 });
     const [productList, setProductList] = useState<tsInterfaceProductItem[]>([]);
     const [query, setQuery] = useState('');
+
+    const [mapsData, setMapsData] = useState<tsInterfaceMapsData[]>([]);
+    const [totalCount, setTotalCount] = useState(0 as number);
 
     // Refs
     const mapRef = useRef<HTMLDivElement>(null);
@@ -387,6 +403,10 @@ const MapSearchProduct = () => {
         searchProducts();
     }, [query]);
 
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     // Filter products based on map bounds and query
     const filterProducts = (bounds?: L.LatLngBounds) => {
         let filtered = mockProductData;
@@ -423,7 +443,6 @@ const MapSearchProduct = () => {
             const bounds = mapInstanceRef.current?.getBounds();
             const filtered = filterProducts(bounds);
             setProductList(filtered);
-            updateMapMarkers(filtered);
 
             setListLoading(false);
         } catch (error) {
@@ -438,35 +457,6 @@ const MapSearchProduct = () => {
     const handleMapMove = () => {
         if (currentScreen === 'sm' && toggleListMap) return;
         setTimeout(searchProducts, 500);
-    };
-
-    // Update map markers
-    const updateMapMarkers = (products: tsInterfaceProductItem[]) => {
-        if (!mapInstanceRef.current) return;
-
-        // Clear existing markers
-        markersRef.current.forEach(marker => mapInstanceRef.current?.removeLayer(marker));
-        markersRef.current = [];
-
-        // Add new markers
-        products.forEach(product => {
-            const [lng, lat] = product.shopInfo.geolocation.coordinates;
-
-            const marker = L.marker([lat, lng])
-                .bindPopup(`
-          <div style="max-width: 250px;">
-            <img src="${product.images[0]}" alt="${product.name}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;" onerror="this.src='https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop'">
-            <h6 style="margin: 0 0 4px 0; font-weight: bold;">${product.name}</h6>
-            <div style="color: #28a745; font-weight: bold; margin-bottom: 4px;">₹${product.price.toLocaleString()}</div>
-            <div style="font-size: 12px; color: #6c757d; margin-bottom: 4px;">${product.description}</div>
-            <div style="font-size: 12px; color: #007bff; font-weight: bold;">${product.shopInfo.name}</div>
-            <div style="font-size: 11px; color: #6c757d;">📍 ${product.shopInfo.address}</div>
-          </div>
-        `)
-                .addTo(mapInstanceRef.current!);
-
-            markersRef.current.push(marker);
-        });
     };
 
     // Get current location
@@ -492,6 +482,67 @@ const MapSearchProduct = () => {
             alert('Unable to get your location');
         });
     };
+
+    const fetchData = async () => {
+        try {
+            const config = {
+                method: 'post',
+                url: `/api/maps/crud/mapsLocationsGet`,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    page: 1,
+                    perPage: 100,
+                },
+            } as AxiosRequestConfig;
+
+            const response = await axiosCustom.request(config);
+
+            // docs
+            let tempArr = [];
+            if (Array.isArray(response.data.docs)) {
+                tempArr = response.data.docs;
+            }
+            setMapsData(tempArr);
+
+            // count
+            let tempTotalCount = 0;
+            if (typeof response.data.count === 'number') {
+                tempTotalCount = response.data.count;
+            }
+            setTotalCount(tempTotalCount);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const updateMapMarkersLifeEvents = () => {
+        if (!mapInstanceRef.current) return;
+
+        // Clear existing markers
+        markersRef.current.forEach(marker => mapInstanceRef.current?.removeLayer(marker));
+        markersRef.current = [];
+
+        // Add new markers
+        mapsData.forEach(map => {
+            console.log(map);
+            const lng = map.infoVaultAddress[0].longitude;
+            const lat = map.infoVaultAddress[0].latitude;
+
+            const marker = L.marker([lat, lng])
+                .bindPopup(`
+                    <div>${map.name}</div>
+                `)
+                .addTo(mapInstanceRef.current!);
+
+            markersRef.current.push(marker);
+        });
+    };
+
+    useEffect(() => {
+        updateMapMarkersLifeEvents();
+    }, [mapsData]);
 
     // Render functions
     const renderSearchBar = () => (
@@ -540,6 +591,18 @@ const MapSearchProduct = () => {
         <div className={styles.s__sProductList_container} style={{ height: '100%', overflowY: 'auto', padding: '10px' }}>
             {currentScreen === 'lg' && renderSearchBar()}
 
+            <hr />
+
+            <h3>Total Count: {totalCount}</h3>
+
+            {mapsData.map((map) => (
+                <div key={map._id}>
+                    <h3>{map.name}</h3>
+                </div>
+            ))}
+
+            <hr />
+
             {listLoading && (
                 <div className="text-center py-4">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" role="status"></div>
@@ -567,7 +630,7 @@ const MapSearchProduct = () => {
 
     return (
         <div className='w-full bg-gray-100 p-0'>
-            
+
             {currentScreen === 'sm' && (
                 <div className="p-2 border-b bg-white">
                     {renderSearchBar()}
