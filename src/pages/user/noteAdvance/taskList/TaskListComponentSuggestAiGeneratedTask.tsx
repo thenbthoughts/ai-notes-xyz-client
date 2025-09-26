@@ -26,7 +26,7 @@ const TaskListComponentSuggestAiGeneratedTask = ({
         setLoading(true);
         let config = {
             method: 'post',
-            url: '/api/task/ai-generated/taskGenerateByLast30Conversation',
+            url: '/api/task/ai-generated/taskGenerateByConversationAll',
         };
 
         try {
