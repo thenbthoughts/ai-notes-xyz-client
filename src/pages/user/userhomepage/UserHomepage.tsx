@@ -260,6 +260,12 @@ const UserHomepage = () => {
                                         </div>
                                         <div>Maps</div>
                                     </Link>
+                                    <Link to="/user/calender" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                            <LucideCalendar1 size={32} />
+                                        </div>
+                                        <div>Calendar</div>
+                                    </Link>
                                     <Link to="/user/task-schedule" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideClock size={32} />
