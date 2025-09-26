@@ -57,6 +57,9 @@ const Header = () => {
                                 to="/user/maps" className="hover:underline"
                             >Maps</Link>
                             <Link
+                                to="/user/calender" className="hover:underline"
+                            >Calendar</Link>
+                            <Link
                                 to="/user/task-schedule" className="hover:underline"
                             >Schedule</Link>
                         </Fragment>
