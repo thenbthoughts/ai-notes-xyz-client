@@ -10,8 +10,6 @@ import { LucideAudioLines, LucideClipboard, LucideInfo, LucideTrash, LucideEyeOf
 import { tsMessageItem } from '../../../../../types/pages/tsNotesAdvanceList';
 import ReactMarkdown from "react-markdown";
 
-import cssChatMessageItem from './scss/chatMessageItem.module.scss';
-
 const ComponentAiTaskByNotesId = ({
     itemMessageId,
     callGenerateAiTaskListRandomNum,
@@ -296,11 +294,9 @@ const ComponentMessageItem = ({
         return (
             <div>
                 <p className="text-sm break-all">
-                    <div className={`${cssChatMessageItem.chatMessageMtemMontainer}`}>
-                        <div className={`prose prose-sm break-words max-w-none`}>
-                            <ReactMarkdown
-
-                            >{itemMessage.content.replace('AI: #', '').replace(/\n\n/g, '\n')}</ReactMarkdown>
+                    <div>
+                        <div>
+                            <ReactMarkdown>{itemMessage.content.replace('AI: ', '')}</ReactMarkdown>
                         </div>
                     </div>
                 </p>
