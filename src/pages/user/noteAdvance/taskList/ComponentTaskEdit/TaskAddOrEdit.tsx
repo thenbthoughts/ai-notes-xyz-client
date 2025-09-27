@@ -511,7 +511,7 @@ const TaskAddOrEdit: React.FC<{
                                         {
                                             dueDate && (
                                                 <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2">
-                                                    <label className="block font-medium">Reminder Preset Time Label:</label>
+                                                    <label className="block font-medium">Reminder:</label>
                                                     <select
                                                         className="border border-gray-300 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
                                                         value={reminderPresetTimeLabel}
