@@ -1,11 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 * {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+}
+
+code {
+  max-width: 90%;
+  display: inline-block;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-family: "Courier New", Courier, monospace;
+  background-color: #f5f5f5;
 }
 
 @keyframes gradient {

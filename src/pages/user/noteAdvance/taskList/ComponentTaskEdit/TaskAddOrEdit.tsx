@@ -247,8 +247,9 @@ const TaskAddOrEdit: React.FC<{
         <div>
             {isTaskAddModalIsOpen.openStatus && (
                 <div
-                    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+                    className="fixed inset-0 flex items-center justify-center"
                     style={{
+                        background: 'rgba(0,0,0,0.5)',
                         zIndex: 1000,
                     }}
                 >
