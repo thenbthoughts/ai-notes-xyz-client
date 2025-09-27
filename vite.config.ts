@@ -11,4 +11,5 @@ export default defineConfig({
     //   registerType: 'autoUpdate'
     // }),
   ],
+  publicDir: 'public',
 })

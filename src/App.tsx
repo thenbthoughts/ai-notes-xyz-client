@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { lazy, Suspense } from "react";
-import { HelmetProvider } from 'react-helmet-async';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 // component
 import Header from './components/Header';
@@ -264,7 +264,7 @@ function App() {
 
         {
           path: '/test',
-          element:  (
+          element: (
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
               <TestDevWrapper />
             </Suspense>
@@ -294,6 +294,10 @@ function App() {
 
   return (
     <HelmetProvider>
+      <Helmet>
+        <link rel="icon" href="/logoAiNotesXyz.png" />
+        <link rel="alternate icon" href="/logoAiNotesXyz.png" />
+      </Helmet>
       <Toaster
         position="top-center"
       />
