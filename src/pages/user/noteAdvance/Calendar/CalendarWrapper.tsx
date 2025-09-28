@@ -10,17 +10,23 @@ interface Event {
     end?: Date;
     extendedProps?: {
         recordId: string;
-        fromCollection: 'tasks';
+        fromCollection: 'tasks' | 'lifeEvents';
+        moreInfoLink: string;
     };
 }
 
 interface tsCalenderApiRes {
     _id: string;
-    fromCollection: 'tasks';
+    fromCollection: 'tasks' | 'lifeEvents';
     taskInfo: {
         _id: string;
         title: string;
         dueDate: Date;
+    };
+    lifeEventInfo: {
+        _id: string;
+        title: string;
+        eventDateUtc: Date;
     };
 }
 
@@ -31,7 +37,6 @@ const CalendarWrapper = () => {
 
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
-``
     const [events, setEvents] = useState<Event[]>([]);
 
     const fetchEvents = async () => {
@@ -63,6 +68,17 @@ const CalendarWrapper = () => {
                             extendedProps: {
                                 recordId: doc.taskInfo._id,
                                 fromCollection: 'tasks',
+                                moreInfoLink: `/user/task/?edit-task-id=${doc.taskInfo._id}`,
+                            },
+                        });
+                    } else if (doc.fromCollection === 'lifeEvents') {
+                        tempArr.push({
+                            title: doc.lifeEventInfo.title,
+                            start: new Date(doc.lifeEventInfo.eventDateUtc),
+                            extendedProps: {
+                                recordId: doc.lifeEventInfo._id,
+                                fromCollection: 'lifeEvents',
+                                moreInfoLink: `/user/life-events?action=edit&id=${doc.lifeEventInfo._id}`,
                             },
                         });
                     }
@@ -344,19 +360,17 @@ function renderEventContent(eventInfo: {
         title: string;
         extendedProps: {
             recordId: string;
+            fromCollection: 'tasks' | 'lifeEvents';
+            moreInfoLink: string;
         };
     };
 }) {
     return (
         <>
-            <b
-                onClick={() => {
-                    console.log('eventInfo: ', eventInfo);
-                }}
-            >{eventInfo.timeText}</b>
+            <b>{eventInfo.timeText}</b>
             <div className='text-xs text-gray-500 ml-1'>
                 <a
-                    href={`/user/task/?edit-task-id=${eventInfo.event.extendedProps.recordId}`}
+                    href={eventInfo.event.extendedProps.moreInfoLink || ''}
                     className='px-2'
                 >
                     <LucideLink
