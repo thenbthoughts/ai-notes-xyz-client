@@ -11,7 +11,8 @@ import {
     LucideCalendar1,
     LucideFileText,
     LucideClock,
-    LucideMap
+    LucideMap,
+    LucideRefreshCcw
 } from 'lucide-react'; // Importing lucide icons
 import { useAtomValue } from 'jotai';
 import { Fragment, useEffect, useState } from 'react';
@@ -119,6 +120,19 @@ const UserHomepage = () => {
                         {authState.isLoggedIn === 'false' && (
                             <Fragment>
                                 <div className="pb-2">
+                                    {/* Refresh button */}
+                                    <button
+                                        className="text-left p-3 border border-blue-400 rounded-md shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300 w-full"
+                                        onClick={() => window.location.reload()}
+                                    >
+                                        <div className="flex justify-between items-center ">
+                                            <h2 className="text-lg font-bold text-blue-800 cursor-pointer">
+                                                <LucideRefreshCcw size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
+                                                Refresh
+                                            </h2>
+                                        </div>
+                                    </button>
+
                                     {/* login */}
                                     <Link to="/login">
                                         <div
