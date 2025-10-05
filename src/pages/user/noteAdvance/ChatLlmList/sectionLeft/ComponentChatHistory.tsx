@@ -17,7 +17,7 @@ const ComponentChatHistory = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const setChatHistoryModalOpen = useSetAtom(jotaiChatHistoryModalOpen); 
+    const setChatHistoryModalOpen = useSetAtom(jotaiChatHistoryModalOpen);
 
     const [activeChatId, setActiveChatId] = useState('');
 
@@ -163,7 +163,7 @@ const ComponentChatHistory = () => {
                             }
                             onClick={() => {
                                 setChatHistoryModalOpen({
-                                    isOpen: true,
+                                    isOpen: false,
                                 });
                             }}
                         >

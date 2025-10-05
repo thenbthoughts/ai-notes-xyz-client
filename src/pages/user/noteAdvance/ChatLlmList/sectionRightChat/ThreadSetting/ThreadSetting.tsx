@@ -296,6 +296,16 @@ const ThreadSetting = ({
                         onChange={(e) => setFormData({ ...formData, systemPrompt: e.target.value })}
                         rows={3}
                     />
+                    {formData.systemPrompt.length > 0 && (
+                        <button
+                            type="button"
+                            className="mt-2 px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded transition-colors duration-200"
+                            onClick={() => setFormData({ ...formData, systemPrompt: '' })}
+                        >
+                            Clear System Prompt
+                            <LucideX className="w-4 h-4 ml-2 inline-block" />
+                        </button>
+                    )}
                 </div>
 
                 {/* field -> isPersonalContextEnabled */}
