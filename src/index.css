@@ -1,9 +1,11 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 * {
   box-sizing: border-box;
 }
 
+/*
 code {
   max-width: 90%;
   display: inline-block;
@@ -11,7 +13,10 @@ code {
   white-space: nowrap;
   font-family: "Courier New", Courier, monospace;
   background-color: #f5f5f5;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
+*/
 
 @keyframes gradient {
   0% {
