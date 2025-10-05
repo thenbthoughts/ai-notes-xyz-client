@@ -10,23 +10,36 @@ interface Event {
     end?: Date;
     extendedProps?: {
         recordId: string;
-        fromCollection: 'tasks' | 'lifeEvents';
+        fromCollection: 'tasks' | 'lifeEvents' | 'infoVaultSignificantDate' | 'infoVaultSignificantDateRepeat';
         moreInfoLink: string;
     };
 }
 
 interface tsCalenderApiRes {
     _id: string;
-    fromCollection: 'tasks' | 'lifeEvents';
-    taskInfo: {
+    fromCollection: 'tasks' | 'lifeEvents' | 'infoVaultSignificantDate' | 'infoVaultSignificantDateRepeat';
+    taskInfo?: {
         _id: string;
         title: string;
         dueDate: Date;
     };
-    lifeEventInfo: {
+    lifeEventInfo?: {
         _id: string;
         title: string;
         eventDateUtc: Date;
+    };
+    infoVaultSignificantDate?: {
+        _id: string;
+        infoVaultId: string;
+        label: string;
+        date: Date;
+    };
+    infoVaultSignificantDateRepeat?: {
+        _id: string;
+        infoVaultId: string;
+        label: string;
+        date: Date;
+        normalizedDate: Date;
     };
 }
 
@@ -61,7 +74,7 @@ const CalendarWrapper = () => {
             let tempArr = [] as Event[];
             if (Array.isArray(resDocs)) {
                 for (const doc of resDocs) {
-                    if (doc.fromCollection === 'tasks') {
+                    if (doc.fromCollection === 'tasks' && doc.taskInfo) {
                         tempArr.push({
                             title: doc.taskInfo.title,
                             start: new Date(doc.taskInfo.dueDate),
@@ -71,7 +84,7 @@ const CalendarWrapper = () => {
                                 moreInfoLink: `/user/task/?edit-task-id=${doc.taskInfo._id}`,
                             },
                         });
-                    } else if (doc.fromCollection === 'lifeEvents') {
+                    } else if (doc.fromCollection === 'lifeEvents' && doc.lifeEventInfo) {
                         tempArr.push({
                             title: doc.lifeEventInfo.title,
                             start: new Date(doc.lifeEventInfo.eventDateUtc),
@@ -81,6 +94,39 @@ const CalendarWrapper = () => {
                                 moreInfoLink: `/user/life-events?action=edit&id=${doc.lifeEventInfo._id}`,
                             },
                         });
+                    } else if (doc.fromCollection === 'infoVaultSignificantDate' && doc.infoVaultSignificantDate) {
+                        tempArr.push({
+                            title: doc.infoVaultSignificantDate.label,
+                            start: new Date(doc.infoVaultSignificantDate.date),
+                            extendedProps: {
+                                recordId: doc.infoVaultSignificantDate._id,
+                                fromCollection: 'infoVaultSignificantDate',
+                                moreInfoLink: `/user/info-vault?action=edit&id=${doc.infoVaultSignificantDate.infoVaultId}`,
+                            },
+                        });
+                    } else if (doc.fromCollection === 'infoVaultSignificantDateRepeat' && doc.infoVaultSignificantDateRepeat) {
+                        let shouldInsert = true;
+
+                        // should not insert if the recordId is already in the tempArr
+                        for (let indexRepeated = 0; indexRepeated < tempArr.length; indexRepeated++) {
+                            const element = tempArr[indexRepeated];
+                            if (element.extendedProps?.recordId === doc.infoVaultSignificantDateRepeat._id) {
+                                shouldInsert = false;
+                                break;
+                            }
+                        }
+
+                        if (shouldInsert) {
+                            tempArr.push({
+                                title: doc.infoVaultSignificantDateRepeat.label,
+                                start: new Date(doc.infoVaultSignificantDateRepeat.normalizedDate || doc.infoVaultSignificantDateRepeat.date),
+                                extendedProps: {
+                                    recordId: doc.infoVaultSignificantDateRepeat._id,
+                                    fromCollection: 'infoVaultSignificantDateRepeat',
+                                    moreInfoLink: `/user/info-vault?action=edit&id=${doc.infoVaultSignificantDateRepeat.infoVaultId}`,
+                                },
+                            });
+                        }
                     }
                 }
             }
@@ -121,7 +167,7 @@ const CalendarWrapper = () => {
                     <span
                         className="text-white font-semibold text-lg tracking-wide truncate"
                     >
-                        View your Tasks, Notes & Events
+                        View your Tasks, Events & Important Dates
                     </span>
                 </div>
 
@@ -326,12 +372,14 @@ const CalendarWrapper = () => {
                 {/* count */}
                 <div className='mt-2'>
                     {(() => {
-                        // Count tasks and lifeEvents
+                        // Count all types
                         const taskCount = events.filter(event => event.extendedProps?.fromCollection === 'tasks').length;
                         const lifeEventCount = events.filter(event => event.extendedProps?.fromCollection === 'lifeEvents').length;
+                        const staticDateCount = events.filter(event => event.extendedProps?.fromCollection === 'infoVaultSignificantDate').length;
+                        const significantDateCount = events.filter(event => event.extendedProps?.fromCollection === 'infoVaultSignificantDateRepeat').length;
                         return (
                             <div className="mb-2">
-                                {(taskCount > 0 || lifeEventCount > 0) && (
+                                {events.length > 0 && (
                                     <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-gray-600 font-medium bg-gray-50 rounded px-2 py-1">
                                         📅 <span>All:</span> <span>{events.length}</span>
                                     </div>
@@ -342,8 +390,18 @@ const CalendarWrapper = () => {
                                     </div>
                                 )}
                                 {lifeEventCount > 0 && (
-                                    <div className="inline-block align-middle mb-1 items-center gap-1 text-purple-600 font-medium bg-purple-50 rounded px-2 py-1">
+                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-purple-600 font-medium bg-purple-50 rounded px-2 py-1">
                                         🎉 <span>Life Events:</span> <span>{lifeEventCount}</span>
+                                    </div>
+                                )}
+                                {staticDateCount > 0 && (
+                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-blue-600 font-medium bg-blue-50 rounded px-2 py-1">
+                                        📌 <span>Significant Dates:</span> <span>{staticDateCount}</span>
+                                    </div>
+                                )}
+                                {significantDateCount > 0 && (
+                                    <div className="inline-block align-middle mb-1 items-center gap-1 text-green-600 font-medium bg-green-50 rounded px-2 py-1">
+                                        ⭐ <span>Significant Dates (Repeated):</span> <span>{significantDateCount}</span>
                                     </div>
                                 )}
                             </div>
@@ -360,6 +418,8 @@ const CalendarWrapper = () => {
                         <div className="flex-shrink-0 w-7 h-7 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-lg text-white shadow">
                             {event.extendedProps?.fromCollection === 'tasks' && '📝'}
                             {event.extendedProps?.fromCollection === 'lifeEvents' && '🎉'}
+                            {event.extendedProps?.fromCollection === 'infoVaultSignificantDate' && '📌'}
+                            {event.extendedProps?.fromCollection === 'infoVaultSignificantDateRepeat' && '⭐'}
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="text-sm font-semibold text-white">
