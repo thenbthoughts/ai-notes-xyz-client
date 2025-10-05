@@ -310,11 +310,90 @@ const CalendarWrapper = () => {
         )
     }
 
+    const renderRightList = () => {
+        return (
+            <div className='bg-white rounded-lg my-2 p-1 md:p-2'>
+                {/* heading */}
+                <h1 className='text-lg font-semibold text-gray-800'>Events</h1>
+
+                {/* no events */}
+                <div className='mt-2'>
+                    {events.length === 0 && (
+                        <div className='text-sm text-gray-500'>No events found</div>
+                    )}
+                </div>
+
+                {/* count */}
+                <div className='mt-2'>
+                    {(() => {
+                        // Count tasks and lifeEvents
+                        const taskCount = events.filter(event => event.extendedProps?.fromCollection === 'tasks').length;
+                        const lifeEventCount = events.filter(event => event.extendedProps?.fromCollection === 'lifeEvents').length;
+                        return (
+                            <div className="mb-2">
+                                {(taskCount > 0 || lifeEventCount > 0) && (
+                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-gray-600 font-medium bg-gray-50 rounded px-2 py-1">
+                                        📅 <span>All:</span> <span>{events.length}</span>
+                                    </div>
+                                )}
+                                {taskCount > 0 && (
+                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-indigo-600 font-medium bg-indigo-50 rounded px-2 py-1">
+                                        📝 <span>Tasks:</span> <span>{taskCount}</span>
+                                    </div>
+                                )}
+                                {lifeEventCount > 0 && (
+                                    <div className="inline-block align-middle mb-1 items-center gap-1 text-purple-600 font-medium bg-purple-50 rounded px-2 py-1">
+                                        🎉 <span>Life Events:</span> <span>{lifeEventCount}</span>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })()}
+                </div>
+
+                {/* events */}
+                {events.map((event) => (
+                    <div
+                        key={event.title}
+                        className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-md p-1 mb-2 flex items-center gap-2 hover:scale-[1.025] transition-transform duration-200"
+                    >
+                        <div className="flex-shrink-0 w-7 h-7 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-lg text-white shadow">
+                            {event.extendedProps?.fromCollection === 'tasks' && '📝'}
+                            {event.extendedProps?.fromCollection === 'lifeEvents' && '🎉'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="text-sm font-semibold text-white">
+                                {event.extendedProps?.moreInfoLink ? (
+                                    <a
+                                        href={event.extendedProps.moreInfoLink}
+                                        className="hover:underline flex items-center gap-1"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {event.title}
+                                        <LucideLink className="w-3 h-3 text-white opacity-80" />
+                                    </a>
+                                ) : (
+                                    event.title
+                                )}
+                            </div>
+                            <div className="text-xs text-white text-opacity-80 mt-0.5">
+                                {event.start instanceof Date
+                                    ? event.start.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+                                    : ''}
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
     return (
         <div
             className='container m-auto py-5 px-1'
             style={{
-                maxWidth: '1000px',
+                maxWidth: '1280px',
             }}
         >
             {/* heading */}
@@ -327,28 +406,40 @@ const CalendarWrapper = () => {
             {renderButtons()}
 
             {/* Calendar */}
-            <div className='bg-white rounded-lg md:p-4 my-2'>
-                <FullCalendar
-                    ref={calendarRef}
-                    plugins={[
-                        dayGridPlugin
-                    ]}
-                    initialView='dayGridMonth'
-                    weekends={true}
-                    events={events}
-                    eventContent={renderEventContent}
-                    datesSet={(arg) => {
-                        const d = arg.view.calendar.getDate(); // current anchor date of the view
-                        console.log('datesSet: ', d);
-                        setStartDate(d.toISOString());
-                        setEndDate(arg.end.toISOString());
-                    }}
+            <div className='flex flex-col lg:flex-row gap-4'>
+                {/* left */}
+                <div className='w-full lg:w-3/4'>
+                    <div className='bg-white rounded-lg md:p-4 my-2'>
+                        <FullCalendar
+                            ref={calendarRef}
+                            plugins={[
+                                dayGridPlugin
+                            ]}
+                            initialView='dayGridMonth'
+                            weekends={true}
+                            events={events}
+                            eventContent={renderEventContent}
+                            datesSet={(arg) => {
+                                const d = arg.view.calendar.getDate(); // current anchor date of the view
+                                console.log('datesSet: ', d);
+                                setStartDate(d.toISOString());
+                                setEndDate(arg.end.toISOString());
+                            }}
 
-                    // height
-                    height="auto"
-                    contentHeight="auto"
-                    expandRows={true}
-                />
+                            // height
+                            height="auto"
+                            contentHeight="auto"
+                            expandRows={true}
+                        />
+                    </div>
+                </div>
+
+                {/* right */}
+                <div className='w-full lg:w-1/4'>
+                    <div className='bg-white rounded-lg'>
+                        {renderRightList()}
+                    </div>
+                </div>
             </div>
         </div>
     )
