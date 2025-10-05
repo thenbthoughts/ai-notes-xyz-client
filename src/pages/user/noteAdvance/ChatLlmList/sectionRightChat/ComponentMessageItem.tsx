@@ -522,7 +522,7 @@ const ComponentMessageItem = ({
             )}
             {!isDeleted && (
                 <div
-                    className="bg-white border border-gray-300 rounded-lg px-3 py-2 shadow-md inline-block max-w-[650px] min-w-[60%]"
+                    className="bg-white border border-gray-300 rounded-lg px-3 py-2 shadow-md inline-block max-w-[750px] min-w-[60%]"
                 >
                     {(
                         itemMessage.aiModelProvider === '' && itemMessage.aiModelName === ''
