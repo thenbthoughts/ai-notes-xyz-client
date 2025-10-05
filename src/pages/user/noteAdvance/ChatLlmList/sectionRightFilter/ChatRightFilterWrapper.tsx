@@ -32,6 +32,34 @@ const ChatRightFilterWrapper = () => {
 
     return (
         <div className='w-full'>
+            {/* chat history */}
+            {screenWidth === screenList.sm && (
+                <div
+                    className='p-1 cursor-pointer'
+                    onClick={() => {
+                        setChatHistoryModalOpen({
+                            isOpen: !chatHistoryModalOpen.isOpen,
+                        });
+                        setChatLlmThreadSetting((prevProps) => {
+                            return {
+                                ...prevProps,
+                                isOpen: false,
+                            };
+                        });
+                    }}
+                >
+                    <div className={`py-3 rounded ${chatHistoryModalOpen.isOpen ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                        <LucideList
+                            style={{
+                                width: '100%',
+                                color: 'white', // Set icon color to white
+                            }}
+                            className=''
+                        />
+                    </div>
+                </div>
+            )}
+
             {/* setting */}
             <div
                 className='p-1 cursor-pointer'
@@ -109,33 +137,14 @@ const ChatRightFilterWrapper = () => {
                 </div>
             </div>
 
-            {/* chat history */}
-            {screenWidth === screenList.sm && (
-                <div
-                    className='p-1 cursor-pointer'
-                    onClick={() => {
-                        setChatHistoryModalOpen({
-                            isOpen: !chatHistoryModalOpen.isOpen,
-                        });
-                    }}
-                >
-                    <div className={`py-3 rounded ${chatHistoryModalOpen.isOpen ? 'bg-blue-600' : 'bg-gray-600'}`}>
-                        <LucideList
-                            style={{
-                                width: '100%',
-                                color: 'white', // Set icon color to white
-                            }}
-                            className=''
-                        />
-                    </div>
-                </div>
-            )}
-
             {/* thread setting */}
             {chatLlmThreadSetting.threadId.length === 24 && (
                 <div
                     className='p-1 cursor-pointer'
                     onClick={() => {
+                        setChatHistoryModalOpen({
+                            isOpen: false,
+                        });
                         setChatLlmThreadSetting((prevProps) => {
                             return {
                                 ...prevProps,

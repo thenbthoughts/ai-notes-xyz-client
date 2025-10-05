@@ -245,8 +245,8 @@ const ComponentThreadAdd = () => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        isPersonalContextEnabled: true,
-        isAutoAiContextSelectEnabled: true,
+        isPersonalContextEnabled: false,
+        isAutoAiContextSelectEnabled: false,
     });
 
     const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq");
