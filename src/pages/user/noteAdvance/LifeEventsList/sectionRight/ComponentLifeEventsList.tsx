@@ -15,7 +15,7 @@ import { PlusCircle } from 'lucide-react';
 import { lifeEventAddAxios } from '../utils/lifeEventsListAxios.ts';
 import { useNavigate } from 'react-router-dom';
 
-const perPage = 20;
+const perPage = 10;
 
 const ComponentLifeEventsList = () => {
     const navigate = useNavigate();
@@ -200,14 +200,14 @@ const ComponentLifeEventsList = () => {
                         breakLabel="..."
                         nextLabel="next >"
                         onPageChange={(e) => {
-                            setPage(e.selected);
+                            setPage(e.selected+1);
                         }}
                         marginPagesDisplayed={1}
                         pageRangeDisplayed={3}
                         pageCount={Math.ceil(totalCount / perPage)}
                         previousLabel="< previous"
                         renderOnZeroPageCount={null}
-                        forcePage={page}
+                        forcePage={page-1}
 
                         containerClassName="flex flex-wrap justify-center items-center gap-1 sm:space-x-1"
                         pageClassName="border border-gray-300 rounded-md hover:bg-gray-200 text-base sm:text-lg m-0.5"
