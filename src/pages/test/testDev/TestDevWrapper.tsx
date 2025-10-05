@@ -30,6 +30,10 @@ const TestDevWrapper = () => {
                 <Link to="/user/task-schedule" target="_blank" rel="noopener noreferrer">Go to Task Schedule</Link>
             </p>
 
+            <p>
+                <Link to="/user/ai-suggestions-demo" target="_blank" rel="noopener noreferrer">Go to AI Suggestions Demo</Link>
+            </p>
+
             <TestReactQuill />
 
             <TestChatInput />

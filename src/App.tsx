@@ -59,6 +59,10 @@ const UpdateUserApiClientFrontendUrl = lazy(() => import('./components/settings/
 // pages -> maps
 const MapsWrapper = lazy(() => import("./pages/user/noteAdvance/Maps/Maps.tsx"));
 
+// pages -> suggestions
+const AiSuggestions = lazy(() => import("./pages/user/noteAdvance/Suggestions/AiSuggestions.tsx"));
+const AiSuggestionsDemo = lazy(() => import("./pages/user/noteAdvance/Suggestions/demo/AiSuggestions.tsx"));
+
 function App() {
   const Layout = () => {
     return (
@@ -177,6 +181,22 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <TaskScheduleWrapper />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
+          path: "/user/suggestions",
+          element: (
+            <UnauthorizedRoute>
+              <AiSuggestions />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
+          path: "/user/ai-suggestions-demo",
+          element: (
+            <UnauthorizedRoute>
+              <AiSuggestionsDemo />
             </UnauthorizedRoute>
           ),
         },
