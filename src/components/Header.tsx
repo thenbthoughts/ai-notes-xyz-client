@@ -39,6 +39,9 @@ const Header = () => {
                     {authState.isLoggedIn === 'true' && (
                         <Fragment>
                             <Link
+                                to="/user/suggestions" className="hover:underline"
+                            >Suggestions</Link>
+                            <Link
                                 to="/user/chat" className="hover:underline"
                             >Chat</Link>
                             <Link
