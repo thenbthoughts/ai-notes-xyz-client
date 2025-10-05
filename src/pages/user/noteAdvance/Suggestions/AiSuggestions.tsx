@@ -499,7 +499,7 @@ const AiTaskSuggestions = () => {
                                     <div className="text-xs text-green-600 border border-green-200 rounded p-2 my-2 bg-green-50">
                                         <p className="mb-1">Task added successfully!</p>
                                         <a 
-                                            href={`http://localhost:3000/user/task?workspace=${task.taskWorkspaceId}&edit-task-id=${task._id}`}
+                                            href={`/user/task?workspace=${task.taskWorkspaceId}&edit-task-id=${task._id}`}
                                             className="text-blue-600 hover:text-blue-800 underline"
                                             target="_blank"
                                             rel="noopener noreferrer"
