@@ -13,6 +13,7 @@ import FileUploadEnvCheck from '../../../../../components/FileUploadEnvCheck';
 
 import { useSetAtom } from 'jotai';
 import { jotaiChatLlmFooterHeight } from '../jotai/jotaiChatLlmThreadSetting';
+import ComponentUploadImage from './ComponentUploadImage';
 
 const TextAndFileInput = ({
     value,
@@ -383,6 +384,13 @@ const ComponentNotesAdd = ({
                     <ComponentUploadFile
                         setFiles={setFiles}
                     />
+                </FileUploadEnvCheck>
+
+                {/* camera */}
+                <FileUploadEnvCheck iconType="file">
+                    <ComponentUploadImage
+                        setFiles={setFiles}
+                    />                    
                 </FileUploadEnvCheck>
 
                 {/* audio */}
