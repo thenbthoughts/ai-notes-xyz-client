@@ -1,7 +1,11 @@
-import { LucideLoader2, LucideZap } from "lucide-react";
+import { LucideLoader2, LucideRefreshCw, LucideZap } from "lucide-react";
 import { useEffect, useState } from "react";
 import axiosCustom from "../../../../../config/axiosCustom";
 import toast from "react-hot-toast";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
+
+const autoLoadAtom = atomWithStorage('aiTaskSuggestionsAutoLoad', false);
 
 interface TaskSuggestion {
     _id?: string;
@@ -31,13 +35,23 @@ const AiSuggestionTasks = () => {
         error: '',
     });
     const [taskSuggestions, setTaskSuggestions] = useState<TaskSuggestion[]>([]);
+    const [autoLoad, setAutoLoad] = useAtom(autoLoadAtom);
 
     const [
         randomNum,
         setRandomNum
-    ] = useState(Math.random());
+    ] = useState(0);
 
     useEffect(() => {
+        if (randomNum === 0) {
+            setRequestAiTaskSuggestions({
+                loading: false,
+                success: '',
+                error: '',
+            });
+            return;
+        }
+
         const controller = new AbortController();
         fetchTaskSuggestions(controller.signal);
 
@@ -45,6 +59,15 @@ const AiSuggestionTasks = () => {
             controller.abort();
         };
     }, [randomNum]);
+
+    useEffect(() => {
+        if (autoLoad) {
+            console.log('autoLoad is true');
+            setRandomNum(Math.random());
+        } else {
+            console.log('autoLoad is false');
+        }
+    }, [autoLoad]);
 
     const fetchTaskSuggestions = async (signal?: AbortSignal) => {
         setRequestAiTaskSuggestions({
@@ -166,16 +189,44 @@ const AiSuggestionTasks = () => {
 
     return (
         <div className="mb-2 bg-white rounded-lg shadow border border-gray-200 p-2 md:p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-                <LucideZap className="w-4 h-4 text-blue-600" />
-                <h2 className="text-sm md:text-base font-bold text-gray-800">AI Task Suggestions</h2>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 mb-1">
+                <div className="flex items-center gap-1.5 flex-1">
+                    <LucideZap className="w-4 h-4 text-blue-600" />
+                    <h2 className="text-sm md:text-base font-bold text-gray-800">AI Task Suggestions</h2>
+                </div>
+                <div className="flex items-center gap-1.5 w-full sm:w-auto">
+                    <button
+                        onClick={() => {
+                            setAutoLoad(!autoLoad);
+                        }}
+                        className={`p-1 px-2 rounded transition-colors text-xs flex items-center flex-1 sm:flex-initial justify-center ${autoLoad ? 'bg-green-100 hover:bg-green-200' : 'bg-gray-100 hover:bg-gray-200'}`}
+                        title={autoLoad ? 'Auto-load enabled' : 'Auto-load disabled'}
+                    >
+                        <LucideZap
+                            className={`w-3 h-3 md:w-4 md:h-4 ${autoLoad ? 'text-green-600' : 'text-gray-400'} mr-1`}
+                        />
+                        <span className="">{autoLoad ? 'Auto-load enabled' : 'Auto-load disabled'}</span>
+                    </button>
+                    <button
+                        onClick={() => {
+                            setRandomNum(Math.random());
+                        }}
+                        disabled={requestAiTaskSuggestions.loading}
+                        className="p-1 rounded hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        title="Refresh task suggestions"
+                    >
+                        <LucideRefreshCw
+                            className={`w-4 h-4 text-blue-600 ${requestAiTaskSuggestions.loading ? 'animate-spin' : ''}`}
+                        />
+                    </button>
+                </div>
             </div>
-            <button
-                onClick={() => {
-                    setRandomNum(Math.random());
-                }}
-                className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded"
-            >Refresh</button>
+
+            {!autoLoad && taskSuggestions.length === 0 && !requestAiTaskSuggestions.loading && (
+                <div className="flex items-center justify-center py-4">
+                    <span className="text-xs md:text-sm text-gray-600">Auto-load is disabled. Click refresh to load task suggestions.</span>
+                </div>
+            )}
 
             {requestAiTaskSuggestions.loading && (
                 <div className="border border-gray-200 rounded p-2 my-2 text-center">
