@@ -3,6 +3,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import { useRef, useState, useEffect } from 'react';
 import { LucideLink, LucidePlus } from 'lucide-react';
 import axiosCustom from '../../../../config/axiosCustom';
+import { Link } from 'react-router-dom';
 
 interface Event {
     title: string;
@@ -131,7 +132,12 @@ const CalendarWrapper = () => {
                 }
             }
             console.log('tempArr: ', tempArr);
-            setEvents(tempArr);
+
+            let tempArrSorted = tempArr.sort((a, b) => {
+                return a.start.getTime() - b.start.getTime();
+            });
+
+            setEvents(tempArrSorted);
         } catch (error) {
             console.error(error);
         }
@@ -424,15 +430,15 @@ const CalendarWrapper = () => {
                         <div className="flex-1 min-w-0">
                             <div className="text-sm font-semibold text-white">
                                 {event.extendedProps?.moreInfoLink ? (
-                                    <a
-                                        href={event.extendedProps.moreInfoLink}
+                                    <Link
+                                        to={event.extendedProps.moreInfoLink}
                                         className="hover:underline flex items-center gap-1"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
                                         {event.title}
                                         <LucideLink className="w-3 h-3 text-white opacity-80" />
-                                    </a>
+                                    </Link>
                                 ) : (
                                     event.title
                                 )}
@@ -520,8 +526,8 @@ function renderEventContent(eventInfo: {
         <>
             <b>{eventInfo.timeText}</b>
             <div className='text-xs text-gray-500 ml-1'>
-                <a
-                    href={eventInfo.event.extendedProps.moreInfoLink || ''}
+                <Link
+                    to={eventInfo.event.extendedProps.moreInfoLink || ''}
                     className='px-2'
                 >
                     <LucideLink
@@ -531,7 +537,7 @@ function renderEventContent(eventInfo: {
                         }}
                         className='inline-block'
                     />
-                </a>
+                </Link>
             </div>
             <i
                 onClick={() => {
