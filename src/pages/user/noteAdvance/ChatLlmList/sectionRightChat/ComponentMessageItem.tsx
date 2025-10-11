@@ -9,6 +9,7 @@ import { LucideAudioLines, LucideClipboard, LucideInfo, LucideTrash, LucideEyeOf
 
 import { tsMessageItem } from '../../../../../types/pages/tsNotesAdvanceList';
 import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm'
 
 const ComponentAiTaskByNotesId = ({
     itemMessageId,
@@ -296,7 +297,9 @@ const ComponentMessageItem = ({
             <div
                 className="prose prose-sm max-w-none break-words"
             >
-                <ReactMarkdown>{mdContent}</ReactMarkdown>
+                <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                >{mdContent}</ReactMarkdown>
             </div>
         );
     };
@@ -522,7 +525,7 @@ const ComponentMessageItem = ({
             )}
             {!isDeleted && (
                 <div
-                    className="bg-white border border-gray-300 rounded-lg px-3 py-2 shadow-md inline-block max-w-[750px] min-w-[60%]"
+                    className="bg-white border border-gray-300 rounded-lg px-3 py-2 shadow-md inline-block max-w-[800px] min-w-[40%]"
                 >
                     {(
                         itemMessage.aiModelProvider === '' && itemMessage.aiModelName === ''
