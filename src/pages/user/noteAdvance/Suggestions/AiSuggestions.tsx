@@ -2,6 +2,7 @@ import { LucideBrain } from "lucide-react";
 
 import AiSuggestionsDiary from "./components/AiSuggestionSummary";
 import AiSuggestionTasks from "./components/AiSuggestionTasks";
+import AiSuggestionSummaryCombined from "./components/AiSuggestionSummaryCombined";
 
 const AiSuggestions = () => {
 
@@ -27,6 +28,7 @@ const AiSuggestions = () => {
             }}
         >
             {renderHeading()}
+            <AiSuggestionSummaryCombined />
             <AiSuggestionsDiary />
             <AiSuggestionTasks />
         </div>
