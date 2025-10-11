@@ -2,6 +2,7 @@ import { LucideBrain, LucideLightbulb, LucideLoader2, LucideRefreshCcw, LucideZa
 import { useEffect, useState } from "react";
 import axiosCustom from "../../../../config/axiosCustom";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const fetchRevailateAIDiary = async ({
     summaryDate,
@@ -63,65 +64,149 @@ const AiSuggestionsDiary = () => {
         content: '',
         lifeEventId: '',
     });
+    const [currentWeekAiDiary, setCurrentWeekAiDiary] = useState({
+        content: '',
+        lifeEventId: '',
+    });
+    const [lastWeekAiDiary, setLastWeekAiDiary] = useState({
+        content: '',
+        lifeEventId: '',
+    });
+    const [currentMonthAiDiary, setCurrentMonthAiDiary] = useState({
+        content: '',
+        lifeEventId: '',
+    });
+    const [lastMonthAiDiary, setLastMonthAiDiary] = useState({
+        content: '',
+        lifeEventId: '',
+    });
     const [showDaily, setShowDaily] = useState(true);
     const [showYesterday, setShowYesterday] = useState(true);
-    const [showWeekly, setShowWeekly] = useState(false);
-    const [showMonthly, setShowMonthly] = useState(false);
-    const [showLastWeek, setShowLastWeek] = useState(false);
-    const [showLastMonth, setShowLastMonth] = useState(false);
+    const [showWeekly, setShowWeekly] = useState(true);
+    const [showMonthly, setShowMonthly] = useState(true);
+    const [showLastWeek, setShowLastWeek] = useState(true);
+    const [showLastMonth, setShowLastMonth] = useState(true);
 
     useEffect(() => {
-        fetchDailyAiDiaryToday();
-        fetchDailyAiDiaryYesterday();
+        fetchAllSummaries();
     }, []);
 
-    const fetchDailyAiDiaryToday = async () => {
+    const fetchAllSummaries = async () => {
         try {
-            const response = await axiosCustom.get('/api/suggestions/crud/ai-daily-diary-get-today-summary');
-            if (response.data && response.data.docs && response.data.docs.length > 0) {
-                const todayDiary = response.data.docs[0];
-                setDailyAiDiary({
-                    content: todayDiary.aiSummary || todayDiary.description || '',
-                    lifeEventId: todayDiary._id || '',
-                });
+            const response = await axiosCustom.get('/api/suggestions/crud/ai-summary-get');
+            if (response.data && response.data.data) {
+                const data = response.data.data;
+                
+                if (data.summaryToday) {
+                    setDailyAiDiary({
+                        content: data.summaryToday.description || '',
+                        lifeEventId: data.summaryToday._id || '',
+                    });
+                }
+                
+                if (data.summaryYesterday) {
+                    setYesterdayAiDiary({
+                        content: data.summaryYesterday.description || '',
+                        lifeEventId: data.summaryYesterday._id || '',
+                    });
+                }
+                
+                if (data.summaryCurrentWeek) {
+                    setCurrentWeekAiDiary({
+                        content: data.summaryCurrentWeek.description || '',
+                        lifeEventId: data.summaryCurrentWeek._id || '',
+                    });
+                }
+                
+                if (data.summaryLastWeek) {
+                    setLastWeekAiDiary({
+                        content: data.summaryLastWeek.description || '',
+                        lifeEventId: data.summaryLastWeek._id || '',
+                    });
+                }
+                
+                if (data.summaryCurrentMonth) {
+                    setCurrentMonthAiDiary({
+                        content: data.summaryCurrentMonth.description || '',
+                        lifeEventId: data.summaryCurrentMonth._id || '',
+                    });
+                }
+                
+                if (data.summaryLastMonth) {
+                    setLastMonthAiDiary({
+                        content: data.summaryLastMonth.description || '',
+                        lifeEventId: data.summaryLastMonth._id || '',
+                    });
+                }
             }
         } catch (error) {
-            console.error('Error fetching daily AI diary:', error);
+            console.error('Error fetching AI summaries:', error);
         }
-    }
-
-    const fetchDailyAiDiaryYesterday = async () => {
-        try {
-            const response = await axiosCustom.get('/api/suggestions/crud/ai-daily-diary-get-yesterday-summary');
-            if (response.data && response.data.docs && response.data.docs.length > 0) {
-                const yesterdayDiary = response.data.docs[0];
-                setYesterdayAiDiary({
-                    content: yesterdayDiary.aiSummary || yesterdayDiary.description || '',
-                    lifeEventId: yesterdayDiary._id || '',
-                });
-            }
-        } catch (error) {
-            console.error('Error fetching daily AI diary:', error);
-        }
-    }
+    };
 
     const fetchRevailateAIAll = async () => {
         setStateRevailateAIAll({
             loading: true,
         });
         try {
+            // today
             await fetchRevailateAIDiary({
                 summaryDate: new Date().toISOString(),
                 summaryType: 'daily',
             });
-            await fetchDailyAiDiaryToday();
+            // Refresh all summaries
+            await fetchAllSummaries();
+
+            // yesterday
             await fetchRevailateAIDiary({
                 summaryDate: new Date(
                     new Date().valueOf() - 1000 * 60 * 60 * 24
                 ).toISOString(),
                 summaryType: 'daily',
             });
-            await fetchDailyAiDiaryYesterday();
+            // Refresh all summaries
+            await fetchAllSummaries();
+
+            // current week
+            await fetchRevailateAIDiary({
+                summaryDate: new Date(
+                    new Date().valueOf()
+                ).toISOString(),
+                summaryType: 'weekly',
+            });
+            // Refresh all summaries
+            await fetchAllSummaries();
+
+            // past week
+            await fetchRevailateAIDiary({
+                summaryDate: new Date(
+                    new Date().valueOf() - 1000 * 60 * 60 * 24 * 7
+                ).toISOString(),
+                summaryType: 'weekly',
+            });
+            // Refresh all summaries
+            await fetchAllSummaries();
+
+            // current month
+            await fetchRevailateAIDiary({
+                summaryDate: new Date(
+                    new Date().valueOf()
+                ).toISOString(),
+                summaryType: 'monthly',
+            });
+            // Refresh all summaries
+            await fetchAllSummaries();
+
+            // past month
+            await fetchRevailateAIDiary({
+                summaryDate: new Date(
+                    new Date().valueOf() - 1000 * 60 * 60 * 24 * 30
+                ).toISOString(),
+                summaryType: 'monthly',
+            });
+
+            // Refresh all summaries
+            await fetchAllSummaries();
         } catch (error) {
             console.error('Error fetching daily AI diary:', error);
         } finally {
@@ -142,7 +227,7 @@ const AiSuggestionsDiary = () => {
                     )}
                     {!stateRevailateAIAll.loading && (
                         <LucideRefreshCcw
-                            className="w-4 h-4 text-gray-600 inline-block ml-1"
+                            className="w-4 h-4 text-gray-600 inline-block ml-1 cursor-pointer hover:text-gray-800"
                             onClick={fetchRevailateAIAll}
                         />
                     )}
@@ -151,49 +236,63 @@ const AiSuggestionsDiary = () => {
 
             <div>
                 <div className="flex flex-wrap gap-2 mb-2">
-                    {yesterdayAiDiary.content.length >= 1 && (
+                    {yesterdayAiDiary.content && (
                         <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
                             <input type="checkbox" checked={showYesterday} onChange={e => setShowYesterday(e.target.checked)} />
                             Yesterday
                         </label>
                     )}
-                    {dailyAiDiary.content.length >= 1 && (
+                    {dailyAiDiary.content && (
                         <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
                             <input type="checkbox" checked={showDaily} onChange={e => setShowDaily(e.target.checked)} />
                             Today
                         </label>
                     )}
-                    <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
-                        <input type="checkbox" checked={showLastWeek} onChange={e => setShowLastWeek(e.target.checked)} />
-                        Last week
-                    </label>
-                    <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
-                        <input type="checkbox" checked={showWeekly} onChange={e => setShowWeekly(e.target.checked)} />
-                        This week
-                    </label>
-                    <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
-                        <input type="checkbox" checked={showLastMonth} onChange={e => setShowLastMonth(e.target.checked)} />
-                        Last month
-                    </label>
-                    <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
-                        <input type="checkbox" checked={showMonthly} onChange={e => setShowMonthly(e.target.checked)} />
-                        This month
-                    </label>
+                    {lastWeekAiDiary.content && (
+                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                            <input type="checkbox" checked={showLastWeek} onChange={e => setShowLastWeek(e.target.checked)} />
+                            Last week
+                        </label>
+                    )}
+                    {currentWeekAiDiary.content && (
+                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                            <input type="checkbox" checked={showWeekly} onChange={e => setShowWeekly(e.target.checked)} />
+                            This week
+                        </label>
+                    )}
+                    {lastMonthAiDiary.content && (
+                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                            <input type="checkbox" checked={showLastMonth} onChange={e => setShowLastMonth(e.target.checked)} />
+                            Last month
+                        </label>
+                    )}
+                    {currentMonthAiDiary.content && (
+                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                            <input type="checkbox" checked={showMonthly} onChange={e => setShowMonthly(e.target.checked)} />
+                            This month
+                        </label>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     {/* Daily Diary - Yesterday */}
-                    {showYesterday && yesterdayAiDiary.content.length >= 1 && (
+                    {showYesterday && yesterdayAiDiary.content && (
                         <div className="p-2 rounded border border-cyan-200 bg-cyan-50">
                             <p className="text-xs text-gray-600">
-                                {new Date(
-                                    new Date().valueOf() - 1000 * 60 * 60 * 24
-                                ).toLocaleDateString()}
+                                {new Date(new Date().valueOf() - 1000 * 60 * 60 * 24).toLocaleDateString()}
                             </p>
                             <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
                                 Yesterday
+                                {yesterdayAiDiary.lifeEventId && (
+                                    <Link 
+                                        to={`/user/life-events?action=edit&id=${yesterdayAiDiary.lifeEventId}`}
+                                        className="ml-2 text-cyan-600 hover:text-cyan-800 text-xs"
+                                    >
+                                        View
+                                    </Link>
+                                )}
                             </h3>
-                            <div className="whitespace-pre-wrap"
+                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
                                 style={{
                                     overflowY: 'auto',
                                     maxHeight: '250px',
@@ -203,15 +302,23 @@ const AiSuggestionsDiary = () => {
                     )}
 
                     {/* Daily Diary - Today */}
-                    {showDaily && dailyAiDiary.content.length >= 1 && (
+                    {showDaily && dailyAiDiary.content && (
                         <div className="p-2 rounded border border-cyan-200 bg-cyan-50">
                             <p className="text-xs text-gray-600">
                                 {new Date().toLocaleDateString()}
                             </p>
                             <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
                                 Today
+                                {dailyAiDiary.lifeEventId && (
+                                    <Link 
+                                        to={`/user/life-events?action=edit&id=${dailyAiDiary.lifeEventId}`}
+                                        className="ml-2 text-cyan-600 hover:text-cyan-800 text-xs"
+                                    >
+                                        View
+                                    </Link>
+                                )}
                             </h3>
-                            <div className="whitespace-pre-wrap"
+                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
                                 style={{
                                     overflowY: 'auto',
                                     maxHeight: '250px',
@@ -220,50 +327,101 @@ const AiSuggestionsDiary = () => {
                         </div>
                     )}
 
-                    {/* {showWeekly && (
-                        <div className="p-2 rounded border border-blue-200 bg-blue-50">
-                            <p className="text-xs text-gray-600">This Week</p>
-                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">AI Weekly Diary</h3>
-                            <ul className="text-xs md:text-sm text-gray-700 space-y-1 list-disc ml-4">
-                                <li>Productivity: Pomodoro x5 days, time-block daily</li>
-                                <li>Learning: 3 active-recall sessions</li>
-                                <li>Finance: Friday spending review</li>
-                            </ul>
-                        </div>
-                    )}
-                    {showMonthly && (
-                        <div className="p-2 rounded border border-purple-200 bg-purple-50">
-                            <p className="text-xs text-gray-600">This Month</p>
-                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">AI Monthly Diary</h3>
-                            <ul className="text-xs md:text-sm text-gray-700 space-y-1 list-disc ml-4">
-                                <li>Habits: solidify morning routine</li>
-                                <li>Goal: save $500 toward emergency fund</li>
-                                <li>Learning: finish 2 books</li>
-                            </ul>
-                        </div>
-                    )}
-                    {showLastWeek && (
+                    {/* Weekly Diary - Last Week */}
+                    {showLastWeek && lastWeekAiDiary.content && (
                         <div className="p-2 rounded border border-amber-200 bg-amber-50">
                             <p className="text-xs text-gray-600">Last Week</p>
-                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">AI Last Week Diary</h3>
-                            <ul className="text-xs md:text-sm text-gray-700 space-y-1 list-disc ml-4">
-                                <li>Completed: 18 tasks, 7 notes</li>
-                                <li>Focus: 15 Pomodoros, 80% adherence</li>
-                                <li>Next-up: improve planning accuracy</li>
-                            </ul>
+                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
+                                AI Last Week Diary
+                                {lastWeekAiDiary.lifeEventId && (
+                                    <Link 
+                                        to={`/user/life-events?action=edit&id=${lastWeekAiDiary.lifeEventId}`}
+                                        className="ml-2 text-amber-600 hover:text-amber-800 text-xs"
+                                    >
+                                        View
+                                    </Link>
+                                )}
+                            </h3>
+                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
+                                style={{
+                                    overflowY: 'auto',
+                                    maxHeight: '250px',
+                                }}
+                            >{lastWeekAiDiary.content}</div>
                         </div>
                     )}
-                    {showLastMonth && (
+
+                    {/* Weekly Diary - This Week */}
+                    {showWeekly && currentWeekAiDiary.content && (
+                        <div className="p-2 rounded border border-blue-200 bg-blue-50">
+                            <p className="text-xs text-gray-600">This Week</p>
+                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
+                                AI Weekly Diary
+                                {currentWeekAiDiary.lifeEventId && (
+                                    <Link 
+                                        to={`/user/life-events?action=edit&id=${currentWeekAiDiary.lifeEventId}`}
+                                        className="ml-2 text-blue-600 hover:text-blue-800 text-xs"
+                                    >
+                                        View
+                                    </Link>
+                                )}
+                            </h3>
+                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
+                                style={{
+                                    overflowY: 'auto',
+                                    maxHeight: '250px',
+                                }}
+                            >{currentWeekAiDiary.content}</div>
+                        </div>
+                    )}
+
+                    {/* Monthly Diary - Last Month */}
+                    {showLastMonth && lastMonthAiDiary.content && (
                         <div className="p-2 rounded border border-indigo-200 bg-indigo-50">
                             <p className="text-xs text-gray-600">Last Month</p>
-                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">AI Last Month Diary</h3>
-                            <ul className="text-xs md:text-sm text-gray-700 space-y-1 list-disc ml-4">
-                                <li>Achievements: completed 3 major projects</li>
-                                <li>Habits: 85% consistency with morning routine</li>
-                                <li>Growth: improved time estimation skills</li>
-                            </ul>
+                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
+                                AI Last Month Diary
+                                {lastMonthAiDiary.lifeEventId && (
+                                    <Link 
+                                        to={`/user/life-events?action=edit&id=${lastMonthAiDiary.lifeEventId}`}
+                                        className="ml-2 text-indigo-600 hover:text-indigo-800 text-xs"
+                                    >
+                                        View
+                                    </Link>
+                                )}
+                            </h3>
+                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
+                                style={{
+                                    overflowY: 'auto',
+                                    maxHeight: '250px',
+                                }}
+                            >{lastMonthAiDiary.content}</div>
                         </div>
-                    )} */}
+                    )}
+
+                    {/* Monthly Diary - This Month */}
+                    {showMonthly && currentMonthAiDiary.content && (
+                        <div className="p-2 rounded border border-purple-200 bg-purple-50">
+                            <p className="text-xs text-gray-600">This Month</p>
+                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
+                                AI Monthly Diary
+                                {currentMonthAiDiary.lifeEventId && (
+                                    <Link 
+                                        to={`/user/life-events?action=edit&id=${currentMonthAiDiary.lifeEventId}`}
+                                        className="ml-2 text-purple-600 hover:text-purple-800 text-xs"
+                                    >
+                                        View
+                                    </Link>
+                                )}
+                            </h3>
+                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
+                                style={{
+                                    overflowY: 'auto',
+                                    maxHeight: '250px',
+                                }}
+                            >{currentMonthAiDiary.content}</div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

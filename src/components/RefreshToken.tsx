@@ -15,7 +15,8 @@ const RefreshToken = () => {
     }, []);
 
     useEffect(() => {
-        const intervalId = setInterval(refreshToken, 60000); // Call refreshToken every minute (60000 milliseconds)
+        let ONE_DAY_IN_MS = 24 * 60 * 60 * 1_000;
+        const intervalId = setInterval(refreshToken, ONE_DAY_IN_MS); // Call refreshToken every 24 hours
         return () => clearInterval(intervalId); // Clear the interval when the component unmounts
     }, []);
 
