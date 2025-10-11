@@ -6,12 +6,13 @@ import remarkGfm from "remark-gfm";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-const autoLoadAtom = atomWithStorage('aiSummaryAutoLoad', true);
+const autoLoadAtom = atomWithStorage('aiSummaryAutoLoad', false);
 
 const AiSuggestionSummaryCombined = () => {
     const [summary, setSummary] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [autoLoad, setAutoLoad] = useAtom(autoLoadAtom);
+    const [randomNum, setRandomNum] = useState(0);
 
     const fetchSummary = async (signal?: AbortSignal) => {
         setIsLoading(true);
@@ -35,11 +36,11 @@ const AiSuggestionSummaryCombined = () => {
     };
 
     const handleRefresh = () => {
-        fetchSummary();
+        setRandomNum(Math.random());
     };
 
     useEffect(() => {
-        if (!autoLoad) {
+        if (randomNum === 0) {
             setIsLoading(false);
             return;
         }
@@ -50,6 +51,15 @@ const AiSuggestionSummaryCombined = () => {
         return () => {
             controller.abort();
         };
+    }, [randomNum]);
+
+    useEffect(() => {
+        if (autoLoad) {
+            console.log('autoLoad is true');
+            setRandomNum(Math.random());
+        } else {
+            console.log('autoLoad is false');
+        }
     }, [autoLoad]);
 
     return (
@@ -97,7 +107,12 @@ const AiSuggestionSummaryCombined = () => {
                     <span className="ml-2 text-xs md:text-sm text-gray-600">Loading summary...</span>
                 </div>
             ) : (
-                <div className="prose prose-sm max-w-none">
+                <div className="prose prose-sm max-w-none"
+                    style={{
+                        overflowY: 'auto',
+                        maxHeight: '80vh',
+                    }}
+                >
                     {summary.length === 0 && (
                         <div className="text-center">
                             <span className="text-xs md:text-sm text-gray-600">No summary available yet.</span>
