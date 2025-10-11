@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import ReactPaginate from 'react-paginate';
 import { useSetAtom } from 'jotai';
+import { DateTime } from 'luxon';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { jotaiChatHistoryModalOpen } from '../jotai/jotaiChatLlmThreadSetting.ts';
@@ -173,7 +174,9 @@ const ComponentChatHistory = () => {
                             </span>
                             {/* Timestamp */}
                             <span className="block text-xs text-gray-600">
-                                {item.createdAtUtc}
+                                {new Date(item.createdAtUtc).toLocaleDateString()}{' - '}
+                                {new Date(item.createdAtUtc).toLocaleTimeString()}{' - '}
+                                {DateTime.fromJSDate(new Date(item.createdAtUtc)).toRelative()}
                             </span>
                         </Link>
                         <div>
