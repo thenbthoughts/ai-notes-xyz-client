@@ -107,7 +107,7 @@ const ComponentLifeEventItem = ({
                     whiteSpace: 'nowrap',
                 }}
             >
-                {lifeEventObj.filesArr.map((fileObj, fileIndex) => {
+                {lifeEventObj?.comments?.map((fileObj, fileIndex) => {
                     return (
                         <Fragment key={fileIndex}>
                             {fileObj.fileType === "image" && (
