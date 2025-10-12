@@ -9,7 +9,6 @@ import { LucideArrowLeft, LucidePlus, LucideSave } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ComponentLifeEventsEditCategory from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategory.tsx';
 import ComponentLifeEventsEditCategorySub from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategorySub.tsx';
-import FileUploadEnvCheck from '../../../../../components/FileUploadEnvCheck.tsx';
 import CommentCommonComponent from '../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
 
 const ComponentLifeEventsEdit = ({
