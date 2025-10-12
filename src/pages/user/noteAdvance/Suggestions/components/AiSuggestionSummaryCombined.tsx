@@ -8,6 +8,23 @@ import { atomWithStorage } from "jotai/utils";
 
 const autoLoadAtom = atomWithStorage('aiSummaryAutoLoad', false);
 
+const fetchRevailateAIDiary = async ({
+    summaryDate,
+    summaryType,
+}: {
+    summaryDate: string;
+    summaryType: 'daily' | 'weekly' | 'monthly';
+}) => {
+    try {
+        await axiosCustom.post('/api/suggestions/crud/ai-daily-diary-revalidate', {
+            summaryDate: summaryDate,
+            summaryType: summaryType,
+        });
+    } catch (error) {
+        console.error('Error fetching daily AI diary:', error);
+    }
+};
+
 const AiSuggestionSummaryCombined = () => {
     const [summary, setSummary] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -17,6 +34,27 @@ const AiSuggestionSummaryCombined = () => {
     const fetchSummary = async (signal?: AbortSignal) => {
         setIsLoading(true);
         try {
+            // revalidate summary
+            const promiseSummaryRevalidateToday = fetchRevailateAIDiary({
+                summaryDate: new Date().toISOString(),
+                summaryType: 'daily',
+            });
+            const promiseSummaryRevalidateYesterday = fetchRevailateAIDiary({
+                summaryDate: `${new Date(
+                    new Date().valueOf() - 1000 * 60 * 60 * 24
+                ).toISOString()}`,
+                summaryType: 'daily',
+            });
+            await promiseSummaryRevalidateToday;
+            await promiseSummaryRevalidateYesterday;
+            await fetchRevailateAIDiary({
+                summaryDate: new Date(
+                    new Date().valueOf()
+                ).toISOString(),
+                summaryType: 'weekly',
+            });
+
+            // get summary
             const response = await axiosCustom.get('/api/suggestions/crud/get-ai-summary-combined', {
                 signal
             });
