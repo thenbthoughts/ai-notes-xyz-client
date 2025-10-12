@@ -5,10 +5,13 @@ import { LucideLink, LucidePlus } from 'lucide-react';
 import axiosCustom from '../../../../config/axiosCustom';
 import { Link } from 'react-router-dom';
 
+import calendarScss from './scss/calendarWrapper.module.scss';
+
 interface Event {
     title: string;
     start: Date;
     end?: Date;
+    allDay: true,
     extendedProps?: {
         recordId: string;
         fromCollection: 'tasks' | 'lifeEvents' | 'infoVaultSignificantDate' | 'infoVaultSignificantDateRepeat';
@@ -79,6 +82,7 @@ const CalendarWrapper = () => {
                         tempArr.push({
                             title: doc.taskInfo.title,
                             start: new Date(doc.taskInfo.dueDate),
+                            allDay: true,
                             extendedProps: {
                                 recordId: doc.taskInfo._id,
                                 fromCollection: 'tasks',
@@ -89,6 +93,7 @@ const CalendarWrapper = () => {
                         tempArr.push({
                             title: doc.lifeEventInfo.title,
                             start: new Date(doc.lifeEventInfo.eventDateUtc),
+                            allDay: true,
                             extendedProps: {
                                 recordId: doc.lifeEventInfo._id,
                                 fromCollection: 'lifeEvents',
@@ -99,6 +104,7 @@ const CalendarWrapper = () => {
                         tempArr.push({
                             title: doc.infoVaultSignificantDate.label,
                             start: new Date(doc.infoVaultSignificantDate.date),
+                            allDay: true,
                             extendedProps: {
                                 recordId: doc.infoVaultSignificantDate._id,
                                 fromCollection: 'infoVaultSignificantDate',
@@ -121,6 +127,7 @@ const CalendarWrapper = () => {
                             tempArr.push({
                                 title: doc.infoVaultSignificantDateRepeat.label,
                                 start: new Date(doc.infoVaultSignificantDateRepeat.normalizedDate || doc.infoVaultSignificantDateRepeat.date),
+                                allDay: true,
                                 extendedProps: {
                                     recordId: doc.infoVaultSignificantDateRepeat._id,
                                     fromCollection: 'infoVaultSignificantDateRepeat',
@@ -523,29 +530,30 @@ function renderEventContent(eventInfo: {
     };
 }) {
     return (
-        <>
+        <div className='p-1'>
             <b>{eventInfo.timeText}</b>
-            <div className='text-xs text-gray-500 ml-1'>
+            <i
+                onClick={() => {
+                    console.log('eventInfo: ', eventInfo);
+                }}
+                className={`text-xs ${calendarScss.calendarTitleLink}`}
+                title={eventInfo.event.title}
+            >{eventInfo.event.title}</i>
+            <div className='text-xs text-gray-500'>
                 <Link
                     to={eventInfo.event.extendedProps.moreInfoLink || ''}
-                    className='px-2'
+                    className='p-1 text-center block bg-white rounded-md'
                 >
                     <LucideLink
                         size={12}
                         style={{
                             marginTop: '-3px',
                         }}
-                        className='inline-block'
-                    />
+                        className='inline-block mr-1'
+                    /> View
                 </Link>
             </div>
-            <i
-                onClick={() => {
-                    console.log('eventInfo: ', eventInfo);
-                }}
-                className='pl-1'
-            >{eventInfo.event.title}</i>
-        </>
+        </div>
     )
 }
 
