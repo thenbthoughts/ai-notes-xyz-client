@@ -212,8 +212,8 @@ const ComponentTaskSubList: React.FC<{
                         value={newSubtask}
                         placeholder="✨ Add a new subtask..."
                         onChange={(e) => setNewSubtask(e.target.value)}
-                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                        rows={2}
+                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        rows={3}
                     />
                     <button
                         onClick={() => {

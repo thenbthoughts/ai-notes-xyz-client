@@ -7,6 +7,7 @@ import axiosCustom from "../../config/axiosCustom";
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { LucideMic, LucidePause, LucidePlay, LucideMicOff } from "lucide-react";
 import { ICommentType } from "./CommentCommonComponent";
+import { commentAddAudioToTextAxios } from "./commentCommonAxiosUtils";
 
 const ComponentUploadFile = ({
     entityId,
@@ -77,38 +78,44 @@ const ComponentUploadFile = ({
 
             setTaskCommentsReloadRandomNumCurrent(Math.random() * 1_000_000);
 
-            // audio to text
-            const audioToTextRes = await axiosCustom.post("/api/llm/crud/audioToText", {
-                fileUrl: response.data.fileName,
-            });
-            const audioToTextResData = audioToTextRes.data;
-            const text = audioToTextResData.data.contentAudioToText;
+            await commentAddAudioToTextAxios({
+                fileName: response.data.fileName,
+                commentType,
+                entityId,
+            })
 
-            if (audioToTextResData.error !== '') {
-                toast.error(audioToTextResData.error);
-                return;
-            }
+            // // audio to text
+            // const audioToTextRes = await axiosCustom.post("/api/llm/crud/audioToText", {
+            //     fileUrl: response.data.fileName,
+            // });
+            // const audioToTextResData = audioToTextRes.data;
+            // const text = audioToTextResData.data.contentAudioToText;
 
-            // Then add a comment with the transcribed text
-            if (text !== '') {
-                await axiosCustom.post("/api/comment-common/crud/commentCommonAdd", {
-                    // comment type and reference id
-                    commentType,
-                    entityId,
+            // if (audioToTextResData.error !== '') {
+            //     toast.error(audioToTextResData.error);
+            //     return;
+            // }
 
-                    // is ai
-                    isAi: false,
+            // // Then add a comment with the transcribed text
+            // if (text !== '') {
+            //     await axiosCustom.post("/api/comment-common/crud/commentCommonAdd", {
+            //         // comment type and reference id
+            //         commentType,
+            //         entityId,
 
-                    // 
-                    commentText: text,
+            //         // is ai
+            //         isAi: false,
 
-                    // file
-                    fileType: '',
-                    fileUrl: '',
-                    fileTitle: '',
-                    fileDescription: '',
-                });
-            }
+            //         // 
+            //         commentText: text,
+
+            //         // file
+            //         fileType: '',
+            //         fileUrl: '',
+            //         fileTitle: '',
+            //         fileDescription: '',
+            //     });
+            // }
 
             setTaskCommentsReloadRandomNumCurrent(Math.random() * 1_000_000);
 
@@ -124,7 +131,7 @@ const ComponentUploadFile = ({
     return (
         <div className="py-2">
 
-            <h3 className="text-lg font-semibold mb-2">Audio Comment</h3>
+            <h4 className="text-md font-semibold mb-2">Audio Comment</h4>
 
             {!isRecording && (
                 <button
