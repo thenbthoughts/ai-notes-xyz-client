@@ -1,20 +1,21 @@
 import { Fragment } from "react/jsx-runtime";
+import envKeys from "../../config/envKeys";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useEffect } from "react";
+import axiosCustom from "../../config/axiosCustom";
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { LucideMic, LucidePause, LucidePlay, LucideMicOff } from "lucide-react";
-import { DateTime } from "luxon";
-
-import axiosCustom from "../../../../../../config/axiosCustom";
-import envKeys from "../../../../../../config/envKeys";
+import { ICommentType } from "./CommentCommonComponent";
 
 const ComponentUploadFile = ({
-    notesId,
-    setNotesCommentsReloadRandomNumCurrent,
+    entityId,
+    setTaskCommentsReloadRandomNumCurrent,
+    commentType,
 }: {
-    notesId: string;
-    setNotesCommentsReloadRandomNumCurrent: React.Dispatch<React.SetStateAction<number>>;
+    entityId: string;
+    setTaskCommentsReloadRandomNumCurrent: React.Dispatch<React.SetStateAction<number>>;
+    commentType: ICommentType;
 }) => {
 
     const {
@@ -56,22 +57,25 @@ const ComponentUploadFile = ({
 
             // add a comment
             // First add the audio file
-            await axiosCustom.post("/api/notes-comments/crud/notesCommentAdd", {
-                // task
-                notesId: notesId,
+            await axiosCustom.post("/api/comment-common/crud/commentCommonAdd", {
+                // comment type and reference id
+                commentType,
+                entityId,
+
+                // is ai
                 isAi: false,
 
-                // 
+                // comment text
                 commentText: '',
 
-                // file
+                // file type, url, title, description
                 fileType: 'audio',
                 fileUrl: response.data.fileName,
-                fileTitle: `audio-${DateTime.now().toFormat('yyyy-MM-dd-HH-mm-ss')}.webm`,
+                fileTitle: 'audio.webm',
                 fileDescription: 'Audio recording',
             });
 
-            setNotesCommentsReloadRandomNumCurrent(Math.random() * 1_000_000);
+            setTaskCommentsReloadRandomNumCurrent(Math.random() * 1_000_000);
 
             // audio to text
             const audioToTextRes = await axiosCustom.post("/api/llm/crud/audioToText", {
@@ -87,9 +91,12 @@ const ComponentUploadFile = ({
 
             // Then add a comment with the transcribed text
             if (text !== '') {
-                await axiosCustom.post("/api/notes-comments/crud/notesCommentAdd", {
-                    // task
-                    notesId: notesId,
+                await axiosCustom.post("/api/comment-common/crud/commentCommonAdd", {
+                    // comment type and reference id
+                    commentType,
+                    entityId,
+
+                    // is ai
                     isAi: false,
 
                     // 
@@ -103,7 +110,7 @@ const ComponentUploadFile = ({
                 });
             }
 
-            setNotesCommentsReloadRandomNumCurrent(Math.random() * 1_000_000);
+            setTaskCommentsReloadRandomNumCurrent(Math.random() * 1_000_000);
 
             toast.dismiss(toastDismissId);
         } catch (error) {

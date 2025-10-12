@@ -10,7 +10,7 @@ import htmlToMarkdown from '@wcj/html-to-markdown';
 import { jotaiStateNotesWorkspaceRefresh } from '../../stateJotai/notesStateJotai.ts';
 import { INotes } from '../../../../../../types/pages/tsNotes.ts';
 import QuillEditorCustom1 from '../../../../../../components/quillJs/QuillEditorCustom1/QuillEditorCustom1.tsx';
-import ComponentNotesCommentList from './ComponentNotesCommentList.tsx';
+import CommentCommonComponent from '../../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
 
 const ComponentNotesEdit = ({
     notesObj
@@ -244,10 +244,11 @@ const ComponentNotesEdit = ({
                     />
                 </div>
 
-                {/* field -> file upload */}
+                {/* field -> comments */}
                 <div>
-                    <ComponentNotesCommentList
-                        parentNotesId={notesObj._id}
+                    <CommentCommonComponent
+                        commentType="note"
+                        recordId={notesObj._id}
                     />
                 </div>
 

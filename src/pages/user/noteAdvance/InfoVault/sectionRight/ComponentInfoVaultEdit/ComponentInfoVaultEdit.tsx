@@ -14,6 +14,7 @@ import ComponentInfoVaultWebsite from './ComponentInfoVaultWebsite.tsx';
 import ComponentInfoVaultSignificantDate from './ComponentInfoVaultSignificantDate.tsx';
 import ComponentInfoVaultAddress from './ComponentInfoVaultAddress.tsx';
 import FileUploadEnvCheck from '../../../../../../components/FileUploadEnvCheck.tsx';
+import CommentCommonComponent from '../../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
 
 const ComponentInfoVaultEdit = ({
     infoVaultObj
@@ -517,6 +518,11 @@ const ComponentInfoVaultEdit = ({
             )}
 
             {renderEditFields()}
+
+            <CommentCommonComponent
+                commentType="infoVault"
+                recordId={infoVaultObj._id}
+            />
 
         </div>
     )

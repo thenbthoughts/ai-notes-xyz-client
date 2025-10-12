@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Trash2, Send, LucideFile } from 'lucide-react';
 import axios from 'axios';
-import axiosCustom from '../../../../../config/axiosCustom';
+import axiosCustom from '../../config/axiosCustom';
 import { DateTime } from 'luxon';
 import toast from 'react-hot-toast';
-import envKeys from '../../../../../config/envKeys';
+import envKeys from '../../config/envKeys';
 import ComponentTaskCommentListAudioInput from './ComponentTaskCommentListAudioInput';
-import FileUploadEnvCheck from '../../../../../components/FileUploadEnvCheck';
+import FileUploadEnvCheck from '../../components/FileUploadEnvCheck';
 
 interface TaskComment {
     _id: string;
@@ -17,11 +17,15 @@ interface TaskComment {
     fileUrl: string;
 }
 
+export type ICommentType = 'note' | 'task' | 'lifeEvent' | 'infoVault';
+
 const ComponentTaskCommentListFileUpload = ({
-    taskId,
+    commentType,
+    entityId,
     setTaskCommentsReloadRandomNumCurrent,
 }: {
-    taskId: string;
+    commentType: ICommentType;
+    entityId: string;
     setTaskCommentsReloadRandomNumCurrent: React.Dispatch<React.SetStateAction<number>>;
 }) => {
 
@@ -37,7 +41,7 @@ const ComponentTaskCommentListFileUpload = ({
     };
 
     const uploadFiles = async (fileList: FileList | File[]) => {
-        if (!fileList || !taskId) return;
+        if (!fileList || !entityId) return;
         setUploading(true);
         for (let i = 0; i < fileList.length; i++) {
             const file = fileList[i];
@@ -52,15 +56,18 @@ const ComponentTaskCommentListFileUpload = ({
                 );
                 const fileUrl = uploadRes.data.fileName;
                 const fileType = getFileType(file);
-                await axiosCustom.post("/api/task-comments/crud/taskCommentAdd", {
-                    // task
-                    taskId,
+                await axiosCustom.post("/api/comment-common/crud/commentCommonAdd", {
+                    // comment type and reference id
+                    commentType,
+                    entityId,
+
+                    // is ai
                     isAi: false,
 
-                    // 
+                    // comment text
                     commentText: '',
 
-                    // file
+                    // file type, url, title, description
                     fileType,
                     fileUrl,
                     fileTitle: file.name,
@@ -114,7 +121,7 @@ const ComponentTaskCommentItem = ({
     const deleteComment = async (id: string) => {
         try {
             await axiosCustom.post(
-                '/api/task-comments/crud/taskCommentDelete',
+                '/api/comment-common/crud/commentCommonDelete',
                 {
                     id
                 }
@@ -195,10 +202,12 @@ const ComponentTaskCommentItem = ({
 };
 
 const ComponentTaskCommentAdd = ({
-    taskId,
+    entityId,
+    commentType,
     setTaskCommentsReloadRandomNumCurrent,
 }: {
-    taskId: string;
+    entityId: string;
+    commentType: ICommentType;
     setTaskCommentsReloadRandomNumCurrent: React.Dispatch<React.SetStateAction<number>>;
 }) => {
 
@@ -207,9 +216,15 @@ const ComponentTaskCommentAdd = ({
     const onAddComment = async () => {
         if (newComment.trim()) {
             try {
-                await axiosCustom.post('/api/task-comments/crud/taskCommentAdd', {
+                await axiosCustom.post('/api/comment-common/crud/commentCommonAdd', {
+                    // comment text
                     commentText: newComment,
-                    taskId,
+
+                    // comment type and reference id
+                    commentType,
+                    entityId,
+
+                    // is ai
                     isAi: false,
                 });
                 setNewCommand('');
@@ -247,9 +262,10 @@ const ComponentTaskCommentAdd = ({
 };
 
 const ComponentTaskCommentList: React.FC<{
-    parentTaskId: string;
+    entityId: string;
     taskCommentsReloadRandomNum: number;
-}> = ({ parentTaskId, taskCommentsReloadRandomNum }) => {
+    commentType: ICommentType;
+}> = ({ entityId, taskCommentsReloadRandomNum, commentType }) => {
     const [comments, setCommands] = useState<TaskComment[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -257,12 +273,12 @@ const ComponentTaskCommentList: React.FC<{
 
     useEffect(() => {
         fetchCommands();
-    }, [parentTaskId, taskCommentsReloadRandomNum, taskCommentsReloadRandomNumCurrent]);
+    }, [entityId, taskCommentsReloadRandomNum, taskCommentsReloadRandomNumCurrent]);
 
     const fetchCommands = async () => {
         setLoading(true);
         try {
-            const response = await axiosCustom.post('/api/task-comments/crud/taskCommentGet', { taskId: parentTaskId });
+            const response = await axiosCustom.post('/api/comment-common/crud/commentCommonGet', { entityId: entityId });
             setCommands(response.data.docs);
         } catch (error) {
             console.error('Error fetching comments:', error);
@@ -285,8 +301,9 @@ const ComponentTaskCommentList: React.FC<{
                     iconType="file"
                 >
                     <ComponentTaskCommentListFileUpload
-                        taskId={parentTaskId}
+                        entityId={entityId}
                         setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
+                        commentType={commentType}
                     />
                 </FileUploadEnvCheck>
             </div>
@@ -297,8 +314,9 @@ const ComponentTaskCommentList: React.FC<{
                     iconType="audio"
                 >
                     <ComponentTaskCommentListAudioInput
-                        taskId={parentTaskId}
+                        entityId={entityId}
                         setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
+                        commentType={commentType}
                     />
                 </FileUploadEnvCheck>
             </div>
@@ -313,8 +331,9 @@ const ComponentTaskCommentList: React.FC<{
                 ))}
 
                 <ComponentTaskCommentAdd
-                    taskId={parentTaskId}
+                    entityId={entityId}
                     setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
+                    commentType={commentType}
                 />
 
             </div>
@@ -322,4 +341,26 @@ const ComponentTaskCommentList: React.FC<{
     );
 };
 
-export default ComponentTaskCommentList;
+const CommentCommonComponent = ({
+    commentType,
+    recordId
+}: {
+    commentType: 'note' | 'task' | 'lifeEvent' | 'infoVault';
+    recordId: string;
+}) => {
+    return (
+        <div>
+            <h1>Comment</h1>
+            <div className='border p-2 rounded-md my-2'>
+                {commentType} {recordId}
+            </div>
+            <ComponentTaskCommentList
+                entityId={recordId}
+                taskCommentsReloadRandomNum={0}
+                commentType={commentType}
+            />
+        </div>
+    );
+};
+
+export default CommentCommonComponent;

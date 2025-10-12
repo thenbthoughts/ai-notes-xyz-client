@@ -11,6 +11,7 @@ import ComponentLifeEventsEditCategory from './ComponentLifeEventsEditCategory/C
 import ComponentLifeEventsEditCategorySub from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategorySub.tsx';
 import ComponentLifeEventsEditFileUpload from './ComponentLifeEventsEditFileUpload/ComponentLifeEventsEditFileUpload.tsx';
 import FileUploadEnvCheck from '../../../../../components/FileUploadEnvCheck.tsx';
+import CommentCommonComponent from '../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
 
 const ComponentLifeEventsEdit = ({
     lifeEventObj
@@ -345,6 +346,11 @@ const ComponentLifeEventsEdit = ({
             )}
 
             {renderEditFields()}
+
+            <CommentCommonComponent
+                commentType="lifeEvent"
+                recordId={lifeEventObj._id}
+            />
 
         </div>
     )
