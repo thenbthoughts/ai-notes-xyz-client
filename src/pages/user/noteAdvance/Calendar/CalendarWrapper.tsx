@@ -542,7 +542,7 @@ function renderEventContent(eventInfo: {
             <div className='text-xs text-gray-500'>
                 <Link
                     to={eventInfo.event.extendedProps.moreInfoLink || ''}
-                    className='p-1 text-center block bg-white rounded-md'
+                    className='p-1 text-center block bg-white rounded-md flex flex-col lg:flex-row items-center justify-center'
                 >
                     <LucideLink
                         size={12}
