@@ -1,4 +1,4 @@
-import { LucideTrash } from 'lucide-react';
+import { LucideStar, LucideTrash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import ReactPaginate from 'react-paginate';
 import { useSetAtom } from 'jotai';
 import { DateTime } from 'luxon';
+import { AxiosRequestConfig } from 'axios';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { jotaiChatHistoryModalOpen } from '../jotai/jotaiChatLlmThreadSetting.ts';
@@ -30,10 +31,12 @@ const ComponentChatHistory = () => {
     const [items, setItems] = useState([] as {
         _id: string;
         threadTitle: string;
+        isFavourite: boolean;
         createdAtUtc: string;
     }[]);
     const [searchTerm, setSearchTerm] = useState('');
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
+    const [isFavourite, setIsFavourite] = useState('');
 
     const goToTop = () => {
         const chatHistoryTop = document.getElementById('chat-history-top');
@@ -47,11 +50,13 @@ const ComponentChatHistory = () => {
         try {
             setLoading(true);
             const response = await axiosCustom.post(
-                '/api/chat-llm/threads-crud/threadsGet', {
-                page: page,
-                perPage: perPage,
-                search: searchTerm,
-            }
+                '/api/chat-llm/threads-crud/threadsGet',
+                {
+                    page: page,
+                    perPage: perPage,
+                    search: searchTerm,
+                    isFavourite: isFavourite,
+                }
             );
             if (response.data && response.data.docs) {
                 // Map API data to expected format
@@ -79,7 +84,10 @@ const ComponentChatHistory = () => {
                 Math.random() * 1_000_000
             )
         );
-    }, [searchTerm]);
+    }, [
+        searchTerm,
+        isFavourite
+    ]);
 
     const deleteThread = async (argThreadId: string) => {
         try {
@@ -99,6 +107,37 @@ const ComponentChatHistory = () => {
         }
     };
 
+    const toggleFavourite = async ({
+        recordId,
+        isFavourite,
+    }: {
+        recordId: string;
+        isFavourite: boolean;
+    }) => {
+        try {
+            const config = {
+                method: 'post',
+                url: `/api/chat-llm/threads-crud/threadsEditById`,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    threadId: recordId,
+
+                    // classification
+                    isFavourite: isFavourite,
+                },
+            } as AxiosRequestConfig;
+
+            await axiosCustom.request(config);
+
+            toast.success('Thread favourited successfully');
+            await fetchChatThreads();
+        } catch (error) {
+            alert('Error toggling favourite: ' + error);
+        }
+    };
+
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         let tempActiveChatId = '';
@@ -108,6 +147,28 @@ const ComponentChatHistory = () => {
         }
         setActiveChatId(tempActiveChatId);
     }, [location.search]);
+
+    const renderFilterIsFavourite = () => {
+        return (
+            <div className="mb-3">
+                <div className="mt-1 flex items-center">
+                    <input
+                        type="checkbox"
+                        id="favouriteCheckbox"
+                        checked={isFavourite === 'true'}
+                        onChange={(e) => setIsFavourite(e.target.checked ? 'true' : '')}
+                        className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    />
+                    <label
+                        htmlFor="favouriteCheckbox"
+                        className="ml-2 text-sm text-gray-700 cursor-pointer"
+                    >
+                        Show only favourites
+                    </label>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="py-10 px-2 text-black">
@@ -143,6 +204,9 @@ const ComponentChatHistory = () => {
                     value={searchTerm}
                 />
             </div>
+
+            {/* filter is favourite */}
+            {renderFilterIsFavourite()}
 
             {/* History Items List */}
             <div className="space-y-3">
@@ -186,6 +250,21 @@ const ComponentChatHistory = () => {
                                 onClick={() => deleteThread(item._id)}
                             >
                                 <LucideTrash />
+                            </button>
+                            {/* favourite icon */}
+                            <button
+                                className="mt-2 mr-1"
+                                onClick={() => toggleFavourite({
+                                    recordId: item?._id,
+                                    isFavourite: item?.isFavourite ? false : true,
+                                })}
+                            >
+                                {item?.isFavourite ? <LucideStar
+                                    fill='yellow'
+                                    className='text-yellow-500 hover:text-yellow-700'
+                                /> : <LucideStar
+                                    className='text-gray-500 hover:text-gray-700'
+                                />}
                             </button>
                         </div>
                     </div>
