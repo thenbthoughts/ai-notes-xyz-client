@@ -7,7 +7,7 @@ import ReactPaginate from 'react-paginate';
 import { PlusCircle } from 'lucide-react';
 import { notesAddAxios } from '../utils/notesListAxios.ts';
 import { useNavigate } from 'react-router-dom';
-import { jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
+import { jotaiStateNotesIsStar, jotaiStateNotesSearch, jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
 import { useAtomValue } from 'jotai';
     
 const perPage = 20;
@@ -20,6 +20,9 @@ const ComponentNotesList = () => {
     const workspaceId = useAtomValue(jotaiStateNotesWorkspaceId);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
+    const searchTerm = useAtomValue(jotaiStateNotesSearch);
+    const isStar = useAtomValue(jotaiStateNotesIsStar);
+
     useEffect(() => {
         const axiosCancelTokenSource: CancelTokenSource = axios.CancelToken.source();
         fetchList({ axiosCancelTokenSource });
@@ -31,7 +34,7 @@ const ComponentNotesList = () => {
     useEffect(() => {
         setPage(1);
         setRefreshRandomNum(Math.random());
-    }, [page, workspaceId]);
+    }, [page, workspaceId, searchTerm, isStar]);
 
     const fetchList = async ({ axiosCancelTokenSource }: { axiosCancelTokenSource: CancelTokenSource }) => {
         try {
@@ -45,6 +48,8 @@ const ComponentNotesList = () => {
                     page: page,
                     perPage: perPage,
                     notesWorkspaceId: workspaceId,
+                    search: searchTerm,
+                    isStar: isStar,
                 },
                 cancelToken: axiosCancelTokenSource.token,
             } as AxiosRequestConfig;
