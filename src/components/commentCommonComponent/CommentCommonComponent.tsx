@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Trash2, Send, LucideFile } from 'lucide-react';
+import { Trash2, Send, LucideFile, LucideDownload, LucideFileAudio } from 'lucide-react';
 import axios from 'axios';
 import axiosCustom from '../../config/axiosCustom';
 import { DateTime } from 'luxon';
@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import envKeys from '../../config/envKeys';
 import ComponentTaskCommentListAudioInput from './ComponentTaskCommentListAudioInput';
 import FileUploadEnvCheck from '../../components/FileUploadEnvCheck';
+import { commentAddAudioToTextAxios } from './commentCommonAxiosUtils';
 
 interface TaskComment {
     _id: string;
@@ -18,6 +19,14 @@ interface TaskComment {
 }
 
 export type ICommentType = 'note' | 'task' | 'lifeEvent' | 'infoVault';
+
+const getFileType = (file: File) => {
+    const ext = file.name.split('.').pop()?.toLowerCase() || "";
+    if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "image";
+    if (["mp4", "mov", "avi", "webm"].includes(ext)) return "video";
+    if (["mp3", "wav", "ogg"].includes(ext)) return "audio";
+    return "file";
+};
 
 const ComponentTaskCommentListFileUpload = ({
     commentType,
@@ -32,22 +41,18 @@ const ComponentTaskCommentListFileUpload = ({
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const getFileType = (file: File) => {
-        const ext = file.name.split('.').pop()?.toLowerCase() || "";
-        if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "image";
-        if (["mp4", "mov", "avi", "webm"].includes(ext)) return "video";
-        if (["mp3", "wav", "ogg"].includes(ext)) return "audio";
-        return "file";
-    };
-
     const uploadFiles = async (fileList: FileList | File[]) => {
         if (!fileList || !entityId) return;
+
         setUploading(true);
         for (let i = 0; i < fileList.length; i++) {
             const file = fileList[i];
             const formData = new FormData();
             formData.append("file", file);
-            toast.loading("Uploading...", { id: `upload-${i}` });
+
+            let randomToastUploadId = `upload-${Math.floor(Math.random() * 1_000_000)}`;
+
+            toast.loading("Uploading...", { id: randomToastUploadId });
             try {
                 const uploadRes = await axios.post(
                     `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
@@ -73,9 +78,11 @@ const ComponentTaskCommentListFileUpload = ({
                     fileTitle: file.name,
                     fileDescription: file.name,
                 });
-                toast.success("File uploaded!", { id: `upload-${i}` });
+                toast.success("File uploaded!", { id: randomToastUploadId });
+                toast.dismiss(randomToastUploadId);
             } catch {
-                toast.error("Upload failed", { id: `upload-${i}` });
+                toast.error("Upload failed", { id: randomToastUploadId });
+                toast.dismiss(randomToastUploadId);
             }
         }
         setUploading(false);
@@ -113,9 +120,15 @@ const ComponentTaskCommentListFileUpload = ({
 const ComponentTaskCommentItem = ({
     comment,
     setTaskCommentsReloadRandomNumCurrent,
+
+    commentType,
+    entityId,
 }: {
     comment: TaskComment;
     setTaskCommentsReloadRandomNumCurrent: React.Dispatch<React.SetStateAction<number>>;
+
+    commentType: ICommentType;
+    entityId: string;
 }) => {
 
     const deleteComment = async (id: string) => {
@@ -188,10 +201,53 @@ const ComponentTaskCommentItem = ({
                             </span>
                             <button
                                 onClick={() => deleteComment(comment._id)}
-                                className="text-red-500 hover:text-red-700"
+                                className="text-red-500 hover:text-red-700 px-3"
                             >
                                 <Trash2 size={16} />
                             </button>
+
+                            {comment.fileType && comment.fileUrl && (
+                                <a
+                                    href={getFileUrl(comment.fileUrl)}
+                                    download={comment.fileUrl.split('/').pop() || "download"}
+                                    className="text-blue-500 hover:text-blue-700 text-sm px-3"
+                                    target='_blank'
+                                >
+                                    <LucideDownload
+                                        size={16}
+                                        className="inline-block"
+                                        style={{
+                                            marginTop: '-8px',
+                                        }}
+                                    />
+                                </a>
+                            )}
+
+                            {comment.fileType === "audio" && (
+                                <button
+                                    onClick={async () => {
+                                        await commentAddAudioToTextAxios({
+                                            fileName: comment.fileUrl,
+                                            commentType,
+                                            entityId,
+                                        });
+                                        setTaskCommentsReloadRandomNumCurrent(prev => prev + 1);
+                                        toast.success("Audio to Text completed!");
+                                    }}
+                                    className="text-blue-500 hover:text-blue-700 text-sm px-3"
+                                >
+                                    <LucideFileAudio
+                                        size={16}
+                                        className="inline-block"
+                                        style={{
+                                            marginTop: '-4px',
+                                        }}
+                                    />
+                                    <span
+                                        className='inline-block pl-2'
+                                    >Audio to Text</span>
+                                </button>
+                            )}
                         </div>
                     </div>
 
@@ -235,15 +291,98 @@ const ComponentTaskCommentAdd = ({
         }
     };
 
+    // upload file
+    const uploadFileToStorage = async (file: File) => {
+        let randomToastUploadId = `upload-${Math.floor(Math.random() * 1_000_000)}`;
+        const toastDismissId = toast.loading("Uploading...", { id: `upload-${randomToastUploadId}` });
+        try {
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const config = {
+                method: 'post',
+                url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
+                data: formData,
+                withCredentials: true,
+            };
+
+            const response = await axios.request(config);
+            // setFiles(prev => [...prev, response.data.fileName]);
+
+            const fileUrl = response.data.fileName;
+            const fileType = getFileType(file);
+
+            await axiosCustom.post("/api/comment-common/crud/commentCommonAdd", {
+                // comment type and reference id
+                commentType,
+                entityId,
+
+                // is ai
+                isAi: false,
+
+                // comment text
+                commentText: '',
+
+                // file type, url, title, description
+                fileType,
+                fileUrl,
+                fileTitle: file.name,
+                fileDescription: file.name,
+            });
+
+            setTaskCommentsReloadRandomNumCurrent(prev => prev + 1);
+
+            toast.dismiss(toastDismissId);
+            toast.success(`File "${file.name}" uploaded successfully!`);
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            toast.dismiss(toastDismissId);
+            toast.error('Error uploading file!');
+        }
+    };
+
+    const uploadFilesToStorage = async (files: File[]) => {
+        await Promise.all(Array.from(files).map(uploadFileToStorage));
+    };
+
+    const handleFileDrop = async (event: React.DragEvent<HTMLTextAreaElement>): Promise<void> => {
+        event.preventDefault();
+        const droppedFiles = event.dataTransfer.files;
+        await uploadFilesToStorage(Array.from(droppedFiles));
+    };
+
+    const handlePaste = async (event: React.ClipboardEvent<HTMLTextAreaElement>): Promise<void> => {
+        const items = event.clipboardData.items;
+
+        const pastedFiles: File[] = [];
+        for (const item of items) {
+            if (item.kind === 'file') {
+                const file = item.getAsFile();
+                if (file) pastedFiles.push(file);
+            }
+        }
+        await uploadFilesToStorage(pastedFiles);
+    };
+
+    const handleDragOver = (event: React.DragEvent<HTMLTextAreaElement>): void => {
+        event.preventDefault();
+    };
+
     return (
         <div className="gap-2 mt-2">
             <div className="flex mt-1">
                 <textarea
                     value={newComment}
                     onChange={(e) => setNewCommand(e.target.value)}
-                    placeholder="Write a comment..."
-                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    rows={2}
+                    placeholder="Write a comment or drag & drop any files here..."
+                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={5}
+
+                    // file upload
+                    onDrop={handleFileDrop}
+                    onDragOver={handleDragOver}
+                    onPaste={handlePaste}
                 />
             </div>
             <div className="flex justify-end mt-1">
@@ -290,7 +429,7 @@ const ComponentTaskCommentList: React.FC<{
     return (
         <div>
             <div className="flex justify-between items-center mb-1">
-                <h3 className="text-sm font-medium text-gray-700">
+                <h3 className="text-lg font-medium text-gray-700">
                     Comments {loading && <span className="text-blue-500">Loading...</span>}
                 </h3>
             </div>
@@ -322,20 +461,22 @@ const ComponentTaskCommentList: React.FC<{
             </div>
 
             <div className="space-y-1 mt-2">
-                {comments.map((comment) => (
-                    <ComponentTaskCommentItem
-                        key={comment._id}
-                        comment={comment}
-                        setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
-                    />
-                ))}
-
                 <ComponentTaskCommentAdd
                     entityId={entityId}
                     setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
                     commentType={commentType}
                 />
 
+                {comments.map((comment) => (
+                    <ComponentTaskCommentItem
+                        key={comment._id}
+                        comment={comment}
+                        setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
+
+                        commentType={commentType}
+                        entityId={entityId}
+                    />
+                ))}
             </div>
         </div>
     );
@@ -350,10 +491,6 @@ const CommentCommonComponent = ({
 }) => {
     return (
         <div>
-            <h1>Comment</h1>
-            <div className='border p-2 rounded-md my-2'>
-                {commentType} {recordId}
-            </div>
             <ComponentTaskCommentList
                 entityId={recordId}
                 taskCommentsReloadRandomNum={0}

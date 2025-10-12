@@ -82,7 +82,6 @@ const TextAndFileInput = ({
     return (
         <div className="w-full">
             <textarea
-                // className="w-full p-3 border border-gray-300 rounded min-h-[80px] focus:outline-none focus:border-blue-500 resize-none"
                 className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 resize-none"
                 placeholder={"Type your message or drag & drop any files here..."}
                 ref={textareaRef}
