@@ -440,8 +440,6 @@ const CalendarWrapper = () => {
                                     <Link
                                         to={event.extendedProps.moreInfoLink}
                                         className="hover:underline flex items-center gap-1"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
                                     >
                                         {event.title}
                                         <LucideLink className="w-3 h-3 text-white opacity-80" />
