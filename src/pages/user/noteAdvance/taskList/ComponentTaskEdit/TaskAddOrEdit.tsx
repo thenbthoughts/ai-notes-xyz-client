@@ -4,12 +4,12 @@ import { LucideDelete } from 'lucide-react';
 import axiosCustom from '../../../../../config/axiosCustom';
 
 import ComponentTaskSubList from './ComponentTaskSubList';
-import ComponentTaskCommentList from './ComponentTaskCommentList';
 import ComponentSelectWorkspace from './ComponentSelectWorkspace';
 import ComponentSelectTaskStatus from './ComponentSelectTaskStatus';
 
 import getDateTimeForInputTypeDateTimeLocal from '../../../../../utils/getDateTimeForInputTypeDateTimeLocal';
 import { reminderLabelToMsArr } from './taskEditCons';
+import CommentCommonComponent from '../../../../../components/commentCommonComponent/CommentCommonComponent';
 
 const TaskAddOrEdit: React.FC<{
     isTaskAddModalIsOpen: {
@@ -584,11 +584,11 @@ const TaskAddOrEdit: React.FC<{
                                         />
                                     )}
 
-                                    {/* comments */}
+                                    {/* comment common component */}
                                     {isTaskAddModalIsOpen.modalType === 'edit' && (
-                                        <ComponentTaskCommentList
-                                            parentTaskId={isTaskAddModalIsOpen.recordId}
-                                            taskCommentsReloadRandomNum={taskCommentsReloadRandomNum}
+                                        <CommentCommonComponent
+                                            commentType="task"
+                                            recordId={isTaskAddModalIsOpen.recordId}
                                         />
                                     )}
                                 </div>
