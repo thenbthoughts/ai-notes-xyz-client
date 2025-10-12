@@ -44,7 +44,7 @@ const TaskAddOrEdit: React.FC<{
     const [workspaceId, setWorkspaceId] = useState('');
     const [taskStatusId, setTaskStatusId] = useState('');
 
-    const [taskCommentsReloadRandomNum, setTaskCommentsReloadRandomNum] = useState(Math.random());
+    const [_, setTaskCommentsReloadRandomNum] = useState(Math.random());
 
     const [taskAiSuggestionLoading, setTaskAiSuggestionLoading] = useState(false);
     const [taskAiSuggestion, setTaskAiSuggestion] = useState({
