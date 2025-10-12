@@ -6,14 +6,12 @@ import { LucideArrowLeft, LucidePlus, LucideSave, LucideTrash } from 'lucide-rea
 import toast from 'react-hot-toast';
 
 import { IInfoVault } from '../../../../../../types/pages/tsInfoVault.ts';
-import ComponentInfoVaultEditFileUpload from './ComponentInfoVaultEditFileUpload.tsx';
 import ComponentInfoVaultCustomField from './ComponentInfoVaultCustomField.tsx';
 import ComponentInfoVaultEmail from './ComponentInfoVaultEmail.tsx';
 import ComponentInfoVaultPhone from './ComponentInfoVaultPhone.tsx';
 import ComponentInfoVaultWebsite from './ComponentInfoVaultWebsite.tsx';
 import ComponentInfoVaultSignificantDate from './ComponentInfoVaultSignificantDate.tsx';
 import ComponentInfoVaultAddress from './ComponentInfoVaultAddress.tsx';
-import FileUploadEnvCheck from '../../../../../../components/FileUploadEnvCheck.tsx';
 import CommentCommonComponent from '../../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
 
 const ComponentInfoVaultEdit = ({
@@ -267,15 +265,6 @@ const ComponentInfoVaultEdit = ({
                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                         rows={10}
                     />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Files</label>
-                    <FileUploadEnvCheck
-                        iconType="file"
-                    >
-                        <ComponentInfoVaultEditFileUpload infoVaultId={infoVaultObj._id} />
-                    </FileUploadEnvCheck>
                 </div>
 
                 <div>

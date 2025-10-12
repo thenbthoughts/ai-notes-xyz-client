@@ -9,8 +9,6 @@ import { LucideArrowLeft, LucidePlus, LucideSave } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ComponentLifeEventsEditCategory from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategory.tsx';
 import ComponentLifeEventsEditCategorySub from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategorySub.tsx';
-import ComponentLifeEventsEditFileUpload from './ComponentLifeEventsEditFileUpload/ComponentLifeEventsEditFileUpload.tsx';
-import FileUploadEnvCheck from '../../../../../components/FileUploadEnvCheck.tsx';
 import CommentCommonComponent from '../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
 
 const ComponentLifeEventsEdit = ({
@@ -254,18 +252,6 @@ const ComponentLifeEventsEdit = ({
                         <option value="huge">Huge</option>
                     </select>
                     {formError.eventImpact.length >= 1 && <p className="text-red-500 text-sm">{formError.eventImpact}</p>}
-                </div>
-
-                {/* field -> file upload crud component */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">File Upload</label>
-                    <FileUploadEnvCheck
-                        iconType="file"
-                    >
-                        <ComponentLifeEventsEditFileUpload
-                            lifeEventId={lifeEventObj._id}
-                        />
-                    </FileUploadEnvCheck>
                 </div>
 
                 {/* field -> ai tags */}
