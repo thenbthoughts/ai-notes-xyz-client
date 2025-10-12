@@ -1,0 +1,9 @@
+.calendarTitleLink {
+    word-break: break-all;
+    white-space: break-spaces;
+
+    @media (min-width: 1024px) {
+        word-break: break-word;
+        white-space: break-spaces;
+    }
+}
