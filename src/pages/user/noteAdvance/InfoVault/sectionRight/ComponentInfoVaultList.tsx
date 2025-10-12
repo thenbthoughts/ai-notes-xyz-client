@@ -7,6 +7,8 @@ import ReactPaginate from 'react-paginate';
 import { PlusCircle } from 'lucide-react';
 import { infoVaultAddAxios } from '../utils/infoVaultListAxios.ts';
 import { useNavigate } from 'react-router-dom';
+import { useAtomValue } from 'jotai';
+import { jotaiStateInfoVaultIsStar, jotaiStateInfoVaultSearch } from '../stateJotai/infoVaultStateJotai.ts';
 
 const perPage = 20;
 
@@ -16,6 +18,8 @@ const ComponentInfoVaultList = () => {
     const [list, setList] = useState([] as IInfoVault[]);
     const [page, setPage] = useState(1);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
+    const searchTerm = useAtomValue(jotaiStateInfoVaultSearch);
+    const isFavorite = useAtomValue(jotaiStateInfoVaultIsStar);
 
     useEffect(() => {
         const axiosCancelTokenSource: CancelTokenSource = axios.CancelToken.source();
@@ -28,7 +32,11 @@ const ComponentInfoVaultList = () => {
     useEffect(() => {
         setPage(1);
         setRefreshRandomNum(Math.random());
-    }, [page]);
+    }, [
+        page,
+        searchTerm,
+        isFavorite,
+    ]);
 
     const fetchList = async ({ axiosCancelTokenSource }: { axiosCancelTokenSource: CancelTokenSource }) => {
         try {
@@ -41,6 +49,8 @@ const ComponentInfoVaultList = () => {
                 data: {
                     page: page,
                     perPage: perPage,
+                    search: searchTerm,
+                    isFavorite: isFavorite,
                 },
                 cancelToken: axiosCancelTokenSource.token,
             } as AxiosRequestConfig;
