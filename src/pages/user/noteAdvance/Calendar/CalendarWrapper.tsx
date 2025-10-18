@@ -55,6 +55,11 @@ const CalendarWrapper = () => {
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
     const [events, setEvents] = useState<Event[]>([]);
+    
+    const [filterEventTypeTasks, setFilterEventTypeTasks] = useState<boolean>(true);
+    const [filterEventTypeLifeEvents, setFilterEventTypeLifeEvents] = useState<boolean>(true);
+    const [filterEventTypeInfoVault, setFilterEventTypeInfoVault] = useState<boolean>(true);
+    const [filterEventTypeDiary, setFilterEventTypeDiary] = useState<boolean>(true);
 
     const fetchEvents = async () => {
         try {
@@ -71,6 +76,12 @@ const CalendarWrapper = () => {
                 perPage: 1000,
                 startDate: startDateDynamic,
                 endDate: endDateDynamic,
+
+                // filter -> event type filters
+                filterEventTypeTasks,
+                filterEventTypeLifeEvents,
+                filterEventTypeInfoVault,
+                filterEventTypeDiary,
             });
 
             let resDocs = result.data.docs as tsCalenderApiRes[];
@@ -156,6 +167,12 @@ const CalendarWrapper = () => {
         startDate,
         endDate,
         currentView,
+
+        // event type filters
+        filterEventTypeTasks,
+        filterEventTypeLifeEvents,
+        filterEventTypeInfoVault,
+        filterEventTypeDiary,
     ]);
 
     const renderSearchBox = () => {
@@ -227,6 +244,57 @@ const CalendarWrapper = () => {
                         Add Event
                     </button>
                 </div>
+            </div>
+        )
+    }
+
+    const renderFilters = () => {
+        return (
+            <div className="pb-3">
+                <label 
+                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-full px-2.5 py-1 backdrop-blur-sm select-none"
+                    onChange={() => setFilterEventTypeTasks((prev) => !prev)}
+                >
+                    <input
+                        type="checkbox"
+                        className="w-3 h-3 cursor-pointer align-middle mr-1"
+                        checked={filterEventTypeTasks}
+                    />
+                    <span className="align-middle">Tasks</span>
+                </label>
+                <label 
+                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-full px-2.5 py-1 backdrop-blur-sm select-none"
+                    onChange={() => setFilterEventTypeLifeEvents((prev) => !prev)}
+                >
+                    <input
+                        type="checkbox"
+                        className="w-3 h-3 cursor-pointer align-middle mr-1"
+                        checked={filterEventTypeLifeEvents}
+                    />
+                    <span className="align-middle">Life Events</span>
+                </label>
+                <label 
+                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-full px-2.5 py-1 backdrop-blur-sm select-none"
+                    onChange={() => setFilterEventTypeInfoVault((prev) => !prev)}
+                >
+                    <input
+                        type="checkbox"
+                        className="w-3 h-3 cursor-pointer align-middle mr-1"
+                        checked={filterEventTypeInfoVault}
+                    />
+                    <span className="align-middle">Info Vault</span>
+                </label>
+                <label 
+                    className="inline-block text-white text-xs cursor-pointer hover:opacity-80 transition-opacity bg-white/10 rounded-full px-2.5 py-1 backdrop-blur-sm select-none"
+                    onChange={() => setFilterEventTypeDiary((prev) => !prev)}
+                >
+                    <input
+                        type="checkbox"
+                        className="w-3 h-3 cursor-pointer align-middle mr-1"
+                        checked={filterEventTypeDiary}
+                    />
+                    <span className="align-middle">Diary</span>
+                </label>
             </div>
         )
     }
@@ -472,6 +540,9 @@ const CalendarWrapper = () => {
 
             {/* search box */}
             {renderSearchBox()}
+
+            {/* filters */}
+            {renderFilters()}
 
             {/* buttons */}
             {renderButtons()}
