@@ -339,7 +339,6 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     // Extract data from notes collection
                     if (item.fromCollection === 'notes' && item.notesInfo) {
                         title = item.notesInfo.title;
-                        description = item.notesInfo.description;
                         itemDate = item.notesInfo.createdAtUtc;
                         itemLink = '/user/notes';
                         eventTypeLabel = 'Note';
