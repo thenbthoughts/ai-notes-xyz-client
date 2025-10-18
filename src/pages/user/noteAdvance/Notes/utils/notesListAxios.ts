@@ -173,3 +173,130 @@ export const notesQuickDailyNotesAddAxios = async (): Promise<{
         };
     }
 }
+
+export const notesQuickTaskAddAxios = async (): Promise<{
+    success: string;
+    error: string;
+    recordId: string;
+    workspaceId: string;
+}> => {
+    // there are 3 steps to add quick daily notes
+    // 1. get or create workspace - "Daily Task"
+    // 2. get task by title
+    // 3. add task
+    try {
+        console.log('Adding quick task');
+
+        let taskWorkspaceId = '';
+
+        // step 1: get or create workspace
+        const result = await axiosCustom.post(
+            '/api/task-workspace/crud/taskWorkspaceGet'
+        );
+        if (result.data.docs) {
+            if (result.data.docs.length > 0) {
+                let taskWorkspaceArr = result.data.docs;
+                taskWorkspaceArr.forEach((item: {
+                    _id: string;
+                    title: string;
+                }) => {
+                    if (item.title === 'Daily Task') {
+                        taskWorkspaceId = item._id;
+                    }
+                });
+            }
+        }
+
+        if (taskWorkspaceId === '') {
+            const createResult = await axiosCustom.request({
+                method: 'post',
+                url: '/api/task-workspace/crud/taskWorkspaceAdd',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    title: 'Daily Task',
+                    description: 'Daily Task',
+                },
+            });
+            if (createResult.data.doc) {
+                taskWorkspaceId = createResult.data.doc._id;
+            }
+        }
+
+        if (taskWorkspaceId === '') {
+            return {
+                success: '',
+                error: 'No task workspace found. Please create a task workspace first.',
+                recordId: '',
+                workspaceId: '',
+            };
+        }
+
+        const taskTitle = DateTime.now().toFormat('yyyy-MM-dd');
+
+        // step 2: get notes by title
+        const responseTaskGet = await axiosCustom.request({
+            method: 'post',
+            url: `/api/task/crud/taskGet`,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: {
+                title: taskTitle,
+                taskWorkspaceId: taskWorkspaceId,
+            },
+        });
+
+        if (responseTaskGet.data.docs) {
+            if (responseTaskGet.data.docs.length > 0) {
+                return {
+                    success: 'Success',
+                    error: '',
+                    recordId: responseTaskGet.data.docs[0]._id,
+                    workspaceId: taskWorkspaceId,
+                };
+            }
+        }
+
+        // step 3: add notes
+        const responseTaskAdd = await axiosCustom.request({
+            method: 'post',
+            url: `/api/task/crud/taskAdd`,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: {
+                title: taskTitle,
+                taskWorkspaceId: taskWorkspaceId,
+            },
+        });
+        const doc = responseTaskAdd.data;
+        if (typeof doc._id === 'string') {
+            if (doc._id.length === 24) {
+                return {
+                    success: 'Success',
+                    error: '',
+                    recordId: doc._id,
+                    workspaceId: taskWorkspaceId,
+                };
+            }
+        }
+
+        return {
+            success: '',
+            error: 'An error occurred while adding the quick daily notes. Please try again.',
+            recordId: '',
+            workspaceId: '',
+        };
+    } catch (error) {
+        console.error(error);
+        alert('An error occurred while adding the quick daily notes. Please try again.');
+        return {
+            success: '',
+            error: 'An error occurred while adding the quick daily notes. Please try again.',
+            recordId: '',
+            workspaceId: '',
+        };
+    }
+}
