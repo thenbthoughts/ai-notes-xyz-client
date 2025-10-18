@@ -1,4 +1,4 @@
-import { LucideSettings, LucideX } from "lucide-react";
+import { LucideLoader, LucideSave, LucideSettings, LucideX } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import { AxiosRequestConfig } from "axios";
@@ -51,8 +51,8 @@ const SelectAiModelOpenrouter = ({
     }, []);
 
     return (
-        <div className="mb-2">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
+        <div className="mb-1 lg:mb-2">
+            <h3 className="text-sm font-medium text-gray-700 mb-1 lg:mb-2">Model</h3>
             <Select<{ value: string; label: string }>
                 value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.id === aiModelName)?.name || "" } : undefined}
                 onChange={(selectedOption: { value: string; label: string } | null) => {
@@ -96,8 +96,8 @@ const SelectAiModelGroq = ({
     }, []);
 
     return (
-        <div className="mb-2">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
+        <div className="mb-1 lg:mb-2">
+            <h3 className="text-sm font-medium text-gray-700 mb-1 lg:mb-2">Model</h3>
             <Select<{ value: string; label: string }>
                 value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.id === aiModelName)?.id || "" } : undefined}
                 onChange={(selectedOption: { value: string; label: string } | null) => {
@@ -190,7 +190,7 @@ const ThreadSetting = ({
 
     const renderMain = () => {
         return (
-            <div className="p-2 lg:p-4">
+            <div className="p-1 lg:p-2">
                 <div className="flex flex-col h-full">
                     <div className="flex-1 overflow-y-auto">
                         {/* Thread Setting */}
@@ -213,32 +213,32 @@ const ThreadSetting = ({
                         </div>
 
                         {/* line */}
-                        <div className="h-px bg-gray-200 my-2"></div>
+                        <div className="h-px bg-gray-200 my-1 lg:my-2"></div>
 
                         {/* field -> threadTitle */}
-                        <div className="mb-4">
+                        <div className="mb-2 lg:mb-3">
                             <label className="block text-sm font-medium text-gray-700">Title *</label>
                             <input
                                 type="text"
                                 value={formData.threadTitle}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-1 lg:p-2"
                                 onChange={(e) => setFormData({ ...formData, threadTitle: e.target.value })}
                             />
                         </div>
 
                         {/* field -> systemPrompt */}
-                        <div className="mb-4">
+                        <div className="mb-2 lg:mb-3">
                             <label className="block text-sm font-medium text-gray-700">System Prompt</label>
                             <textarea
                                 value={formData.systemPrompt}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-1 lg:p-2"
                                 onChange={(e) => setFormData({ ...formData, systemPrompt: e.target.value })}
                                 rows={3}
                             />
                             {formData.systemPrompt.length > 0 && (
                                 <button
                                     type="button"
-                                    className="mt-2 px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded transition-colors duration-200"
+                                    className="mt-1 lg:mt-2 px-2 lg:px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded transition-colors duration-200"
                                     onClick={() => setFormData({ ...formData, systemPrompt: '' })}
                                 >
                                     Clear System Prompt
@@ -248,8 +248,8 @@ const ThreadSetting = ({
                         </div>
 
                         {/* field -> isPersonalContextEnabled */}
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Personal Context</label>
+                        <div className="mb-2 lg:mb-3">
+                            <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Personal Context</label>
                             <div
                                 onClick={() => {
                                     setFormData({ ...formData, isPersonalContextEnabled: !formData.isPersonalContextEnabled });
@@ -257,7 +257,7 @@ const ThreadSetting = ({
                             >
                                 <input
                                     type="checkbox"
-                                    className="mt-1 rounded-md p-2 mr-2"
+                                    className="mt-1 rounded-md p-1 lg:p-2 mr-2"
                                     checked={formData.isPersonalContextEnabled}
                                 />
                                 <span className="text-sm text-gray-700 cursor-pointer">Personal Context Enable</span>
@@ -265,8 +265,8 @@ const ThreadSetting = ({
                         </div>
 
                         {/* field -> isAutoAiContextSelectEnabled */}
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Auto AI Context</label>
+                        <div className="mb-2 lg:mb-3">
+                            <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Auto AI Context</label>
                             <div
                                 onClick={() => {
                                     setFormData({ ...formData, isAutoAiContextSelectEnabled: !formData.isAutoAiContextSelectEnabled });
@@ -274,7 +274,7 @@ const ThreadSetting = ({
                             >
                                 <input
                                     type="checkbox"
-                                    className="mt-1 rounded-md p-2 mr-2"
+                                    className="mt-1 rounded-md p-1 lg:p-2 mr-2"
                                     checked={formData.isAutoAiContextSelectEnabled}
                                 />
                                 <span className="text-sm text-gray-700 cursor-pointer">Auto AI Context Enable</span>
@@ -282,10 +282,10 @@ const ThreadSetting = ({
                         </div>
 
                         {/* field -> aiModelProvider */}
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">AI Model Provider</label>
+                        <div className="mb-2 lg:mb-3">
+                            <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">AI Model Provider</label>
                             <select
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-1 lg:p-2"
                                 value={aiModelProvider}
                                 onChange={(e) => setAiModelProvider(e.target.value as "openrouter" | "groq")}
                             >
@@ -318,29 +318,55 @@ const ThreadSetting = ({
                         )}
 
                     </div>
-                    <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 mt-4">
-                        <div className="flex justify-between items-center gap-2">
-                            {/* button -> cancel */}
+                    <div className="sticky bottom-0 bg-white border-t border-gray-200 p-2 lg:p-3 mt-2 lg:mt-3">
+                        <div className="flex justify-between items-center gap-1"
+                            style={{
+                                width: '100%',
+                                maxWidth: '200px',
+                                margin: '0 auto',
+                            }}
+                        >
+                            {/* button -> close */}
                             <button
-                                className="w-full bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition-colors duration-200 w-full"
+                                className="w-full bg-gray-500 hover:bg-gray-600 text-white text-sm px-2 py-1 rounded-md transition-colors duration-200 w-full"
                                 onClick={() => {
                                     closeModal();
                                 }}
-                            >Cancel</button>
+                            >
+                                <LucideX
+                                    className="w-4 h-4 inline-block"
+                                    style={{
+                                        marginTop: '-3px',
+                                    }}
+                                />
+                            </button>
                             {/* button -> save */}
                             <Fragment>
                                 {requestEdit.loading && (
                                     <button
-                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-200 w-full"
-                                    >Saving...</button>
+                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm px-2 py-1 rounded-md transition-colors duration-200 w-full"
+                                    >
+                                        <LucideLoader className="w-4 h-4 inline-block"
+                                            style={{
+                                                marginTop: '-3px',
+                                            }}
+                                        />
+                                    </button>
                                 )}
                                 {!requestEdit.loading && (
                                     <button
-                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-200 w-full"
+                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm px-2 py-1 rounded-md transition-colors duration-200 w-full"
                                         onClick={() => {
                                             editRecord();
                                         }}
-                                    >Save</button>
+                                    >
+                                        <LucideSave
+                                            className="w-4 h-4 inline-block"
+                                            style={{
+                                                marginTop: '-3px',
+                                            }}
+                                        />
+                                    </button>
                                 )}
                             </Fragment>
                         </div>
@@ -352,7 +378,7 @@ const ThreadSetting = ({
 
     return (
         <div
-            className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded p-2 h-full"
+            className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded p-1 lg:p-2 h-full"
             style={{
                 overflowY: 'auto',
             }}
