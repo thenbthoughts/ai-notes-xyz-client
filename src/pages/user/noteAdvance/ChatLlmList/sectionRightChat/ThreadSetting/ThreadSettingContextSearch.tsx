@@ -105,6 +105,11 @@ interface ITaskWorkspace {
     title: string;
 }
 
+interface INotesWorkspace {
+    _id: string;
+    title: string;
+}
+
 const ComponentTaskWorkspaceSelect = ({
     workspaceIds,
     setWorkspaceIds,
@@ -161,6 +166,62 @@ const ComponentTaskWorkspaceSelect = ({
     );
 };
 
+const ComponentNoteskWorkspaceSelect = ({
+    workspaceIds,
+    setWorkspaceIds,
+}: {
+    workspaceIds: string[];
+    setWorkspaceIds: React.Dispatch<React.SetStateAction<string[]>>;
+}) => {
+    const [workspaces, setWorkspaces] = useState<INotesWorkspace[]>([]);
+
+    useEffect(() => {
+        const fetchWorkspaces = async () => {
+            try {
+                const result = await axiosCustom.post<{
+                    docs: ITaskWorkspace[]
+                }>('/api/notes-workspace/crud/notesWorkspaceGet');
+
+                const docs = result.data.docs;
+
+                setWorkspaces(docs);
+            } catch (err) {
+                toast.error('Failed to load workspaces');
+            }
+        };
+
+        fetchWorkspaces();
+    }, []);
+
+    return (
+        <Fragment>
+            {workspaces.length > 0 && (
+                <Select
+                    value={workspaces.filter(w => workspaceIds.includes(w._id)).map(w => ({ value: w._id, label: w.title }))}
+                    isMulti={true}
+                    onChange={(selectedOptions) => {
+                        if (selectedOptions) {
+                            setWorkspaceIds(selectedOptions.map(option => option.value));
+                        } else {
+                            setWorkspaceIds([]);
+                        }
+                    }}
+                    options={workspaces.map(workspace => ({
+                        value: workspace._id,
+                        label: workspace.title
+                    }))}
+                />
+
+            )}
+            {workspaces.length === 0 && (
+                <div className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    No workspaces found
+                </div>
+            )}
+        </Fragment>
+    );
+};
+
 const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
     // State for search query
     const [search, setSearch] = useState("");
@@ -175,10 +236,14 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
         filterEventTypeDiary: true,
     });
 
+    // filter -> task
     const [filterTaskWorkspaceIds, setFilterTaskWorkspaceIds] = useState<string[]>([]);
     const [filterTaskIsCompleted, setFilterTaskIsCompleted] = useState('not-completed' as 'all' | 'completed' | 'not-completed');
     const [filterTaskIsArchived, setFilterTaskIsArchived] = useState('not-archived' as 'all' | 'archived' | 'not-archived');
     const [filterIsContextSelected, setFilterIsContextSelected] = useState('all' as 'all' | 'added' | 'not-added');
+
+    // filter -> notes
+    const [filterNotesWorkspaceIds, setFilterNotesWorkspaceIds] = useState<string[]>([]);
 
     // State for pagination
     const [page, setPage] = useState(1);
@@ -209,10 +274,13 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
         filters,
         filterIsContextSelected,
 
-        // filter by task status
+        // filter -> task
         filterTaskWorkspaceIds,
         filterTaskIsCompleted,
         filterTaskIsArchived,
+
+        // filter -> notes
+        filterNotesWorkspaceIds,
     ]);
 
     // Fetch context list from API
@@ -230,10 +298,13 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     filterEventTypeDiary: filters.filterEventTypeDiary,
                     filterIsContextSelected: filterIsContextSelected,
 
-                    // filter by task status
+                    // filter -> task
                     filterTaskIsCompleted,
                     filterTaskIsArchived,
                     filterTaskWorkspaceIds,
+
+                    // filter -> notes
+                    filterNotesWorkspaceIds,
 
                     // pagination
                     page: page,
@@ -308,10 +379,13 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                 filterEventTypeDiary: filters.filterEventTypeDiary,
                 filterIsContextSelected: filterIsContextSelected,
 
-                // filter by task status
-                filterTaskIsCompleted: filterTaskIsCompleted,
-                filterTaskIsArchived: filterTaskIsArchived,
-                filterTaskWorkspaceIds: filterTaskWorkspaceIds,
+                // filter -> task
+                filterTaskIsCompleted,
+                filterTaskIsArchived,
+                filterTaskWorkspaceIds,
+
+                // filter -> notes
+                filterNotesWorkspaceIds,
 
                 page: 1,
                 limit: 3650,
@@ -356,10 +430,13 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                 filterEventTypeDiary: filters.filterEventTypeDiary,
                 filterIsContextSelected: 'added',
 
-                // filter by task status
-                filterTaskIsCompleted: filterTaskIsCompleted,
-                filterTaskIsArchived: filterTaskIsArchived,
-                filterTaskWorkspaceIds: filterTaskWorkspaceIds,
+                // filter -> task
+                filterTaskIsCompleted,
+                filterTaskIsArchived,
+                filterTaskWorkspaceIds,
+
+                // filter -> notes
+                filterNotesWorkspaceIds,
 
                 page: 1,
                 limit: 3650,
@@ -553,12 +630,26 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                             </div>
                         </div>
 
-                        {/* workspace filter */}
+                        {/* task workspace filter */}
                         <div>
                             <label className="text-sm font-medium text-gray-700">Task Workspace:</label>
                             <ComponentTaskWorkspaceSelect
                                 workspaceIds={filterTaskWorkspaceIds}
                                 setWorkspaceIds={setFilterTaskWorkspaceIds}
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* Filter -> notes */}
+                {filters.filterEventTypeNotes && (
+                    <div className="space-y-2">
+                        {/* notes workspace filter */}
+                        <div>
+                            <label className="text-sm font-medium text-gray-700">Notes Workspace:</label>
+                            <ComponentNoteskWorkspaceSelect
+                                workspaceIds={filterNotesWorkspaceIds}
+                                setWorkspaceIds={setFilterNotesWorkspaceIds}
                             />
                         </div>
                     </div>
