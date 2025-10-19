@@ -563,7 +563,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
 
                 {/* Filter by task status */}
                 {filters.filterEventTypeTasks && (
-                    <div className="space-y-2">
+                    <div className="space-y-2 border border-gray-400 rounded p-1">
                         <div>
                             <label className="text-sm font-medium text-gray-700">Task Status:</label>
                             <div className="flex gap-2 mb-2">
@@ -643,7 +643,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
 
                 {/* Filter -> notes */}
                 {filters.filterEventTypeNotes && (
-                    <div className="space-y-2">
+                    <div className="space-y-2 border border-gray-400 rounded p-1">
                         {/* notes workspace filter */}
                         <div>
                             <label className="text-sm font-medium text-gray-700">Notes Workspace:</label>
@@ -903,7 +903,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
             </div>
 
             {/* Pagination */}
-            {(page > 1 || totalCount === perPage) && (
+            {totalCount >= perPage && (
                 <div className="flex justify-center items-center gap-3 mt-6">
                     <button
                         onClick={() => setPage(page - 1)}
@@ -917,7 +917,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     </span>
                     <button
                         onClick={() => setPage(page + 1)}
-                        disabled={totalCount < perPage}
+                        disabled={page >= Math.ceil(totalCount / perPage)}
                         className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors"
                     >
                         Next →
