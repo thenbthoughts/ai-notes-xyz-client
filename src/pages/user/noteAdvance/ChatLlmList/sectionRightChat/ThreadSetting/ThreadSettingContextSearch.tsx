@@ -6,6 +6,7 @@ import axiosCustom from "../../../../../../config/axiosCustom";
 import { LucideExternalLink, LucideSearch } from "lucide-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import Select from "react-select";
 
 interface TaskInfo {
     _id: string;
@@ -99,6 +100,67 @@ interface ContextItem {
     isContextSelected: boolean;
 }
 
+interface ITaskWorkspace {
+    _id: string;
+    title: string;
+}
+
+const ComponentTaskWorkspaceSelect = ({
+    workspaceIds,
+    setWorkspaceIds,
+}: {
+    workspaceIds: string[];
+    setWorkspaceIds: React.Dispatch<React.SetStateAction<string[]>>;
+}) => {
+    const [workspaces, setWorkspaces] = useState<ITaskWorkspace[]>([]);
+
+    useEffect(() => {
+        const fetchWorkspaces = async () => {
+            try {
+                const result = await axiosCustom.post<{
+                    docs: ITaskWorkspace[]
+                }>('/api/task-workspace/crud/taskWorkspaceGet');
+
+                const docs = result.data.docs;
+
+                setWorkspaces(docs);
+            } catch (err) {
+                toast.error('Failed to load workspaces');
+            }
+        };
+
+        fetchWorkspaces();
+    }, []);
+
+    return (
+        <Fragment>
+            {workspaces.length > 0 && (
+                <Select
+                    value={workspaces.filter(w => workspaceIds.includes(w._id)).map(w => ({ value: w._id, label: w.title }))}
+                    isMulti={true}
+                    onChange={(selectedOptions) => {
+                        if (selectedOptions) {
+                            setWorkspaceIds(selectedOptions.map(option => option.value));
+                        } else {
+                            setWorkspaceIds([]);
+                        }
+                    }}
+                    options={workspaces.map(workspace => ({
+                        value: workspace._id,
+                        label: workspace.title
+                    }))}
+                />
+
+            )}
+            {workspaces.length === 0 && (
+                <div className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    No workspaces found
+                </div>
+            )}
+        </Fragment>
+    );
+};
+
 const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
     // State for search query
     const [search, setSearch] = useState("");
@@ -112,6 +174,8 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
         filterEventTypeNotes: true,
         filterEventTypeDiary: true,
     });
+
+    const [filterTaskWorkspaceIds, setFilterTaskWorkspaceIds] = useState<string[]>([]);
     const [filterTaskIsCompleted, setFilterTaskIsCompleted] = useState('not-completed' as 'all' | 'completed' | 'not-completed');
     const [filterTaskIsArchived, setFilterTaskIsArchived] = useState('not-archived' as 'all' | 'archived' | 'not-archived');
     const [filterIsContextSelected, setFilterIsContextSelected] = useState('all' as 'all' | 'added' | 'not-added');
@@ -146,6 +210,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
         filterIsContextSelected,
 
         // filter by task status
+        filterTaskWorkspaceIds,
         filterTaskIsCompleted,
         filterTaskIsArchived,
     ]);
@@ -166,9 +231,11 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     filterIsContextSelected: filterIsContextSelected,
 
                     // filter by task status
-                    filterTaskIsCompleted: filterTaskIsCompleted,
-                    filterTaskIsArchived: filterTaskIsArchived,
+                    filterTaskIsCompleted,
+                    filterTaskIsArchived,
+                    filterTaskWorkspaceIds,
 
+                    // pagination
                     page: page,
                     limit: perPage,
                 },
@@ -244,6 +311,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                 // filter by task status
                 filterTaskIsCompleted: filterTaskIsCompleted,
                 filterTaskIsArchived: filterTaskIsArchived,
+                filterTaskWorkspaceIds: filterTaskWorkspaceIds,
 
                 page: 1,
                 limit: 3650,
@@ -291,6 +359,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                 // filter by task status
                 filterTaskIsCompleted: filterTaskIsCompleted,
                 filterTaskIsArchived: filterTaskIsArchived,
+                filterTaskWorkspaceIds: filterTaskWorkspaceIds,
 
                 page: 1,
                 limit: 3650,
@@ -482,6 +551,15 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                     Not Archived
                                 </button>
                             </div>
+                        </div>
+
+                        {/* workspace filter */}
+                        <div>
+                            <label className="text-sm font-medium text-gray-700">Task Workspace:</label>
+                            <ComponentTaskWorkspaceSelect
+                                workspaceIds={filterTaskWorkspaceIds}
+                                setWorkspaceIds={setFilterTaskWorkspaceIds}
+                            />
                         </div>
                     </div>
                 )}
