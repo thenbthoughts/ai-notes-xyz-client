@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideSend, LucideVideo, LucideX } from 'lucide-react';
+import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideRepeat, LucideSend, LucideVideo, LucideX } from 'lucide-react';
 import envKeys from '../../../../../config/envKeys';
 import axios from 'axios';
 import axiosCustom from '../../../../../config/axiosCustom';
@@ -82,7 +82,7 @@ const TextAndFileInput = ({
     return (
         <div className="w-full">
             <textarea
-                className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 resize-none"
+                className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 resize-none bg-white"
                 placeholder={"Type your message or drag & drop any files here..."}
                 ref={textareaRef}
                 value={value}
@@ -342,6 +342,24 @@ const ComponentNotesAdd = ({
         }
     };
 
+    const regenerateResponse = async () => {
+        let toastLoadingId = toast.loading('Regenerating response...');
+        setIsSubmitting(true);
+        try {
+            // process notes
+            await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
+                threadId: threadId,
+            });
+            setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
+        } catch (error) {
+            console.error(error);
+            toast.error('Error regenerating response. Please try again.');
+        } finally {
+            toast.dismiss(toastLoadingId);
+            setIsSubmitting(false);
+        }
+    }
+
     return (
         <div
             ref={actionContainerRef}
@@ -389,7 +407,7 @@ const ComponentNotesAdd = ({
                 <FileUploadEnvCheck iconType="file">
                     <ComponentUploadImage
                         setFiles={setFiles}
-                    />                    
+                    />
                 </FileUploadEnvCheck>
 
                 {/* audio */}
@@ -399,6 +417,17 @@ const ComponentNotesAdd = ({
                         threadId={threadId}
                     />
                 </FileUploadEnvCheck>
+
+                {isSubmitting === false && (
+                    <button
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
+                        style={{ height: '40px' }}
+                        onClick={regenerateResponse}
+                        disabled={isSubmitting}
+                    >
+                        <LucideRepeat style={{ height: '20px' }} />
+                    </button>
+                )}
 
                 {/* auto select context notes */}
                 <button

@@ -579,6 +579,7 @@ const TaskAddOrEdit: React.FC<{
                                     {/* Subtasks */}
                                     {isTaskAddModalIsOpen.modalType === 'edit' && (
                                         <ComponentTaskSubList
+                                            parentWorkspaceId={workspaceId}
                                             parentTaskId={isTaskAddModalIsOpen.recordId}
                                             newTaskSubtasks={taskAiSuggestion.newTaskSubtasks}
                                         />

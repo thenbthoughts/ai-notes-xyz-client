@@ -1,17 +1,82 @@
 import React, { useEffect, useState } from 'react';
-import { CheckSquare, Square, Trash2, Plus, Edit, Save } from 'lucide-react';
+import { CheckSquare, Square, Trash2, Plus, Edit, Save, LucideMoreVertical } from 'lucide-react';
 import axiosCustom from '../../../../../config/axiosCustom';
 import toast from 'react-hot-toast';
+import { AxiosError } from 'axios';
+
+const createTodoCardFromSubtask = async ({
+    subTaskTitle,
+    parentTaskId,
+}: {
+    subTaskTitle: string;
+    parentTaskId: string;
+}): Promise<{
+    success: boolean;
+    message: string;
+    recordId: string;
+}> => {
+    try {
+        // get task by id
+        const response = await axiosCustom.post('/api/task/crud/taskGet', {
+            recordId: parentTaskId
+        });
+        const task = response.data.docs[0];
+
+        if (!task) {
+            throw new Error('Task not found');
+        }
+
+        const newTask = {
+            ...task,
+            title: `${task.title} - ${subTaskTitle}`,
+            isArchived: false,
+            isCompleted: false,
+        }
+
+        const data = JSON.stringify(newTask);
+        const config = {
+            method: 'post',
+            url: '/api/task/crud/taskAdd',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: data
+        };
+
+        const responseInsert = await axiosCustom.request(config);
+        return {
+            success: true,
+            message: 'Task created successfully',
+            recordId: responseInsert.data._id,
+        };
+    } catch (error) {
+        console.error('Error adding task:', error);
+        let errorMessage = 'An error occurred while adding the task. Please try again.';
+        if (error instanceof AxiosError) {
+            errorMessage = error.response?.data?.message || errorMessage;
+        }
+        return {
+            success: false,
+            message: errorMessage,
+            recordId: '',
+        };
+    }
+};
 
 const ComponentSubTaskItem = ({
     subtask,
     setRandomNumLoading,
+    parentWorkspaceId,
+    parentTaskId,
 }: {
     subtask: { _id: string; title: string; taskCompletedStatus: boolean };
     setRandomNumLoading: React.Dispatch<React.SetStateAction<number>>;
+    parentWorkspaceId: string;
+    parentTaskId: string;
 }) => {
     const [axiosEditTitleLoading, setAxiosEditTitleLoading] = useState(false);
     const [showEditTitle, setShowEditTitle] = useState(false);
+    const [showMoreOptions, setShowMoreOptions] = useState(false);
 
     const [formData, setFormData] = useState({
         title: subtask.title,
@@ -71,6 +136,31 @@ const ComponentSubTaskItem = ({
             console.error('Error deleting subtask:', error);
         }
     };
+
+    const createTodoCardFromSubtaskLocal = async () => {
+        try {
+            const response = await createTodoCardFromSubtask({
+                subTaskTitle: subtask.title,
+                parentTaskId: parentTaskId,
+            });
+            console.log('response', response);
+            if (response.success) {
+                toast.success(response.message);
+
+                setRandomNumLoading(Math.random() * 1000000);
+
+                // remove the subtask from the list
+                await deleteSubtask();
+
+                // redirect to the new task
+                window.location.href = `/user/task?workspace=${parentWorkspaceId}&edit-task-id=${response.recordId}`;
+            } else {
+                toast.error(response.message);
+            }
+        } catch (error) {
+            console.error('Error creating todo card from subtask:', error);
+        }
+    }
 
     return (
         <div>
@@ -133,7 +223,29 @@ const ComponentSubTaskItem = ({
                     >
                         <Trash2 size={20} />
                     </button>
+                    <button
+                        onClick={() => {
+                            setShowMoreOptions(!showMoreOptions)
+                        }}
+                        className="text-gray-500 hover:text-gray-700 mr-1 p-3"
+                    >
+                        <LucideMoreVertical size={20} />
+                    </button>
                 </div>
+
+                {/* show more options */}
+                {showMoreOptions && (
+                    <div>
+                        <button
+                            onClick={() => {
+                                createTodoCardFromSubtaskLocal();
+                            }}
+                            className="text-blue-500 hover:text-blue-700 p-2 text-sm"
+                        >
+                            Create Todo Card
+                        </button>
+                    </div>
+                )}
 
                 {/* loading */}
                 {axiosEditTitleLoading && (
@@ -145,9 +257,10 @@ const ComponentSubTaskItem = ({
 }
 
 const ComponentTaskSubList: React.FC<{
+    parentWorkspaceId: string;
     parentTaskId: string;
     newTaskSubtasks: string[]
-}> = ({ parentTaskId, newTaskSubtasks }) => {
+}> = ({ parentWorkspaceId, parentTaskId, newTaskSubtasks }) => {
     const [subtasks, setSubtasks] = useState<{ _id: string; title: string; taskCompletedStatus: boolean }[]>([]);
     const [newSubtask, setNewSubtask] = useState('');
     const [loading, setLoading] = useState(true); // New loading state
@@ -205,6 +318,8 @@ const ComponentTaskSubList: React.FC<{
                         key={subtask._id}
                         subtask={subtask}
                         setRandomNumLoading={setRandomNumLoading}
+                        parentTaskId={parentTaskId}
+                        parentWorkspaceId={parentWorkspaceId}
                     />
                 ))}
                 <div className="flex gap-2 mt-2">
