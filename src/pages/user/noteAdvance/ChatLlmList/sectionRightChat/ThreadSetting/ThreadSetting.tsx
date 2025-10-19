@@ -247,6 +247,35 @@ const ThreadSetting = ({
                             )}
                         </div>
 
+                        {/* field -> aiModelProvider */}
+                        <div className="mb-2 lg:mb-3">
+                            <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">AI Model Provider</label>
+                            <select
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-1 lg:p-2"
+                                value={aiModelProvider}
+                                onChange={(e) => setAiModelProvider(e.target.value as "openrouter" | "groq")}
+                            >
+                                <option value="openrouter">OpenRouter</option>
+                                <option value="groq">GROQ</option>
+                            </select>
+                        </div>
+
+                        {/* field -> select model -> openrouter */}
+                        {aiModelProvider === 'openrouter' && (
+                            <SelectAiModelOpenrouter
+                                aiModelName={aiModelName}
+                                setAiModelName={setAiModelName}
+                            />
+                        )}
+
+                        {/* field -> select model -> groq */}
+                        {aiModelProvider === 'groq' && (
+                            <SelectAiModelGroq
+                                aiModelName={aiModelName}
+                                setAiModelName={setAiModelName}
+                            />
+                        )}
+
                         {/* field -> isPersonalContextEnabled */}
                         <div className="mb-2 lg:mb-3">
                             <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Personal Context</label>
@@ -281,37 +310,8 @@ const ThreadSetting = ({
                             </div>
                         </div>
 
-                        {/* field -> aiModelProvider */}
-                        <div className="mb-2 lg:mb-3">
-                            <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">AI Model Provider</label>
-                            <select
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-1 lg:p-2"
-                                value={aiModelProvider}
-                                onChange={(e) => setAiModelProvider(e.target.value as "openrouter" | "groq")}
-                            >
-                                <option value="openrouter">OpenRouter</option>
-                                <option value="groq">GROQ</option>
-                            </select>
-                        </div>
-
-                        {/* field -> select model -> openrouter */}
-                        {aiModelProvider === 'openrouter' && (
-                            <SelectAiModelOpenrouter
-                                aiModelName={aiModelName}
-                                setAiModelName={setAiModelName}
-                            />
-                        )}
-
-                        {/* field -> select model -> groq */}
-                        {aiModelProvider === 'groq' && (
-                            <SelectAiModelGroq
-                                aiModelName={aiModelName}
-                                setAiModelName={setAiModelName}
-                            />
-                        )}
-
                         {/* field -> context search */}
-                        {formData.isAutoAiContextSelectEnabled && (
+                        {formData.isPersonalContextEnabled && (
                             <ThreadSettingContextSearch
                                 threadId={threadSetting._id}
                             />

@@ -89,7 +89,7 @@ interface LifeEventInfo {
 
 interface ContextItem {
     _id: string;
-    fromCollection: 'tasks' | 'notes' | 'lifeEvents';
+    fromCollection: 'tasks' | 'notes' | 'lifeEvents' | 'chatLlm' | 'infoVault';
     taskInfo?: TaskInfo;
     notesInfo?: NotesInfo;
     lifeEventInfo?: LifeEventInfo;
@@ -112,6 +112,8 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
         filterEventTypeNotes: true,
         filterEventTypeDiary: true,
     });
+    const [filterTaskIsCompleted, setFilterTaskIsCompleted] = useState('not-completed' as 'all' | 'completed' | 'not-completed');
+    const [filterTaskIsArchived, setFilterTaskIsArchived] = useState('not-archived' as 'all' | 'archived' | 'not-archived');
     const [filterIsContextSelected, setFilterIsContextSelected] = useState('all' as 'all' | 'added' | 'not-added');
 
     // State for pagination
@@ -138,7 +140,15 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
     useEffect(() => {
         setPage(1);
         setRefreshRandomNum(Math.random());
-    }, [search, filters, filterIsContextSelected]);
+    }, [
+        search,
+        filters,
+        filterIsContextSelected,
+
+        // filter by task status
+        filterTaskIsCompleted,
+        filterTaskIsArchived,
+    ]);
 
     // Fetch context list from API
     const fetchList = async ({ axiosCancelTokenSource }: { axiosCancelTokenSource: CancelTokenSource }) => {
@@ -154,6 +164,11 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     filterEventTypeNotes: filters.filterEventTypeNotes,
                     filterEventTypeDiary: filters.filterEventTypeDiary,
                     filterIsContextSelected: filterIsContextSelected,
+
+                    // filter by task status
+                    filterTaskIsCompleted: filterTaskIsCompleted,
+                    filterTaskIsArchived: filterTaskIsArchived,
+
                     page: page,
                     limit: perPage,
                 },
@@ -173,7 +188,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
         referenceId,
         shouldLoad,
     }: {
-        referenceFrom: 'notes' | 'tasks' | 'life-events';
+        referenceFrom: 'notes' | 'tasks' | 'chatLlm' | 'lifeEvents' | 'infoVault';
         referenceId: string;
         shouldLoad: boolean;
     }) => {
@@ -212,94 +227,178 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
             toast.dismiss(toastId);
         }
     }
+
+    const renderFilters = () => {
+        return (
+            <div className="flex flex-col gap-2">
+                {/* Search Input */}
+                <div className="relative">
+                    <LucideSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                        type="text"
+                        placeholder="Search contexts..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                </div>
+
+                {/* Filter by added or not added */}
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Context Selected:</label>
+                    <div className="flex flex-wrap gap-2">
+                        <button
+                            className={`px-3 py-1 text-sm border rounded-lg transition-colors ${filterIsContextSelected === 'all'
+                                ? 'bg-blue-600 text-white border-blue-600'
+                                : 'border-gray-300 hover:bg-gray-50'
+                                }`}
+                            onClick={() => setFilterIsContextSelected('all')}
+                        >
+                            All
+                        </button>
+                        <button
+                            className={`px-3 py-1 text-sm border rounded-lg transition-colors ${filterIsContextSelected === 'not-added'
+                                ? 'bg-blue-600 text-white border-blue-600'
+                                : 'border-gray-300 hover:bg-gray-50'
+                                }`}
+                            onClick={() => setFilterIsContextSelected('not-added')}
+                        >
+                            Not Selected
+                        </button>
+                        <button
+                            className={`px-3 py-1 text-sm border rounded-lg transition-colors ${filterIsContextSelected === 'added'
+                                ? 'bg-blue-600 text-white border-blue-600'
+                                : 'border-gray-300 hover:bg-gray-50'
+                                }`}
+                            onClick={() => setFilterIsContextSelected('added')}
+                        >
+                            Selected
+                        </button>
+                    </div>
+                </div>
+
+                {/* Filters */}
+                <div className="flex flex-wrap gap-2">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={filters.filterEventTypeNotes}
+                            onChange={(e) => setFilters({ ...filters, filterEventTypeNotes: e.target.checked })}
+                            className="rounded"
+                        />
+                        <span className="text-sm">Notes</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={filters.filterEventTypeTasks}
+                            onChange={(e) => setFilters({ ...filters, filterEventTypeTasks: e.target.checked })}
+                            className="rounded"
+                        />
+                        <span className="text-sm">Tasks</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={filters.filterEventTypeLifeEvents}
+                            onChange={(e) => setFilters({ ...filters, filterEventTypeLifeEvents: e.target.checked })}
+                            className="rounded"
+                        />
+                        <span className="text-sm">Life Events</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={filters.filterEventTypeDiary}
+                            onChange={(e) => setFilters({ ...filters, filterEventTypeDiary: e.target.checked })}
+                            className="rounded"
+                        />
+                        <span className="text-sm">Diary</span>
+                    </label>
+                </div>
+
+                {/* Filter by task status */}
+                {filters.filterEventTypeTasks && (
+                    <div className="space-y-2">
+                        <div>
+                            <label className="text-sm font-medium text-gray-700">Task Status:</label>
+                            <div className="flex gap-2 mb-2">
+                                <button
+                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsCompleted === 'all'
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    onClick={() => setFilterTaskIsCompleted('all')}
+                                >
+                                    All
+                                </button>
+                                <button
+                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsCompleted === 'completed'
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    onClick={() => setFilterTaskIsCompleted('completed')}
+                                >
+                                    Completed
+                                </button>
+                                <button
+                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsCompleted === 'not-completed'
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    onClick={() => setFilterTaskIsCompleted('not-completed')}
+                                >
+                                    Not Completed
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-sm font-medium text-gray-700">Task Archive Status:</label>
+                            <div className="flex gap-2">
+                                <button
+                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsArchived === 'all'
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    onClick={() => setFilterTaskIsArchived('all')}
+                                >
+                                    All
+                                </button>
+                                <button
+                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsArchived === 'archived'
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    onClick={() => setFilterTaskIsArchived('archived')}
+                                >
+                                    Archived
+                                </button>
+                                <button
+                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsArchived === 'not-archived'
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    onClick={() => setFilterTaskIsArchived('not-archived')}
+                                >
+                                    Not Archived
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
+    };
+
     return (
         <div className="space-y-4">
 
             {/* Heading */}
             <h3 className="text-lg font-bold mb-4">Contexts: {totalCount > 0 ? `(${totalCount})` : ''}</h3>
 
-            {/* Search Input */}
-            <div className="relative">
-                <LucideSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                    type="text"
-                    placeholder="Search contexts..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-            </div>
-
-            {/* Filter by added or not added */}
-            <div className="flex flex-wrap gap-2">
-                <button
-                    className={`px-4 py-2 border rounded-lg transition-colors ${filterIsContextSelected === 'all'
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'border-gray-300 hover:bg-gray-50'
-                        }`}
-                    onClick={() => setFilterIsContextSelected('all')}
-                >
-                    All
-                </button>
-                <button
-                    className={`px-4 py-2 border rounded-lg transition-colors ${filterIsContextSelected === 'not-added'
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'border-gray-300 hover:bg-gray-50'
-                        }`}
-                    onClick={() => setFilterIsContextSelected('not-added')}
-                >
-                    Not Added
-                </button>
-                <button
-                    className={`px-4 py-2 border rounded-lg transition-colors ${filterIsContextSelected === 'added'
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'border-gray-300 hover:bg-gray-50'
-                        }`}
-                    onClick={() => setFilterIsContextSelected('added')}
-                >
-                    Added
-                </button>
-            </div>
-
             {/* Filters */}
-            <div className="flex flex-wrap gap-2">
-                <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={filters.filterEventTypeNotes}
-                        onChange={(e) => setFilters({ ...filters, filterEventTypeNotes: e.target.checked })}
-                        className="rounded"
-                    />
-                    <span className="text-sm">Notes</span>
-                </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={filters.filterEventTypeTasks}
-                        onChange={(e) => setFilters({ ...filters, filterEventTypeTasks: e.target.checked })}
-                        className="rounded"
-                    />
-                    <span className="text-sm">Tasks</span>
-                </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={filters.filterEventTypeLifeEvents}
-                        onChange={(e) => setFilters({ ...filters, filterEventTypeLifeEvents: e.target.checked })}
-                        className="rounded"
-                    />
-                    <span className="text-sm">Life Events</span>
-                </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={filters.filterEventTypeDiary}
-                        onChange={(e) => setFilters({ ...filters, filterEventTypeDiary: e.target.checked })}
-                        className="rounded"
-                    />
-                    <span className="text-sm">Diary</span>
-                </label>
-            </div>
+            {renderFilters()}
 
             {/* Results Count */}
             <div className="text-sm text-gray-600">
@@ -474,15 +573,21 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                             if (
                                                 item.fromCollection === 'tasks' ||
                                                 item.fromCollection === 'notes' ||
-                                                item.fromCollection === 'lifeEvents'
+                                                item.fromCollection === 'lifeEvents' ||
+                                                item.fromCollection === 'chatLlm' ||
+                                                item.fromCollection === 'infoVault'
                                             ) {
-                                                let tempReferenceFrom = '' as 'tasks' | 'notes' | 'life-events';
+                                                let tempReferenceFrom = '' as 'tasks' | 'notes' | 'chatLlm' | 'lifeEvents' | 'infoVault';
                                                 if (item.fromCollection === 'tasks') {
                                                     tempReferenceFrom = 'tasks';
                                                 } else if (item.fromCollection === 'notes') {
                                                     tempReferenceFrom = 'notes';
                                                 } else if (item.fromCollection === 'lifeEvents') {
-                                                    tempReferenceFrom = 'life-events';
+                                                    tempReferenceFrom = 'lifeEvents';
+                                                } else if (item.fromCollection === 'chatLlm') {
+                                                    tempReferenceFrom = 'chatLlm';
+                                                } else if (item.fromCollection === 'infoVault') {
+                                                    tempReferenceFrom = 'infoVault';
                                                 }
                                                 handleAddContext({
                                                     referenceFrom: tempReferenceFrom,
