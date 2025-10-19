@@ -30,8 +30,8 @@ const ChatLlmListWrapper = () => {
     ] = useAtom(jotaiChatLlmThreadSetting);
 
     const [
-        refreshRandomNum,
-        // setRefreshRandomNum
+        refreshRandomNumFetchChat,
+        setRefreshRandomNumFetchChat,
     ] = useState(0);
 
     useEffect(() => {
@@ -95,7 +95,7 @@ const ChatLlmListWrapper = () => {
                                     }}
                                 >
                                     <ComponentRightChatWrapper
-                                        refreshRandomNumParent={refreshRandomNum}
+                                        refreshRandomNumParent={refreshRandomNumFetchChat}
                                     />
                                 </div>
                             </div>
@@ -111,7 +111,9 @@ const ChatLlmListWrapper = () => {
                 }}
                 className='text-center flex flex-col items-center justify-center'
             >
-                <ChatRightFilterWrapper />
+                <ChatRightFilterWrapper
+                    setRefreshRandomNumFetchChat={setRefreshRandomNumFetchChat}
+                />
             </div>
 
             {/* screen list */}

@@ -3,6 +3,7 @@ import {
     LucideMoveDown,
     LucideMoveUp,
     LucidePlus,
+    LucideRefreshCcw,
     LucideSettings,
     LucideSettings2
 } from 'lucide-react';
@@ -14,8 +15,13 @@ import useResponsiveScreen, {
 } from '../../../../../hooks/useResponsiveScreen.tsx';
 import { jotaiChatHistoryModalOpen, jotaiChatLlmThreadSetting } from '../jotai/jotaiChatLlmThreadSetting.ts';
 import { useAtom } from 'jotai';
+import { toast } from 'react-hot-toast';
 
-const ChatRightFilterWrapper = () => {
+const ChatRightFilterWrapper = ({
+    setRefreshRandomNumFetchChat,
+}: {
+    setRefreshRandomNumFetchChat: React.Dispatch<React.SetStateAction<number>> 
+}) => {
 
     // useState
     const screenWidth = useResponsiveScreen();
@@ -136,6 +142,28 @@ const ChatRightFilterWrapper = () => {
                     />
                 </div>
             </div>
+
+            {/* thread setting */}
+            {chatLlmThreadSetting.threadId.length === 24 && (
+                <div
+                    className='p-1 cursor-pointer'
+                    onClick={() => {
+                        toast.success('Refreshing...');
+                        let randomNum = Math.floor(Math.random() * 1_000_000);
+                        setRefreshRandomNumFetchChat(randomNum);
+                    }}
+                >
+                    <div className={`py-3 rounded bg-gray-600`}>
+                        <LucideRefreshCcw
+                            style={{
+                                width: '100%',
+                                color: 'white',
+                            }}
+                            className=''
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* thread setting */}
             {chatLlmThreadSetting.threadId.length === 24 && (
