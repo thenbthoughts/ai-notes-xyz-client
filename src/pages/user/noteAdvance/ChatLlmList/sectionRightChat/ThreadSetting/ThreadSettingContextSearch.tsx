@@ -228,6 +228,104 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
         }
     }
 
+    const handleAddAllContext = async () => {
+        const toastId = toast.loading('Loading...');
+        try {
+            // Get all items of search result
+            const response = await axiosCustom.post('/api/chat-llm/threads-context-crud/contextSearch', {
+                threadId: threadId,
+                searchQuery: search,
+                filterEventTypeTasks: filters.filterEventTypeTasks,
+                filterEventTypeLifeEvents: filters.filterEventTypeLifeEvents,
+                filterEventTypeNotes: filters.filterEventTypeNotes,
+                filterEventTypeDiary: filters.filterEventTypeDiary,
+                filterIsContextSelected: filterIsContextSelected,
+
+                // filter by task status
+                filterTaskIsCompleted: filterTaskIsCompleted,
+                filterTaskIsArchived: filterTaskIsArchived,
+
+                page: 1,
+                limit: 3650,
+            });
+
+            if (response.data.result.docs && Array.isArray(response.data.result.docs)) {
+                const items = response.data.result.docs;
+
+                // Prepare contexts array for bulk upsert
+                const contexts = items.map((item: ContextItem) => ({
+                    referenceFrom: item.fromCollection,
+                    referenceId: item._id,
+                }));
+
+                // Bulk add all contexts
+                await axiosCustom.post('/api/chat-llm/threads-context-crud/contextBulkUpsert', {
+                    threadId: threadId,
+                    contexts: contexts,
+                });
+
+                // Refresh the list after all items are added
+                setRefreshRandomNum(Math.random());
+                toast.success(`Added ${items.length} context item${items.length !== 1 ? 's' : ''}`);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            toast.dismiss(toastId);
+        }
+    }
+
+    const handleRemoveAllContext = async () => {
+        const toastId = toast.loading('Loading...');
+        try {
+            // Get all items of search result
+            const response = await axiosCustom.post('/api/chat-llm/threads-context-crud/contextSearch', {
+                threadId: threadId,
+                searchQuery: search,
+                filterEventTypeTasks: filters.filterEventTypeTasks,
+                filterEventTypeLifeEvents: filters.filterEventTypeLifeEvents,
+                filterEventTypeNotes: filters.filterEventTypeNotes,
+                filterEventTypeDiary: filters.filterEventTypeDiary,
+                filterIsContextSelected: 'added',
+
+                // filter by task status
+                filterTaskIsCompleted: filterTaskIsCompleted,
+                filterTaskIsArchived: filterTaskIsArchived,
+
+                page: 1,
+                limit: 3650,
+            });
+
+            if (response.data.result.docs && Array.isArray(response.data.result.docs)) {
+                const items = response.data.result.docs;
+
+                // Get context IDs for items that are already added
+                const contextIds = items
+                    .filter((item: ContextItem) => item.isContextSelected)
+                    .map((item: ContextItem) => item.contextSelectedId);
+
+                if (contextIds.length === 0) {
+                    toast.error('No contexts to remove');
+                    return;
+                }
+
+                // Bulk delete all contexts
+                await axiosCustom.post('/api/chat-llm/threads-context-crud/contextBulkDelete', {
+                    threadId: threadId,
+                    contextIds: contextIds,
+                });
+
+                // Refresh the list after all items are removed
+                setRefreshRandomNum(Math.random());
+                toast.success(`Removed ${contextIds.length} context item${contextIds.length !== 1 ? 's' : ''}`);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            toast.dismiss(toastId);
+        }
+    }
+
     const renderFilters = () => {
         return (
             <div className="flex flex-col gap-2">
@@ -396,6 +494,26 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
 
             {/* Heading */}
             <h3 className="text-lg font-bold mb-4">Contexts: {totalCount > 0 ? `(${totalCount})` : ''}</h3>
+
+            {/* add all context button */}
+            <div>
+                <button
+                    onClick={() => {
+                        handleAddAllContext();
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors inline-block mr-2"
+                >
+                    Add All Context
+                </button>
+                <button
+                    onClick={() => {
+                        handleRemoveAllContext();
+                    }}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors inline-block"
+                >
+                    Remove All Context
+                </button>
+            </div>
 
             {/* Filters */}
             {renderFilters()}
