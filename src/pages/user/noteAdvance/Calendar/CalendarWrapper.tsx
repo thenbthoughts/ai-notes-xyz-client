@@ -50,7 +50,6 @@ interface tsCalenderApiRes {
 const CalendarWrapper = () => {
     const calendarRef = useRef<FullCalendar | null>(null);
     const [currentView, setCurrentView] = useState<string>('dayGridMonth');
-    const [searchTerm, setSearchTerm] = useState<string>('');
 
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
