@@ -69,7 +69,7 @@ const QuickActionsComponent = () => {
                             className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
                         >
                             <LucideListTodo size={14} className="mr-1" />
-                            Quick Task
+                            Quick Daily Task
                         </button>
                     </div>
                 </div>
