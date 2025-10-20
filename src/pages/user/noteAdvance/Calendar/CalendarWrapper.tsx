@@ -208,29 +208,15 @@ const CalendarWrapper = () => {
                 </div>
 
                 <div className="flex items-center gap-3 flex-1 min-w-0 pt-3">
-                    {/* Search Box */}
-                    <input
-                        type="text"
-                        placeholder="Search events..."
-                        className="
-                            px-3 py-2 rounded-md border-none outline-none
-                            text-base bg-gray-100 text-gray-800
-                            min-w-[120px] w-full max-w-[200px]
-                            shadow-sm mb-1 flex-1
-                            focus:ring-2 focus:ring-indigo-300
-                        "
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
                     {/* Add Event Button */}
-                    <button
+                    <Link
+                        to="/user/life-events"
                         className="
                             bg-white text-indigo-500 border-none rounded-md
                             px-4 py-2 font-semibold text-base cursor-pointer
                             shadow-md transition hover:bg-indigo-50
                             whitespace-nowrap mb-1 flex-shrink-0
                         "
-                        onClick={() => alert('Add Event feature coming soon!')}
                     >
                         <span role="img" aria-label="add" className="mr-1">
                             <LucidePlus
@@ -242,7 +228,7 @@ const CalendarWrapper = () => {
                             />
                         </span>
                         Add Event
-                    </button>
+                    </Link>
                 </div>
             </div>
         )
