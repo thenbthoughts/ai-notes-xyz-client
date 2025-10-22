@@ -6,7 +6,8 @@ import toast from "react-hot-toast";
 import envKeys from "../../../../../config/envKeys";
 import axiosCustom from "../../../../../config/axiosCustom";
 import { LucideAudioLines, LucideClipboard, LucideInfo, LucideTrash, LucideEyeOff } from "lucide-react";
-
+import { jotaiTtsModalOpenStatus } from '../../../../../jotai/stateJotaiTextToSpeechModal';
+import { useSetAtom } from 'jotai';
 import { tsMessageItem } from '../../../../../types/pages/tsNotesAdvanceList';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
@@ -165,7 +166,6 @@ const ComponentMessageItem = ({
     itemMessage: tsMessageItem;
 }) => {
     const [isDeleted, setIsDeleted] = useState(false);
-    const [isSpeaking, setIsSpeaking] = useState(false);
     const [showAllTags, setShowAllTags] = useState(false);
     const [showAiGeneratedFileInfo, setShowAiGeneratedFileInfo] = useState(false);
     const [
@@ -173,39 +173,7 @@ const ComponentMessageItem = ({
         setCallGenerateAiTaskListRandomNum, // whenever the func is called 
     ] = useState(0);
 
-    const handleSpeak = () => {
-        setIsSpeaking(true);
-        const modifiedContent = itemMessage.content.replace(/\*\*/g, ' '); // Remove ** from content
-
-        // Split content into smaller chunks for better compatibility with mobile TTS
-        const chunkSize = 200; // Adjust the size as needed
-        const chunks = modifiedContent.match(new RegExp(`.{1,${chunkSize}}`, 'g'));
-
-        if (chunks) {
-            let index = 0;
-            const speakNextChunk = () => {
-                if (index < chunks.length) {
-                    console.log('index: ', index);
-                    const utterance = new SpeechSynthesisUtterance(chunks[index]);
-                    utterance.onend = () => {
-                        index++;
-                        speakNextChunk();
-                    };
-                    speechSynthesis.speak(utterance);
-                } else {
-                    setIsSpeaking(false);
-                }
-            };
-            speakNextChunk();
-        } else {
-            setIsSpeaking(false);
-        }
-    };
-
-    const handleStopSpeak = () => {
-        speechSynthesis.cancel();
-        setIsSpeaking(false);
-    };
+    const setTtsModalOpenStatus = useSetAtom(jotaiTtsModalOpenStatus);
 
     const handleDeleteMessage = async () => {
         const confirmDelete = window.confirm("Are you sure you want to delete this note?");
@@ -327,43 +295,32 @@ const ComponentMessageItem = ({
                 <div className="">
                     {itemMessage.type === 'text' && (
                         <Fragment>
-                            {isSpeaking ? (
-                                <button
-                                    onClick={handleStopSpeak}
-                                    className="px-2 py-1 rounded bg-red-500 text-white mb-1 mr-1"
-                                >
-                                    <LucideAudioLines
-                                        style={{
-                                            color: '#FFFFFF',
-                                            marginBottom: '0',
-                                            display: 'inline-block',
-                                            lineHeight: '24px',
-                                            width: "19px",
-                                            height: "19px",
-                                            position: 'relative',
-                                            top: '-2px',
-                                        }}
-                                    />
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={handleSpeak}
-                                    className="px-2 py-1 rounded bg-blue-500 text-white mb-1 mr-1"
-                                >
-                                    <LucideAudioLines
-                                        style={{
-                                            color: '#FFFFFF',
-                                            marginBottom: '0',
-                                            display: 'inline-block',
-                                            lineHeight: '24px',
-                                            width: "19px",
-                                            height: "19px",
-                                            position: 'relative',
-                                            top: '-2px',
-                                        }}
-                                    />
-                                </button>
-                            )}
+                            <button
+                                onClick={() => {
+                                    const textSplit = itemMessage.content.split('. ');
+                                    setTtsModalOpenStatus({
+                                        openStatus: true,
+                                        playingStatus: true,
+                                        currentTextIndex: 0,
+                                        text: itemMessage.content,
+                                        textSplit: textSplit,
+                                    });
+                                }}
+                                className="px-2 py-1 rounded bg-green-500 text-white mb-1 mr-1"
+                            >
+                                <LucideAudioLines
+                                    style={{
+                                        color: '#FFFFFF',
+                                        marginBottom: '0',
+                                        display: 'inline-block',
+                                        lineHeight: '24px',
+                                        width: "19px",
+                                        height: "19px",
+                                        position: 'relative',
+                                        top: '-2px',
+                                    }}
+                                />
+                            </button>
 
                             <button
                                 onClick={() => {

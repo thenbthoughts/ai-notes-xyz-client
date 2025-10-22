@@ -1,15 +1,17 @@
 import { Link } from 'react-router-dom';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import stateJotaiNavigationDrawer from '../jotai/stateJotaiNavigationDrawer';
 import stateJotaiAuthAtom from '../jotai/stateJotaiAuth';
 import { Fragment } from 'react/jsx-runtime';
 import { useEffect, useState } from 'react';
+import { LucideSpeech } from 'lucide-react';
+import { jotaiTtsModalOpenStatus } from '../jotai/stateJotaiTextToSpeechModal';
 
 const Header = () => {
 
     const [stateNavigationDrawer, setStateNavigationDrawer] = useAtom(stateJotaiNavigationDrawer);
     const authState = useAtomValue(stateJotaiAuthAtom);
-
+    const setTtsModalOpenStatus = useSetAtom(jotaiTtsModalOpenStatus);
     const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
@@ -65,12 +67,25 @@ const Header = () => {
                             <Link
                                 to="/user/task-schedule" className="hover:underline"
                             >Schedule</Link>
+                            <Link
+                                to="/user/setting" className="hover:underline"
+                            >Settings</Link>
+                            <div
+                                className='hover:underline cursor-pointer'
+                                onClick={() => {
+                                    setTtsModalOpenStatus((prev) => {
+                                        return {
+                                            ...prev,
+                                            openStatus: true,
+                                        }
+                                    });
+                                }}
+                            >
+                                <LucideSpeech />
+                            </div>
                         </Fragment>
                     )}
                     <Link to="/about" className="hover:underline">About</Link>
-                    {authState.isLoggedIn === 'true' && (
-                        <Link to="/user/setting" className="hover:underline">Settings</Link>
-                    )}
                     {authState.isLoggedIn === 'true' ? (
                         <Link to="/logout" className="hover:underline">Logout</Link>
                     ) : (
@@ -78,6 +93,16 @@ const Header = () => {
                     )}
                 </nav>
                 <div className="lg:hidden">
+                    <div className='hover:underline cursor-pointer inline-block mr-4' onClick={() => {
+                        setTtsModalOpenStatus((prev) => {
+                            return {
+                                ...prev,
+                                openStatus: true,
+                            }
+                        });
+                    }}>
+                        <LucideSpeech />
+                    </div>
                     <button className="focus:outline-none" onClick={() => setStateNavigationDrawer(!stateNavigationDrawer)}>
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
