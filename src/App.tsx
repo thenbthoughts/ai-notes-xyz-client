@@ -13,6 +13,7 @@ import NavigationDrawer from './components/NavigationDrawer.tsx';
 import UnauthorizedRoute from "./components/UnauthorizedRoute.tsx";
 import RefreshToken from "./components/RefreshToken.tsx";
 import AuthorizedRoute from "./components/AuthorizedRoute.tsx";
+import TextToSpeechModal from "./components/textToSpeechModalComponent/TextToSpeechModal.tsx";
 
 // pages -> auth
 const UserLogin = lazy(() => import('./pages/user/auth/Login.tsx'));
@@ -323,6 +324,7 @@ function App() {
       />
       <RouterProvider router={router} />
       <RefreshToken />
+      <TextToSpeechModal />
 
       {/* dynamic data */}
       <ModelOpenrouterInsertAll />
