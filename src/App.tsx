@@ -64,6 +64,9 @@ const MapsWrapper = lazy(() => import("./pages/user/features/Maps/Maps.tsx"));
 const AiSuggestions = lazy(() => import("./pages/user/features/Suggestions/AiSuggestions.tsx"));
 const AiSuggestionsDemo = lazy(() => import("./pages/user/features/Suggestions/demo/AiSuggestions.tsx"));
 
+// pages -> search
+const Search = lazy(() => import("./pages/user/features/search/Search.tsx"));
+
 function App() {
   const Layout = () => {
     return (
@@ -85,6 +88,14 @@ function App() {
         {
           path: "/",
           element: <UserHomepage />,
+        },
+        {
+          path: "/user/search",
+          element: (
+            <UnauthorizedRoute>
+              <Search />
+            </UnauthorizedRoute>
+          )
         },
         {
           path: "/login",
