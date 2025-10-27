@@ -4,7 +4,7 @@ import stateJotaiNavigationDrawer from '../jotai/stateJotaiNavigationDrawer';
 import stateJotaiAuthAtom from '../jotai/stateJotaiAuth';
 import { Fragment } from 'react/jsx-runtime';
 import { useEffect, useState } from 'react';
-import { LucideSpeech } from 'lucide-react';
+import { LucideSearch, LucideSpeech } from 'lucide-react';
 import { jotaiTtsModalOpenStatus } from '../jotai/stateJotaiTextToSpeechModal';
 
 const Header = () => {
@@ -40,6 +40,17 @@ const Header = () => {
                     <Link to="/" className="hover:underline">Home</Link>
                     {authState.isLoggedIn === 'true' && (
                         <Fragment>
+                            <Link
+                                to="/user/search"
+                                className="hover:underline"
+                            >
+                                <LucideSearch
+                                    size={16}
+                                    style={{
+                                        marginTop: '4px',
+                                    }}
+                                />
+                            </Link>
                             <Link
                                 to="/user/suggestions" className="hover:underline"
                             >Suggestions</Link>
@@ -93,6 +104,11 @@ const Header = () => {
                     )}
                 </nav>
                 <div className="lg:hidden">
+                    <div className='inline-block mr-4'>
+                        <Link to="/user/search" className="hover:underline cursor-pointer">
+                            <LucideSearch />
+                        </Link>
+                    </div>
                     <div className='hover:underline cursor-pointer inline-block mr-4' onClick={() => {
                         setTtsModalOpenStatus((prev) => {
                             return {
