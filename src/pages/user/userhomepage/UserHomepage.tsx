@@ -13,7 +13,8 @@ import {
     LucideClock,
     LucideMap,
     LucideRefreshCcw,
-    LucideLightbulb
+    LucideLightbulb,
+    LucideSearch
 } from 'lucide-react'; // Importing lucide icons
 import { useAtomValue } from 'jotai';
 import { Fragment, useEffect, useState } from 'react';
@@ -198,6 +199,12 @@ const UserHomepage = () => {
                                             <LucideMessageSquare size={32} />
                                         </div>
                                         <div>Chat</div>
+                                    </Link>
+                                    <Link to="/user/search" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                            <LucideSearch size={32} />
+                                        </div>
+                                        <div>Search</div>
                                     </Link>
                                     <Link to="/user/suggestions" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>

@@ -33,21 +33,21 @@ const SettingChangePassword = lazy(() => import("./pages/user/settings/changePas
 const NotificationWrapper = lazy(() => import("./pages/user/settings/notification/NotificationWrapper.tsx"));
 
 // pages -> ai
-const ChatLlmListWrapper = lazy(() => import('./pages/user/noteAdvance/ChatLlmList/ChatLlmListWrapper.tsx'));
-const AiDeepResearchWrapper = lazy(() => import("./pages/user/noteAdvance/AiDeepResearch/AiDeepResearchWrapper.tsx"));
+const ChatLlmListWrapper = lazy(() => import('./pages/user/features/ChatLlmList/ChatLlmListWrapper.tsx'));
+const AiDeepResearchWrapper = lazy(() => import("./pages/user/features/AiDeepResearch/AiDeepResearchWrapper.tsx"));
 
 // pages -> notes
-const NotesWrapper = lazy(() => import("./pages/user/noteAdvance/Notes/NotesWrapper.tsx"));
-const NotesWorkspaceCrud = lazy(() => import("./pages/user/noteAdvance/NotesWorkspaceCrud/NotesWorkspaceCrud.tsx"));
-const InfoVaultWrapper = lazy(() => import("./pages/user/noteAdvance/InfoVault/InfoVaultWrapper.tsx"));
-const LifeEventWrapper = lazy(() => import('./pages/user/noteAdvance/LifeEventsList/LifeEventWrapper.tsx'));
+const NotesWrapper = lazy(() => import("./pages/user/features/Notes/NotesWrapper.tsx"));
+const NotesWorkspaceCrud = lazy(() => import("./pages/user/features/NotesWorkspaceCrud/NotesWorkspaceCrud.tsx"));
+const InfoVaultWrapper = lazy(() => import("./pages/user/features/InfoVault/InfoVaultWrapper.tsx"));
+const LifeEventWrapper = lazy(() => import('./pages/user/features/LifeEventsList/LifeEventWrapper.tsx'));
 
 // pages -> productivity
-const TaskList = lazy(() => import("./pages/user/noteAdvance/taskList/TaskList.tsx"));
-const TaskWorkspaceCrud = lazy(() => import("./pages/user/noteAdvance/TaskWorkspaceCrud/TaskWorkspaceCrud.tsx"));
-const CalendarWrapper = lazy(() => import("./pages/user/noteAdvance/Calendar/CalendarWrapper.tsx"));
-const FinanceWrapper = lazy(() => import("./pages/user/noteAdvance/Finance/FinanceWrapper.tsx"));
-const TaskScheduleWrapper = lazy(() => import("./pages/user/noteAdvance/taskSchedule/TaskScheduleWrapper.tsx"));
+const TaskList = lazy(() => import("./pages/user/features/taskList/TaskList.tsx"));
+const TaskWorkspaceCrud = lazy(() => import("./pages/user/features/TaskWorkspaceCrud/TaskWorkspaceCrud.tsx"));
+const CalendarWrapper = lazy(() => import("./pages/user/features/Calendar/CalendarWrapper.tsx"));
+const FinanceWrapper = lazy(() => import("./pages/user/features/Finance/FinanceWrapper.tsx"));
+const TaskScheduleWrapper = lazy(() => import("./pages/user/features/taskSchedule/TaskScheduleWrapper.tsx"));
 
 // pages -> test
 const TestDevWrapper = lazy(() => import("./pages/test/testDev/TestDevWrapper.tsx"));
@@ -58,11 +58,14 @@ const ModelOpenrouterInsertAll = lazy(() => import('./components/settings/ModelO
 const UpdateUserApiClientFrontendUrl = lazy(() => import('./components/settings/UpdateUserApiClientFrontendUrl.tsx'));
 
 // pages -> maps
-const MapsWrapper = lazy(() => import("./pages/user/noteAdvance/Maps/Maps.tsx"));
+const MapsWrapper = lazy(() => import("./pages/user/features/Maps/Maps.tsx"));
 
 // pages -> suggestions
-const AiSuggestions = lazy(() => import("./pages/user/noteAdvance/Suggestions/AiSuggestions.tsx"));
-const AiSuggestionsDemo = lazy(() => import("./pages/user/noteAdvance/Suggestions/demo/AiSuggestions.tsx"));
+const AiSuggestions = lazy(() => import("./pages/user/features/Suggestions/AiSuggestions.tsx"));
+const AiSuggestionsDemo = lazy(() => import("./pages/user/features/Suggestions/demo/AiSuggestions.tsx"));
+
+// pages -> search
+const Search = lazy(() => import("./pages/user/features/search/Search.tsx"));
 
 function App() {
   const Layout = () => {
@@ -85,6 +88,14 @@ function App() {
         {
           path: "/",
           element: <UserHomepage />,
+        },
+        {
+          path: "/user/search",
+          element: (
+            <UnauthorizedRoute>
+              <Search />
+            </UnauthorizedRoute>
+          )
         },
         {
           path: "/login",
