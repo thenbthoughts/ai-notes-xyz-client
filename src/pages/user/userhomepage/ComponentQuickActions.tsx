@@ -2,7 +2,7 @@ import { LucideZap, LucideChevronUp, LucideChevronDown, LucideFileText, LucideLi
 import { useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
-import { notesQuickDailyNotesAddAxios, notesQuickTaskAddAxios } from '../noteAdvance/Notes/utils/notesListAxios';
+import { notesQuickDailyNotesAddAxios, notesQuickTaskAddAxios } from '../features/Notes/utils/notesListAxios';
 import toast from 'react-hot-toast';
 
 
