@@ -4,13 +4,47 @@ import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { INotes } from '../../../../../types/pages/tsNotes.ts';
 import ComponentNotesItem from './ComponentNotesItem.tsx';
 import ReactPaginate from 'react-paginate';
-import { PlusCircle } from 'lucide-react';
+import { MessageCircle, PlusCircle } from 'lucide-react';
 import { notesAddAxios } from '../utils/notesListAxios.ts';
 import { useNavigate } from 'react-router-dom';
 import { jotaiStateNotesIsStar, jotaiStateNotesSearch, jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
 import { useAtomValue } from 'jotai';
+import toast from 'react-hot-toast';
+import { notesWorkspaceChatWithAi } from '../utils/notesListAxios.ts';
     
 const perPage = 20;
+
+const notesWorkspaceChatWithAiLocal = async ({
+    notesWorkspaceId,
+}: {
+    notesWorkspaceId: string;
+}) => {
+    const toastLoadingId = toast.loading('Starting workspace chat with AI...');
+    try {
+        // call func
+        const result = await notesWorkspaceChatWithAi({ notesWorkspaceId: notesWorkspaceId });
+        toast.dismiss(toastLoadingId);
+        if (result.error !== '') {
+            toast.error(result.error || 'Error workspace chat with AI. Please try again.');
+            return;
+        }
+
+        // success message
+        toast.success(
+            'Workspace chat with AI started successfully! Please send a message to start the conversation.',
+            {
+                duration: 3000,
+            }
+        );
+
+        // redirect to chat page
+        window.location.href = `/user/chat?id=${result.threadId}`;
+    } catch (error) {
+        console.error('Error workspace chat with AI:', error);
+        toast.error('Error workspace chat with AI. Please try again.');
+        toast.dismiss(toastLoadingId);
+    }
+};
 
 const ComponentNotesList = () => {
     const navigate = useNavigate();
@@ -96,6 +130,21 @@ const ComponentNotesList = () => {
                     {totalCount === 0 && (
                         <span className="ml-4 text-red-500 font-semibold">No result</span>
                     )}
+                </div>
+                <div className="flex items-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-lg px-4 py-2 shadow-sm border border-blue-200">
+                    <button onClick={() => notesWorkspaceChatWithAiLocal({ notesWorkspaceId: workspaceId })}>
+                        <MessageCircle
+                            size={20}
+                            className="text-blue-500 mr-2 animate-pulse"
+                            strokeWidth={2}
+                            fill="#e0e7ff"
+                            style={{
+                                display: 'inline-block',
+                                marginTop: '-3px',
+                            }}
+                        />
+                        Workspace Chat with AI
+                    </button>
                 </div>
             </div>
         );

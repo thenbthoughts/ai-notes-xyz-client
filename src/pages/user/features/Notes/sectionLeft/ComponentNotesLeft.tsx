@@ -10,7 +10,41 @@ import ComponentFolderAndFileList from './ComponentFolderAndFileList.tsx';
 import ComponentNotesWorkspace from './ComponentNotesWorkspace.tsx';
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { AxiosRequestConfig } from 'axios';
-import { LucideList, LucidePlus, LucideRefreshCcw } from 'lucide-react';
+import { LucideList, LucideMessageCircle, LucidePlus, LucideRefreshCcw } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { notesWorkspaceChatWithAi } from '../utils/notesListAxios.ts';
+
+const notesWorkspaceChatWithAiLocal = async ({
+    notesWorkspaceId,
+}: {
+    notesWorkspaceId: string;
+}) => {
+    const toastLoadingId = toast.loading('Starting workspace chat with AI...');
+    try {
+        // call func
+        const result = await notesWorkspaceChatWithAi({ notesWorkspaceId: notesWorkspaceId });
+        toast.dismiss(toastLoadingId);
+        if (result.error !== '') {
+            toast.error(result.error || 'Error workspace chat with AI. Please try again.');
+            return;
+        }
+
+        // success message
+        toast.success(
+            'Workspace chat with AI started successfully! Please send a message to start the conversation.',
+            {
+                duration: 3000,
+            }
+        );
+
+        // redirect to chat page
+        window.location.href = `/user/chat?id=${result.threadId}`;
+    } catch (error) {
+        console.error('Error workspace chat with AI:', error);
+        toast.error('Error workspace chat with AI. Please try again.');
+        toast.dismiss(toastLoadingId);
+    }
+};
 
 const ComponentNotesLeft = () => {
     const navigate = useNavigate();
@@ -118,6 +152,13 @@ const ComponentNotesLeft = () => {
                 >
                     <LucidePlus size={14} />
                     Quick Daily Notes
+                </button>
+                <button
+                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300"
+                    onClick={() => notesWorkspaceChatWithAiLocal({ notesWorkspaceId: workspaceId })}
+                >
+                    <LucideMessageCircle size={14} />
+                    Workspace Chat with AI
                 </button>
             </div>
 

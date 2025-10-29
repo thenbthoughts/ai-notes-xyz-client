@@ -300,3 +300,93 @@ export const notesQuickTaskAddAxios = async (): Promise<{
         };
     }
 }
+
+export const notesWorkspaceChatWithAi = async ({
+    notesWorkspaceId,
+}: {
+    notesWorkspaceId: string;
+}) : Promise<{
+    threadId: string;
+    success: string;
+    error: string;
+}> => {
+    try {
+        const response = await axiosCustom.post('/api/chat-llm/threads-crud/threadsAdd', {
+            isPersonalContextEnabled: true,
+            aiModelProvider: 'openrouter',
+            aiModelName: 'openrouter/auto',
+        });
+
+        const tempThreadId = response?.data?.thread?._id;
+
+        let threadId = '';
+
+        if (tempThreadId) {
+            if (typeof tempThreadId === 'string') {
+                threadId = tempThreadId;
+            }
+        }
+
+        if (threadId === '') {
+            return {
+                threadId: '',
+                success: '',
+                error: 'Failed to create chat thread. Please try again.',
+            };
+        }
+
+        // get all notes and add to context
+        const config = {
+            method: 'post',
+            url: '/api/notes/crud/notesGet',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: {
+                page: 1,
+                perPage: 1000,
+                notesWorkspaceId: notesWorkspaceId || '',
+            }
+        };
+
+        const notesResponse = await axiosCustom.request(config);
+        const notesArr = notesResponse.data.docs;
+
+        if (notesArr.length === 0) {
+            return {
+                threadId: '',
+                success: '',
+                error: 'No notes found.',
+            };
+        }
+
+        interface ContextItem {
+            _id: string;
+        }
+
+        // Prepare contexts array for bulk upsert
+        const contexts = notesArr.map((item: ContextItem) => ({
+            referenceFrom: 'notes',
+            referenceId: item._id,
+        }));
+
+        // Bulk add all contexts
+        await axiosCustom.post('/api/chat-llm/threads-context-crud/contextBulkUpsert', {
+            threadId: threadId,
+            contexts: contexts,
+        });
+
+        return {
+            threadId: threadId,
+            success: 'Successfully created chat thread.',
+            error: '',
+        };
+    } catch (error) {
+        console.error('Error workspace chat with AI:', error);
+        return {
+            threadId: '',
+            success: '',
+            error: 'Failed to create chat thread. Please try again.',
+        };
+    }
+};
