@@ -106,7 +106,7 @@ const TaskListComponentSuggestAiGeneratedTask = ({
     );
 };
 
-const workspaceChatWithAi = async ({
+const taskWorkspaceChatWithAi = async ({
     taskWorkspaceId,
 }: {
     taskWorkspaceId: string;
@@ -145,6 +145,12 @@ const workspaceChatWithAi = async ({
 
         const tasksResponse = await axiosCustom.request(config);
         const taskArr = tasksResponse.data.docs;
+
+        if (taskArr.length === 0) {
+            toast.error('No tasks found');
+            toast.dismiss(toastLoadingId);
+            return;
+        }
 
         interface ContextItem {
             _id: string;
@@ -202,7 +208,7 @@ const TaskAiTools = ({
                         🚀 Generate Tasks by AI
                     </button>
                     <button
-                        onClick={() => workspaceChatWithAi({ taskWorkspaceId: workspaceId })}
+                        onClick={() => taskWorkspaceChatWithAi({ taskWorkspaceId: workspaceId })}
                         className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-1 px-2 rounded-lg shadow-lg hover:shadow-xl transition duration-300 mx-1 cursor-pointer"
                     >
                         Workspace Chat with AI
