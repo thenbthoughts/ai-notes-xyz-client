@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { AxiosRequestConfig } from 'axios';
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
 import { Link, useNavigate } from 'react-router-dom';
-import { LucideArrowLeft, LucideCopy, LucideMessageSquare, LucidePlus, LucideSave, LucideTrash, LucideX } from 'lucide-react';
+import { LucideArrowLeft, LucideCopy, LucideMessageSquare, LucidePlus, LucideSave, LucideSettings, LucideTrash, LucideX } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSetAtom } from 'jotai';
 import htmlToMarkdown from '@wcj/html-to-markdown';
@@ -11,6 +11,82 @@ import { jotaiStateNotesWorkspaceRefresh } from '../../stateJotai/notesStateJota
 import { INotes } from '../../../../../../types/pages/tsNotes.ts';
 import QuillEditorCustom1 from '../../../../../../components/quillJs/QuillEditorCustom1/QuillEditorCustom1.tsx';
 import CommentCommonComponent from '../../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
+
+
+const ComponentNotesEditWorkspace = ({
+    workspaceId,
+    setWorkspaceId,
+}: {
+    workspaceId: string;
+    setWorkspaceId: (workspaceId: string) => void;
+}) => {
+    interface NotesWorkspaceItem {
+        _id: string;
+        title: string;
+    }
+    const [workspaces, setWorkspaces] = useState<NotesWorkspaceItem[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const fetchWorkspaces = async () => {
+            try {
+                const result = await axiosCustom.post<{
+                    docs: NotesWorkspaceItem[]
+                }>('/api/notes-workspace/crud/notesWorkspaceGet');
+                setWorkspaces(result.data.docs);
+            } catch (err) {
+                toast.error('Failed to load workspaces');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchWorkspaces();
+    }, []);
+
+    return (
+        <div>
+            {loading && (
+                <select
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    value=""
+                    onChange={() => { }}
+                >
+                    <option value="000000000000000000000000">Loading...</option>
+                </select>
+            )}
+            {!loading && (
+                <div className="mb-4">
+                    <label className="block text-sm font-medium pb-2">
+                        Workspace
+                        <Link
+                            to={'/user/notes-workspace'}
+                            className="ml-2 p-0 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300 inline-block text-sm"
+                        >
+                            <LucideSettings className="inline-block m-1"
+                                size={'20px'}
+                            />
+                        </Link>
+                    </label>
+                    <select
+                        className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        value={workspaceId}
+                        onChange={(e) => {
+                            // Handle workspace selection
+                            setWorkspaceId(e.target.value);
+                        }}
+                    >
+                        {workspaces.map((workspace) => (
+                            <option key={workspace._id} value={workspace._id}>
+                                {workspace.title}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const ComponentNotesEdit = ({
     notesObj
@@ -35,6 +111,7 @@ const ComponentNotesEdit = ({
         aiSummary: notesObj.aiSummary,
         aiSuggestions: notesObj.aiSuggestions,
         tagsInput: '', // Temporary field for tag input
+        notesWorkspaceId: notesObj.notesWorkspaceId,
     } as {
         title: string;
         description: string;
@@ -44,6 +121,7 @@ const ComponentNotesEdit = ({
         aiSummary: string;
         aiSuggestions: string;
         tagsInput: string; // Temporary field for tag input
+        notesWorkspaceId: string;
     });
 
     const editRecord = async () => {
@@ -175,6 +253,14 @@ const ComponentNotesEdit = ({
                         checked={formData.isStar}
                         className="mt-1"
                         onChange={(e) => setFormData({ ...formData, isStar: e.target.checked })}
+                    />
+                </div>
+
+                {/* field -> workspace */}
+                <div>
+                    <ComponentNotesEditWorkspace
+                        workspaceId={formData.notesWorkspaceId}
+                        setWorkspaceId={(workspaceId: string) => setFormData({ ...formData, notesWorkspaceId: workspaceId })}
                     />
                 </div>
 
