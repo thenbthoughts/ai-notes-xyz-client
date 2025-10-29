@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { DebounceInput } from 'react-debounce-input';
 
 import axiosCustom from '../../../../config/axiosCustom';
-import TaskListComponentSuggestAiGeneratedTask from './TaskListComponentSuggestAiGeneratedTask';
+import TaskAiTools from './TaskAiTools';
 
 import TaskItem from './TaskItem';
 import { tsPageTask } from '../../../../types/pages/tsPageTaskList';
@@ -355,7 +355,7 @@ const TaskList: React.FC = () => {
                     {renderHeading()}
 
                     <div className='px-2'>
-                        <TaskListComponentSuggestAiGeneratedTask
+                        <TaskAiTools
                             setRefreshParentRandomNum={setRefreshRandomNum}
                         />
                     </div>
