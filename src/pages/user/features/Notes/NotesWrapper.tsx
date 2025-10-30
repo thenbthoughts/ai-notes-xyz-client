@@ -163,7 +163,7 @@ const NotesWrapper = () => {
                     <div
                         className='p-1 cursor-pointer'
                     >
-                        <div className={`py-3 rounded bg-gray-600`}>
+                        <div className={`py-3 rounded-sm bg-gray-600`}>
                             <Link to={'/user/setting'}>
                                 <LucideSettings
                                     style={{
@@ -183,7 +183,7 @@ const NotesWrapper = () => {
                             notesAddAxiosLocal();
                         }}
                     >
-                        <div className={`py-3 rounded bg-gray-600`}>
+                        <div className={`py-3 rounded-sm bg-gray-600`}>
                             <LucidePlus
                                 style={{
                                     width: '100%',
@@ -267,7 +267,7 @@ const NotesWrapper = () => {
                                 setStateDisplayChatHistory(!stateDisplayChatHistory);
                             }}
                         >
-                            <div className={`py-3 rounded ${stateDisplayChatHistory ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                            <div className={`py-3 rounded-sm ${stateDisplayChatHistory ? 'bg-blue-600' : 'bg-gray-600'}`}>
                                 <LucideList
                                     style={{
                                         width: '100%',

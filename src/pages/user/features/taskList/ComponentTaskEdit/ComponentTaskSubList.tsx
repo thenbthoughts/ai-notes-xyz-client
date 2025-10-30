@@ -177,7 +177,7 @@ const ComponentSubTaskItem = ({
                             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                                 setFormData({ ...formData, title: e.target.value })
                             }}
-                            className="w-full text-sm border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 mt-1"
+                            className="w-full text-sm border border-gray-300 rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 mt-1"
                             rows={2}
                         />
                     ) : (
@@ -327,7 +327,7 @@ const ComponentTaskSubList: React.FC<{
                         value={newSubtask}
                         placeholder="✨ Add a new subtask..."
                         onChange={(e) => setNewSubtask(e.target.value)}
-                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-2 border rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         rows={3}
                     />
                     <button
@@ -336,7 +336,7 @@ const ComponentTaskSubList: React.FC<{
                                 argNewSubtask: newSubtask
                             });
                         }}
-                        className="px-3 py-2 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition duration-200 flex items-center"
+                        className="px-3 py-2 bg-white text-blue-600 rounded-sm hover:bg-gray-100 transition duration-200 flex items-center"
                     >
                         <Plus size={16} />
                     </button>
@@ -345,7 +345,7 @@ const ComponentTaskSubList: React.FC<{
 
             {/* New task sub tasks */}
             {newTaskSubtasks.length > 0 && (
-                <div className="bg-blue-100 p-2 rounded mt-2">
+                <div className="bg-blue-100 p-2 rounded-sm mt-2">
                     <div className="space-y-1">
                         {newTaskSubtasks.map((subtask, index) => (
                             <div
@@ -363,7 +363,7 @@ const ComponentTaskSubList: React.FC<{
                                             argNewSubtask: subtask
                                         });
                                     }} // Pass the title instead of the whole subtask object
-                                    className="bg-blue-500 text-white text-xs font-medium px-2 py-1 rounded hover:bg-blue-600 transition duration-200 ml-2"
+                                    className="bg-blue-500 text-white text-xs font-medium px-2 py-1 rounded-sm hover:bg-blue-600 transition duration-200 ml-2"
                                 >
                                     Add
                                 </button>

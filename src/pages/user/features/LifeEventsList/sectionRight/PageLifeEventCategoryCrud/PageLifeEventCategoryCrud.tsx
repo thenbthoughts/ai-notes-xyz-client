@@ -43,7 +43,7 @@ function CategoryDropdown({
 
   return (
     <select
-      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition bg-white text-gray-800"
+      className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition bg-white text-gray-800"
       value={value}
       onChange={onChange}
       disabled={disabled}
@@ -104,7 +104,7 @@ function AddCategory({ onAdd }: { onAdd: () => void }) {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Level</label>
           <select
-            className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-gray-800"
+            className="w-full rounded-sm border border-gray-300 px-3 py-2 bg-white text-gray-800"
             value={level}
             onChange={(e) => setLevel(e.target.value as "main" | "sub")}
           >
@@ -121,7 +121,7 @@ function AddCategory({ onAdd }: { onAdd: () => void }) {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
           <input
-            className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-gray-800"
+            className="w-full rounded-sm border border-gray-300 px-3 py-2 bg-white text-gray-800"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Category name"
@@ -129,7 +129,7 @@ function AddCategory({ onAdd }: { onAdd: () => void }) {
         </div>
       </div>
       <button
-        className="w-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white font-semibold px-6 py-2 rounded-lg shadow hover:scale-105 transition disabled:opacity-60"
+        className="w-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white font-semibold px-6 py-2 rounded-sm shadow hover:scale-105 transition disabled:opacity-60"
         onClick={handleAdd}
         disabled={loading}
       >
@@ -180,7 +180,7 @@ function EditCategory({
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-1">Edit Name</label>
         <input
-          className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-gray-800"
+          className="w-full rounded-sm border border-gray-300 px-3 py-2 bg-white text-gray-800"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Category name"
@@ -188,14 +188,14 @@ function EditCategory({
       </div>
       <div className="flex flex-col gap-2 sm:flex-row">
         <button
-          className="bg-indigo-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-600 transition"
+          className="bg-indigo-500 text-white px-4 py-2 rounded-sm font-semibold hover:bg-indigo-600 transition"
           onClick={handleEdit}
           disabled={loading}
         >
           {loading ? "Saving..." : "Save"}
         </button>
         <button
-          className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-200 transition"
+          className="bg-gray-100 text-gray-700 px-4 py-2 rounded-sm font-semibold hover:bg-gray-200 transition"
           onClick={onCancel}
         >
           Cancel
@@ -245,20 +245,20 @@ function Subcategories({
       {subs.map((sub) => (
         <li
           key={sub._id}
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 rounded-lg px-3 py-1 hover:bg-indigo-50 transition"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 rounded-sm px-3 py-1 hover:bg-indigo-50 transition"
         >
           <span className="text-sm text-gray-700 flex items-center gap-1 mb-2 sm:mb-0">
             <span className="text-indigo-400">↳</span> {sub.name}
           </span>
           <div className="flex flex-col gap-1 sm:flex-row">
             <button
-              className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500 text-xs"
+              className="bg-yellow-400 text-white px-2 py-1 rounded-sm hover:bg-yellow-500 text-xs"
               onClick={() => onEdit(sub)}
             >
               Edit
             </button>
             <button
-              className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 text-xs"
+              className="bg-red-500 text-white px-2 py-1 rounded-sm hover:bg-red-600 text-xs"
               onClick={() => onDelete(sub._id)}
             >
               Delete
@@ -318,7 +318,7 @@ function CategoryCrud() {
       <div className="flex justify-center mb-4">
         <Link
           to="/user/life-events"
-          className="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold px-2 py-1 rounded shadow transition flex items-center text-sm mt-2"
+          className="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold px-2 py-1 rounded-sm shadow transition flex items-center text-sm mt-2"
         >
           ← Back
         </Link>
@@ -351,13 +351,13 @@ function CategoryCrud() {
                   <span className="font-semibold text-lg text-indigo-800">{cat.name}</span>
                   <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
                     <button
-                      className="bg-yellow-400 text-white px-4 py-1 rounded-lg font-semibold hover:bg-yellow-500 transition"
+                      className="bg-yellow-400 text-white px-4 py-1 rounded-sm font-semibold hover:bg-yellow-500 transition"
                       onClick={() => setEditCat(cat)}
                     >
                       Edit
                     </button>
                     <button
-                      className="bg-red-500 text-white px-4 py-1 rounded-lg font-semibold hover:bg-red-600 transition"
+                      className="bg-red-500 text-white px-4 py-1 rounded-sm font-semibold hover:bg-red-600 transition"
                       onClick={() => handleDelete(cat._id)}
                     >
                       Delete

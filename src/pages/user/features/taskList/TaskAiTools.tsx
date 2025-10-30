@@ -87,7 +87,7 @@ const TaskListComponentSuggestAiGeneratedTask = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                 {tasks.map((task, index) => (
-                    <div key={index} className="p-2 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+                    <div key={index} className="p-2 border border-gray-300 rounded-sm bg-gray-50 hover:bg-gray-100 transition">
                         <h3 className="text-lg font-semibold text-gray-700">{task.taskTitle}</h3>
                         <p className="text-gray-600 text-sm">{task.taskDescription}</p>
                         <p className="text-gray-500 text-sm">Priority: <span className={`font-bold ${task.taskPriority === 'high' ? 'text-red-500' : task.taskPriority === 'medium' ? 'text-yellow-500' : 'text-green-500'}`}>{task.taskPriority}</span></p>
@@ -95,7 +95,7 @@ const TaskListComponentSuggestAiGeneratedTask = ({
                         <p className="text-gray-500 text-sm">Tags: <span className="font-semibold">{task.taskTags.join(', ')}</span></p>
                         <button
                             onClick={() => addTask(task)}
-                            className="mt-1 bg-blue-600 text-white p-1 rounded-lg hover:bg-blue-700 transition"
+                            className="mt-1 bg-blue-600 text-white p-1 rounded-sm hover:bg-blue-700 transition"
                         >
                             Add Task
                         </button>
@@ -197,19 +197,19 @@ const TaskAiTools = ({
 
     return (
         <div className='pb-2'>
-            <div className="p-4 bg-white rounded-lg shadow-md">
+            <div className="p-4 bg-white rounded-sm shadow-md">
                 <h2 className="text-xl font-bold mb-2 text-gray-800">AI Tools</h2>
 
                 <div className="flex justify-center mb-2">
                     <button
                         onClick={() => setCallGenerateAiTaskListRandomNum(Math.floor(Math.random() * 1_000_000))}
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-1 px-2 rounded-lg shadow-lg hover:shadow-xl transition duration-300 mx-1 cursor-pointer"
+                        className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-1 px-2 rounded-sm shadow-lg hover:shadow-xl transition duration-300 mx-1 cursor-pointer"
                     >
                         🚀 Generate Tasks by AI
                     </button>
                     <button
                         onClick={() => taskWorkspaceChatWithAi({ taskWorkspaceId: workspaceId })}
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-1 px-2 rounded-lg shadow-lg hover:shadow-xl transition duration-300 mx-1 cursor-pointer"
+                        className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-1 px-2 rounded-sm shadow-lg hover:shadow-xl transition duration-300 mx-1 cursor-pointer"
                     >
                         Workspace Chat with AI
                     </button>

@@ -58,7 +58,7 @@ const ComponentNotesLeft = () => {
 
 const ComponentNotesLeftRender = () => {
     return (
-        // Main container with light background, padding, rounded corners and max width for presentation
+        // Main container with light background, padding, rounded-sm corners and max width for presentation
         <div
             style={{
                 paddingTop: '10px',
@@ -66,7 +66,7 @@ const ComponentNotesLeftRender = () => {
             }}
         >
             <div
-                className="bg-white rounded-lg shadow-md"
+                className="bg-white rounded-sm shadow-md"
                 style={{
                     paddingTop: '10px',
                     paddingBottom: '10px',
@@ -88,7 +88,7 @@ const ComponentNotesLeftRender = () => {
 
 const ComponentNotesLeftModelRender = () => {
     return (
-        // Main container with light background, padding, rounded corners and max width for presentation
+        // Main container with light background, padding, rounded-sm corners and max width for presentation
         <div
             style={{
                 position: 'fixed',

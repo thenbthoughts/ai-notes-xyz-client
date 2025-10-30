@@ -83,7 +83,7 @@ const ComponentInfoVaultItem = ({
                     <div className="action-buttons my-4">
                         {infoVaultObj.notes.trim().length >= 1 && (
                             <button
-                                className="px-3 py-1 rounded bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200 mr-1"
+                                className="px-3 py-1 rounded-sm bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200 mr-1"
                                 onClick={() => {
                                     setIsExpandedDescription(!isExpandedDescription)
                                 }}
@@ -93,7 +93,7 @@ const ComponentInfoVaultItem = ({
                         )}
                         {infoVaultObj.aiSummary.trim().length >= 1 && (
                             <button
-                                className="px-3 py-1 rounded bg-purple-100 text-purple-800 text-sm font-semibold hover:bg-purple-200 mr-1"
+                                className="px-3 py-1 rounded-sm bg-purple-100 text-purple-800 text-sm font-semibold hover:bg-purple-200 mr-1"
                                 onClick={() => {
                                     setIsExpandedAiSummary(!isExpandedAiSummary)
                                 }}
@@ -103,7 +103,7 @@ const ComponentInfoVaultItem = ({
                         )}
                         <Link
                             to={`/user/info-vault?action=edit&id=${infoVaultObj._id}`}
-                            className="px-3 py-1 rounded bg-green-100 text-green-800 text-sm font-semibold hover:bg-green-200 mr-1"
+                            className="px-3 py-1 rounded-sm bg-green-100 text-green-800 text-sm font-semibold hover:bg-green-200 mr-1"
                         >
                             <LucideEdit
                                 className="w-4 h-4 inline-block mr-2"
@@ -112,7 +112,7 @@ const ComponentInfoVaultItem = ({
                             Edit
                         </Link>
                         <button
-                            className="px-3 py-1 rounded bg-red-100 text-red-800 text-sm font-semibold hover:bg-red-200 mr-1"
+                            className="px-3 py-1 rounded-sm bg-red-100 text-red-800 text-sm font-semibold hover:bg-red-200 mr-1"
                             onClick={deleteItem}
                         >
                             <LucideTrash2
@@ -126,12 +126,12 @@ const ComponentInfoVaultItem = ({
 
                 {/* description */}
                 {isExpandedDescription && (
-                    <p className="mb-2 whitespace-pre-wrap border border-gray-200 rounded p-1">{infoVaultObj.notes}</p>
+                    <p className="mb-2 whitespace-pre-wrap border border-gray-200 rounded-sm p-1">{infoVaultObj.notes}</p>
                 )}
 
                 {/* ai summary */}
                 {isExpandedAiSummary && (
-                    <p className="mb-2 whitespace-pre-wrap border border-gray-200 rounded p-1">{infoVaultObj.aiSummary}</p>
+                    <p className="mb-2 whitespace-pre-wrap border border-gray-200 rounded-sm p-1">{infoVaultObj.aiSummary}</p>
                 )}
             </Fragment>
         )
@@ -139,7 +139,7 @@ const ComponentInfoVaultItem = ({
 
     return (
         <div
-            className="my-2 py-2 bg-white rounded px-2"
+            className="my-2 py-2 bg-white rounded-sm px-2"
             style={{ borderBottom: '1px solid #ccc' }}
         >
             {isDeleted && (

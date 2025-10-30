@@ -188,7 +188,7 @@ const AiSuggestionTasks = () => {
     }
 
     return (
-        <div className="mb-2 bg-white rounded-lg shadow border border-gray-200 p-2 md:p-3">
+        <div className="mb-2 bg-white rounded-sm shadow border border-gray-200 p-2 md:p-3">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 mb-1">
                 <div className="flex items-center gap-1.5 flex-1">
                     <LucideZap className="w-4 h-4 text-blue-600" />
@@ -199,7 +199,7 @@ const AiSuggestionTasks = () => {
                         onClick={() => {
                             setAutoLoad(!autoLoad);
                         }}
-                        className={`p-1 px-2 rounded transition-colors text-xs flex items-center flex-1 sm:flex-initial justify-center ${autoLoad ? 'bg-green-100 hover:bg-green-200' : 'bg-gray-100 hover:bg-gray-200'}`}
+                        className={`p-1 px-2 rounded-sm transition-colors text-xs flex items-center flex-1 sm:flex-initial justify-center ${autoLoad ? 'bg-green-100 hover:bg-green-200' : 'bg-gray-100 hover:bg-gray-200'}`}
                         title={autoLoad ? 'Auto-load enabled' : 'Auto-load disabled'}
                     >
                         <LucideZap
@@ -212,7 +212,7 @@ const AiSuggestionTasks = () => {
                             setRandomNum(Math.random());
                         }}
                         disabled={requestAiTaskSuggestions.loading}
-                        className="p-1 rounded hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="p-1 rounded-sm hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         title="Refresh task suggestions"
                     >
                         <LucideRefreshCw
@@ -229,7 +229,7 @@ const AiSuggestionTasks = () => {
             )}
 
             {requestAiTaskSuggestions.loading && (
-                <div className="border border-gray-200 rounded p-2 my-2 text-center">
+                <div className="border border-gray-200 rounded-sm p-2 my-2 text-center">
                     <p className="text-xs text-gray-600">
                         <LucideLoader2 className="w-4 h-4 text-gray-600 inline-block ml-1 animate-spin inline-block mr-1" 
                             style={{
@@ -242,17 +242,17 @@ const AiSuggestionTasks = () => {
                 </div>
             )}
             {!requestAiTaskSuggestions.loading && requestAiTaskSuggestions.success.length > 0 && (
-                <p className="text-xs text-green-600 border border-green-200 rounded p-2 my-2 bg-green-50">{requestAiTaskSuggestions.success}</p>
+                <p className="text-xs text-green-600 border border-green-200 rounded-sm p-2 my-2 bg-green-50">{requestAiTaskSuggestions.success}</p>
             )}
             {!requestAiTaskSuggestions.loading && requestAiTaskSuggestions.error.length > 0 && (
-                <p className="text-xs text-red-600 border border-red-200 rounded p-2 my-2 bg-red-50">{requestAiTaskSuggestions.error}</p>
+                <p className="text-xs text-red-600 border border-red-200 rounded-sm p-2 my-2 bg-red-50">{requestAiTaskSuggestions.error}</p>
             )}
 
             {/* list */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                 {taskSuggestions.map((task: TaskSuggestion, index: number) => {                    
                     return (
-                        <div key={task._id || index} className="p-2 rounded border border-gray-200 bg-gray-50">
+                        <div key={task._id || index} className="p-2 rounded-sm border border-gray-200 bg-gray-50">
                             <div className="flex flex-col h-full">
                                 <div className="flex-1">
                                     <p className={`text-xs md:text-sm text-gray-800 font-medium mb-1`}>
@@ -262,17 +262,17 @@ const AiSuggestionTasks = () => {
                                         {task.taskDescription}
                                     </p>
                                     <div className="flex flex-wrap items-center gap-1 mb-2">
-                                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">
+                                        <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-gray-100 text-gray-700">
                                             {task.taskWorkspaceName}
                                         </span>
-                                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">
+                                        <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-gray-100 text-gray-700">
                                             Due {formatDueDate(task.taskDueDate)}
                                         </span>
-                                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${getPriorityColor(task.taskPriority)}`}>
+                                        <span className={`text-[10px] px-1.5 py-0.5 rounded-sm ${getPriorityColor(task.taskPriority)}`}>
                                             {task.taskPriority} priority
                                         </span>
                                         {task.taskTags && task.taskTags.length > 0 && (
-                                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-300">
+                                            <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-blue-50 text-blue-700 border border-blue-300">
                                                 {task.taskTags[0]}
                                             </span>
                                         )}
@@ -280,7 +280,7 @@ const AiSuggestionTasks = () => {
                                 </div>
                                 {task.isAdded}
                                 {task.isAdded && (
-                                    <div className="text-xs text-green-600 border border-green-200 rounded p-2 my-2 bg-green-50">
+                                    <div className="text-xs text-green-600 border border-green-200 rounded-sm p-2 my-2 bg-green-50">
                                         <p className="mb-1">Task added successfully!</p>
                                         <a 
                                             href={`/user/task?workspace=${task.taskWorkspaceId}&edit-task-id=${task._id}`}
@@ -295,7 +295,7 @@ const AiSuggestionTasks = () => {
                                 {!task.isAdded && (
                                     <button
                                         onClick={() => addTask(task)}
-                                        className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded w-full"
+                                        className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-sm w-full"
                                     >
                                         Add Task
                                     </button>

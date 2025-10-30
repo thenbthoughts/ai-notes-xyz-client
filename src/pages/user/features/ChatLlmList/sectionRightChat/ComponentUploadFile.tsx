@@ -81,7 +81,7 @@ const ComponentUploadFile = ({
             <input
                 type="file"
                 onChange={handleFileChange}
-                className="mb-4 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="mb-4 p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                 multiple
                 hidden
                 ref={fileInputRef}

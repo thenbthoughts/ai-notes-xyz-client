@@ -175,7 +175,7 @@ const ComponentTaskWorkspaceSelect = ({
                 />
             )}
             {workspaces.length === 0 && (
-                <div className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     No workspaces found
                 </div>
             )}
@@ -229,7 +229,7 @@ const ComponentNotesWorkspaceSelect = ({
                 />
             )}
             {workspaces.length === 0 && (
-                <div className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     No workspaces found
                 </div>
             )}
@@ -348,7 +348,7 @@ const Search = () => {
 
     const renderFilters = () => {
         return (
-            <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-4">
+            <div className="bg-white border border-gray-200 rounded-sm p-4 space-y-4">
                 {/* Filter Toggle Button */}
                 <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
@@ -417,14 +417,14 @@ const Search = () => {
 
                         {/* Task-specific filters */}
                         {filters.filterEventTypeTasks && (
-                            <div className="space-y-3 border border-gray-300 rounded-lg p-3">
+                            <div className="space-y-3 border border-gray-300 rounded-sm p-3">
                                 <h4 className="text-sm font-semibold text-gray-700">Task Filters</h4>
                                 
                                 <div>
                                     <label className="text-sm font-medium text-gray-700">Task Status:</label>
                                     <div className="flex gap-2 mt-1">
                                         <button
-                                            className={`px-3 py-1 rounded text-sm ${filterTaskIsCompleted === 'all'
+                                            className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsCompleted === 'all'
                                                 ? 'bg-blue-600 text-white'
                                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                                 }`}
@@ -433,7 +433,7 @@ const Search = () => {
                                             All
                                         </button>
                                         <button
-                                            className={`px-3 py-1 rounded text-sm ${filterTaskIsCompleted === 'completed'
+                                            className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsCompleted === 'completed'
                                                 ? 'bg-blue-600 text-white'
                                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                                 }`}
@@ -442,7 +442,7 @@ const Search = () => {
                                             Completed
                                         </button>
                                         <button
-                                            className={`px-3 py-1 rounded text-sm ${filterTaskIsCompleted === 'not-completed'
+                                            className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsCompleted === 'not-completed'
                                                 ? 'bg-blue-600 text-white'
                                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                                 }`}
@@ -457,7 +457,7 @@ const Search = () => {
                                     <label className="text-sm font-medium text-gray-700">Archive Status:</label>
                                     <div className="flex gap-2 mt-1">
                                         <button
-                                            className={`px-3 py-1 rounded text-sm ${filterTaskIsArchived === 'all'
+                                            className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsArchived === 'all'
                                                 ? 'bg-blue-600 text-white'
                                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                                 }`}
@@ -466,7 +466,7 @@ const Search = () => {
                                             All
                                         </button>
                                         <button
-                                            className={`px-3 py-1 rounded text-sm ${filterTaskIsArchived === 'archived'
+                                            className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsArchived === 'archived'
                                                 ? 'bg-blue-600 text-white'
                                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                                 }`}
@@ -475,7 +475,7 @@ const Search = () => {
                                             Archived
                                         </button>
                                         <button
-                                            className={`px-3 py-1 rounded text-sm ${filterTaskIsArchived === 'not-archived'
+                                            className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsArchived === 'not-archived'
                                                 ? 'bg-blue-600 text-white'
                                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                                 }`}
@@ -498,7 +498,7 @@ const Search = () => {
 
                         {/* Notes-specific filters */}
                         {filters.filterEventTypeNotes && (
-                            <div className="space-y-3 border border-gray-300 rounded-lg p-3">
+                            <div className="space-y-3 border border-gray-300 rounded-sm p-3">
                                 <h4 className="text-sm font-semibold text-gray-700">Notes Filters</h4>
                                 
                                 <div>
@@ -514,7 +514,7 @@ const Search = () => {
                         {/*  */}
                         {/* Life Event-specific filters */}
                         {filters.filterEventTypeLifeEvents && (
-                            <div className="space-y-3 border border-gray-300 rounded-lg p-3">
+                            <div className="space-y-3 border border-gray-300 rounded-sm p-3">
                                 <h4 className="text-sm font-semibold text-gray-700">Life Event Filters</h4>
                                 <div>
                                     <label className="text-sm font-medium text-gray-700">Life Event Search Diary:</label>
@@ -619,13 +619,13 @@ const Search = () => {
         return (
             <div
                 key={item._id}
-                className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="bg-white border border-gray-200 rounded-sm p-4 hover:shadow-md transition-shadow"
             >
                 <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                         {/* Header with type badge and link */}
                         <div className="flex items-center gap-2 mb-2">
-                            <span className={`text-xs px-2 py-1 rounded-full font-medium ${eventTypeColor}`}>
+                            <span className={`text-xs px-2 py-1 rounded-sm font-medium ${eventTypeColor}`}>
                                 {eventTypeLabel}
                             </span>
                             <Link
@@ -679,11 +679,11 @@ const Search = () => {
                             )}
                             {item.fromCollection === 'tasks' && item.taskInfo && (
                                 <Fragment>
-                                    <span className={`px-2 py-0.5 rounded ${item.taskInfo.isCompleted ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                    <span className={`px-2 py-0.5 rounded-sm ${item.taskInfo.isCompleted ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                                         {item.taskInfo.isCompleted ? 'Completed' : 'Not Completed'}
                                     </span>
                                     {item.taskInfo.isArchived && (
-                                        <span className="px-2 py-0.5 rounded bg-gray-200 text-gray-600">
+                                        <span className="px-2 py-0.5 rounded-sm bg-gray-200 text-gray-600">
                                             Archived
                                         </span>
                                     )}
@@ -742,7 +742,7 @@ const Search = () => {
                             placeholder="Search for anything..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+                            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
                             autoFocus
                         />
                     </div>
@@ -755,7 +755,7 @@ const Search = () => {
 
                 {/* Results Count */}
                 <div className="mb-4">
-                    <div className="text-sm text-gray-600 bg-white border border-gray-200 rounded-lg px-4 py-2">
+                    <div className="text-sm text-gray-600 bg-white border border-gray-200 rounded-sm px-4 py-2">
                         {isLoading ? (
                             <span>Loading...</span>
                         ) : (
@@ -774,7 +774,7 @@ const Search = () => {
 
                 {/* Empty State */}
                 {list.length === 0 && !isLoading && (
-                    <div className="text-center py-12 bg-white border border-gray-200 rounded-lg">
+                    <div className="text-center py-12 bg-white border border-gray-200 rounded-sm">
                         <LucideSearch className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                         <h3 className="text-lg font-medium text-gray-900 mb-2">
                             {search ? 'No results found' : 'Start searching'}
@@ -794,7 +794,7 @@ const Search = () => {
                         <button
                             onClick={() => setPage(page - 1)}
                             disabled={page === 1}
-                            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors bg-white"
+                            className="px-4 py-2 border border-gray-300 rounded-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors bg-white"
                         >
                             ← Previous
                         </button>
@@ -804,7 +804,7 @@ const Search = () => {
                         <button
                             onClick={() => setPage(page + 1)}
                             disabled={page >= Math.ceil(totalCount / perPage)}
-                            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors bg-white"
+                            className="px-4 py-2 border border-gray-300 rounded-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors bg-white"
                         >
                             Next →
                         </button>

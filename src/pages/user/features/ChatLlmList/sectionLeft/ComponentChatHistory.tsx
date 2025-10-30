@@ -157,7 +157,7 @@ const ComponentChatHistory = () => {
                         id="favouriteCheckbox"
                         checked={isFavourite === 'true'}
                         onChange={(e) => setIsFavourite(e.target.checked ? 'true' : '')}
-                        className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                        className="h-4 w-4 text-indigo-600 border-gray-300 rounded-sm focus:ring-indigo-500"
                     />
                     <label
                         htmlFor="favouriteCheckbox"
@@ -187,7 +187,7 @@ const ComponentChatHistory = () => {
             <div className="mb-4">
                 <Link
                     to="/user/chat"
-                    className="w-full p-1 text-white bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 rounded-md shadow-sm hover:from-indigo-600 hover:via-purple-700 hover:to-pink-600 transition-colors duration-300 block text-center py-2"
+                    className="w-full p-1 text-white bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 rounded-sm shadow-sm hover:from-indigo-600 hover:via-purple-700 hover:to-pink-600 transition-colors duration-300 block text-center py-2"
                 >
                     + Add Chat
                 </Link>
@@ -199,7 +199,7 @@ const ComponentChatHistory = () => {
                     debounceTimeout={500}
                     type="text"
                     placeholder="Search chat history..."
-                    className="border rounded-lg p-2 w-full"
+                    className="border rounded-sm p-2 w-full"
                     onChange={(e) => setSearchTerm(e.target.value)}
                     value={searchTerm}
                 />
@@ -212,7 +212,7 @@ const ComponentChatHistory = () => {
             <div className="space-y-3">
                 {loading && (
                     <div className="flex justify-center items-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+                        <div className="animate-spin rounded-sm h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
                     </div>
                 )}
                 {items.map((item) => (
@@ -220,7 +220,7 @@ const ComponentChatHistory = () => {
                         <Link
                             to={`/user/chat?id=${item._id}`}
                             className={
-                                `block p-3 rounded-lg border cursor-pointer transition-colors duration-150 ease-in-out 
+                                `block p-3 rounded-sm border cursor-pointer transition-colors duration-150 ease-in-out 
                                 ${item._id === activeChatId
                                     ? 'bg-blue-100 border-blue-600'
                                     : 'bg-gray-100 border-gray-300 hover:border-gray-600'
@@ -288,12 +288,12 @@ const ComponentChatHistory = () => {
                     previousLabel="< previous"
                     renderOnZeroPageCount={null}
                     containerClassName="flex flex-wrap justify-center items-center gap-1 sm:space-x-1"
-                    pageClassName="border border-gray-300 rounded-md hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                    previousClassName="border border-gray-300 rounded-md hover:bg-gray-200 text-base sm:text-lg m-0.5"
+                    pageClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
+                    previousClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
                     previousLinkClassName="text-gray-700 px-2 sm:px-3"
-                    nextClassName="border border-gray-300 rounded-md hover:bg-gray-200 text-base sm:text-lg m-0.5"
+                    nextClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
                     nextLinkClassName="text-gray-700 px-2 sm:px-3"
-                    breakClassName="border border-gray-300 rounded-md text-base sm:text-lg m-0.5"
+                    breakClassName="border border-gray-300 rounded-sm text-base sm:text-lg m-0.5"
                     breakLinkClassName="text-gray-700 px-2 sm:px-3"
                     activeLinkClassName="bg-blue-500 text-white"
                     pageLinkClassName="text-gray-700 px-2 sm:px-3"
@@ -305,7 +305,7 @@ const ComponentChatHistory = () => {
 
 const ComponentChatHistoryRender = () => {
     return (
-        // Main container with light background, padding, rounded corners and max width for presentation
+        // Main container with light background, padding, rounded-sm corners and max width for presentation
         <div
             style={{
                 paddingTop: '10px',
@@ -313,7 +313,7 @@ const ComponentChatHistoryRender = () => {
             }}
         >
             <div
-                className="bg-white rounded-lg shadow-md"
+                className="bg-white rounded-sm shadow-md"
                 style={{
                     paddingTop: '10px',
                     paddingBottom: '10px',
@@ -335,7 +335,7 @@ const ComponentChatHistoryRender = () => {
 
 const ComponentChatHistoryModelRender = () => {
     return (
-        // Main container with light background, padding, rounded corners and max width for presentation
+        // Main container with light background, padding, rounded-sm corners and max width for presentation
         <div
             style={{
                 position: 'fixed',

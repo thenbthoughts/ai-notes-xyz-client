@@ -49,7 +49,7 @@ const ComponentFilterAiCategory = () => {
                 <Fragment>
                     {loading && (
                         <select
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                             value=""
                             onChange={() => { }}
                         >
@@ -62,7 +62,7 @@ const ComponentFilterAiCategory = () => {
                                 AI Sub Category
                             </label>
                             <select
-                                className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 value={aiSubCategory}
                                 onChange={(e) => {
                                     setAiSubCategory(e.target.value);

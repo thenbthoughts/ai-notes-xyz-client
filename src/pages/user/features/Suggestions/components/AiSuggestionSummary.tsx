@@ -186,7 +186,7 @@ const AiSuggestionsDiary = () => {
     };
 
     return (
-        <div className="mb-2 bg-white rounded-lg shadow border border-gray-200 p-2 md:p-3">
+        <div className="mb-2 bg-white rounded-sm shadow border border-gray-200 p-2 md:p-3">
             <div className="flex items-center gap-1.5 mb-1">
                 <LucideLightbulb className="w-4 h-4 text-amber-600" />
                 <h2 className="text-sm md:text-base font-bold text-gray-800">
@@ -206,37 +206,37 @@ const AiSuggestionsDiary = () => {
             <div>
                 <div className="flex flex-wrap gap-2 mb-2">
                     {dailyAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
                             <input type="checkbox" checked={showDaily} onChange={e => setShowDaily(e.target.checked)} />
                             Today
                         </label>
                     )}
                     {yesterdayAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
                             <input type="checkbox" checked={showYesterday} onChange={e => setShowYesterday(e.target.checked)} />
                             Yesterday
                         </label>
                     )}
                     {currentWeekAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
                             <input type="checkbox" checked={showWeekly} onChange={e => setShowWeekly(e.target.checked)} />
                             This week
                         </label>
                     )}
                     {lastWeekAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
                             <input type="checkbox" checked={showLastWeek} onChange={e => setShowLastWeek(e.target.checked)} />
                             Last week
                         </label>
                     )}
                     {currentMonthAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
                             <input type="checkbox" checked={showMonthly} onChange={e => setShowMonthly(e.target.checked)} />
                             This month
                         </label>
                     )}
                     {lastMonthAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
                             <input type="checkbox" checked={showLastMonth} onChange={e => setShowLastMonth(e.target.checked)} />
                             Last month
                         </label>
@@ -246,7 +246,7 @@ const AiSuggestionsDiary = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     {/* Daily Diary - Today */}
                     {showDaily && dailyAiDiary.content && (
-                        <div className="p-2 rounded border border-cyan-200 bg-cyan-50">
+                        <div className="p-2 rounded-sm border border-cyan-200 bg-cyan-50">
                             <p className="text-xs text-gray-600">
                                 {new Date().toLocaleDateString()}
                             </p>
@@ -272,7 +272,7 @@ const AiSuggestionsDiary = () => {
 
                     {/* Daily Diary - Yesterday */}
                     {showYesterday && yesterdayAiDiary.content && (
-                        <div className="p-2 rounded border border-cyan-200 bg-cyan-50">
+                        <div className="p-2 rounded-sm border border-cyan-200 bg-cyan-50">
                             <p className="text-xs text-gray-600">
                                 {new Date(new Date().valueOf() - 1000 * 60 * 60 * 24).toLocaleDateString()}
                             </p>
@@ -298,7 +298,7 @@ const AiSuggestionsDiary = () => {
 
                     {/* Weekly Diary - This Week */}
                     {showWeekly && currentWeekAiDiary.content && (
-                        <div className="p-2 rounded border border-blue-200 bg-blue-50">
+                        <div className="p-2 rounded-sm border border-blue-200 bg-blue-50">
                             <p className="text-xs text-gray-600">This Week</p>
                             <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
                                 AI Weekly Diary
@@ -322,7 +322,7 @@ const AiSuggestionsDiary = () => {
 
                     {/* Weekly Diary - Last Week */}
                     {showLastWeek && lastWeekAiDiary.content && (
-                        <div className="p-2 rounded border border-amber-200 bg-amber-50">
+                        <div className="p-2 rounded-sm border border-amber-200 bg-amber-50">
                             <p className="text-xs text-gray-600">Last Week</p>
                             <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
                                 AI Last Week Diary
@@ -346,7 +346,7 @@ const AiSuggestionsDiary = () => {
 
                     {/* Monthly Diary - This Month */}
                     {showMonthly && currentMonthAiDiary.content && (
-                        <div className="p-2 rounded border border-purple-200 bg-purple-50">
+                        <div className="p-2 rounded-sm border border-purple-200 bg-purple-50">
                             <p className="text-xs text-gray-600">This Month</p>
                             <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
                                 AI Monthly Diary
@@ -370,7 +370,7 @@ const AiSuggestionsDiary = () => {
 
                     {/* Monthly Diary - Last Month */}
                     {showLastMonth && lastMonthAiDiary.content && (
-                        <div className="p-2 rounded border border-indigo-200 bg-indigo-50">
+                        <div className="p-2 rounded-sm border border-indigo-200 bg-indigo-50">
                             <p className="text-xs text-gray-600">Last Month</p>
                             <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
                                 AI Last Month Diary

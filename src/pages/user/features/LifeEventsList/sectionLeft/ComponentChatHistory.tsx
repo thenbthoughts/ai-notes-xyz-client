@@ -93,13 +93,13 @@ const ComponentChatHistory = () => {
                 <label className="block text-sm font-medium">Date Range</label>
                 <input
                     type="date"
-                    className="p-2 border border-gray-300 rounded-lg block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="p-2 border border-gray-300 rounded-sm block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     value={dateRange.startDate ? dateRange.startDate.toISOString().split('T')[0] : ''}
                     onChange={(e) => setDateRange({ ...dateRange, startDate: new Date(e.target.value) })}
                 />
                 <input
                     type="date"
-                    className="p-2 border border-gray-300 rounded-lg block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-2"
+                    className="p-2 border border-gray-300 rounded-sm block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-2"
                     value={dateRange.endDate ? dateRange.endDate.toISOString().split('T')[0] : ''}
                     onChange={(e) => setDateRange({ ...dateRange, endDate: new Date(e.target.value) })}
                 />
@@ -125,15 +125,15 @@ const ComponentChatHistory = () => {
 
             <div className="flex space-x-2 mb-4">
                 <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
                     onClick={lifeEventAddAxiosLocal}
                 >+ Add</button>
                 <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
                     onClick={clearFilters}
                 >Clear Filters</button>
                 <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
                 >Ai Extract</button>
             </div>
 
@@ -147,7 +147,7 @@ const ComponentChatHistory = () => {
                     debounceTimeout={500}
                     type="text"
                     placeholder="Search..."
-                    className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="border border-gray-300 rounded-sm p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     onChange={(e) => setSearchTerm(e.target.value)}
                     value={searchTerm}
                 />
@@ -281,7 +281,7 @@ const ComponentChatHistory = () => {
 
 const ComponentChatHistoryRender = () => {
     return (
-        // Main container with light background, padding, rounded corners and max width for presentation
+        // Main container with light background, padding, rounded-sm corners and max width for presentation
         <div
             style={{
                 paddingTop: '10px',
@@ -289,7 +289,7 @@ const ComponentChatHistoryRender = () => {
             }}
         >
             <div
-                className="bg-white rounded-lg shadow-md"
+                className="bg-white rounded-sm shadow-md"
                 style={{
                     paddingTop: '10px',
                     paddingBottom: '10px',
@@ -311,7 +311,7 @@ const ComponentChatHistoryRender = () => {
 
 const ComponentChatHistoryModelRender = () => {
     return (
-        // Main container with light background, padding, rounded corners and max width for presentation
+        // Main container with light background, padding, rounded-sm corners and max width for presentation
         <div
             style={{
                 position: 'fixed',

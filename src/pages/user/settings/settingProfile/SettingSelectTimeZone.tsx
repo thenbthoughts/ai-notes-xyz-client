@@ -73,7 +73,7 @@ const SettingSelectTimeZone = () => {
                         Set timezone
                     </label>
                     <select
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={timeZoneRegion}
                         onChange={(e) => {
                             const tzName = e.target.value;
@@ -104,14 +104,14 @@ const SettingSelectTimeZone = () => {
                 </div>
                 
                 {request.success !== "" && (
-                    <p className="rounded px-2 bg-green-100 text-green-500 text-sm py-2">{request.success}</p>
+                    <p className="rounded-sm px-2 bg-green-100 text-green-500 text-sm py-2">{request.success}</p>
                 )}
                 {request.error !== "" && (
-                    <p className="rounded px-2 bg-red-100 text-red-500 text-sm py-2">{request.error}</p>
+                    <p className="rounded-sm px-2 bg-red-100 text-red-500 text-sm py-2">{request.error}</p>
                 )}
                 {request.loading && (
                     <button
-                        className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200"
+                        className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
                     >
                         Updating...
                     </button>
@@ -119,7 +119,7 @@ const SettingSelectTimeZone = () => {
                 {!request.loading && (
                     <button
                         onClick={handleUpdate}
-                        className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200"
+                        className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
                     >
                         Update timezone
                     </button>

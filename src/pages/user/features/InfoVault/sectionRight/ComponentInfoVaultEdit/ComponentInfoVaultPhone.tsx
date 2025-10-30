@@ -65,7 +65,7 @@ const PhoneItem = ({
     }, [formData]);
 
     return (
-        <div className="border border-gray-200 bg-white p-3 rounded-lg hover:shadow-sm transition-shadow">
+        <div className="border border-gray-200 bg-white p-3 rounded-sm hover:shadow-sm transition-shadow">
             <div className="flex flex-col gap-2">
                 <div className="flex flex-col sm:flex-row gap-2">
                     <DebounceInput
@@ -74,7 +74,7 @@ const PhoneItem = ({
                         placeholder="Country code (e.g., +1)"
                         value={formData.countryCode}
                         onChange={(e) => setFormData({ ...formData, countryCode: e.target.value })}
-                        className="sm:w-32 px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                        className="sm:w-32 px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                     />
                     <DebounceInput
                         debounceTimeout={1000}
@@ -82,7 +82,7 @@ const PhoneItem = ({
                         placeholder="Enter phone number"
                         value={formData.phoneNumber}
                         onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                        className="flex-1 px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                        className="flex-1 px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                     />
                     <DebounceInput
                         debounceTimeout={1000}
@@ -90,7 +90,7 @@ const PhoneItem = ({
                         placeholder="Label (e.g., mobile, work, home)"
                         value={formData.label}
                         onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-                        className="sm:w-40 px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                        className="sm:w-40 px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                     />
                 </div>
 
@@ -100,7 +100,7 @@ const PhoneItem = ({
                             type="checkbox"
                             checked={formData.isPrimary}
                             onChange={(e) => setFormData({ ...formData, isPrimary: e.target.checked })}
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 focus:ring-2"
                         />
                         <span className="text-sm text-gray-700 flex items-center gap-1">
                             <LucideStar className="w-3 h-3" />
@@ -112,7 +112,7 @@ const PhoneItem = ({
 
             <div className="flex gap-1 mt-2">
                 <button
-                    className="text-blue-400 hover:text-blue-600 p-1 rounded-full hover:bg-blue-50 transition-colors"
+                    className="text-blue-400 hover:text-blue-600 p-1 rounded-sm hover:bg-blue-50 transition-colors"
                     title="Save phone"
                     onClick={() => handleSavePhone()}
                 >
@@ -124,7 +124,7 @@ const PhoneItem = ({
                     <span className="pl-1 inline">Save</span>
                 </button>
                 <button
-                    className="text-red-400 hover:text-red-600 p-1 rounded-full hover:bg-red-50 transition-colors"
+                    className="text-red-400 hover:text-red-600 p-1 rounded-sm hover:bg-red-50 transition-colors"
                     title="Delete phone"
                     onClick={() => handleDelete()}
                 >
@@ -188,7 +188,7 @@ const ComponentInfoVaultPhone = ({ infoVaultId }: { infoVaultId: string }) => {
             {/* Add Phone Button */}
             <div className="flex flex-col sm:flex-row gap-2">
                 <button
-                    className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors duration-200 flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors duration-200 flex items-center justify-center gap-2"
                     disabled={uploading}
                     onClick={handleAddPhone}
                     type="button"
@@ -205,7 +205,7 @@ const ComponentInfoVaultPhone = ({ infoVaultId }: { infoVaultId: string }) => {
             ) : (
                 <div className="space-y-2">
                     {phones.length === 0 && (
-                        <div className="text-gray-400 text-sm py-4 text-center bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="text-gray-400 text-sm py-4 text-center bg-gray-50 rounded-sm border border-gray-200">
                             No phones added yet.
                         </div>
                     )}

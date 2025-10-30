@@ -14,7 +14,7 @@ const ComponentScheduleTaskAdd = ({
 }) => {
 
     return (
-        <div className="py-2 border border-gray-200 rounded-lg p-4">
+        <div className="py-2 border border-gray-200 rounded-sm p-4">
 
             <h1 className="text-2xl font-bold text-gray-800 my-4">Task Add</h1>
 
@@ -24,7 +24,7 @@ const ComponentScheduleTaskAdd = ({
                 <input
                     type="text"
                     value={formDataTaskAdd.taskTitle}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                     onChange={(e) => setFormDataTaskAdd({ ...formDataTaskAdd, taskTitle: e.target.value })}
                 />
             </div>
@@ -111,7 +111,7 @@ const ComponentScheduleTaskAdd = ({
                                     newSubtaskList[index] = e.target.value;
                                     setFormDataTaskAdd({ ...formDataTaskAdd, subtaskArr: newSubtaskList });
                                 }}
-                                className="flex-1 border border-gray-300 rounded px-1 p-1 w-full"
+                                className="flex-1 border border-gray-300 rounded-sm px-1 p-1 w-full"
                                 placeholder="Enter subtask"
                             />
                             <button
@@ -120,7 +120,7 @@ const ComponentScheduleTaskAdd = ({
                                     const newSubtaskList = formDataTaskAdd.subtaskArr.filter((_, i) => i !== index);
                                     setFormDataTaskAdd({ ...formDataTaskAdd, subtaskArr: newSubtaskList });
                                 }}
-                                className="px-1 py-0.5 bg-red-500 text-white rounded hover:bg-red-600 flex items-center"
+                                className="px-1 py-0.5 bg-red-500 text-white rounded-sm hover:bg-red-600 flex items-center"
                             >
                                 <LucideTrash2 className="w-4 h-4" />
                             </button>
@@ -134,7 +134,7 @@ const ComponentScheduleTaskAdd = ({
                                 subtaskArr: [...formDataTaskAdd.subtaskArr, '']
                             });
                         }}
-                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        className="px-3 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-600"
                     >
                         Add Subtask
                     </button>
@@ -165,7 +165,7 @@ const ComponentScheduleTaskAdd = ({
                             type="number"
                             value={formDataTaskAdd.taskDeadlineDays}
                             onChange={(e) => setFormDataTaskAdd({ ...formDataTaskAdd, taskDeadlineDays: Number(e.target.value) })}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         />
                         <label htmlFor="taskDeadlineDays" className="ml-2 text-sm text-gray-600">days</label>
                     </div>
@@ -193,7 +193,7 @@ const ComponentScheduleTaskAdd = ({
                     <label className="block text-sm font-medium text-gray-700">Task AI Context</label>
                     <textarea
                         value={formDataTaskAdd.taskAiContext}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 min-h-[100px] resize-vertical"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2 min-h-[100px] resize-vertical"
                         onChange={(e) => setFormDataTaskAdd({ ...formDataTaskAdd, taskAiContext: e.target.value })}
                         placeholder="Enter task AI context..."
                     />

@@ -82,7 +82,7 @@ const TextAndFileInput = ({
     return (
         <div className="w-full">
             <textarea
-                className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 resize-none bg-white"
+                className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-blue-500 resize-none bg-white"
                 placeholder={"Type your message or drag & drop any files here..."}
                 ref={textareaRef}
                 value={value}
@@ -207,7 +207,7 @@ const ComponentFilesDisplay = ({
                     };
 
                     return (
-                        <div key={index} className="flex-shrink-0 bg-gray-100 p-2 rounded-md min-w-[200opx] max-w-[200px]">
+                        <div key={index} className="flex-shrink-0 bg-gray-100 p-2 rounded-sm min-w-[200opx] max-w-[200px]">
                             <div className="flex items-center gap-2">
                                 {getFileIcon(file)}
                                 <div>
@@ -463,7 +463,7 @@ const ComponentNotesAdd = ({
 
                 {/* auto select context notes */}
                 <button
-                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded whitespace-nowrap"
+                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded-sm whitespace-nowrap"
                     style={{ height: '40px' }}
                     onClick={() => {
                         handleAutoSelectContext({ threadId: threadId });

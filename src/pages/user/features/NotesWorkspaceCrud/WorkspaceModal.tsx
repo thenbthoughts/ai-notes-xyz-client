@@ -86,7 +86,7 @@ const WorkspaceModal = ({ isOpen, onClose, editingWorkspace, onSuccess }: Worksp
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="bg-white rounded-sm p-6 w-full max-w-md mx-4">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold text-gray-800">
                         {editingWorkspace ? 'Edit Workspace' : 'Add New Workspace'}
@@ -109,7 +109,7 @@ const WorkspaceModal = ({ isOpen, onClose, editingWorkspace, onSuccess }: Worksp
                             type="text"
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             placeholder="Enter workspace title"
                             disabled={loading}
                             required
@@ -123,7 +123,7 @@ const WorkspaceModal = ({ isOpen, onClose, editingWorkspace, onSuccess }: Worksp
                         <textarea
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             placeholder="Enter workspace description"
                             rows={3}
                             disabled={loading}
@@ -135,14 +135,14 @@ const WorkspaceModal = ({ isOpen, onClose, editingWorkspace, onSuccess }: Worksp
                             type="button"
                             onClick={handleClose}
                             disabled={loading}
-                            className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
+                            className="px-4 py-2 text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors disabled:opacity-50"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                            className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition-colors disabled:opacity-50"
                         >
                             {loading ? 'Saving...' : (editingWorkspace ? 'Update' : 'Create')}
                         </button>

@@ -61,28 +61,28 @@ const CustomFieldItem = ({
     }, [formData]);
 
     return (
-        <div className="border border-gray-200 bg-white p-3 rounded-lg hover:shadow-sm transition-shadow">
+        <div className="border border-gray-200 bg-white p-3 rounded-sm hover:shadow-sm transition-shadow">
             <div className="flex flex-col sm:flex-row gap-2">
                 <DebounceInput
                     debounceTimeout={1000}
                     type="text"
                     value={formData.key}
                     onChange={(e) => setFormData({ ...formData, key: e.target.value })}
-                    className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                    className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                 />
                 <DebounceInput
                     debounceTimeout={1000}
                     type="text"
                     value={formData.value}
                     onChange={(e) => setFormData({ ...formData, value: e.target.value })}
-                    className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                    className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                 />
             </div>
 
             <div className="flex gap-1">
                 <>
                     <button
-                        className="text-blue-400 hover:text-blue-600 p-1 rounded-full hover:bg-blue-50 transition-colors"
+                        className="text-blue-400 hover:text-blue-600 p-1 rounded-sm hover:bg-blue-50 transition-colors"
                         title="Edit custom field"
                         onClick={() => handleSaveField()}
                     >
@@ -94,7 +94,7 @@ const CustomFieldItem = ({
                         <span className="pl-1 inline">Save</span>
                     </button>
                     <button
-                        className="text-red-400 hover:text-red-600 p-1 rounded-full hover:bg-red-50 transition-colors"
+                        className="text-red-400 hover:text-red-600 p-1 rounded-sm hover:bg-red-50 transition-colors"
                         title="Delete custom field"
                         onClick={() => handleDelete()}
                     >
@@ -157,7 +157,7 @@ const ComponentInfoVaultCustomField = ({ infoVaultId }: { infoVaultId: string })
             {/* Add Custom Field Button */}
             <div className="flex flex-col sm:flex-row gap-2">
                 <button
-                    className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors duration-200 flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors duration-200 flex items-center justify-center gap-2"
                     disabled={uploading}
                     onClick={handleAddCustomField}
                     type="button"
@@ -174,7 +174,7 @@ const ComponentInfoVaultCustomField = ({ infoVaultId }: { infoVaultId: string })
             ) : (
                 <div className="space-y-2">
                     {customFields.length === 0 && (
-                        <div className="text-gray-400 text-sm py-4 text-center bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="text-gray-400 text-sm py-4 text-center bg-gray-50 rounded-sm border border-gray-200">
                             No custom fields added yet.
                         </div>
                     )}

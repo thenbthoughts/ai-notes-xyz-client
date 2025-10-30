@@ -159,7 +159,7 @@ const ComponentLifeEventsEdit = ({
                     <input
                         type="date"
                         value={formData.eventDateUtc?.substring(0, 10)} // Format the date for the input
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => {
                             setFormData({
                                 ...formData,
@@ -187,7 +187,7 @@ const ComponentLifeEventsEdit = ({
                     <input
                         type="text"
                         value={formData.title}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     />
                     {formError.title.length >= 1 && <p className="text-red-500 text-sm">{formError.title}</p>}
@@ -198,7 +198,7 @@ const ComponentLifeEventsEdit = ({
                     <label className="block text-sm font-medium text-gray-700">Description</label>
                     <textarea
                         value={formData.description}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         rows={10}
                     />
@@ -210,7 +210,7 @@ const ComponentLifeEventsEdit = ({
                         Category
                         <Link
                             to={'/user/life-events?action=category'}
-                            className="ml-2 p-0 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300 inline-block text-sm"
+                            className="ml-2 p-0 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300 inline-block text-sm"
                         >
                             <LucidePlus className="inline-block m-1"
                                 size={'20px'}
@@ -242,7 +242,7 @@ const ComponentLifeEventsEdit = ({
                     <label className="block text-sm font-medium text-gray-700">Event Impact *</label>
                     <select
                         value={formData.eventImpact}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, eventImpact: e.target.value })}
                     >
                         <option value="very-low">Very Low</option>
@@ -260,7 +260,7 @@ const ComponentLifeEventsEdit = ({
                         <label className="block text-sm font-medium text-gray-700">AI Tags</label>
                         <div className="mt-2">
                             {formData.aiTags.map((tag, index) => (
-                                <div key={index} className="inline-block bg-gray-100 rounded-md p-1 px-2 text-sm text-gray-600 mb-2 mr-2">
+                                <div key={index} className="inline-block bg-gray-100 rounded-sm p-1 px-2 text-sm text-gray-600 mb-2 mr-2">
                                     {tag}
                                 </div>
                             ))}
@@ -272,7 +272,7 @@ const ComponentLifeEventsEdit = ({
                 {formData.aiSummary.length > 0 && (
                     <div>
                         <label className="block text-sm font-medium text-gray-700">AI Summary</label>
-                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-3 text-gray-700 text-sm whitespace-pre-line break-words">
+                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-sm p-3 text-gray-700 text-sm whitespace-pre-line break-words">
                             {formData.aiSummary}
                         </div>
                     </div>
@@ -282,7 +282,7 @@ const ComponentLifeEventsEdit = ({
                 {formData.aiCategory.length > 0 && (
                     <div>
                         <label className="block text-sm font-medium text-gray-700">AI Category</label>
-                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-3 text-gray-700 text-sm whitespace-pre-line break-words">
+                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-sm p-3 text-gray-700 text-sm whitespace-pre-line break-words">
                             {formData?.aiCategory}
                             {formData?.aiSubCategory.length > 0 && (
                                 <span className='text-gray-500 px-3'>
@@ -302,7 +302,7 @@ const ComponentLifeEventsEdit = ({
             {requestEdit.loading && (
                 <div className="flex justify-between my-4">
                     <button
-                        className="px-3 py-1 rounded bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
+                        className="px-3 py-1 rounded-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
                     >
                         <LucideArrowLeft className="w-4 h-4 inline-block mr-2" />
                         Saving...
@@ -313,13 +313,13 @@ const ComponentLifeEventsEdit = ({
                 <div className="flex justify-between my-4">
                     <Link
                         to={'/user/life-events'}
-                        className="px-3 py-1 rounded bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
+                        className="px-3 py-1 rounded-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
                     >
                         <LucideArrowLeft className="w-4 h-4 inline-block mr-2" />
                         Back
                     </Link>
                     <button
-                        className="px-3 py-1 rounded bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200"
+                        className="px-3 py-1 rounded-sm bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200"
                         onClick={() => {
                             editRecord();
                         }}
@@ -389,7 +389,7 @@ const ComponentLifeEventsEditWrapper = ({
     }
 
     return (
-        <div className='bg-white rounded p-4'>
+        <div className='bg-white rounded-sm p-4'>
             <h1 className="text-3xl font-bold text-gray-800 my-4">Life Events {'->'} Edit</h1>
             {loading && (
                 <div className="text-center">
@@ -402,7 +402,7 @@ const ComponentLifeEventsEditWrapper = ({
                     <div className="text-center">
                         <p className="text-lg text-red-500">Record does not exist.</p>
                         <button
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600"
                             onClick={() => {
                                 navigate('/user/life-events');
                             }}

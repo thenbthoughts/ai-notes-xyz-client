@@ -52,12 +52,12 @@ const ComponentRightWrapper = ({
             className="p-1 md:p-3"
         >
 
-            <div className="mb-6 p-4 rounded-lg shadow-lg text-white bg-yellow-500">
+            <div className="mb-6 p-4 rounded-sm shadow-lg text-white bg-yellow-500">
                 <h1 className="text-3xl font-extrabold mb-2 drop-shadow-md">Notes</h1>
                 <p className="text-lg font-medium drop-shadow-sm">Notes are a great way to keep track of information. You can add, edit, and delete notes as you wish.</p>
                 <div>
                     <button 
-                        className="mt-3 px-4 py-2 bg-white text-yellow-600 font-semibold rounded-lg shadow-md hover:bg-yellow-50 hover:shadow-lg transition-all duration-200 ease-in-out"
+                        className="mt-3 px-4 py-2 bg-white text-yellow-600 font-semibold rounded-sm shadow-md hover:bg-yellow-50 hover:shadow-lg transition-all duration-200 ease-in-out"
                         onClick={async () => {
                             const result = await notesQuickDailyNotesAddAxios();
                             if (result.success.length > 0) {

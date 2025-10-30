@@ -849,7 +849,7 @@ const UserHomepageBackupDelete = () => {
 
     // Quick Stats Component
     const QuickStatsComponent = () => (
-        <div className="text-left p-3 border border-indigo-400 rounded-md shadow-md bg-gradient-to-r from-indigo-100 to-indigo-300 mb-2 hover:bg-indigo-200 transition duration-300">
+        <div className="text-left p-3 border border-indigo-400 rounded-sm shadow-md bg-gradient-to-r from-indigo-100 to-indigo-300 mb-2 hover:bg-indigo-200 transition duration-300">
             <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-bold text-indigo-800">
                     <LucideBarChart3 size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
@@ -859,14 +859,14 @@ const UserHomepageBackupDelete = () => {
                     <button
                         onClick={handleRefreshStats}
                         disabled={isLoading}
-                        className="p-1 rounded-full bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
+                        className="p-1 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
                         title="Refresh Stats (Ctrl+R)"
                     >
                         <LucideRefreshCw size={16} className={`text-indigo-600 ${isLoading ? 'animate-spin' : ''}`} />
                     </button>
                     <button
                         onClick={() => setIsStatsExpanded(!isStatsExpanded)}
-                        className="p-1 rounded-full bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
+                        className="p-1 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
                         title="Toggle Expand"
                     >
                         {isStatsExpanded ? 
@@ -880,14 +880,14 @@ const UserHomepageBackupDelete = () => {
             {isStatsExpanded && (
                 <div className="space-y-2">
                     {/* Progress Bar */}
-                    <div className="bg-white bg-opacity-50 rounded p-2">
+                    <div className="bg-white bg-opacity-50 rounded-sm p-2">
                         <div className="flex justify-between items-center mb-1">
                             <span className="text-xs text-indigo-600">Completion Progress</span>
                             <span className="text-xs font-semibold text-indigo-700">{completionPercentage}%</span>
                         </div>
-                        <div className="w-full bg-indigo-200 rounded-full h-2">
+                        <div className="w-full bg-indigo-200 rounded-sm h-2">
                             <div 
-                                className="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full transition-all duration-500 ease-out"
+                                className="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-sm transition-all duration-500 ease-out"
                                 style={{ width: `${completionPercentage}%` }}
                             ></div>
                         </div>
@@ -895,28 +895,28 @@ const UserHomepageBackupDelete = () => {
                     
                     <div className="grid grid-cols-2 gap-2 text-sm">
                         <div 
-                            className="bg-white bg-opacity-50 rounded p-2 cursor-pointer hover:bg-opacity-70 transition duration-200 transform hover:scale-105"
+                            className="bg-white bg-opacity-50 rounded-sm p-2 cursor-pointer hover:bg-opacity-70 transition duration-200 transform hover:scale-105"
                             onClick={() => showNotification('Total Tasks: ' + quickStats.totalTasks)}
                         >
                             <div className="font-semibold text-indigo-700">{quickStats.totalTasks}</div>
                             <div className="text-xs text-indigo-600">Total Tasks</div>
                         </div>
                         <div 
-                            className="bg-white bg-opacity-50 rounded p-2 cursor-pointer hover:bg-opacity-70 transition duration-200 transform hover:scale-105"
+                            className="bg-white bg-opacity-50 rounded-sm p-2 cursor-pointer hover:bg-opacity-70 transition duration-200 transform hover:scale-105"
                             onClick={() => showNotification('Completed Tasks: ' + quickStats.completedTasks)}
                         >
                             <div className="font-semibold text-green-700">{quickStats.completedTasks}</div>
                             <div className="text-xs text-green-600">Completed</div>
                         </div>
                         <div 
-                            className="bg-white bg-opacity-50 rounded p-2 cursor-pointer hover:bg-opacity-70 transition duration-200 transform hover:scale-105"
+                            className="bg-white bg-opacity-50 rounded-sm p-2 cursor-pointer hover:bg-opacity-70 transition duration-200 transform hover:scale-105"
                             onClick={() => showNotification('Pending Tasks: ' + quickStats.pendingTasks)}
                         >
                             <div className="font-semibold text-orange-700">{quickStats.pendingTasks}</div>
                             <div className="text-xs text-orange-600">Pending</div>
                         </div>
                         <div 
-                            className="bg-white bg-opacity-50 rounded p-2 cursor-pointer hover:bg-opacity-70 transition duration-200 transform hover:scale-105"
+                            className="bg-white bg-opacity-50 rounded-sm p-2 cursor-pointer hover:bg-opacity-70 transition duration-200 transform hover:scale-105"
                             onClick={() => showNotification('Total Notes: ' + quickStats.totalNotes)}
                         >
                             <div className="font-semibold text-blue-700">{quickStats.totalNotes}</div>
@@ -930,7 +930,7 @@ const UserHomepageBackupDelete = () => {
 
     // Time & Weather Component
     const TimeWeatherComponent = () => (
-        <div className="text-left p-3 border border-teal-400 rounded-md shadow-md bg-gradient-to-r from-teal-100 to-teal-300 mb-2 hover:bg-teal-200 transition duration-300">
+        <div className="text-left p-3 border border-teal-400 rounded-sm shadow-md bg-gradient-to-r from-teal-100 to-teal-300 mb-2 hover:bg-teal-200 transition duration-300">
             <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-bold text-teal-800">
                     <LucideClock size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
@@ -939,7 +939,7 @@ const UserHomepageBackupDelete = () => {
                 <div className="flex gap-1">
                     <button
                         onClick={toggleTimeFormat}
-                        className="p-1 rounded-full bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
+                        className="p-1 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
                         title={`Switch to ${is24HourFormat ? '12' : '24'}-hour format`}
                     >
                         {is24HourFormat ? 
@@ -949,7 +949,7 @@ const UserHomepageBackupDelete = () => {
                     </button>
                     <button
                         onClick={() => setIsTimeExpanded(!isTimeExpanded)}
-                        className="p-1 rounded-full bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
+                        className="p-1 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
                         title="Toggle Expand"
                     >
                         {isTimeExpanded ? 
@@ -963,7 +963,7 @@ const UserHomepageBackupDelete = () => {
             {isTimeExpanded && (
                 <div className="text-sm text-teal-700 space-y-2">
                     <div 
-                        className="font-semibold text-lg bg-white bg-opacity-50 rounded p-2 cursor-pointer hover:bg-opacity-70 transition duration-200"
+                        className="font-semibold text-lg bg-white bg-opacity-50 rounded-sm p-2 cursor-pointer hover:bg-opacity-70 transition duration-200"
                         onClick={() => showNotification('Current time: ' + currentTime.toLocaleTimeString())}
                     >
                         {is24HourFormat 
@@ -971,7 +971,7 @@ const UserHomepageBackupDelete = () => {
                             : currentTime.toLocaleTimeString()
                         }
                     </div>
-                    <div className="text-xs bg-white bg-opacity-50 rounded p-2">
+                    <div className="text-xs bg-white bg-opacity-50 rounded-sm p-2">
                         {currentTime.toLocaleDateString(undefined, { 
                             weekday: 'long', 
                             year: 'numeric', 
@@ -979,14 +979,14 @@ const UserHomepageBackupDelete = () => {
                             day: 'numeric' 
                         })}
                     </div>
-                    <div className="flex items-center bg-white bg-opacity-50 rounded p-2">
+                    <div className="flex items-center bg-white bg-opacity-50 rounded-sm p-2">
                         <LucideThermometer size={16} className="mr-2" />
                         <div>
                             <div className="text-xs font-semibold">Weather: Sunny</div>
                             <div className="text-xs">72°F | Feels like 75°F</div>
                         </div>
                     </div>
-                    <div className="text-xs bg-white bg-opacity-50 rounded p-2">
+                    <div className="text-xs bg-white bg-opacity-50 rounded-sm p-2">
                         <div className="flex justify-between">
                             <span>Sunrise</span>
                             <span>6:42 AM</span>
@@ -1003,7 +1003,7 @@ const UserHomepageBackupDelete = () => {
 
     // Recent Activity Component
     const RecentActivityComponent = () => (
-        <div className="text-left p-3 border border-rose-400 rounded-md shadow-md bg-gradient-to-r from-rose-100 to-rose-300 mb-2 hover:bg-rose-200 transition duration-300">
+        <div className="text-left p-3 border border-rose-400 rounded-sm shadow-md bg-gradient-to-r from-rose-100 to-rose-300 mb-2 hover:bg-rose-200 transition duration-300">
             <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-bold text-rose-800">
                     <LucideActivity size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
@@ -1011,7 +1011,7 @@ const UserHomepageBackupDelete = () => {
                 </h2>
                 <button
                     onClick={() => setIsActivityExpanded(!isActivityExpanded)}
-                    className="p-1 rounded-full bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
+                    className="p-1 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
                     title="Toggle Expand"
                 >
                     {isActivityExpanded ? 
@@ -1026,7 +1026,7 @@ const UserHomepageBackupDelete = () => {
                     {recentActivity.map((activity) => (
                         <div 
                             key={activity.id} 
-                            className="text-xs bg-white bg-opacity-50 rounded p-2 cursor-pointer hover:bg-opacity-70 transition duration-200 transform hover:scale-105"
+                            className="text-xs bg-white bg-opacity-50 rounded-sm p-2 cursor-pointer hover:bg-opacity-70 transition duration-200 transform hover:scale-105"
                             onClick={() => showNotification(`Activity: ${activity.action} - ${activity.time}`)}
                         >
                             <div className="flex items-center justify-between">
@@ -1052,7 +1052,7 @@ const UserHomepageBackupDelete = () => {
 
     // Quick Actions Component
     const QuickActionsComponent = () => (
-        <div className="text-left p-3 border border-amber-400 rounded-md shadow-md bg-gradient-to-r from-amber-100 to-amber-300 mb-2 hover:bg-amber-200 transition duration-300">
+        <div className="text-left p-3 border border-amber-400 rounded-sm shadow-md bg-gradient-to-r from-amber-100 to-amber-300 mb-2 hover:bg-amber-200 transition duration-300">
             <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-bold text-amber-800">
                     <LucideZap size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
@@ -1060,7 +1060,7 @@ const UserHomepageBackupDelete = () => {
                 </h2>
                 <button
                     onClick={() => setIsActionsExpanded(!isActionsExpanded)}
-                    className="p-1 rounded-full bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
+                    className="p-1 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
                     title="Toggle Expand"
                 >
                     {isActionsExpanded ? 
@@ -1075,7 +1075,7 @@ const UserHomepageBackupDelete = () => {
                     <div className="flex gap-2 flex-wrap">
                         <button
                             onClick={() => setShowQuickTaskModal(true)}
-                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
+                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
                             title="Quick Task (Ctrl+T)"
                         >
                             <LucidePlus size={14} className="mr-1" />
@@ -1083,27 +1083,27 @@ const UserHomepageBackupDelete = () => {
                         </button>
                         <Link 
                             to="/user/task?add-task-dialog=yes" 
-                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
+                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
                         >
                             <LucideList size={14} className="mr-1" />
                             Full Task
                         </Link>
                         <Link 
                             to="/user/notes" 
-                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
+                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
                         >
                             <LucideFileText size={14} className="mr-1" />
                             New Note
                         </Link>
                         <Link 
                             to="/user/chat" 
-                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
+                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
                         >
                             <LucideSearch size={14} className="mr-1" />
                             AI Chat
                         </Link>
                     </div>
-                    <div className="text-xs text-amber-600 bg-white bg-opacity-50 rounded p-2">
+                    <div className="text-xs text-amber-600 bg-white bg-opacity-50 rounded-sm p-2">
                         <div className="font-semibold mb-1">Keyboard shortcuts:</div>
                         <div>Ctrl+T: Quick Task | Ctrl+R: Refresh Stats</div>
                     </div>
@@ -1116,11 +1116,11 @@ const UserHomepageBackupDelete = () => {
     const NavigationControlsComponent = () => (
         <div className="mb-4 space-y-3">
             {/* View Toggle and Main Controls */}
-            <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-100 rounded-lg">
+            <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-100 rounded-sm">
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
+                        className={`flex items-center gap-2 px-3 py-2 rounded-sm transition-all duration-200 ${
                             viewMode === 'grid' 
                                 ? 'bg-blue-500 text-white' 
                                 : 'bg-white text-gray-700 hover:bg-gray-50'
@@ -1144,7 +1144,7 @@ const UserHomepageBackupDelete = () => {
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setShowOnlyWithBadges(!showOnlyWithBadges)}
-                                className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-all duration-200 ${
+                                className={`flex items-center gap-1 px-2 py-1 rounded-sm text-xs transition-all duration-200 ${
                                     showOnlyWithBadges 
                                         ? 'bg-red-500 text-white' 
                                         : 'bg-white text-gray-700 hover:bg-gray-50'
@@ -1157,7 +1157,7 @@ const UserHomepageBackupDelete = () => {
                             
                             <button
                                 onClick={() => setShowBulkActions(!showBulkActions)}
-                                className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-all duration-200 ${
+                                className={`flex items-center gap-1 px-2 py-1 rounded-sm text-xs transition-all duration-200 ${
                                     showBulkActions || selectedItems.length > 0
                                         ? 'bg-blue-500 text-white' 
                                         : 'bg-white text-gray-700 hover:bg-gray-50'
@@ -1181,7 +1181,7 @@ const UserHomepageBackupDelete = () => {
                                 value={searchFilter}
                                 onChange={(e) => setSearchFilter(e.target.value)}
                                 placeholder="Search navigation..."
-                                className="pl-8 pr-3 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-40"
+                                className="pl-8 pr-3 py-1 text-sm border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-40"
                             />
                             {searchFilter && (
                                 <button
@@ -1197,7 +1197,7 @@ const UserHomepageBackupDelete = () => {
                         <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value as 'name' | 'priority' | 'usage')}
-                            className="px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="px-2 py-1 text-sm border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="name">Name</option>
                             <option value="priority">Priority</option>
@@ -1208,7 +1208,7 @@ const UserHomepageBackupDelete = () => {
                         <div className="flex items-center gap-1 ml-2">
                             <button
                                 onClick={() => setShowAddModal('general')}
-                                className="flex items-center gap-1 px-2 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600 transition-colors"
+                                className="flex items-center gap-1 px-2 py-1 bg-green-500 text-white rounded-sm text-xs hover:bg-green-600 transition-colors"
                                 title="Quick Add"
                             >
                                 <LucidePlus size={12} />
@@ -1217,7 +1217,7 @@ const UserHomepageBackupDelete = () => {
 
                             <button
                                 onClick={() => setShowCustomizeModal(true)}
-                                className="flex items-center gap-1 px-2 py-1 bg-purple-500 text-white rounded text-xs hover:bg-purple-600 transition-colors"
+                                className="flex items-center gap-1 px-2 py-1 bg-purple-500 text-white rounded-sm text-xs hover:bg-purple-600 transition-colors"
                                 title="Customize"
                             >
                                 <LucidePalette size={12} />
@@ -1233,7 +1233,7 @@ const UserHomepageBackupDelete = () => {
                                     }, 2000);
                                 }}
                                 disabled={isProcessing === 'sync'}
-                                className="flex items-center gap-1 px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors disabled:opacity-50"
+                                className="flex items-center gap-1 px-2 py-1 bg-blue-500 text-white rounded-sm text-xs hover:bg-blue-600 transition-colors disabled:opacity-50"
                                 title="Sync All"
                             >
                                 {isProcessing === 'sync' ? (
@@ -1250,7 +1250,7 @@ const UserHomepageBackupDelete = () => {
 
             {/* Bulk Actions Bar */}
             {(showBulkActions || selectedItems.length > 0) && viewMode === 'list' && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div className="bg-blue-50 border border-blue-200 rounded-sm p-3">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2">
@@ -1287,7 +1287,7 @@ const UserHomepageBackupDelete = () => {
                                             key={action.id}
                                             onClick={() => handleBulkAction(action.id)}
                                             disabled={isProcessing === 'bulk'}
-                                            className={`px-2 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1 ${
+                                            className={`px-2 py-1 rounded-sm text-xs font-medium transition-colors flex items-center gap-1 ${
                                                 action.color === 'red' 
                                                     ? 'bg-red-100 text-red-700 hover:bg-red-200' 
                                                     : action.color === 'indigo'
@@ -1316,26 +1316,26 @@ const UserHomepageBackupDelete = () => {
             {viewMode === 'list' && (
                 <div className="grid grid-cols-4 gap-2 text-center">
                     {Object.entries(cardBadges).reduce((total, [_, count]) => total + count, 0) > 0 && (
-                        <div className="bg-red-50 border border-red-200 rounded p-2">
+                        <div className="bg-red-50 border border-red-200 rounded-sm p-2">
                             <div className="text-sm font-bold text-red-700">
                                 {Object.entries(cardBadges).reduce((total, [_, count]) => total + count, 0)}
                             </div>
                             <div className="text-xs text-red-600">Notifications</div>
                         </div>
                     )}
-                    <div className="bg-blue-50 border border-blue-200 rounded p-2">
+                    <div className="bg-blue-50 border border-blue-200 rounded-sm p-2">
                         <div className="text-sm font-bold text-blue-700">
                             {Object.values(filteredSections()).reduce((total: number, section: any) => total + section.items.length, 0)}
                         </div>
                         <div className="text-xs text-blue-600">Total Items</div>
                     </div>
-                    <div className="bg-green-50 border border-green-200 rounded p-2">
+                    <div className="bg-green-50 border border-green-200 rounded-sm p-2">
                         <div className="text-sm font-bold text-green-700">
                             {Object.keys(filteredSections()).length}
                         </div>
                         <div className="text-xs text-green-600">Categories</div>
                     </div>
-                    <div className="bg-purple-50 border border-purple-200 rounded p-2">
+                    <div className="bg-purple-50 border border-purple-200 rounded-sm p-2">
                         <div className="text-sm font-bold text-purple-700">
                             {completionPercentage}%
                         </div>
@@ -1353,20 +1353,20 @@ const UserHomepageBackupDelete = () => {
         const totalBadges = section.items.reduce((total: number, item: any) => total + item.badges, 0);
 
         return (
-            <div className="mb-4 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+            <div className="mb-4 bg-white rounded-sm border border-gray-200 shadow-sm overflow-hidden">
                 <button
                     onClick={() => toggleSection(sectionKey)}
                     className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors duration-200"
                 >
                     <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg bg-${section.color}-100`}>
+                        <div className={`p-2 rounded-sm bg-${section.color}-100`}>
                             <SectionIcon size={20} className={`text-${section.color}-600`} />
                         </div>
                         <div className="text-left">
                             <div className="font-semibold text-gray-800 flex items-center gap-2">
                                 {section.title}
                                 {totalBadges > 0 && (
-                                    <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                                    <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-sm font-bold">
                                         {totalBadges}
                                     </span>
                                 )}
@@ -1453,17 +1453,17 @@ const UserHomepageBackupDelete = () => {
                         />
                     )}
 
-                    <div className={`p-2 rounded-lg bg-${item.color}-100 relative transition-all duration-200 ${
+                    <div className={`p-2 rounded-sm bg-${item.color}-100 relative transition-all duration-200 ${
                         isHovered ? `bg-${item.color}-200 scale-110` : ''
                     }`}>
                         <ItemIcon size={20} className={`text-${item.color}-600`} />
                         {item.badges > 0 && (
-                            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold animate-bounce">
+                            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-sm h-4 w-4 flex items-center justify-center font-bold animate-bounce">
                                 {item.badges}
                             </div>
                         )}
                         {isProcessingItem && (
-                            <div className="absolute inset-0 bg-white bg-opacity-75 rounded-lg flex items-center justify-center">
+                            <div className="absolute inset-0 bg-white bg-opacity-75 rounded-sm flex items-center justify-center">
                                 <LucideRefreshCw size={12} className="text-gray-600 animate-spin" />
                             </div>
                         )}
@@ -1472,7 +1472,7 @@ const UserHomepageBackupDelete = () => {
                     <div className="flex-1">
                         <div className="flex items-center gap-2">
                             <span className="font-semibold text-gray-800">{item.title}</span>
-                            <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(item.status)}`}>
+                            <span className={`text-xs px-2 py-1 rounded-sm ${getStatusColor(item.status)}`}>
                                 {item.status}
                             </span>
                             {item.isExternal && (
@@ -1498,9 +1498,9 @@ const UserHomepageBackupDelete = () => {
                             )}
                         </div>
                         {item.progress !== undefined && (
-                            <div className="mt-2 w-full bg-gray-200 rounded-full h-1">
+                            <div className="mt-2 w-full bg-gray-200 rounded-sm h-1">
                                 <div 
-                                    className={`bg-${item.color}-500 h-1 rounded-full transition-all duration-300`}
+                                    className={`bg-${item.color}-500 h-1 rounded-sm transition-all duration-300`}
                                     style={{ width: `${item.progress}%` }}
                                 ></div>
                             </div>
@@ -1526,7 +1526,7 @@ const UserHomepageBackupDelete = () => {
                                     e.preventDefault();
                                     handleItemAction(item.id, 'add');
                                 }}
-                                className="p-1 bg-green-600 rounded-full hover:bg-green-700 transition-colors"
+                                className="p-1 bg-green-600 rounded-sm hover:bg-green-700 transition-colors"
                                 title="Add New"
                             >
                                 <LucidePlus size={12} className="text-white" />
@@ -1536,7 +1536,7 @@ const UserHomepageBackupDelete = () => {
                                     e.preventDefault();
                                     handleItemAction(item.id, 'history');
                                 }}
-                                className="p-1 bg-blue-600 rounded-full hover:bg-blue-700 transition-colors"
+                                className="p-1 bg-blue-600 rounded-sm hover:bg-blue-700 transition-colors"
                                 title="View History"
                             >
                                 <LucideHistory size={12} className="text-white" />
@@ -1546,7 +1546,7 @@ const UserHomepageBackupDelete = () => {
                                     e.preventDefault();
                                     setShowActionMenu(showActionMenu === item.id ? null : item.id);
                                 }}
-                                className={`p-1 bg-gray-600 rounded-full hover:bg-gray-700 transition-colors ${showActionMenu === item.id ? 'bg-gray-700' : ''}`}
+                                className={`p-1 bg-gray-600 rounded-sm hover:bg-gray-700 transition-colors ${showActionMenu === item.id ? 'bg-gray-700' : ''}`}
                                 title="More Actions"
                             >
                                 <LucideMoreHorizontal size={12} className="text-white" />
@@ -1562,7 +1562,7 @@ const UserHomepageBackupDelete = () => {
                     
                     {/* Action Menu Dropdown */}
                     {showActionMenu === item.id && (
-                        <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48" data-action-menu="true">
+                        <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-sm shadow-lg z-50 min-w-48" data-action-menu="true">
                             <div className="py-1">
                                 <div className="px-3 py-2 text-xs font-semibold text-gray-500 border-b border-gray-100">
                                     Actions for {item.title}
@@ -1608,17 +1608,17 @@ const UserHomepageBackupDelete = () => {
                         />
                     )}
 
-                    <div className={`p-2 rounded-lg bg-${item.color}-100 relative transition-all duration-200 ${
+                    <div className={`p-2 rounded-sm bg-${item.color}-100 relative transition-all duration-200 ${
                         isHovered ? `bg-${item.color}-200 scale-110` : ''
                     }`}>
                         <ItemIcon size={20} className={`text-${item.color}-600`} />
                         {item.badges > 0 && (
-                            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold animate-bounce">
+                            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-sm h-4 w-4 flex items-center justify-center font-bold animate-bounce">
                                 {item.badges}
                             </div>
                         )}
                         {isProcessingItem && (
-                            <div className="absolute inset-0 bg-white bg-opacity-75 rounded-lg flex items-center justify-center">
+                            <div className="absolute inset-0 bg-white bg-opacity-75 rounded-sm flex items-center justify-center">
                                 <LucideRefreshCw size={12} className="text-gray-600 animate-spin" />
                             </div>
                         )}
@@ -1627,7 +1627,7 @@ const UserHomepageBackupDelete = () => {
                     <div className="flex-1">
                         <div className="flex items-center gap-2">
                             <span className="font-semibold text-gray-800">{item.title}</span>
-                            <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(item.status)}`}>
+                            <span className={`text-xs px-2 py-1 rounded-sm ${getStatusColor(item.status)}`}>
                                 {item.status}
                             </span>
                             {item.isExternal && (
@@ -1653,9 +1653,9 @@ const UserHomepageBackupDelete = () => {
                             )}
                         </div>
                         {item.progress !== undefined && (
-                            <div className="mt-2 w-full bg-gray-200 rounded-full h-1">
+                            <div className="mt-2 w-full bg-gray-200 rounded-sm h-1">
                                 <div 
-                                    className={`bg-${item.color}-500 h-1 rounded-full transition-all duration-300`}
+                                    className={`bg-${item.color}-500 h-1 rounded-sm transition-all duration-300`}
                                     style={{ width: `${item.progress}%` }}
                                 ></div>
                             </div>
@@ -1681,7 +1681,7 @@ const UserHomepageBackupDelete = () => {
                                     e.preventDefault();
                                     handleItemAction(item.id, 'add');
                                 }}
-                                className="p-1 bg-green-600 rounded-full hover:bg-green-700 transition-colors"
+                                className="p-1 bg-green-600 rounded-sm hover:bg-green-700 transition-colors"
                                 title="Add New"
                             >
                                 <LucidePlus size={12} className="text-white" />
@@ -1691,7 +1691,7 @@ const UserHomepageBackupDelete = () => {
                                     e.preventDefault();
                                     handleItemAction(item.id, 'history');
                                 }}
-                                className="p-1 bg-blue-600 rounded-full hover:bg-blue-700 transition-colors"
+                                className="p-1 bg-blue-600 rounded-sm hover:bg-blue-700 transition-colors"
                                 title="View History"
                             >
                                 <LucideHistory size={12} className="text-white" />
@@ -1701,7 +1701,7 @@ const UserHomepageBackupDelete = () => {
                                     e.preventDefault();
                                     setShowActionMenu(showActionMenu === item.id ? null : item.id);
                                 }}
-                                className={`p-1 bg-gray-600 rounded-full hover:bg-gray-700 transition-colors ${showActionMenu === item.id ? 'bg-gray-700' : ''}`}
+                                className={`p-1 bg-gray-600 rounded-sm hover:bg-gray-700 transition-colors ${showActionMenu === item.id ? 'bg-gray-700' : ''}`}
                                 title="More Actions"
                             >
                                 <LucideMoreHorizontal size={12} className="text-white" />
@@ -1717,7 +1717,7 @@ const UserHomepageBackupDelete = () => {
                     
                     {/* Action Menu Dropdown */}
                     {showActionMenu === item.id && (
-                        <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48" data-action-menu="true">
+                        <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-sm shadow-lg z-50 min-w-48" data-action-menu="true">
                             <div className="py-1">
                                 <div className="px-3 py-2 text-xs font-semibold text-gray-500 border-b border-gray-100">
                                     Actions for {item.title}
@@ -1752,14 +1752,14 @@ const UserHomepageBackupDelete = () => {
             {/* History Modal */}
             {showHistoryModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 max-w-90vw max-h-80vh overflow-y-auto">
+                    <div className="bg-white rounded-sm p-6 w-96 max-w-90vw max-h-80vh overflow-y-auto">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold text-gray-800">
                                 {showHistoryModal.charAt(0).toUpperCase() + showHistoryModal.slice(1)} History
                             </h3>
                             <button
                                 onClick={() => setShowHistoryModal(null)}
-                                className="p-1 hover:bg-gray-100 rounded-full transition duration-200"
+                                className="p-1 hover:bg-gray-100 rounded-sm transition duration-200"
                             >
                                 <LucideX size={20} className="text-gray-600" />
                             </button>
@@ -1789,7 +1789,7 @@ const UserHomepageBackupDelete = () => {
                         <div className="mt-6 flex justify-end">
                             <button
                                 onClick={() => setShowHistoryModal(null)}
-                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200"
+                                className="px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 transition duration-200"
                             >
                                 Close
                             </button>
@@ -1801,14 +1801,14 @@ const UserHomepageBackupDelete = () => {
             {/* Add Modal */}
             {showAddModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 max-w-90vw">
+                    <div className="bg-white rounded-sm p-6 w-96 max-w-90vw">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold text-gray-800">
                                 Add New {showAddModal.charAt(0).toUpperCase() + showAddModal.slice(1)}
                             </h3>
                             <button
                                 onClick={() => setShowAddModal(null)}
-                                className="p-1 hover:bg-gray-100 rounded-full transition duration-200"
+                                className="p-1 hover:bg-gray-100 rounded-sm transition duration-200"
                             >
                                 <LucideX size={20} className="text-gray-600" />
                             </button>
@@ -1821,7 +1821,7 @@ const UserHomepageBackupDelete = () => {
                                 <input
                                     type="text"
                                     placeholder={`Enter ${showAddModal} title...`}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
                             <div>
@@ -1831,13 +1831,13 @@ const UserHomepageBackupDelete = () => {
                                 <textarea
                                     placeholder={`Enter ${showAddModal} description...`}
                                     rows={3}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 ></textarea>
                             </div>
                             <div className="flex gap-2 justify-end">
                                 <button
                                     onClick={() => setShowAddModal(null)}
-                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200"
+                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-sm hover:bg-gray-400 transition duration-200"
                                 >
                                     Cancel
                                 </button>
@@ -1846,7 +1846,7 @@ const UserHomepageBackupDelete = () => {
                                         showNotification(`New ${showAddModal} created!`);
                                         setShowAddModal(null);
                                     }}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200 flex items-center gap-2"
+                                    className="px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 transition duration-200 flex items-center gap-2"
                                 >
                                     <LucideCheck size={16} />
                                     Create
@@ -1860,7 +1860,7 @@ const UserHomepageBackupDelete = () => {
             {/* AI Insights Modal for Smart Summary */}
             {showCardPreview === 'smart-summary' && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-[500px] max-w-90vw max-h-80vh overflow-y-auto">
+                    <div className="bg-white rounded-sm p-6 w-[500px] max-w-90vw max-h-80vh overflow-y-auto">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                                 <LucideBot size={20} className="text-violet-600" />
@@ -1868,20 +1868,20 @@ const UserHomepageBackupDelete = () => {
                             </h3>
                             <button
                                 onClick={() => setShowCardPreview(null)}
-                                className="p-1 hover:bg-gray-100 rounded-full transition duration-200"
+                                className="p-1 hover:bg-gray-100 rounded-sm transition duration-200"
                             >
                                 <LucideX size={20} className="text-gray-600" />
                             </button>
                         </div>
                         <div className="space-y-4">
-                            <div className="bg-violet-50 border border-violet-200 rounded-lg p-4">
+                            <div className="bg-violet-50 border border-violet-200 rounded-sm p-4">
                                 <h4 className="font-semibold text-violet-800 mb-2">📊 Productivity Overview</h4>
                                 <p className="text-sm text-violet-700">
                                     You're at {aiInsights.totalProductivity}% productivity this week ({aiInsights.weeklyTrend}). 
                                     Your most active area is {aiInsights.topCategory}.
                                 </p>
                             </div>
-                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                            <div className="bg-amber-50 border border-amber-200 rounded-sm p-4">
                                 <h4 className="font-semibold text-amber-800 mb-2">💡 AI Suggestions</h4>
                                 <ul className="space-y-2">
                                     {aiInsights.suggestions.map((suggestion, index) => (
@@ -1892,7 +1892,7 @@ const UserHomepageBackupDelete = () => {
                                     ))}
                                 </ul>
                             </div>
-                            <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
+                            <div className="bg-cyan-50 border border-cyan-200 rounded-sm p-4">
                                 <h4 className="font-semibold text-cyan-800 mb-2">🎯 Next Recommendation</h4>
                                 <p className="text-sm text-cyan-700">{aiInsights.nextRecommendation}</p>
                             </div>
@@ -1900,7 +1900,7 @@ const UserHomepageBackupDelete = () => {
                         <div className="mt-6 flex justify-end">
                             <button
                                 onClick={() => setShowCardPreview(null)}
-                                className="px-4 py-2 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition duration-200"
+                                className="px-4 py-2 bg-violet-500 text-white rounded-sm hover:bg-violet-600 transition duration-200"
                             >
                                 Got it
                             </button>
@@ -1912,7 +1912,7 @@ const UserHomepageBackupDelete = () => {
             {/* Edit Modal */}
             {showEditModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 max-w-90vw">
+                    <div className="bg-white rounded-sm p-6 w-96 max-w-90vw">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                                 <LucideEdit3 size={20} className="text-blue-600" />
@@ -1920,7 +1920,7 @@ const UserHomepageBackupDelete = () => {
                             </h3>
                             <button
                                 onClick={() => setShowEditModal(null)}
-                                className="p-1 hover:bg-gray-100 rounded-full transition duration-200"
+                                className="p-1 hover:bg-gray-100 rounded-sm transition duration-200"
                             >
                                 <LucideX size={20} className="text-gray-600" />
                             </button>
@@ -1931,7 +1931,7 @@ const UserHomepageBackupDelete = () => {
                                 <input
                                     type="text"
                                     placeholder={`Edit ${showEditModal} name...`}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
                             <div>
@@ -1939,13 +1939,13 @@ const UserHomepageBackupDelete = () => {
                                 <textarea
                                     placeholder={`Configure ${showEditModal} settings...`}
                                     rows={3}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 ></textarea>
                             </div>
                             <div className="flex gap-2 justify-end">
                                 <button
                                     onClick={() => setShowEditModal(null)}
-                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200"
+                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-sm hover:bg-gray-400 transition duration-200"
                                 >
                                     Cancel
                                 </button>
@@ -1954,7 +1954,7 @@ const UserHomepageBackupDelete = () => {
                                         showNotification(`${showEditModal} updated successfully!`);
                                         setShowEditModal(null);
                                     }}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200 flex items-center gap-2"
+                                    className="px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 transition duration-200 flex items-center gap-2"
                                 >
                                     <LucideCheck size={16} />
                                     Save Changes
@@ -1968,7 +1968,7 @@ const UserHomepageBackupDelete = () => {
             {/* Delete Confirmation Modal */}
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 max-w-90vw">
+                    <div className="bg-white rounded-sm p-6 w-96 max-w-90vw">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold text-red-800 flex items-center gap-2">
                                 <LucideTrash2 size={20} className="text-red-600" />
@@ -1976,13 +1976,13 @@ const UserHomepageBackupDelete = () => {
                             </h3>
                             <button
                                 onClick={() => setShowDeleteModal(null)}
-                                className="p-1 hover:bg-gray-100 rounded-full transition duration-200"
+                                className="p-1 hover:bg-gray-100 rounded-sm transition duration-200"
                             >
                                 <LucideX size={20} className="text-gray-600" />
                             </button>
                         </div>
                         <div className="mb-6">
-                            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                            <div className="bg-red-50 border border-red-200 rounded-sm p-4 mb-4">
                                 <p className="text-red-800 font-medium">⚠️ Warning: This action cannot be undone</p>
                                 <p className="text-red-600 text-sm mt-2">
                                     All data associated with this {showDeleteModal} will be permanently removed.
@@ -1994,13 +1994,13 @@ const UserHomepageBackupDelete = () => {
                             <input
                                 type="text"
                                 placeholder="Type DELETE to confirm"
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-2"
+                                className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-red-500 mt-2"
                             />
                         </div>
                         <div className="flex gap-2 justify-end">
                             <button
                                 onClick={() => setShowDeleteModal(null)}
-                                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200"
+                                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-sm hover:bg-gray-400 transition duration-200"
                             >
                                 Cancel
                             </button>
@@ -2009,7 +2009,7 @@ const UserHomepageBackupDelete = () => {
                                     showNotification(`${showDeleteModal} deleted successfully`);
                                     setShowDeleteModal(null);
                                 }}
-                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200 flex items-center gap-2"
+                                className="px-4 py-2 bg-red-500 text-white rounded-sm hover:bg-red-600 transition duration-200 flex items-center gap-2"
                             >
                                 <LucideTrash2 size={16} />
                                 Delete Forever
@@ -2022,7 +2022,7 @@ const UserHomepageBackupDelete = () => {
             {/* Export Modal */}
             {showExportModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 max-w-90vw">
+                    <div className="bg-white rounded-sm p-6 w-96 max-w-90vw">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                                 <LucideDownload size={20} className="text-indigo-600" />
@@ -2030,7 +2030,7 @@ const UserHomepageBackupDelete = () => {
                             </h3>
                             <button
                                 onClick={() => setShowExportModal(null)}
-                                className="p-1 hover:bg-gray-100 rounded-full transition duration-200"
+                                className="p-1 hover:bg-gray-100 rounded-sm transition duration-200"
                             >
                                 <LucideX size={20} className="text-gray-600" />
                             </button>
@@ -2038,7 +2038,7 @@ const UserHomepageBackupDelete = () => {
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Export Format</label>
-                                <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <select className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                     <option value="json">JSON Format</option>
                                     <option value="csv">CSV Format</option>
                                     <option value="pdf">PDF Report</option>
@@ -2050,18 +2050,18 @@ const UserHomepageBackupDelete = () => {
                                 <div className="grid grid-cols-2 gap-2">
                                     <input
                                         type="date"
-                                        className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="p-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     />
                                     <input
                                         type="date"
-                                        className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="p-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     />
                                 </div>
                             </div>
                             <div className="flex gap-2 justify-end">
                                 <button
                                     onClick={() => setShowExportModal(null)}
-                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200"
+                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-sm hover:bg-gray-400 transition duration-200"
                                 >
                                     Cancel
                                 </button>
@@ -2070,7 +2070,7 @@ const UserHomepageBackupDelete = () => {
                                         showNotification(`${showExportModal} export started! Check downloads.`);
                                         setShowExportModal(null);
                                     }}
-                                    className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition duration-200 flex items-center gap-2"
+                                    className="px-4 py-2 bg-indigo-500 text-white rounded-sm hover:bg-indigo-600 transition duration-200 flex items-center gap-2"
                                 >
                                     <LucideDownload size={16} />
                                     Export Data
@@ -2084,7 +2084,7 @@ const UserHomepageBackupDelete = () => {
             {/* Import Modal */}
             {showImportModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 max-w-90vw">
+                    <div className="bg-white rounded-sm p-6 w-96 max-w-90vw">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                                 <LucideUpload size={20} className="text-green-600" />
@@ -2092,7 +2092,7 @@ const UserHomepageBackupDelete = () => {
                             </h3>
                             <button
                                 onClick={() => setShowImportModal(null)}
-                                className="p-1 hover:bg-gray-100 rounded-full transition duration-200"
+                                className="p-1 hover:bg-gray-100 rounded-sm transition duration-200"
                             >
                                 <LucideX size={20} className="text-gray-600" />
                             </button>
@@ -2100,13 +2100,13 @@ const UserHomepageBackupDelete = () => {
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Upload File</label>
-                                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-400 transition-colors">
+                                <div className="border-2 border-dashed border-gray-300 rounded-sm p-6 text-center hover:border-green-400 transition-colors">
                                     <LucideUpload size={32} className="mx-auto text-gray-400 mb-2" />
                                     <p className="text-gray-600">Drop files here or <span className="text-green-600 font-medium cursor-pointer">browse</span></p>
                                     <p className="text-xs text-gray-500 mt-1">Supports JSON, CSV, XLSX files</p>
                                 </div>
                             </div>
-                            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                            <div className="bg-yellow-50 border border-yellow-200 rounded-sm p-3">
                                 <p className="text-yellow-800 text-sm">
                                     <strong>Note:</strong> Importing will merge with existing data. Duplicates will be skipped.
                                 </p>
@@ -2114,7 +2114,7 @@ const UserHomepageBackupDelete = () => {
                             <div className="flex gap-2 justify-end">
                                 <button
                                     onClick={() => setShowImportModal(null)}
-                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200"
+                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-sm hover:bg-gray-400 transition duration-200"
                                 >
                                     Cancel
                                 </button>
@@ -2123,7 +2123,7 @@ const UserHomepageBackupDelete = () => {
                                         showNotification(`${showImportModal} import completed successfully!`);
                                         setShowImportModal(null);
                                     }}
-                                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200 flex items-center gap-2"
+                                    className="px-4 py-2 bg-green-500 text-white rounded-sm hover:bg-green-600 transition duration-200 flex items-center gap-2"
                                 >
                                     <LucideUpload size={16} />
                                     Import Data
@@ -2137,7 +2137,7 @@ const UserHomepageBackupDelete = () => {
             {/* Share Modal */}
             {showShareModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 max-w-90vw">
+                    <div className="bg-white rounded-sm p-6 w-96 max-w-90vw">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                                 <LucideShare2 size={20} className="text-purple-600" />
@@ -2145,7 +2145,7 @@ const UserHomepageBackupDelete = () => {
                             </h3>
                             <button
                                 onClick={() => setShowShareModal(null)}
-                                className="p-1 hover:bg-gray-100 rounded-full transition duration-200"
+                                className="p-1 hover:bg-gray-100 rounded-sm transition duration-200"
                             >
                                 <LucideX size={20} className="text-gray-600" />
                             </button>
@@ -2156,12 +2156,12 @@ const UserHomepageBackupDelete = () => {
                                 <input
                                     type="email"
                                     placeholder="Enter email addresses..."
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                    className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Permissions</label>
-                                <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <select className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
                                     <option value="view">View Only</option>
                                     <option value="comment">Can Comment</option>
                                     <option value="edit">Can Edit</option>
@@ -2173,13 +2173,13 @@ const UserHomepageBackupDelete = () => {
                                 <textarea
                                     placeholder="Add a message..."
                                     rows={3}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                    className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 ></textarea>
                             </div>
                             <div className="flex gap-2 justify-end">
                                 <button
                                     onClick={() => setShowShareModal(null)}
-                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200"
+                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-sm hover:bg-gray-400 transition duration-200"
                                 >
                                     Cancel
                                 </button>
@@ -2188,7 +2188,7 @@ const UserHomepageBackupDelete = () => {
                                         showNotification(`${showShareModal} shared successfully!`);
                                         setShowShareModal(null);
                                     }}
-                                    className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition duration-200 flex items-center gap-2"
+                                    className="px-4 py-2 bg-purple-500 text-white rounded-sm hover:bg-purple-600 transition duration-200 flex items-center gap-2"
                                 >
                                     <LucideShare2 size={16} />
                                     Send Invitation
@@ -2202,7 +2202,7 @@ const UserHomepageBackupDelete = () => {
             {/* Customize Modal */}
             {showCustomizeModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-[500px] max-w-90vw max-h-80vh overflow-y-auto">
+                    <div className="bg-white rounded-sm p-6 w-[500px] max-w-90vw max-h-80vh overflow-y-auto">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                                 <LucidePalette size={20} className="text-purple-600" />
@@ -2210,7 +2210,7 @@ const UserHomepageBackupDelete = () => {
                             </h3>
                             <button
                                 onClick={() => setShowCustomizeModal(false)}
-                                className="p-1 hover:bg-gray-100 rounded-full transition duration-200"
+                                className="p-1 hover:bg-gray-100 rounded-sm transition duration-200"
                             >
                                 <LucideX size={20} className="text-gray-600" />
                             </button>
@@ -2219,11 +2219,11 @@ const UserHomepageBackupDelete = () => {
                             <div>
                                 <h4 className="font-semibold text-gray-800 mb-3">Layout Options</h4>
                                 <div className="grid grid-cols-2 gap-3">
-                                    <button className="p-3 border-2 border-blue-500 bg-blue-50 rounded-lg flex items-center gap-2">
+                                    <button className="p-3 border-2 border-blue-500 bg-blue-50 rounded-sm flex items-center gap-2">
                                         <LucideLayout size={16} />
                                         <span className="text-sm">Compact</span>
                                     </button>
-                                    <button className="p-3 border border-gray-300 rounded-lg flex items-center gap-2">
+                                    <button className="p-3 border border-gray-300 rounded-sm flex items-center gap-2">
                                         <LucideMaximize size={16} />
                                         <span className="text-sm">Spacious</span>
                                     </button>
@@ -2235,7 +2235,7 @@ const UserHomepageBackupDelete = () => {
                                     {['blue', 'purple', 'green', 'orange'].map(color => (
                                         <button
                                             key={color}
-                                            className={`h-12 rounded-lg bg-${color}-500 hover:bg-${color}-600 transition-colors ${color === 'blue' ? 'ring-2 ring-offset-2 ring-blue-500' : ''}`}
+                                            className={`h-12 rounded-sm bg-${color}-500 hover:bg-${color}-600 transition-colors ${color === 'blue' ? 'ring-2 ring-offset-2 ring-blue-500' : ''}`}
                                         ></button>
                                     ))}
                                 </div>
@@ -2260,7 +2260,7 @@ const UserHomepageBackupDelete = () => {
                             <div className="flex gap-2 justify-end pt-4 border-t">
                                 <button
                                     onClick={() => setShowCustomizeModal(false)}
-                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200"
+                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-sm hover:bg-gray-400 transition duration-200"
                                 >
                                     Cancel
                                 </button>
@@ -2269,7 +2269,7 @@ const UserHomepageBackupDelete = () => {
                                         showNotification('Interface customized successfully!');
                                         setShowCustomizeModal(false);
                                     }}
-                                    className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition duration-200 flex items-center gap-2"
+                                    className="px-4 py-2 bg-purple-500 text-white rounded-sm hover:bg-purple-600 transition duration-200 flex items-center gap-2"
                                 >
                                     <LucideCheck size={16} />
                                     Apply Changes
@@ -2287,7 +2287,7 @@ const UserHomepageBackupDelete = () => {
             <ActionModalsComponent />
             {/* Notification Toast */}
             {notification && (
-                <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300 animate-bounce">
+                <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-sm shadow-lg transform transition-all duration-300 animate-bounce">
                     <div className="flex items-center gap-2">
                         <LucideBell size={16} />
                         <span>{notification}</span>
@@ -2298,12 +2298,12 @@ const UserHomepageBackupDelete = () => {
             {/* Quick Task Modal */}
             {showQuickTaskModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 max-w-90vw">
+                    <div className="bg-white rounded-sm p-6 w-96 max-w-90vw">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold text-gray-800">Quick Task</h3>
                             <button
                                 onClick={() => setShowQuickTaskModal(false)}
-                                className="p-1 hover:bg-gray-100 rounded-full transition duration-200"
+                                className="p-1 hover:bg-gray-100 rounded-sm transition duration-200"
                             >
                                 <LucideX size={20} className="text-gray-600" />
                             </button>
@@ -2314,7 +2314,7 @@ const UserHomepageBackupDelete = () => {
                                 value={quickTaskText}
                                 onChange={(e) => setQuickTaskText(e.target.value)}
                                 placeholder="Enter task description..."
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                                 autoFocus
                                 onKeyPress={(e) => {
                                     if (e.key === 'Enter') {
@@ -2325,14 +2325,14 @@ const UserHomepageBackupDelete = () => {
                             <div className="flex gap-2 justify-end">
                                 <button
                                     onClick={() => setShowQuickTaskModal(false)}
-                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200"
+                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-sm hover:bg-gray-400 transition duration-200"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleQuickTaskSubmit}
                                     disabled={!quickTaskText.trim()}
-                                    className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200 flex items-center gap-2"
+                                    className="px-4 py-2 bg-amber-500 text-white rounded-sm hover:bg-amber-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200 flex items-center gap-2"
                                 >
                                     <LucideCheck size={16} />
                                     Create Task
@@ -2393,7 +2393,7 @@ const UserHomepageBackupDelete = () => {
                             {authState.isLoggedIn === 'pending' && (
                                 <div className='block p-4 border-2 border-slate-300 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl shadow-md'>
                                     <div className="flex justify-center mb-2">
-                                        <div className="p-2 bg-slate-500 rounded-full">
+                                        <div className="p-2 bg-slate-500 rounded-sm">
                                             <LucideLoader size={28} className="text-white animate-spin" />
                                     </div>
                                     </div>
@@ -2412,13 +2412,13 @@ const UserHomepageBackupDelete = () => {
                                     >
                                         {/* Notification Badge */}
                                         {getBadgeCount('chat') > 0 && (
-                                            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold animate-bounce">
+                                            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-sm h-6 w-6 flex items-center justify-center font-bold animate-bounce">
                                                 {getBadgeCount('chat')}
                                         </div>
                                         )}
                                         
                                         <div className="flex justify-center mb-2">
-                                            <div className={`p-2 bg-purple-500 rounded-full transition-all duration-200 ${hoveredCard === 'chat' ? 'bg-purple-600 scale-110' : ''}`}>
+                                            <div className={`p-2 bg-purple-500 rounded-sm transition-all duration-200 ${hoveredCard === 'chat' ? 'bg-purple-600 scale-110' : ''}`}>
                                                 <LucideBrain size={28} className="text-white" />
                                             </div>
                                         </div>
@@ -2430,7 +2430,7 @@ const UserHomepageBackupDelete = () => {
                                         {/* Status Indicator */}
                                         <div className="absolute bottom-2 left-2">
                                             <div className="flex items-center space-x-1">
-                                                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                                                <div className="w-2 h-2 bg-green-400 rounded-sm animate-pulse"></div>
                                                 <span className="text-xs text-purple-600">Online</span>
                                             </div>
                                         </div>
@@ -2444,13 +2444,13 @@ const UserHomepageBackupDelete = () => {
                                     >
                                         {/* Notification Badge */}
                                         {getBadgeCount('tasks') > 0 && (
-                                            <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">
+                                            <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-sm h-6 w-6 flex items-center justify-center font-bold">
                                                 {getBadgeCount('tasks')}
                                         </div>
                                         )}
                                         
                                         <div className="flex justify-center mb-2">
-                                            <div className={`p-2 bg-blue-500 rounded-full transition-all duration-200 ${hoveredCard === 'tasks' ? 'bg-blue-600 scale-110' : ''}`}>
+                                            <div className={`p-2 bg-blue-500 rounded-sm transition-all duration-200 ${hoveredCard === 'tasks' ? 'bg-blue-600 scale-110' : ''}`}>
                                                 <LucideCheckSquare size={28} className="text-white" />
                                             </div>
                                         </div>
@@ -2461,9 +2461,9 @@ const UserHomepageBackupDelete = () => {
                                         
                                         {/* Progress Bar */}
                                         <div className="absolute bottom-1 left-2 right-2">
-                                            <div className="w-full bg-blue-200 rounded-full h-1">
+                                            <div className="w-full bg-blue-200 rounded-sm h-1">
                                                 <div 
-                                                    className="bg-blue-500 h-1 rounded-full transition-all duration-300"
+                                                    className="bg-blue-500 h-1 rounded-sm transition-all duration-300"
                                                     style={{ width: `${completionPercentage}%` }}
                                                 ></div>
                                             </div>
@@ -2478,13 +2478,13 @@ const UserHomepageBackupDelete = () => {
                                     >
                                         {/* Notification Badge */}
                                         {getBadgeCount('notes') > 0 && (
-                                            <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">
+                                            <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-sm h-6 w-6 flex items-center justify-center font-bold">
                                                 {getBadgeCount('notes')}
                                         </div>
                                         )}
                                         
                                         <div className="flex justify-center mb-2">
-                                            <div className={`p-2 bg-green-500 rounded-full transition-all duration-200 ${hoveredCard === 'notes' ? 'bg-green-600 scale-110' : ''}`}>
+                                            <div className={`p-2 bg-green-500 rounded-sm transition-all duration-200 ${hoveredCard === 'notes' ? 'bg-green-600 scale-110' : ''}`}>
                                                 <LucideBookOpen size={28} className="text-white" />
                                             </div>
                                         </div>
@@ -2501,7 +2501,7 @@ const UserHomepageBackupDelete = () => {
                                                         e.preventDefault();
                                                         showNotification('Quick note created!');
                                                     }}
-                                                    className="p-1 bg-green-600 rounded-full hover:bg-green-700 transition-colors"
+                                                    className="p-1 bg-green-600 rounded-sm hover:bg-green-700 transition-colors"
                                                     title="Quick Note"
                                                 >
                                                     <LucidePlus size={12} className="text-white" />
@@ -2518,13 +2518,13 @@ const UserHomepageBackupDelete = () => {
                                     >
                                         {/* Notification Badge */}
                                         {getBadgeCount('lifeEvents') > 0 && (
-                                            <div className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold animate-bounce">
+                                            <div className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-sm h-6 w-6 flex items-center justify-center font-bold animate-bounce">
                                                 {getBadgeCount('lifeEvents')}
                                         </div>
                                         )}
                                         
                                         <div className="flex justify-center mb-2">
-                                            <div className={`p-2 bg-pink-500 rounded-full transition-all duration-200 ${hoveredCard === 'lifeEvents' ? 'bg-pink-600 scale-110' : ''}`}>
+                                            <div className={`p-2 bg-pink-500 rounded-sm transition-all duration-200 ${hoveredCard === 'lifeEvents' ? 'bg-pink-600 scale-110' : ''}`}>
                                                 <LucideHeart size={28} className="text-white" />
                                             </div>
                                         </div>
@@ -2546,7 +2546,7 @@ const UserHomepageBackupDelete = () => {
                                         onMouseLeave={() => handleCardHover(null)}
                                     >
                                         <div className="flex justify-center mb-2">
-                                            <div className={`p-2 bg-orange-500 rounded-full transition-all duration-200 ${hoveredCard === 'infoVault' ? 'bg-orange-600 scale-110' : ''}`}>
+                                            <div className={`p-2 bg-orange-500 rounded-sm transition-all duration-200 ${hoveredCard === 'infoVault' ? 'bg-orange-600 scale-110' : ''}`}>
                                                 <LucideShield size={28} className="text-white" />
                                         </div>
                                         </div>
@@ -2558,7 +2558,7 @@ const UserHomepageBackupDelete = () => {
                                         {/* Security Indicator */}
                                         <div className="absolute bottom-2 right-2">
                                             <div className="flex items-center space-x-1">
-                                                <div className={`w-2 h-2 rounded-full ${hoveredCard === 'infoVault' ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
+                                                <div className={`w-2 h-2 rounded-sm ${hoveredCard === 'infoVault' ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
                                             </div>
                                         </div>
                                     </Link>
@@ -2571,13 +2571,13 @@ const UserHomepageBackupDelete = () => {
                                     >
                                         {/* Notification Badge */}
                                         {getBadgeCount('settings') > 0 && (
-                                            <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold animate-bounce">
+                                            <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-sm h-6 w-6 flex items-center justify-center font-bold animate-bounce">
                                                 {getBadgeCount('settings')}
                                         </div>
                                         )}
                                         
                                         <div className="flex justify-center mb-2">
-                                            <div className={`p-2 bg-gray-600 rounded-full transition-all duration-200 ${hoveredCard === 'settings' ? 'bg-gray-700 scale-110 animate-spin' : ''}`}>
+                                            <div className={`p-2 bg-gray-600 rounded-sm transition-all duration-200 ${hoveredCard === 'settings' ? 'bg-gray-700 scale-110 animate-spin' : ''}`}>
                                                 <LucideCog size={28} className="text-white" />
                                             </div>
                                         </div>
@@ -2594,7 +2594,7 @@ const UserHomepageBackupDelete = () => {
                                         onMouseLeave={() => handleCardHover(null)}
                                     >
                                         <div className="flex justify-center mb-2">
-                                            <div className={`p-2 bg-red-500 rounded-full transition-all duration-200 ${hoveredCard === 'logout' ? 'bg-red-600 scale-110' : ''}`}>
+                                            <div className={`p-2 bg-red-500 rounded-sm transition-all duration-200 ${hoveredCard === 'logout' ? 'bg-red-600 scale-110' : ''}`}>
                                                 <LucidePower size={28} className="text-white" />
                                         </div>
                                         </div>
@@ -2615,7 +2615,7 @@ const UserHomepageBackupDelete = () => {
 
                             {/* Card Preview Tooltip */}
                             {showCardPreview && getCardPreviewData(showCardPreview) && (
-                                <div className="fixed z-50 bg-white rounded-lg shadow-lg border-2 p-4 w-64 max-w-sm transform transition-all duration-200"
+                                <div className="fixed z-50 bg-white rounded-sm shadow-lg border-2 p-4 w-64 max-w-sm transform transition-all duration-200"
                                      style={{
                                          left: '50%',
                                          top: '50%',
@@ -2628,7 +2628,7 @@ const UserHomepageBackupDelete = () => {
                                     <div className="space-y-1 mb-3">
                                         {getCardPreviewData(showCardPreview).items.map((item: string, index: number) => (
                                             <div key={index} className="text-xs text-gray-600 flex items-center">
-                                                <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                                                <div className="w-2 h-2 bg-blue-400 rounded-sm mr-2"></div>
                                                 {item}
                                             </div>
                                         ))}
@@ -2644,7 +2644,7 @@ const UserHomepageBackupDelete = () => {
                                 <>
                                     <Link to="/login" className='block p-4 border-2 border-emerald-300 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-xl hover:shadow-lg hover:from-emerald-200 hover:to-emerald-300 transform hover:scale-105 transition-all duration-200'>
                                         <div className="flex justify-center mb-2">
-                                            <div className="p-2 bg-emerald-500 rounded-full">
+                                            <div className="p-2 bg-emerald-500 rounded-sm">
                                                 <LucideLogIn size={28} className="text-white" />
                                         </div>
                                         </div>
@@ -2653,7 +2653,7 @@ const UserHomepageBackupDelete = () => {
                                     </Link>
                                     <Link to="/register" className='block p-4 border-2 border-sky-300 bg-gradient-to-br from-sky-100 to-sky-200 rounded-xl hover:shadow-lg hover:from-sky-200 hover:to-sky-300 transform hover:scale-105 transition-all duration-200'>
                                         <div className="flex justify-center mb-2">
-                                            <div className="p-2 bg-sky-500 rounded-full">
+                                            <div className="p-2 bg-sky-500 rounded-sm">
                                                 <LucideUserPlus size={28} className="text-white" />
                                         </div>
                                         </div>
@@ -2664,7 +2664,7 @@ const UserHomepageBackupDelete = () => {
                             )}
                             <Link to="/about" className='block p-4 border-2 border-teal-300 bg-gradient-to-br from-teal-100 to-teal-200 rounded-xl hover:shadow-lg hover:from-teal-200 hover:to-teal-300 transform hover:scale-105 transition-all duration-200'>
                                 <div className="flex justify-center mb-2">
-                                    <div className="p-2 bg-teal-500 rounded-full">
+                                    <div className="p-2 bg-teal-500 rounded-sm">
                                         <LucideHelpCircle size={28} className="text-white" />
                                 </div>
                                 </div>
@@ -2676,7 +2676,7 @@ const UserHomepageBackupDelete = () => {
                                 className='block p-4 border-2 border-indigo-300 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-xl hover:shadow-lg hover:from-indigo-200 hover:to-indigo-300 transform hover:scale-105 transition-all duration-200'
                             >
                                 <div className="flex justify-center mb-2">
-                                    <div className="p-2 bg-indigo-600 rounded-full">
+                                    <div className="p-2 bg-indigo-600 rounded-sm">
                                         <LucideGitBranch size={28} className="text-white" />
                                     </div>
                                 </div>
@@ -2710,7 +2710,7 @@ const UserHomepageBackupDelete = () => {
                                                     setSearchFilter('');
                                                     setShowOnlyWithBadges(false);
                                                 }}
-                                                className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                                                className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 transition-colors"
                                             >
                                                 Clear Filters
                                             </button>
@@ -2723,10 +2723,10 @@ const UserHomepageBackupDelete = () => {
                         {/* List View for Non-authenticated Users */}
                         {viewMode === 'list' && authState.isLoggedIn === 'false' && (
                             <div className="space-y-4">
-                                <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                                <div className="bg-white rounded-sm border border-gray-200 shadow-sm overflow-hidden">
                                     <div className="p-4 border-b border-gray-100">
                                         <div className="flex items-center gap-3">
-                                            <div className="p-2 rounded-lg bg-emerald-100">
+                                            <div className="p-2 rounded-sm bg-emerald-100">
                                                 <LucideLogIn size={20} className="text-emerald-600" />
                                             </div>
                                             <div>
@@ -2738,10 +2738,10 @@ const UserHomepageBackupDelete = () => {
                                     <div className="p-4 space-y-2">
                                         <Link 
                                             to="/login" 
-                                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-sm transition-colors"
                                             onClick={() => handleCardClick('login')}
                                         >
-                                            <div className="p-2 rounded-lg bg-emerald-100">
+                                            <div className="p-2 rounded-sm bg-emerald-100">
                                                 <LucideLogIn size={16} className="text-emerald-600" />
                                             </div>
                                             <div className="flex-1">
@@ -2751,10 +2751,10 @@ const UserHomepageBackupDelete = () => {
                                         </Link>
                                         <Link 
                                             to="/register" 
-                                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-sm transition-colors"
                                             onClick={() => handleCardClick('register')}
                                         >
-                                            <div className="p-2 rounded-lg bg-sky-100">
+                                            <div className="p-2 rounded-sm bg-sky-100">
                                                 <LucideUserPlus size={16} className="text-sky-600" />
                                             </div>
                                             <div className="flex-1">
@@ -2765,10 +2765,10 @@ const UserHomepageBackupDelete = () => {
                                     </div>
                                 </div>
                                 
-                                <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                                <div className="bg-white rounded-sm border border-gray-200 shadow-sm overflow-hidden">
                                     <div className="p-4 border-b border-gray-100">
                                         <div className="flex items-center gap-3">
-                                            <div className="p-2 rounded-lg bg-teal-100">
+                                            <div className="p-2 rounded-sm bg-teal-100">
                                                 <LucideHelpCircle size={20} className="text-teal-600" />
                                             </div>
                                             <div>
@@ -2780,10 +2780,10 @@ const UserHomepageBackupDelete = () => {
                                     <div className="p-4 space-y-2">
                                         <Link 
                                             to="/about" 
-                                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-sm transition-colors"
                                             onClick={() => handleCardClick('about')}
                                         >
-                                            <div className="p-2 rounded-lg bg-teal-100">
+                                            <div className="p-2 rounded-sm bg-teal-100">
                                                 <LucideHelpCircle size={16} className="text-teal-600" />
                                             </div>
                                             <div className="flex-1">
@@ -2795,10 +2795,10 @@ const UserHomepageBackupDelete = () => {
                                             href="https://ai-notes.xyz/docs/selfhost/selfhost-docker-build"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-sm transition-colors"
                                             onClick={() => handleCardClick('git')}
                                         >
-                                            <div className="p-2 rounded-lg bg-indigo-100">
+                                            <div className="p-2 rounded-sm bg-indigo-100">
                                                 <LucideGitBranch size={16} className="text-indigo-600" />
                                             </div>
                                             <div className="flex-1">

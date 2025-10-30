@@ -37,7 +37,7 @@ const ComponentPinnedTask = () => {
     return (
         <div>
             {taskArr.length > 0 && (
-                <div className="text-left p-2 border border-purple-400 rounded-md shadow-md bg-gradient-to-r from-purple-100 to-purple-300 mb-2 hover:bg-purple-200 transition duration-300">
+                <div className="text-left p-2 border border-purple-400 rounded-sm shadow-md bg-gradient-to-r from-purple-100 to-purple-300 mb-2 hover:bg-purple-200 transition duration-300">
                     <h2 className="text-lg font-bold mb-0 text-purple-800">
                         <Link to="/user/task">
                             <LucideList size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
@@ -47,14 +47,14 @@ const ComponentPinnedTask = () => {
                     <div>
                         <div className="flex items-center gap-2 mb-2 pt-2">
                             <Link
-                                className="p-1 border border-purple-400 rounded bg-purple-100 hover:bg-purple-200 transition duration-200"
+                                className="p-1 border border-purple-400 rounded-sm bg-purple-100 hover:bg-purple-200 transition duration-200"
                                 title="Add Task"
                                 to="/user/task?add-task-dialog=yes"
                             >
                                 <LucidePlus size={16} className="text-purple-600" />
                             </Link>
                             <button
-                                className="p-1 border border-purple-400 rounded bg-purple-100 hover:bg-purple-200 transition duration-200" title="Previous Task"
+                                className="p-1 border border-purple-400 rounded-sm bg-purple-100 hover:bg-purple-200 transition duration-200" title="Previous Task"
                                 disabled={currentTaskIndex <= 0}
                                 onClick={() => {
                                     setCurrentTaskIndex(currentTaskIndex - 1);
@@ -62,11 +62,11 @@ const ComponentPinnedTask = () => {
                             >
                                 <LucideChevronLeft size={16} className="text-purple-600" />
                             </button>
-                            <span className="px-2 py-1 text-xs font-medium text-purple-700 bg-purple-50 rounded border border-purple-300">
+                            <span className="px-2 py-1 text-xs font-medium text-purple-700 bg-purple-50 rounded-sm border border-purple-300">
                                 {taskArr.length > 0 ? `${currentTaskIndex + 1} / ${taskArr.length}` : '0 / 0'}
                             </span>
                             <button
-                                className="p-1 border border-purple-400 rounded bg-purple-100 hover:bg-purple-200 transition duration-200"
+                                className="p-1 border border-purple-400 rounded-sm bg-purple-100 hover:bg-purple-200 transition duration-200"
                                 title="Next Task"
                                 disabled={currentTaskIndex >= taskArr.length - 1}
                                 onClick={() => {
@@ -114,7 +114,7 @@ const ComponentPinnedTask = () => {
                             <div className="mt-2">
                                 <Link
                                     to={`/user/task?workspace=${taskArr[currentTaskIndex]?.taskWorkspaceId}&edit-task-id=${taskArr[currentTaskIndex]?._id}`}
-                                    className="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-50 border border-purple-300 rounded hover:bg-purple-100 transition duration-200"
+                                    className="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-50 border border-purple-300 rounded-sm hover:bg-purple-100 transition duration-200"
                                     title="Edit Task"
                                 >
                                     <LucideEdit size={14} className="mr-1" />

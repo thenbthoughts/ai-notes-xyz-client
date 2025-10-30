@@ -34,11 +34,11 @@ const ComponentInfoVaultLeftWrapper = () => {
 
             <div className="flex space-x-2 mb-4">
                 <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
                     onClick={infoVaultAddAxiosLocal}
                 >+ Add</button>
                 <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
                     onClick={clearFilters}
                 >Clear Filters</button>
             </div>
@@ -53,7 +53,7 @@ const ComponentInfoVaultLeftWrapper = () => {
                     debounceTimeout={500}
                     type="text"
                     placeholder="Search..."
-                    className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="border border-gray-300 rounded-sm p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     onChange={(e) => setSearchTerm(e.target.value)}
                     value={searchTerm}
                 />
@@ -105,7 +105,7 @@ const ComponentInfoVaultLeftWrapper = () => {
 
 const ComponentInfoVaultLeftWrapperRender = () => {
     return (
-        // Main container with light background, padding, rounded corners and max width for presentation
+        // Main container with light background, padding, rounded-sm corners and max width for presentation
         <div
             style={{
                 paddingTop: '10px',
@@ -113,7 +113,7 @@ const ComponentInfoVaultLeftWrapperRender = () => {
             }}
         >
             <div
-                className="bg-white rounded-lg shadow-md"
+                className="bg-white rounded-sm shadow-md"
                 style={{
                     paddingTop: '10px',
                     paddingBottom: '10px',
@@ -135,7 +135,7 @@ const ComponentInfoVaultLeftWrapperRender = () => {
 
 const ComponentInfoVaultLeftWrapperModelRender = () => {
     return (
-        // Main container with light background, padding, rounded corners and max width for presentation
+        // Main container with light background, padding, rounded-sm corners and max width for presentation
         <div
             style={{
                 position: 'fixed',

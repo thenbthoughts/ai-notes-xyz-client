@@ -58,14 +58,14 @@ const SettingDefaultEnvKeys = () => {
                     To set your default API keys, click the button below.
                 </p>
                 {request.success !== "" && (
-                    <p className="rounded px-2 bg-green-100 text-green-500 text-sm py-2">{request.success}</p>
+                    <p className="rounded-sm px-2 bg-green-100 text-green-500 text-sm py-2">{request.success}</p>
                 )}
                 {request.error !== "" && (
-                    <p className="rounded px-2 bg-red-100 text-red-500 text-sm py-2">{request.error}</p>
+                    <p className="rounded-sm px-2 bg-red-100 text-red-500 text-sm py-2">{request.error}</p>
                 )}
                 {request.loading && (
                      <button
-                        className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200"
+                        className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
                     >
                         Updating...
                     </button>
@@ -73,7 +73,7 @@ const SettingDefaultEnvKeys = () => {
                 {!request.loading && (
                     <button
                         onClick={handleUpdate}
-                        className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200"
+                        className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
                     >
                         Set Default API Keys
                     </button>

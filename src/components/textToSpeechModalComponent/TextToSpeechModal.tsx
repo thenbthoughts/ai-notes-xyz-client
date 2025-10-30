@@ -101,7 +101,7 @@ const TextToSpeechModal = () => {
             style={getModalStyles(screenSize === 'sm' ? true : false)}
             contentLabel="Text To Speech Modal"
         >
-            <div className="container mx-auto bg-white rounded-lg p-4" style={{ maxWidth: '600px' }}>
+            <div className="container mx-auto bg-white rounded-sm p-4" style={{ maxWidth: '600px' }}>
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-2xl font-bold">Text To Speech</h1>
                     <button
@@ -117,7 +117,7 @@ const TextToSpeechModal = () => {
                     {!ttsModalOpenStatus.playingStatus ? (
                         <button
                             onClick={handlePlay}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-sm transition"
                         >
                             <LucidePlay size={20} />
                             <span>Play</span>
@@ -126,7 +126,7 @@ const TextToSpeechModal = () => {
                         <>
                                 <button
                                     onClick={handleStop}
-                                    className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition"
+                                    className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-sm transition"
                                 >
                                     <LucideStopCircle size={20} />
                                     <span>Stop</span>
@@ -137,7 +137,7 @@ const TextToSpeechModal = () => {
 
                 {/* Text Content */}
                 <div className="max-h-96 overflow-y-auto">
-                    <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                    <div className="mb-4 p-3 bg-gray-50 rounded-sm">
                         <div style={{ overflowY: 'auto', maxHeight: '200px' }}>
                             <p className="text-gray-800 whitespace-pre-wrap">{ttsModalOpenStatus.text}</p>
                         </div>

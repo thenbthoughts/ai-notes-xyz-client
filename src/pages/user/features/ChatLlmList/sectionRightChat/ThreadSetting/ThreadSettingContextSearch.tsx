@@ -158,7 +158,7 @@ const ComponentTaskWorkspaceSelect = ({
 
             )}
             {workspaces.length === 0 && (
-                <div className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     No workspaces found
                 </div>
             )}
@@ -214,7 +214,7 @@ const ComponentNoteskWorkspaceSelect = ({
 
             )}
             {workspaces.length === 0 && (
-                <div className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     No workspaces found
                 </div>
             )}
@@ -483,7 +483,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                         placeholder="Search contexts..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
 
@@ -492,7 +492,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     <label className="text-sm font-medium text-gray-700">Context Selected:</label>
                     <div className="flex flex-wrap gap-2">
                         <button
-                            className={`px-3 py-1 text-sm border rounded-lg transition-colors ${filterIsContextSelected === 'all'
+                            className={`px-3 py-1 text-sm border rounded-sm transition-colors ${filterIsContextSelected === 'all'
                                 ? 'bg-blue-600 text-white border-blue-600'
                                 : 'border-gray-300 hover:bg-gray-50'
                                 }`}
@@ -501,7 +501,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                             All
                         </button>
                         <button
-                            className={`px-3 py-1 text-sm border rounded-lg transition-colors ${filterIsContextSelected === 'not-added'
+                            className={`px-3 py-1 text-sm border rounded-sm transition-colors ${filterIsContextSelected === 'not-added'
                                 ? 'bg-blue-600 text-white border-blue-600'
                                 : 'border-gray-300 hover:bg-gray-50'
                                 }`}
@@ -510,7 +510,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                             Not Selected
                         </button>
                         <button
-                            className={`px-3 py-1 text-sm border rounded-lg transition-colors ${filterIsContextSelected === 'added'
+                            className={`px-3 py-1 text-sm border rounded-sm transition-colors ${filterIsContextSelected === 'added'
                                 ? 'bg-blue-600 text-white border-blue-600'
                                 : 'border-gray-300 hover:bg-gray-50'
                                 }`}
@@ -563,12 +563,12 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
 
                 {/* Filter by task status */}
                 {filters.filterEventTypeTasks && (
-                    <div className="space-y-2 border border-gray-400 rounded p-1">
+                    <div className="space-y-2 border border-gray-400 rounded-sm p-1">
                         <div>
                             <label className="text-sm font-medium text-gray-700">Task Status:</label>
                             <div className="flex gap-2 mb-2">
                                 <button
-                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsCompleted === 'all'
+                                    className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsCompleted === 'all'
                                         ? 'bg-blue-600 text-white'
                                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                         }`}
@@ -577,7 +577,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                     All
                                 </button>
                                 <button
-                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsCompleted === 'completed'
+                                    className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsCompleted === 'completed'
                                         ? 'bg-blue-600 text-white'
                                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                         }`}
@@ -586,7 +586,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                     Completed
                                 </button>
                                 <button
-                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsCompleted === 'not-completed'
+                                    className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsCompleted === 'not-completed'
                                         ? 'bg-blue-600 text-white'
                                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                         }`}
@@ -601,7 +601,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                             <label className="text-sm font-medium text-gray-700">Task Archive Status:</label>
                             <div className="flex gap-2">
                                 <button
-                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsArchived === 'all'
+                                    className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsArchived === 'all'
                                         ? 'bg-blue-600 text-white'
                                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                         }`}
@@ -610,7 +610,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                     All
                                 </button>
                                 <button
-                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsArchived === 'archived'
+                                    className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsArchived === 'archived'
                                         ? 'bg-blue-600 text-white'
                                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                         }`}
@@ -619,7 +619,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                     Archived
                                 </button>
                                 <button
-                                    className={`px-3 py-1 rounded text-sm ${filterTaskIsArchived === 'not-archived'
+                                    className={`px-3 py-1 rounded-sm text-sm ${filterTaskIsArchived === 'not-archived'
                                         ? 'bg-blue-600 text-white'
                                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                         }`}
@@ -643,7 +643,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
 
                 {/* Filter -> notes */}
                 {filters.filterEventTypeNotes && (
-                    <div className="space-y-2 border border-gray-400 rounded p-1">
+                    <div className="space-y-2 border border-gray-400 rounded-sm p-1">
                         {/* notes workspace filter */}
                         <div>
                             <label className="text-sm font-medium text-gray-700">Notes Workspace:</label>
@@ -670,7 +670,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     onClick={() => {
                         handleAddAllContext();
                     }}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors inline-block mr-2"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-sm text-sm font-medium transition-colors inline-block mr-2"
                 >
                     Add All Context
                 </button>
@@ -678,7 +678,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     onClick={() => {
                         handleRemoveAllContext();
                     }}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors inline-block"
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-sm text-sm font-medium transition-colors inline-block"
                 >
                     Remove All Context
                 </button>
@@ -750,13 +750,13 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     return (
                         <div
                             key={item._id}
-                            className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                            className="bg-white border border-gray-200 rounded-sm p-4 hover:shadow-md transition-shadow"
                         >
                             <div className="flex items-start justify-between gap-3">
                                 <div className="flex-1 min-w-0">
                                     {/* Header with type badge and link */}
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${eventTypeColor}`}>
+                                        <span className={`text-xs px-2 py-1 rounded-sm font-medium ${eventTypeColor}`}>
                                             {eventTypeLabel}
                                         </span>
                                         <Link
@@ -809,14 +809,14 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                             </span>
                                         )}
                                         {item.fromCollection === 'tasks' && (
-                                            <span className={`px-2 py-0.5 rounded ${item.taskInfo?.isCompleted ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                            <span className={`px-2 py-0.5 rounded-sm ${item.taskInfo?.isCompleted ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                                                 {item.taskInfo?.isCompleted ? 'Completed' : 'Not Completed'}
                                             </span>
                                         )}
                                         {item.fromCollection === 'tasks' && (
                                             <Fragment>
                                                 {item.taskInfo?.isArchived && (
-                                                    <span className={`px-2 py-0.5 rounded ${item.taskInfo?.isArchived ? 'bg-gray-200 text-gray-600' : 'bg-blue-100 text-blue-700'}`}>
+                                                    <span className={`px-2 py-0.5 rounded-sm ${item.taskInfo?.isArchived ? 'bg-gray-200 text-gray-600' : 'bg-blue-100 text-blue-700'}`}>
                                                         Archived
                                                     </span>
                                                 )}
@@ -883,7 +883,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                                 });
                                             }
                                         }}
-                                        className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
+                                        className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-sm text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
                                     >Add</button>
                                 )}
                                 {item.isContextSelected === true && (
@@ -893,7 +893,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                                 referenceId: item.contextSelectedId,
                                             });
                                         }}
-                                        className="flex-shrink-0 bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
+                                        className="flex-shrink-0 bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-sm text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
                                     >Remove</button>
                                 )}
                             </div>
@@ -908,7 +908,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     <button
                         onClick={() => setPage(page - 1)}
                         disabled={page === 1}
-                        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors"
+                        className="px-4 py-2 border border-gray-300 rounded-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors"
                     >
                         ← Previous
                     </button>
@@ -918,7 +918,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     <button
                         onClick={() => setPage(page + 1)}
                         disabled={page >= Math.ceil(totalCount / perPage)}
-                        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors"
+                        className="px-4 py-2 border border-gray-300 rounded-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors"
                     >
                         Next →
                     </button>

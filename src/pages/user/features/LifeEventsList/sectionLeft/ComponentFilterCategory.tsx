@@ -47,7 +47,7 @@ const ComponentFilterCategory = () => {
         <div>
             {loading && (
                 <select
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                     value=""
                     onChange={() => { }}
                 >
@@ -60,7 +60,7 @@ const ComponentFilterCategory = () => {
                         Category
                         <Link
                             to={'/user/life-events?action=category'}
-                            className="ml-2 p-0 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300 inline-block text-sm"
+                            className="ml-2 p-0 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300 inline-block text-sm"
                         >
                             <LucidePlus className="inline-block m-1"
                                 size={'20px'}
@@ -68,7 +68,7 @@ const ComponentFilterCategory = () => {
                         </Link>
                     </label>
                     <select
-                        className="p-2 border border-gray-300 rounded-lg hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         value={category}
                         onChange={(e) => {
                             setCategory(e.target.value);

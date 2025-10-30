@@ -109,7 +109,7 @@ const SettingModelPreference = () => {
                     </label>
                     <select
                         id="preferredModelProvider"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={preferredModelProvider}
                         onChange={(e) => setPreferredModelProvider(e.target.value)}
                     >
@@ -125,7 +125,7 @@ const SettingModelPreference = () => {
                     <input
                         type="text"
                         id="preferredModelName"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={preferredModelName}
                         onChange={(e) => setPreferredModelName(e.target.value)}
                     />
@@ -136,14 +136,14 @@ const SettingModelPreference = () => {
                     <label htmlFor="preferredModelName" className="block text-gray-700 font-bold mb-2">
                         Model Names for GROQ
                     </label>
-                    <div className="bg-white shadow-md rounded-lg p-4">
+                    <div className="bg-white shadow-md rounded-sm p-4">
                         <div className="flex flex-wrap mt-2">
                             <span
                                 onClick={() => {
                                     setPreferredModelProvider("groq");
                                     setPreferredModelName("llama-3.1-8b-instant");
                                 }}
-                                className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-full mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
+                                className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-sm mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
                             >
                                 llama-3.1-8b-instant
                             </span>
@@ -152,7 +152,7 @@ const SettingModelPreference = () => {
                                     setPreferredModelProvider("groq");
                                     setPreferredModelName("llama-3.2-11b-vision-preview");
                                 }}
-                                className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-full mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
+                                className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-sm mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
                             >
                                 llama-3.2-11b-vision-preview
                             </span>
@@ -161,7 +161,7 @@ const SettingModelPreference = () => {
                                     setPreferredModelProvider("groq");
                                     setPreferredModelName("mistral-saba-24b");
                                 }}
-                                className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-full mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
+                                className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-sm mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
                             >
                                 mistral-saba-24b
                             </span>
@@ -173,7 +173,7 @@ const SettingModelPreference = () => {
                     <label htmlFor="preferredModelName" className="block text-gray-700 font-bold mb-2">
                         Model Names for Openrouter
                     </label>
-                    <div className="bg-white shadow-md rounded-lg p-4">
+                    <div className="bg-white shadow-md rounded-sm p-4">
                         <div className="flex flex-wrap mt-2">
 
                             {modelNamesOpenRouter.map(modelName => {
@@ -183,7 +183,7 @@ const SettingModelPreference = () => {
                                             setPreferredModelProvider("openrouter");
                                             setPreferredModelName(modelName);
                                         }}
-                                        className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-full mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
+                                        className="cursor-pointer bg-blue-100 text-blue-600 py-1 px-3 rounded-sm mr-2 mb-2 hover:bg-blue-200 transition-colors duration-200"
                                     >
                                         {modelName}
                                     </span>
@@ -215,7 +215,7 @@ const SettingModelPreference = () => {
 
                 <button
                     type="submit"
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm focus:outline-none focus:shadow-outline"
                 >
                     Update
                 </button>

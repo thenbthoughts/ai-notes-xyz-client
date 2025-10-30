@@ -216,7 +216,7 @@ const LastUsedLlmModel = ({
                 <button
                     key={index}
                     onClick={() => handleModelSelect(model)}
-                    className={`text-left px-2 py-1 text-sm rounded border hover:bg-gray-50 ${
+                    className={`text-left px-2 py-1 text-sm rounded-sm border hover:bg-gray-50 ${
                         aiModelName === model.aiModelName ? 'bg-blue-50 border-blue-200' : 'border-gray-200'
                     }`}
                 >
@@ -292,7 +292,7 @@ const ComponentThreadAdd = () => {
             <div className="max-w-2xl mx-auto p-6">
                 {/* Header */}
                 <div className="flex items-center mb-6">
-                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                    <div className="w-10 h-10 bg-gray-100 rounded-sm flex items-center justify-center mr-3">
                         <MessageCircle
                             className="w-5 h-5 text-gray-600"
                             style={{
@@ -314,7 +314,7 @@ const ComponentThreadAdd = () => {
                 </p>
 
                 {/* Current Model Section */}
-                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                <div className="bg-gray-50 rounded-sm p-4 mb-4">
                     <div className="flex items-center justify-between mb-2">
                         <h3 className="text-sm font-medium text-gray-700">Current Model</h3>
                         <button className="text-gray-400 hover:text-gray-600">
@@ -326,7 +326,7 @@ const ComponentThreadAdd = () => {
                     <div className="mb-2">
                         <h3 className="text-sm font-medium text-gray-700 mb-2">Provider</h3>
                         <select
-                            className="w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+                            className="w-full border border-gray-300 rounded-sm shadow-sm p-2 text-sm"
                             value={aiModelProvider}
                             onChange={(e) => {
                                 setAiModelProvider(e.target.value as "openrouter" | "groq");
@@ -398,7 +398,7 @@ const ComponentThreadAdd = () => {
                             >
                                 <input
                                     type="checkbox"
-                                    className="rounded-md mr-2"
+                                    className="rounded-sm mr-2"
                                     checked={formData.isPersonalContextEnabled}
                                 />
                                 <span className="text-sm text-gray-700 cursor-pointer">Personal Context Enable</span>
@@ -414,7 +414,7 @@ const ComponentThreadAdd = () => {
                             >
                                 <input
                                     type="checkbox"
-                                    className="rounded-md mr-2"
+                                    className="rounded-sm mr-2"
                                     checked={formData.isAutoAiContextSelectEnabled}
                                 />
                                 <span className="text-sm text-gray-700 cursor-pointer">Auto AI Context Enable</span>
@@ -431,11 +431,11 @@ const ComponentThreadAdd = () => {
                     >
                         <div className="inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div className="flex items-center justify-center space-x-2 z-10">
-                            <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:rotate-12 transition-transform duration-300">
+                            <div className="w-6 h-6 bg-white/20 rounded-sm flex items-center justify-center backdrop-blur-sm group-hover:rotate-12 transition-transform duration-300">
                                 <MessageCircle className="w-4 h-4 text-white drop-shadow-sm" />
                             </div>
                             <span className="text-base font-semibold tracking-wide">Start New Chat</span>
-                            <div className="w-2 h-2 bg-blue-300 rounded-full animate-pulse"></div>
+                            <div className="w-2 h-2 bg-blue-300 rounded-sm animate-pulse"></div>
                         </div>
                     </button>
                 </div>

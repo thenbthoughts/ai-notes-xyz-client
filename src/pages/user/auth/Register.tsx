@@ -117,7 +117,7 @@ export default function Component() {
         <div className="min-h-screen py-6 flex flex-col justify-center sm:py-12">
             <div className="container p-2 m-auto">
                 <div className="py-3 sm:max-w-xl md:max-w-4xl lg:max-w-5xl mx-auto">
-                    <div className="px-4 py-10 bg-white shadow-sm rounded sm:p-20">
+                    <div className="px-4 py-10 bg-white shadow-sm rounded-sm sm:p-20">
                         <div className="max-w-md mx-auto md:max-w-full grid md:grid-cols-2 gap-8">
                             <div>
                                 <div className="bg-white shadow-lg rounded-2xl">
@@ -136,7 +136,7 @@ export default function Component() {
                                                     required
                                                     value={username}
                                                     onChange={(e) => setUsername(e.target.value)}
-                                                    className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                    className="block w-full px-4 py-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -148,7 +148,7 @@ export default function Component() {
                                                     required
                                                     value={password}
                                                     onChange={(e) => setPassword(e.target.value)}
-                                                    className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                    className="block w-full px-4 py-3 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                                 />
                                                 <div className="flex items-center mt-2">
                                                     <input
@@ -167,7 +167,7 @@ export default function Component() {
                                         <div className="p-6 flex flex-col space-y-4">
                                             <button
                                                 type="submit"
-                                                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300"
+                                                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-sm shadow-md hover:bg-indigo-700 transition duration-300"
                                                 disabled={isLoading}
                                                 onClick={handleSubmit}
                                             >
@@ -176,7 +176,7 @@ export default function Component() {
                                             <div className="text-center">
                                                 <Link
                                                     to="/login"
-                                                    className="w-full border border-gray-300 text-gray-700 py-3 px-4 rounded-lg shadow-md hover:bg-gray-100 transition duration-300 block"
+                                                    className="w-full border border-gray-300 text-gray-700 py-3 px-4 rounded-sm shadow-md hover:bg-gray-100 transition duration-300 block"
                                                 >Login</Link>
                                             </div>
                                         </div>

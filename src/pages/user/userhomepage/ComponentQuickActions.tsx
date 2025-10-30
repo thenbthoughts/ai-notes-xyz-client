@@ -32,7 +32,7 @@ const QuickActionsComponent = () => {
     }
 
     return (
-        <div className="text-left p-3 border border-amber-400 rounded-md shadow-md bg-gradient-to-r from-amber-100 to-amber-300 mb-2 hover:bg-amber-200 transition duration-300">
+        <div className="text-left p-3 border border-amber-400 rounded-sm shadow-md bg-gradient-to-r from-amber-100 to-amber-300 mb-2 hover:bg-amber-200 transition duration-300">
             <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-bold text-amber-800">
                     <LucideZap size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
@@ -40,7 +40,7 @@ const QuickActionsComponent = () => {
                 </h2>
                 <button
                     onClick={() => setIsActionsExpanded(!isActionsExpanded)}
-                    className="p-1 rounded-full bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
+                    className="p-1 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
                     title="Toggle Expand"
                 >
                     {isActionsExpanded ?
@@ -57,7 +57,7 @@ const QuickActionsComponent = () => {
                             onClick={() => {
                                 notesQuickDailyNotesAddAxiosLocal();
                             }}
-                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
+                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
                         >
                             <LucideFileText size={14} className="mr-1" />
                             Quick Daily Notes
@@ -66,7 +66,7 @@ const QuickActionsComponent = () => {
                             onClick={() => {
                                 notesQuickTaskAddAxiosLocal();
                             }}
-                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
+                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
                         >
                             <LucideListTodo size={14} className="mr-1" />
                             Quick Daily Task

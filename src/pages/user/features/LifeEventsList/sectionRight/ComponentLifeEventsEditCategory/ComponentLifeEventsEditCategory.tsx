@@ -40,7 +40,7 @@ const ComponentFilterCategory = ({ value, onChange }: {
         <div>
             {loading && (
                 <select
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                     value={value}
                     onChange={onChange}
                 >
@@ -49,7 +49,7 @@ const ComponentFilterCategory = ({ value, onChange }: {
             )}
             {!loading && (
                 <select
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                     value={value}
                     onChange={onChange}
                 >

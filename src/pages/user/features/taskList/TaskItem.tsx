@@ -128,7 +128,7 @@ const TaskItem = ({
         return (
             <div
                 className={`
-                    bg-white p-3 rounded-lg shadow-sm mb-2 hover:shadow-md transition-shadow group cursor-pointer
+                    bg-white p-3 rounded-sm shadow-sm mb-2 hover:shadow-md transition-shadow group cursor-pointer
                     ${isUpdatedNow ? 'border-2 border-blue-500' : ''}
                 `}
             >
@@ -142,7 +142,7 @@ const TaskItem = ({
                             {task.labels.map((label) => (
                                 <div
                                     key={label}
-                                    className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-800"
+                                    className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-sm bg-gray-100 text-gray-800"
                                 >
                                     {label}
                                 </div>
@@ -151,23 +151,23 @@ const TaskItem = ({
                     )}
 
                     {task.isCompleted && (
-                        <div className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+                        <div className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-sm">
                             Completed
                         </div>
                     )}
                     {task.isArchived && (
-                        <div className="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full">
+                        <div className="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-sm">
                             Archived
                         </div>
                     )}
                     {task.priority && (
-                        <div className={`text-xs px-2 py-0.5 rounded-full ${getPriorityColor(task?.priority)}`}>
+                        <div className={`text-xs px-2 py-0.5 rounded-sm ${getPriorityColor(task?.priority)}`}>
                             Priority: {task.priority.replace('-', ' ')}
                         </div>
                     )}
 
                     {task.dueDate && (
-                        <div className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${isOverdue ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                        <div className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-sm ${isOverdue ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
                             }`}>
                             <LucideClock size={12} />
                             <span>
@@ -186,7 +186,7 @@ const TaskItem = ({
                             console.log(e.target.value);
                             axiosChangeTaskList(e.target.value);
                         }}
-                        className="border border-gray-300 px-2 py-1 pr-4 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out hover:bg-blue-50 text-sm"
+                        className="border border-gray-300 px-2 py-1 pr-4 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out hover:bg-blue-50 text-sm"
                         style={{
                             width: '100px',
                         }}
@@ -200,21 +200,21 @@ const TaskItem = ({
                     <div className="flex gap-1">
                         <button
                             onClick={() => axiosDeleteTask(task._id)}
-                            className="text-red-600 p-1 rounded hover:bg-red-50 transition"
+                            className="text-red-600 p-1 rounded-sm hover:bg-red-50 transition"
                             aria-label="Delete task"
                         >
                             <LucideTrash2 size={16} />
                         </button>
                         <button
                             onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
-                            className="text-blue-600 p-1 rounded hover:bg-blue-50 transition"
+                            className="text-blue-600 p-1 rounded-sm hover:bg-blue-50 transition"
                             aria-label="Edit task"
                         >
                             <LucideEdit3 size={16} />
                         </button>
                         <button
                             onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
-                            className="text-gray-600 p-1 rounded hover:bg-gray-50 transition"
+                            className="text-gray-600 p-1 rounded-sm hover:bg-gray-50 transition"
                             aria-label="View task details"
                         >
                             <LucideInfo size={16} />
@@ -225,12 +225,12 @@ const TaskItem = ({
                                     isTaskPinned: !task.isTaskPinned,
                                 })
                             }}
-                            className={`text-gray-600 p-1 rounded hover:bg-gray-50 transition`}
+                            className={`text-gray-600 p-1 rounded-sm hover:bg-gray-50 transition`}
                             aria-label="Pin task"
                         >
                             <LucidePin
                                 size={24}
-                                className={`p-1 rounded-full ${task.isTaskPinned ? 'text-blue-600 bg-blue-100' : 'text-gray-600'}`}
+                                className={`p-1 rounded-sm ${task.isTaskPinned ? 'text-blue-600 bg-blue-100' : 'text-gray-600'}`}
                             />
                         </button>
                     </div>
@@ -244,7 +244,7 @@ const TaskItem = ({
                             console.log('Chat with LLM for task:', task._id);
                             taskChatWithAi(task._id);
                         }}
-                        className="text-purple-600 p-1 rounded hover:bg-purple-50 transition mt-2"
+                        className="text-purple-600 p-1 rounded-sm hover:bg-purple-50 transition mt-2"
                     >
                         <LucideMessageCircle
                             size={16}

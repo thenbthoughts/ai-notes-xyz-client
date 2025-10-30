@@ -213,7 +213,7 @@ const AiSuggestions = () => {
             className="p-1.5 md:p-2"
         >
             {/* Header Section */}
-            <div className="mb-2 p-2.5 md:p-3 rounded-lg shadow text-white bg-gradient-to-r from-purple-600 to-indigo-600">
+            <div className="mb-2 p-2.5 md:p-3 rounded-sm shadow text-white bg-gradient-to-r from-purple-600 to-indigo-600">
                 <div className="flex items-center gap-1.5 mb-1">
                     <LucideBrain className="w-6 h-6 md:w-7 md:h-7" />
                     <h1 className="text-xl md:text-2xl font-bold">AI Suggestions</h1>
@@ -225,7 +225,7 @@ const AiSuggestions = () => {
 
             <div>
                 {/* Current Week Number */}
-                <div className="mb-2 p-2 md:p-2.5 rounded-lg shadow bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200">
+                <div className="mb-2 p-2 md:p-2.5 rounded-sm shadow bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200">
                     <div className="flex items-center gap-1.5">
                         <LucideInfo className="w-4 h-4 text-emerald-600" />
                         <h2 className="text-sm md:text-base font-bold text-gray-800">Current Week</h2>
@@ -245,7 +245,7 @@ const AiSuggestions = () => {
             </div>
 
             {/* AI Summary Section */}
-            <div className="mb-2 p-2.5 md:p-3 rounded-lg shadow bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+            <div className="mb-2 p-2.5 md:p-3 rounded-sm shadow bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
                 <div className="flex items-start gap-1.5 mb-1">
                     <LucideSparkles className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
                     <h2 className="text-sm md:text-base font-bold text-gray-800">AI Summary</h2>
@@ -259,7 +259,7 @@ const AiSuggestions = () => {
             </div>
 
             {/* Section 2: AI Diaries (toggle by checkboxes) */}
-            <div className="mb-2 bg-white rounded-lg shadow border border-gray-200 p-2 md:p-3">
+            <div className="mb-2 bg-white rounded-sm shadow border border-gray-200 p-2 md:p-3">
                 <div className="flex items-center gap-1.5 mb-1">
                     <LucideLightbulb className="w-4 h-4 text-amber-600" />
                     <h2 className="text-sm md:text-base font-bold text-gray-800">AI Diaries</h2>
@@ -269,7 +269,7 @@ const AiSuggestions = () => {
             </div>
 
             {/* Section 3: AI Suggestions List */}
-            <div className="mb-2 bg-white rounded-lg shadow border border-gray-200 p-2 md:p-3">
+            <div className="mb-2 bg-white rounded-sm shadow border border-gray-200 p-2 md:p-3">
                 <div className="flex items-center gap-1.5 mb-1">
                     <LucideSparkles className="w-4 h-4 text-purple-600" />
                     <h2 className="text-sm md:text-base font-bold text-gray-800">AI Suggestions List</h2>
@@ -280,9 +280,9 @@ const AiSuggestions = () => {
                 <ul className="divide-y divide-gray-100">
                     {aiGeneralSuggestions.map((s) => (
                         <li key={s.id} className="py-1.5 flex items-center gap-2">
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded border ${s.priority === 'high' ? 'border-red-300 text-red-700 bg-red-50' : s.priority === 'medium' ? 'border-yellow-300 text-yellow-700 bg-yellow-50' : 'border-green-300 text-green-700 bg-green-50'}`}>{s.priority.toUpperCase()}</span>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-sm border ${s.priority === 'high' ? 'border-red-300 text-red-700 bg-red-50' : s.priority === 'medium' ? 'border-yellow-300 text-yellow-700 bg-yellow-50' : 'border-green-300 text-green-700 bg-green-50'}`}>{s.priority.toUpperCase()}</span>
                             <p className="text-xs md:text-sm text-gray-800 flex-1">{s.text}</p>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">{s.tag}</span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-gray-100 text-gray-700">{s.tag}</span>
                         </li>
                     ))}
                 </ul>
@@ -293,7 +293,7 @@ const AiSuggestions = () => {
             </div>
 
             {/* Section 4: AI Task Suggestions */}
-            <div className="mb-2 bg-white rounded-lg shadow border border-gray-200 p-2 md:p-3">
+            <div className="mb-2 bg-white rounded-sm shadow border border-gray-200 p-2 md:p-3">
                 <div className="flex items-center gap-1.5 mb-1">
                     <LucideZap className="w-4 h-4 text-blue-600" />
                     <h2 className="text-sm md:text-base font-bold text-gray-800">AI Task Suggestions</h2>
@@ -305,8 +305,8 @@ const AiSuggestions = () => {
                             <div className="flex-1">
                                 <p className={`text-xs md:text-sm ${taskSuggestionDone[task.id] ? 'line-through text-gray-400' : 'text-gray-800'}`}>{task.title}</p>
                                 <div className="flex items-center gap-2 mt-0.5">
-                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">ETA {task.eta}</span>
-                                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${task.impact === 'High' ? 'bg-red-50 text-red-700 border border-red-300' : task.impact === 'Medium' ? 'bg-yellow-50 text-yellow-700 border border-yellow-300' : 'bg-green-50 text-green-700 border border-green-300'}`}>{task.impact} impact</span>
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-gray-100 text-gray-700">ETA {task.eta}</span>
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-sm ${task.impact === 'High' ? 'bg-red-50 text-red-700 border border-red-300' : task.impact === 'Medium' ? 'bg-yellow-50 text-yellow-700 border border-yellow-300' : 'bg-green-50 text-green-700 border border-green-300'}`}>{task.impact} impact</span>
                                 </div>
                             </div>
                             <button onClick={() => navigate('/user/task')} className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded">Add Task</button>
@@ -316,7 +316,7 @@ const AiSuggestions = () => {
             </div>
 
             {/* Section 5: AI Ask To Chat (based on past chat) */}
-            <div className="mb-2 bg-white rounded-lg shadow border border-gray-200 p-2 md:p-3">
+            <div className="mb-2 bg-white rounded-sm shadow border border-gray-200 p-2 md:p-3">
                 <div className="flex items-center gap-1.5 mb-1">
                     <LucideMessageSquare className="w-4 h-4 text-indigo-600" />
                     <h2 className="text-sm md:text-base font-bold text-gray-800">Ask to AI Chat</h2>
@@ -334,7 +334,7 @@ const AiSuggestions = () => {
                         <button
                             key={i}
                             onClick={() => navigate('/user/chat')}
-                            className="text-left p-2 rounded border border-gray-200 hover:bg-gray-50 text-xs md:text-sm"
+                            className="text-left p-2 rounded-sm border border-gray-200 hover:bg-gray-50 text-xs md:text-sm"
                         >
                             {q}
                         </button>
@@ -343,7 +343,7 @@ const AiSuggestions = () => {
             </div>
 
             {/* Section 5b: Suggested Adds/Updates from Recent Chats */}
-            <div className="mb-2 bg-white rounded-lg shadow border border-gray-200 p-2 md:p-3">
+            <div className="mb-2 bg-white rounded-sm shadow border border-gray-200 p-2 md:p-3">
                 <div className="flex items-center gap-1.5 mb-1">
                     <LucideSparkles className="w-4 h-4 text-emerald-600" />
                     <h2 className="text-sm md:text-base font-bold text-gray-800">Suggested Adds/Updates (from recent chats)</h2>
@@ -354,7 +354,7 @@ const AiSuggestions = () => {
             </div>
 
             {/* Section 6: AI Random Context */}
-            <div className="mb-2 bg-white rounded-lg shadow border border-gray-200 p-2 md:p-3">
+            <div className="mb-2 bg-white rounded-sm shadow border border-gray-200 p-2 md:p-3">
                 <div className="flex items-center gap-1.5 mb-1">
                     <LucideInfo className="w-4 h-4 text-teal-600" />
                     <h2 className="text-sm md:text-base font-bold text-gray-800">AI Random Context</h2>
@@ -369,7 +369,7 @@ const AiSuggestions = () => {
                         'Health: 3-minute stretch every hour improves focus for the next block.',
                         'Learning: Turn meeting notes into flash cards for quick recall.',
                     ].map((c, i) => (
-                        <li key={i} className="p-2 rounded border border-gray-200 bg-gray-50 text-xs md:text-sm text-gray-700">{c}</li>
+                        <li key={i} className="p-2 rounded-sm border border-gray-200 bg-gray-50 text-xs md:text-sm text-gray-700">{c}</li>
                     ))}
                 </ul>
             </div>
@@ -418,16 +418,16 @@ const AiSuggestions = () => {
                         <h3 className="text-sm md:text-base font-bold text-gray-800">Quick Actions</h3>
                     </div>
                     <div className="flex flex-wrap gap-1.5">
-                        <button onClick={() => navigate('/user/task')} className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition-colors">
+                        <button onClick={() => navigate('/user/task')} className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded-sm transition-colors">
                             Create Task
                         </button>
-                        <button onClick={() => navigate('/user/notes')} className="px-2 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded transition-colors">
+                        <button onClick={() => navigate('/user/notes')} className="px-2 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded-sm transition-colors">
                             New Note
                         </button>
-                        <button onClick={() => navigate('/user/task-workspace')} className="px-2 py-1 bg-purple-500 hover:bg-purple-600 text-white text-xs rounded transition-colors">
+                        <button onClick={() => navigate('/user/task-workspace')} className="px-2 py-1 bg-purple-500 hover:bg-purple-600 text-white text-xs rounded-sm transition-colors">
                             Set Goal
                         </button>
-                        <button onClick={() => navigate('/user/finance')} className="px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white text-xs rounded transition-colors">
+                        <button onClick={() => navigate('/user/finance')} className="px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white text-xs rounded-sm transition-colors">
                             Track Expense
                         </button>
                     </div>
@@ -545,8 +545,8 @@ const AiSuggestions = () => {
                                 <p className="text-xs md:text-sm font-semibold text-gray-800">🎯 Habits</p>
                                 <span className="text-xs text-purple-600 font-semibold">60%</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-1">
-                                <div className="bg-purple-500 h-1 rounded-full" style={{ width: '60%' }}></div>
+                            <div className="w-full bg-gray-200 rounded-sm h-1">
+                                <div className="bg-purple-500 h-1 rounded-sm" style={{ width: '60%' }}></div>
                             </div>
                         </div>
                         <div>
@@ -554,8 +554,8 @@ const AiSuggestions = () => {
                                 <p className="text-xs md:text-sm font-semibold text-gray-800">💰 Save $500</p>
                                 <span className="text-xs text-green-600 font-semibold">40%</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-1">
-                                <div className="bg-green-500 h-1 rounded-full" style={{ width: '40%' }}></div>
+                            <div className="w-full bg-gray-200 rounded-sm h-1">
+                                <div className="bg-green-500 h-1 rounded-sm" style={{ width: '40%' }}></div>
                             </div>
                         </div>
                         <div>
@@ -563,8 +563,8 @@ const AiSuggestions = () => {
                                 <p className="text-xs md:text-sm font-semibold text-gray-800">📚 2 books</p>
                                 <span className="text-xs text-blue-600 font-semibold">75%</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-1">
-                                <div className="bg-blue-500 h-1 rounded-full" style={{ width: '75%' }}></div>
+                            <div className="w-full bg-gray-200 rounded-sm h-1">
+                                <div className="bg-blue-500 h-1 rounded-sm" style={{ width: '75%' }}></div>
                             </div>
                         </div>
                     </div>
@@ -572,7 +572,7 @@ const AiSuggestions = () => {
             </div>
 
             {/* Footer Info */}
-            <div className="mt-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-3 md:p-4 border border-indigo-200">
+            <div className="mt-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-sm p-3 md:p-4 border border-indigo-200">
                 <div className="flex items-start gap-2">
                     <LucideStar className="w-4 h-4 md:w-5 md:h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
                     <div>
@@ -600,23 +600,23 @@ const DiarySection = () => {
     return (
         <div>
             <div className="flex flex-wrap gap-2 mb-2">
-                <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
                     <input type="checkbox" checked={showDaily} onChange={e => setShowDaily(e.target.checked)} />
                     Daily diary
                 </label>
-                <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
                     <input type="checkbox" checked={showWeekly} onChange={e => setShowWeekly(e.target.checked)} />
                     Weekly diary
                 </label>
-                <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
                     <input type="checkbox" checked={showMonthly} onChange={e => setShowMonthly(e.target.checked)} />
                     Monthly diary
                 </label>
-                <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
                     <input type="checkbox" checked={showLastWeek} onChange={e => setShowLastWeek(e.target.checked)} />
                     Last week diary
                 </label>
-                <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded px-2 py-1 cursor-pointer">
+                <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
                     <input type="checkbox" checked={showYesterday} onChange={e => setShowYesterday(e.target.checked)} />
                     Yesterday diary
                 </label>
@@ -624,7 +624,7 @@ const DiarySection = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                 {showDaily && (
-                    <div className="p-2 rounded border border-cyan-200 bg-cyan-50">
+                    <div className="p-2 rounded-sm border border-cyan-200 bg-cyan-50">
                         <p className="text-xs text-gray-600">Today</p>
                         <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">AI Daily Diary</h3>
                         <ul className="text-xs md:text-sm text-gray-700 space-y-1 list-disc ml-4">
@@ -635,7 +635,7 @@ const DiarySection = () => {
                     </div>
                 )}
                 {showWeekly && (
-                    <div className="p-2 rounded border border-blue-200 bg-blue-50">
+                    <div className="p-2 rounded-sm border border-blue-200 bg-blue-50">
                         <p className="text-xs text-gray-600">This Week</p>
                         <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">AI Weekly Diary</h3>
                         <ul className="text-xs md:text-sm text-gray-700 space-y-1 list-disc ml-4">
@@ -646,7 +646,7 @@ const DiarySection = () => {
                     </div>
                 )}
                 {showMonthly && (
-                    <div className="p-2 rounded border border-purple-200 bg-purple-50">
+                    <div className="p-2 rounded-sm border border-purple-200 bg-purple-50">
                         <p className="text-xs text-gray-600">This Month</p>
                         <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">AI Monthly Diary</h3>
                         <ul className="text-xs md:text-sm text-gray-700 space-y-1 list-disc ml-4">
@@ -657,7 +657,7 @@ const DiarySection = () => {
                     </div>
                 )}
                 {showLastWeek && (
-                    <div className="p-2 rounded border border-amber-200 bg-amber-50">
+                    <div className="p-2 rounded-sm border border-amber-200 bg-amber-50">
                         <p className="text-xs text-gray-600">Last Week</p>
                         <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">AI Last Week Diary</h3>
                         <ul className="text-xs md:text-sm text-gray-700 space-y-1 list-disc ml-4">
@@ -668,7 +668,7 @@ const DiarySection = () => {
                     </div>
                 )}
                 {showYesterday && (
-                    <div className="p-2 rounded border border-slate-200 bg-slate-50">
+                    <div className="p-2 rounded-sm border border-slate-200 bg-slate-50">
                         <p className="text-xs text-gray-600">Yesterday</p>
                         <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">AI Yesterday Diary</h3>
                         <ul className="text-xs md:text-sm text-gray-700 space-y-1 list-disc ml-4">
@@ -723,7 +723,7 @@ const SuggestedFromChat = () => {
                 <span className="text-[11px] md:text-xs text-gray-600">Showing {visible.length} suggestions</span>
                 <button
                     onClick={() => visible.forEach(v => markDone(v.id))}
-                    className="ml-auto px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[11px] md:text-xs hover:bg-emerald-100"
+                    className="ml-auto px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-sm text-[11px] md:text-xs hover:bg-emerald-100"
                 >
                     Mark all done
                 </button>
@@ -731,19 +731,19 @@ const SuggestedFromChat = () => {
             <ul className="divide-y divide-gray-100">
                 {visible.map(item => (
                     <li key={item.id} className="py-1.5 flex items-start gap-2">
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 border border-gray-200">{item.kind}</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-gray-100 text-gray-700 border border-gray-200">{item.kind}</span>
                         <div className="flex-1 min-w-0">
                             <p className="text-xs md:text-sm text-gray-800 font-medium">
                                 <span className="text-gray-500 font-normal">{item.action}:</span> {item.title}
                             </p>
                             <p className="text-[11px] md:text-xs text-gray-600">Reason: {item.reason}</p>
                             <div className="flex items-center gap-1 mt-1">
-                                <button onClick={() => navigate(item.route)} className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] md:text-xs rounded whitespace-nowrap">{item.btn}</button>
-                                <button onClick={() => markDone(item.id)} className="px-2 py-1 border border-gray-200 rounded text-[11px] md:text-xs">Done</button>
-                                <button onClick={() => snoozeFor(item.id, 1000 * 60 * 60 * 24)} className="px-2 py-1 border border-gray-200 rounded text-[11px] md:text-xs">Snooze 1d</button>
-                                <button onClick={() => dismiss(item.id)} className="px-2 py-1 border border-gray-200 rounded text-[11px] md:text-xs">Dismiss</button>
-                                <button onClick={() => feedback(item.id, 'up')} className={`px-2 py-1 border rounded text-[11px] md:text-xs ${suggestionState[item.id]?.feedback === 'up' ? 'border-emerald-300 bg-emerald-50 text-emerald-700' : 'border-gray-200'}`}>👍</button>
-                                <button onClick={() => feedback(item.id, 'down')} className={`px-2 py-1 border rounded text-[11px] md:text-xs ${suggestionState[item.id]?.feedback === 'down' ? 'border-red-300 bg-red-50 text-red-700' : 'border-gray-200'}`}>👎</button>
+                                <button onClick={() => navigate(item.route)} className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] md:text-xs rounded-sm whitespace-nowrap">{item.btn}</button>
+                                <button onClick={() => markDone(item.id)} className="px-2 py-1 border border-gray-200 rounded-sm text-[11px] md:text-xs">Done</button>
+                                <button onClick={() => snoozeFor(item.id, 1000 * 60 * 60 * 24)} className="px-2 py-1 border border-gray-200 rounded-sm text-[11px] md:text-xs">Snooze 1d</button>
+                                <button onClick={() => dismiss(item.id)} className="px-2 py-1 border border-gray-200 rounded-sm text-[11px] md:text-xs">Dismiss</button>
+                                <button onClick={() => feedback(item.id, 'up')} className={`px-2 py-1 border rounded-sm text-[11px] md:text-xs ${suggestionState[item.id]?.feedback === 'up' ? 'border-emerald-300 bg-emerald-50 text-emerald-700' : 'border-gray-200'}`}>👍</button>
+                                <button onClick={() => feedback(item.id, 'down')} className={`px-2 py-1 border rounded-sm text-[11px] md:text-xs ${suggestionState[item.id]?.feedback === 'down' ? 'border-red-300 bg-red-50 text-red-700' : 'border-gray-200'}`}>👎</button>
                             </div>
                         </div>
                     </li>
