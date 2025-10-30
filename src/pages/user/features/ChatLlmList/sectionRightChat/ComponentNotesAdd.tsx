@@ -256,12 +256,27 @@ const ComponentNotesAdd = ({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [newNote, setNewNote] = useState('');
     const [files, setFiles] = useState<string[]>([]);
+    const [timer, setTimer] = useState(0);
 
     useEffect(() => {
         if (actionContainerRef.current) {
             setChatLlmFooterHeight(actionContainerRef.current.clientHeight);
         }
     }, [newNote, files]);
+
+    // Polling effect - refresh every 1 second while generating
+    useEffect(() => {
+        const intervalTimer = setInterval(() => {
+            setTimer(prevTimer => prevTimer + 1);
+        }, 1000);
+        return () => clearInterval(intervalTimer);
+    }, []);
+
+    useEffect(() => {
+        if (isSubmitting) {
+            setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
+        }
+    }, [timer, isSubmitting]);
 
     const handleAddNote = async () => {
         setIsSubmitting(true);
@@ -323,15 +338,23 @@ const ComponentNotesAdd = ({
                     messageCount: 1,
                 });
 
-                // process notes
+                setTimeout(() => {
+                    const messagesScrollDown = document.getElementById('messagesScrollDown');
+                    if (messagesScrollDown) {
+                        messagesScrollDown?.scrollIntoView({ behavior: "smooth" });
+                    }
+                }, 2000);
+
+                // Start streaming generation
                 await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
                     threadId: threadId,
                 });
 
                 toast.dismiss(toastLoadingId);
-                toast.success('Note added successfully!');
+                toast.success('Generation completed!');
 
                 setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
+
                 setNewNote("");
             }
         } catch (error) {
@@ -346,17 +369,26 @@ const ComponentNotesAdd = ({
         let toastLoadingId = toast.loading('Regenerating response...');
         setIsSubmitting(true);
         try {
-            // process notes
+            setTimeout(() => {
+                const messagesScrollDown = document.getElementById('messagesScrollDown');
+                if (messagesScrollDown) {
+                    messagesScrollDown?.scrollIntoView({ behavior: "smooth" });
+                }
+            }, 2000);
+
+            // Start streaming generation
             await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
                 threadId: threadId,
             });
-            setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
+            toast.dismiss(toastLoadingId);
+            toast.success('Regeneration completed!');
+
         } catch (error) {
             console.error(error);
             toast.error('Error regenerating response. Please try again.');
         } finally {
-            toast.dismiss(toastLoadingId);
             setIsSubmitting(false);
+            setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
         }
     }
 

@@ -38,15 +38,23 @@ const CRightChatById = ({
 
     // useState - old
     const [messages, setMessages] = useState<tsMessageItem[]>([]);
-
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // useEffect - old
+    const useEffectOneTimeMessagesScrollDownRef = useRef<boolean>(false);
+
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
+        if(!useEffectOneTimeMessagesScrollDownRef.current) {
+            if(messages.length > 0) {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+                useEffectOneTimeMessagesScrollDownRef.current = true;
+            }
+        }
+        return () => {
+            useEffectOneTimeMessagesScrollDownRef.current = false;
+        }
+    }, [messages])
 
     // useEffect
     useEffect(() => {
@@ -116,11 +124,6 @@ const CRightChatById = ({
                 type: doc.type,
             }));
             setMessages(notes);
-
-            const messagesScrollDown = document.getElementById('messagesScrollDown');
-            if (messagesScrollDown) {
-                messagesScrollDown?.scrollIntoView({ behavior: "smooth" });
-            }
         } catch (error) {
             console.log(error);
         } finally {
@@ -171,6 +174,7 @@ const CRightChatById = ({
                                     </div>
                                 )
                             })}
+                            
                         </div>
 
                         <div>

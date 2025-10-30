@@ -122,7 +122,7 @@ const ChatRightFilterWrapper = ({
                 </div>
             </div>
 
-            {/* move up */}
+            {/* move down */}
             <div
                 className='p-1 cursor-pointer'
                 onClick={() => {
