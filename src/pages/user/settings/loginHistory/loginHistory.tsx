@@ -43,7 +43,7 @@ const LoginHistory = () => {
             width: '100px',
             cell: (row: IUserDeviceList) => (
                 <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${row.isExpired
+                    className={`px-2 py-1 rounded-sm text-xs font-medium ${row.isExpired
                         ? 'bg-red-100 text-red-800'
                         : 'bg-green-100 text-green-800'
                         }`}
@@ -104,7 +104,7 @@ const LoginHistory = () => {
             cell: (row: IUserDeviceList) => (
                 <div className="flex gap-2">
                     <button
-                        className={`px-2 py-1 text-xs rounded ${row.isExpired
+                        className={`px-2 py-1 text-xs rounded-sm ${row.isExpired
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             : 'bg-red-100 text-red-600 hover:bg-red-200'
                             }`}
@@ -255,7 +255,7 @@ const LoginHistory = () => {
         >
             <SettingHeader />
 
-            <div className="bg-white rounded-lg shadow-sm border">
+            <div className="bg-white rounded-sm shadow-sm border">
                 <div className="p-4 border-b">
                     <h2 className="text-lg font-semibold text-gray-900">Login History & Devices</h2>
                     <p className="text-sm text-gray-600 mt-1">
@@ -267,13 +267,13 @@ const LoginHistory = () => {
                     <div className="flex gap-3">
                         <button
                             onClick={handleLogoutAllDevices}
-                            className="px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors"
+                            className="px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors"
                         >
                             Logout All Devices
                         </button>
                         <button
                             onClick={handleClearAllRecords}
-                            className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
+                            className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
                         >
                             Clear All Records
                         </button>

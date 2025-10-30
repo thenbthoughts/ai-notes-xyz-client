@@ -29,7 +29,7 @@ const HomepageDateTimeComponent = () => {
     };
 
     return (
-        <div className="text-left p-3 border border-teal-400 rounded-md shadow-md bg-gradient-to-r from-teal-100 to-teal-300 mb-2 hover:bg-teal-200 transition duration-300">
+        <div className="text-left p-3 border border-teal-400 rounded-sm shadow-md bg-gradient-to-r from-teal-100 to-teal-300 mb-2 hover:bg-teal-200 transition duration-300">
             <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-bold text-teal-800">
                     <LucideClock size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
@@ -38,7 +38,7 @@ const HomepageDateTimeComponent = () => {
                 <div className="flex gap-1">
                     <button
                         onClick={toggleTimeFormat}
-                        className="p-1 rounded-full bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
+                        className="p-1 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
                         title={`Switch to ${is24HourFormat ? '12' : '24'}-hour format`}
                     >
                         {is24HourFormat ?
@@ -48,7 +48,7 @@ const HomepageDateTimeComponent = () => {
                     </button>
                     <button
                         onClick={() => setIsTimeExpanded(!isTimeExpanded)}
-                        className="p-1 rounded-full bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
+                        className="p-1 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
                         title="Toggle Expand"
                     >
                         {isTimeExpanded ?
@@ -62,7 +62,7 @@ const HomepageDateTimeComponent = () => {
             {isTimeExpanded && (
                 <div className="text-sm text-teal-700 space-y-2">
                     <div
-                        className="font-semibold text-lg bg-white bg-opacity-50 rounded p-2 cursor-pointer hover:bg-opacity-70 transition duration-200"
+                        className="font-semibold text-lg bg-white bg-opacity-50 rounded-sm p-2 cursor-pointer hover:bg-opacity-70 transition duration-200"
                         // onClick={() => showNotification('Current time: ' + currentTime.toLocaleTimeString())}
                     >
                         {is24HourFormat
@@ -70,7 +70,7 @@ const HomepageDateTimeComponent = () => {
                             : currentTime.toLocaleTimeString()
                         }
                     </div>
-                    <div className="text-xs bg-white bg-opacity-50 rounded p-2">
+                    <div className="text-xs bg-white bg-opacity-50 rounded-sm p-2">
                         {currentTime.toLocaleDateString(undefined, {
                             weekday: 'long',
                             year: 'numeric',

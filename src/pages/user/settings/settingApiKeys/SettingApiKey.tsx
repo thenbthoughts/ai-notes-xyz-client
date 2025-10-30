@@ -327,11 +327,11 @@ const SettingApiKey = () => {
                     <label htmlFor="apiKeyGroq" className="block text-gray-700 font-bold mb-2">
                         Groq Api Key
                         {authState.apiKeyGroqValid ? (
-                            <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                            <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                 Valid
                             </span>
                         ) : (
-                            <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                            <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                 Not set
                             </span>
                         )}
@@ -339,7 +339,7 @@ const SettingApiKey = () => {
                     <input
                         type="text"
                         id="apiKeyGroq"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={apiKeyGroq}
                         onChange={(e) => setApiKeyGroq(e.target.value)}
                     />
@@ -356,7 +356,7 @@ const SettingApiKey = () => {
                     </div>
                     <button
                         onClick={handleUpdateGroq}
-                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200"
+                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
                     >
                         Verify and save
                     </button>
@@ -367,11 +367,11 @@ const SettingApiKey = () => {
                     <label htmlFor="apiKeyOpenrouter" className="block text-gray-700 font-bold mb-2">
                         Openrouter Api Key
                         {authState.apiKeyOpenrouterValid ? (
-                            <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                            <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                 Valid
                             </span>
                         ) : (
-                            <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                            <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                 Not set
                             </span>
                         )}
@@ -379,7 +379,7 @@ const SettingApiKey = () => {
                     <input
                         type="text"
                         id="apiKeyOpenrouter"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={apiKeyOpenrouter}
                         onChange={(e) => setApiKeyOpenrouter(e.target.value)}
                     />
@@ -396,7 +396,7 @@ const SettingApiKey = () => {
                     </div>
                     <button
                         onClick={handleUpdateOpenrouter}
-                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200"
+                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
                     >
                         Verify and save
                     </button>
@@ -408,11 +408,11 @@ const SettingApiKey = () => {
                         <label htmlFor="apiKeyOpenrouter" className="block text-gray-700 font-bold mb-2">
                             S3 compatible Api Key
                             {authState.apiKeyS3Valid ? (
-                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                     Valid
                                 </span>
                             ) : (
-                                <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                                <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                     Not set
                                 </span>
                             )}
@@ -426,7 +426,7 @@ const SettingApiKey = () => {
                         <input
                             type="text"
                             id="apiKeyS3Endpoint"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={apiKeyS3Endpoint}
                             onChange={(e) => setApiKeyS3Endpoint(e.target.value)}
                         />
@@ -438,7 +438,7 @@ const SettingApiKey = () => {
                         <input
                             type="text"
                             id="apiKeyS3Region"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={apiKeyS3Region}
                             onChange={(e) => setApiKeyS3Region(e.target.value)}
                         />
@@ -451,7 +451,7 @@ const SettingApiKey = () => {
                         <input
                             type="text"
                             id="apiKeyS3AccessKeyId"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={apiKeyS3AccessKeyId}
                             onChange={(e) => setApiKeyS3AccessKeyId(e.target.value)}
                         />
@@ -464,7 +464,7 @@ const SettingApiKey = () => {
                         <input
                             type="text"
                             id="apiKeyS3SecretAccessKey"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={apiKeyS3SecretAccessKey}
                             onChange={(e) => setApiKeyS3SecretAccessKey(e.target.value)}
                         />
@@ -476,7 +476,7 @@ const SettingApiKey = () => {
                         <input
                             type="text"
                             id="apiKeyS3BucketName"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={apiKeyS3BucketName}
                             onChange={(e) => setApiKeyS3BucketName(e.target.value)}
                         />
@@ -495,7 +495,7 @@ const SettingApiKey = () => {
                     </div>
                     <button
                         onClick={handleUpdateS3}
-                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200"
+                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
                     >
                         Verify and save
                     </button>
@@ -507,11 +507,11 @@ const SettingApiKey = () => {
                         <label htmlFor="apiKeyOllama" className="block text-gray-700 font-bold mb-2">
                             Ollama Api Key
                             {authState.apiKeyOllamaValid ? (
-                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                     Valid
                                 </span>
                             ) : (
-                                <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                                <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                     Not set
                                 </span>
                             )}
@@ -525,7 +525,7 @@ const SettingApiKey = () => {
                         <input
                             type="text"
                             id="apiKeyOllamaEndpoint"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={apiKeyOllamaEndpoint}
                             onChange={(e) => setApiKeyOllamaEndpoint(e.target.value)}
                         />
@@ -544,7 +544,7 @@ const SettingApiKey = () => {
                     </div>
                     <button
                         onClick={handleUpdateOllama}
-                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200"
+                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
                     >
                         Verify and save
                     </button>
@@ -556,11 +556,11 @@ const SettingApiKey = () => {
                         <label htmlFor="apiKeyOllama" className="block text-gray-700 font-bold mb-2">
                             Qdrant Api Key
                             {authState.apiKeyQdrantValid ? (
-                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                     Valid
                                 </span>
                             ) : (
-                                <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                                <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                     Not set
                                 </span>
                             )}
@@ -574,7 +574,7 @@ const SettingApiKey = () => {
                         <input
                             type="text"
                             id="apiKeyQdrantEndpoint"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={apiKeyQdrantEndpoint}
                             onChange={(e) => setApiKeyQdrantEndpoint(e.target.value)}
                         />
@@ -587,7 +587,7 @@ const SettingApiKey = () => {
                         <input
                             type="text"
                             id="apiKeyQdrantPassword"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={apiKeyQdrantPassword}
                             onChange={(e) => setApiKeyQdrantPassword(e.target.value)}
                         />
@@ -606,7 +606,7 @@ const SettingApiKey = () => {
                     </div>
                     <button
                         onClick={handleUpdateQdrant}
-                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200"
+                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
                     >
                         Verify and save
                     </button>
@@ -618,11 +618,11 @@ const SettingApiKey = () => {
                         <label htmlFor="smtpHost" className="block text-gray-700 font-bold mb-2">
                             SMTP Host
                             {authState.smtpValid ? (
-                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                     Valid
                                 </span>
                             ) : (
-                                <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                                <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                     Not set
                                 </span>
                             )}
@@ -631,7 +631,7 @@ const SettingApiKey = () => {
                             type="text"
                             id="smtpHost"
                             placeholder="smtp.gmail.com"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={smtpHost}
                             onChange={(e) => setSmtpHost(e.target.value)}
                         />
@@ -645,7 +645,7 @@ const SettingApiKey = () => {
                             type="number"
                             id="smtpPort"
                             placeholder="587"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={smtpPort}
                             onChange={(e) => setSmtpPort(e.target.value)}
                         />
@@ -659,7 +659,7 @@ const SettingApiKey = () => {
                             type="text"
                             id="smtpUser"
                             placeholder="your-email@gmail.com"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={smtpUser}
                             onChange={(e) => setSmtpUser(e.target.value)}
                         />
@@ -673,7 +673,7 @@ const SettingApiKey = () => {
                             type="password"
                             id="smtpPassword"
                             placeholder="your-app-password"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={smtpPassword}
                             onChange={(e) => setSmtpPassword(e.target.value)}
                         />
@@ -687,7 +687,7 @@ const SettingApiKey = () => {
                             type="email"
                             id="smtpFrom"
                             placeholder="sender@example.com"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={smtpFrom}
                             onChange={(e) => setSmtpFrom(e.target.value)}
                         />
@@ -701,7 +701,7 @@ const SettingApiKey = () => {
                             type="email"
                             id="smtpTo"
                             placeholder="recipient@example.com"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             value={smtpTo}
                             onChange={(e) => setSmtpTo(e.target.value)}
                         />
@@ -720,7 +720,7 @@ const SettingApiKey = () => {
                     </div>
                     <button
                         onClick={handleUpdateSmtp}
-                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200"
+                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
                     >
                         Verify and save
                     </button>
@@ -734,7 +734,7 @@ const SettingApiKey = () => {
                     <input
                         type="text"
                         id="clientFrontendUrl"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={authState.clientFrontendUrl}
                         disabled
                     />

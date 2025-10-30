@@ -44,10 +44,10 @@ const ComponentNotificationItem = ({
                     </span>
                 </div>
                 {notificationObj.text && notificationObj.text.length > 0 && (
-                    <p className="mb-2 whitespace-pre-wrap border border-gray-200 rounded p-1 text-sm">{notificationObj.text}</p>
+                    <p className="mb-2 whitespace-pre-wrap border border-gray-200 rounded-sm p-1 text-sm">{notificationObj.text}</p>
                 )}
                 {notificationObj.html && notificationObj.html.length > 0 && (
-                    <p className="mb-2 border border-gray-200 rounded p-1 text-sm">
+                    <p className="mb-2 border border-gray-200 rounded-sm p-1 text-sm">
                         {/* <div dangerouslySetInnerHTML={{ __html: notificationObj.html }} /> */}
                         <iframe
                             style={{ width: '100%', height: 400, border: 0 }}
@@ -59,7 +59,7 @@ const ComponentNotificationItem = ({
 
                 {/* delete button */}
                 <button
-                    className="bg-red-100 hover:bg-red-200 text-red-600 px-4 py-1 rounded mt-2 flex items-center gap-2"
+                    className="bg-red-100 hover:bg-red-200 text-red-600 px-4 py-1 rounded-sm mt-2 flex items-center gap-2"
                     onClick={handleDelete}
                 >
                     <LucideTrash size={16} /> Delete
@@ -70,7 +70,7 @@ const ComponentNotificationItem = ({
 
     return (
         <div
-            className="my-2 py-2 bg-white rounded px-2"
+            className="my-2 py-2 bg-white rounded-sm px-2"
             style={{ borderBottom: '1px solid #ccc' }}
         >
             <Fragment>

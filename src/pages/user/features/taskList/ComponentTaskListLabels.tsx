@@ -67,7 +67,7 @@ const ComponentTaskListLabels = ({
             <input
                 type="text"
                 placeholder="Search labels..."
-                className="border border-gray-300 p-3 rounded-lg mb-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 p-3 rounded-sm mb-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
             />
@@ -87,7 +87,7 @@ const ComponentTaskListLabels = ({
                     </div>
                     <div className="flex flex-wrap gap-2">
                         {selectedLabels.map((label) => (
-                            <span key={label} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center gap-1">
+                            <span key={label} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-sm text-sm flex items-center gap-1">
                                 {label}
                                 <button
                                     onClick={() => handleLabelClick(label)}
@@ -116,15 +116,15 @@ const ComponentTaskListLabels = ({
                         ) : (
                             <>
                                 {filteredLabels.slice(0, 100).map((label) => (
-                                    <span key={label._id} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center gap-1" onClick={() => handleLabelClick(label._id)}>
+                                    <span key={label._id} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-sm text-sm flex items-center gap-1" onClick={() => handleLabelClick(label._id)}>
                                         {label._id}
-                                        <span className="bg-blue-200 text-blue-900 px-1 rounded-full text-xs">
+                                        <span className="bg-blue-200 text-blue-900 px-1 rounded-sm text-xs">
                                             {label.count}
                                         </span>
                                     </span>
                                 ))}
                                 {filteredLabels.length > 100 && (
-                                    <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-sm">
+                                    <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-sm text-sm">
                                         + {filteredLabels.length - 100} more
                                     </span>
                                 )}

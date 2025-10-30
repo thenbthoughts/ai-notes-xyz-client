@@ -171,7 +171,7 @@ const ComponentInfoVaultEdit = ({
                         <input
                             type="text"
                             value={formData.infoVaultSubType || ''}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                             onChange={(e) => setFormData({ ...formData, infoVaultSubType: e.target.value })}
                             placeholder="e.g., Friend, Colleague, Restaurant, Conference, Invoice, Software, Car, Photo..."
                         />
@@ -195,7 +195,7 @@ const ComponentInfoVaultEdit = ({
                     <input
                         type="text"
                         value={formData.name}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
                 </div>
@@ -206,7 +206,7 @@ const ComponentInfoVaultEdit = ({
                     <input
                         type="text"
                         value={formData.nickname}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
                     />
                 </div>
@@ -217,7 +217,7 @@ const ComponentInfoVaultEdit = ({
                     <input
                         type="url"
                         value={formData.photoUrl}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, photoUrl: e.target.value })}
                         placeholder="https://example.com/photo.jpg"
                     />
@@ -229,7 +229,7 @@ const ComponentInfoVaultEdit = ({
                     <input
                         type="text"
                         value={formData.company}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                     />
                 </div>
@@ -240,7 +240,7 @@ const ComponentInfoVaultEdit = ({
                     <input
                         type="text"
                         value={formData.jobTitle}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
                     />
                 </div>
@@ -251,7 +251,7 @@ const ComponentInfoVaultEdit = ({
                     <input
                         type="text"
                         value={formData.department}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                     />
                 </div>
@@ -261,7 +261,7 @@ const ComponentInfoVaultEdit = ({
                     <label className="block text-sm font-medium text-gray-700">Notes</label>
                     <textarea
                         value={formData.notes}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                         rows={10}
                     />
@@ -302,11 +302,11 @@ const ComponentInfoVaultEdit = ({
                     <label className="block text-sm font-medium text-gray-700 mb-3">Tags</label>
                     <div className="flex flex-wrap gap-2 mb-2">
                         {formData.tags.map((tag, idx) => (
-                            <span key={idx} className="inline-flex items-center bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded shadow-sm border border-yellow-200">
+                            <span key={idx} className="inline-flex items-center bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-sm shadow-sm border border-yellow-200">
                                 {tag}
                                 <button
                                     type="button"
-                                    className="ml-1 text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 rounded-full px-1"
+                                    className="ml-1 text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 rounded-sm px-1"
                                     style={{ fontSize: '1rem', lineHeight: 1, marginLeft: 4 }}
                                     onClick={() => {
                                         setFormData({
@@ -325,7 +325,7 @@ const ComponentInfoVaultEdit = ({
                         <input
                             type="text"
                             value={formData.tagsInput || ''}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
                             onChange={e => setFormData({ ...formData, tagsInput: e.target.value })}
                             onKeyDown={e => {
                                 if ((e.key === 'Enter' || e.key === ',') && formData.tagsInput && formData.tagsInput.trim() !== '') {
@@ -346,7 +346,7 @@ const ComponentInfoVaultEdit = ({
                         />
                         <button
                             type="button"
-                            className="mt-1 px-3 py-2 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+                            className="mt-1 px-3 py-2 bg-blue-100 text-blue-800 rounded-sm hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
                             onClick={() => {
                                 if (formData.tagsInput && formData.tagsInput.trim() !== '') {
                                     const newTag = formData.tagsInput.trim();
@@ -373,7 +373,7 @@ const ComponentInfoVaultEdit = ({
                     <label className="block text-sm font-medium text-gray-700">Relationship Type</label>
                     <select
                         value={formData.relationshipType}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, relationshipType: e.target.value })}
                     >
                         <option value="myself">Myself</option>
@@ -390,7 +390,7 @@ const ComponentInfoVaultEdit = ({
                     <input
                         type="date"
                         value={formData.lastContactDate}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, lastContactDate: e.target.value })}
                     />
                 </div>
@@ -400,7 +400,7 @@ const ComponentInfoVaultEdit = ({
                     <label className="block text-sm font-medium text-gray-700">Contact Frequency</label>
                     <select
                         value={formData.contactFrequency}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, contactFrequency: e.target.value })}
                     >
                         <option value="">Select</option>
@@ -418,7 +418,7 @@ const ComponentInfoVaultEdit = ({
                         <label className="block text-sm font-medium text-gray-700">AI Tags</label>
                         <div className="mt-2">
                             {formData.aiTags.map((tag, index) => (
-                                <div key={index} className="inline-block bg-gray-100 rounded-md p-1 px-2 text-sm text-gray-600 mb-2 mr-2">
+                                <div key={index} className="inline-block bg-gray-100 rounded-sm p-1 px-2 text-sm text-gray-600 mb-2 mr-2">
                                     {tag}
                                 </div>
                             ))}
@@ -430,7 +430,7 @@ const ComponentInfoVaultEdit = ({
                 {formData.aiSummary.length > 0 && (
                     <div>
                         <label className="block text-sm font-medium text-gray-700">AI Summary</label>
-                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-3 text-gray-700 text-sm whitespace-pre-line break-words">
+                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-sm p-3 text-gray-700 text-sm whitespace-pre-line break-words">
                             {formData.aiSummary}
                         </div>
                     </div>
@@ -440,7 +440,7 @@ const ComponentInfoVaultEdit = ({
                 {formData.aiSuggestions.length > 0 && (
                     <div>
                         <label className="block text-sm font-medium text-gray-700">AI Suggestions</label>
-                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-3 text-gray-700 text-sm whitespace-pre-line break-words">
+                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-sm p-3 text-gray-700 text-sm whitespace-pre-line break-words">
                             {formData.aiSuggestions}
                         </div>
                     </div>
@@ -454,7 +454,7 @@ const ComponentInfoVaultEdit = ({
             {requestEdit.loading && (
                 <div className="flex justify-between my-4">
                     <button
-                        className="px-3 py-1 rounded bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
+                        className="px-3 py-1 rounded-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
                     >
                         <LucideArrowLeft className="w-4 h-4 inline-block mr-2" />
                         Saving...
@@ -465,14 +465,14 @@ const ComponentInfoVaultEdit = ({
                 <div className="flex justify-between my-4">
                     <Link
                         to={'/user/info-vault'}
-                        className="px-3 py-1 rounded bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
+                        className="px-3 py-1 rounded-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
                     >
                         <LucideArrowLeft className="w-4 h-4 inline-block mr-2" />
                         Back
                     </Link>
                     <div className="flex gap-2">
                         <button
-                            className="px-3 py-1 rounded bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
+                            className="px-3 py-1 rounded-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
                             onClick={() => {
                                 deleteRecord();
                             }}
@@ -487,7 +487,7 @@ const ComponentInfoVaultEdit = ({
                             Delete
                         </button>
                         <button
-                            className="px-3 py-1 rounded bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200"
+                            className="px-3 py-1 rounded-sm bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200"
                             onClick={() => {
                                 editRecord();
                             }}
@@ -564,7 +564,7 @@ const ComponentInfoVaultEditWrapper = ({
     }
 
     return (
-        <div className='bg-white rounded p-4'>
+        <div className='bg-white rounded-sm p-4'>
             <h1 className="text-3xl font-bold text-gray-800 my-4">Info Vault {'->'} Edit</h1>
             {loading && (
                 <div className="text-center">
@@ -577,7 +577,7 @@ const ComponentInfoVaultEditWrapper = ({
                     <div className="text-center">
                         <p className="text-lg text-red-500">Record does not exist.</p>
                         <button
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600"
                             onClick={() => {
                                 navigate('/user/info-vault');
                             }}

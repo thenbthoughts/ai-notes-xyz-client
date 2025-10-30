@@ -221,15 +221,15 @@ const MapSearchProduct = () => {
                 placeholder='Search products...'
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex-1 bg-white shadow-sm rounded border border-gray-200 h-10 px-3 mr-2 focus:border-blue-500 focus:outline-none transition-colors"
+                className="flex-1 bg-white shadow-sm rounded-sm border border-gray-200 h-10 px-3 mr-2 focus:border-blue-500 focus:outline-none transition-colors"
             />
 
-            <div className="w-10 h-10 bg-white rounded border flex items-center justify-center ml-2 shadow-sm">
+            <div className="w-10 h-10 bg-white rounded-sm border flex items-center justify-center ml-2 shadow-sm">
                 <span className="text-green-500 text-sm">✅</span>1
             </div>
 
             <button
-                className="px-3 py-1 border border-blue-600 text-blue-600 rounded text-sm ml-2 hover:bg-blue-50 transition-colors"
+                className="px-3 py-1 border border-blue-600 text-blue-600 rounded-sm text-sm ml-2 hover:bg-blue-50 transition-colors"
                 onClick={getCurrentLocation}
                 title="Get current location"
             >
@@ -238,7 +238,7 @@ const MapSearchProduct = () => {
 
             {currentScreen === 'sm' && (
                 <button
-                    className="px-3 py-1 border border-gray-400 text-gray-600 rounded text-sm ml-1 hover:bg-gray-50 transition-colors"
+                    className="px-3 py-1 border border-gray-400 text-gray-600 rounded-sm text-sm ml-1 hover:bg-gray-50 transition-colors"
                     onClick={() => setToggleListMap(!toggleListMap)}
                     title="Toggle view"
                 >
@@ -262,15 +262,15 @@ const MapSearchProduct = () => {
             <div className='pb-5'>
 
             {mapsData.map((map) => (
-                <div key={map._id} className="bg-gradient-to-r from-blue-50 to-indigo-100 rounded-lg p-4 mb-3 border border-blue-200 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer">
+                <div key={map._id} className="bg-gradient-to-r from-blue-50 to-indigo-100 rounded-sm p-4 mb-3 border border-blue-200 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer">
                     <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-sm flex items-center justify-center shadow-lg">
                             <span className="text-white text-lg">🗺️</span>
                         </div>
                         <div className="flex-1">
                             <h3 className="text-lg font-semibold text-gray-800 mb-1">{map.lifeEvents.name}</h3>
                             <div className="flex items-center space-x-2">
-                                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">Life Event</span>
+                                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-sm font-medium">Life Event</span>
                                 <span className="text-gray-500 text-sm">📍 Location</span>
                             </div>
                         </div>

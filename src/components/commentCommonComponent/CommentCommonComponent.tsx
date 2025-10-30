@@ -97,7 +97,7 @@ const ComponentTaskCommentListFileUpload = ({
     return (
         <div>
             <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded focus:outline-none focus:shadow-outline"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-sm focus:outline-none focus:shadow-outline"
                 disabled={uploading}
                 onClick={() => fileInputRef.current?.click()}
                 type="button"
@@ -151,7 +151,7 @@ const ComponentTaskCommentItem = ({
     return (
         <div>
             <div key={comment._id} className="">
-                <div className="bg-gray-50 rounded-lg p-2">
+                <div className="bg-gray-50 rounded-sm p-2">
                     <div>
                         <p className="mt-1 text-gray-700">
                             {comment?.isAi ? 'AI' : 'You'}:
@@ -172,7 +172,7 @@ const ComponentTaskCommentItem = ({
                         </p>
 
                         {comment.fileType && comment.fileUrl && (
-                            <div className="bg-gray-50 rounded-lg py-2">
+                            <div className="bg-gray-50 rounded-sm py-2">
                                 {comment.fileType === "image" && (
                                     <img src={getFileUrl(comment.fileUrl)} alt={comment.fileType} className="w-full"
                                         style={{
@@ -376,7 +376,7 @@ const ComponentTaskCommentAdd = ({
                     value={newComment}
                     onChange={(e) => setNewCommand(e.target.value)}
                     placeholder="Write a comment or drag & drop any files here..."
-                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-2 border rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={5}
 
                     // file upload
@@ -388,7 +388,7 @@ const ComponentTaskCommentAdd = ({
             <div className="flex justify-end mt-1">
                 <button
                     onClick={onAddComment}
-                    className="px-2 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center gap-1"
+                    className="px-2 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-600 flex items-center gap-1"
                     disabled={!newComment.trim()}
                 >
                     <Send size={14} />

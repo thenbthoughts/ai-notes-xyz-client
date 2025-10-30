@@ -262,7 +262,7 @@ const TaskAddOrEdit: React.FC<{
                             }}
                             className="custom-scrollbar"
                         >
-                            <div className="bg-white rounded-lg shadow-lg p-1 relative w-full">
+                            <div className="bg-white rounded-sm shadow-lg p-1 relative w-full">
                                 <div
                                     style={{
                                         padding: '5px',
@@ -281,7 +281,7 @@ const TaskAddOrEdit: React.FC<{
                                     <div className="py-2">
                                         <input
                                             type="text"
-                                            className="border border-gray-300 rounded-lg w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                            className="border border-gray-300 rounded-sm w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
                                             placeholder="Enter task title"
                                             value={taskTitle}
                                             onChange={(e) => setTaskTitle(e.target.value)}
@@ -293,7 +293,7 @@ const TaskAddOrEdit: React.FC<{
                                                 onClick={() => {
                                                     setTaskTitle(new Date().toISOString().split('T')[0])
                                                 }}
-                                                className="bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded mt-1"
+                                                className="bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded-sm mt-1"
                                             >
                                                 Today
                                             </button>
@@ -306,7 +306,7 @@ const TaskAddOrEdit: React.FC<{
                                                     );
                                                     setTaskTitle(tomorrow.toISOString().split('T')[0])
                                                 }}
-                                                className="bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded mt-1 ml-1"
+                                                className="bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded-sm mt-1 ml-1"
                                             >
                                                 Tomorrow
                                             </button>
@@ -314,10 +314,10 @@ const TaskAddOrEdit: React.FC<{
 
                                         {taskAiSuggestion.display && (
                                             <div className='mt-1'>
-                                                <div className='p-1 border rounded-lg bg-blue-100'>
+                                                <div className='p-1 border rounded-sm bg-blue-100'>
                                                     AI:
                                                     <textarea
-                                                        className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 mt-1"
+                                                        className="w-full border border-gray-300 rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 mt-1"
                                                         value={taskAiSuggestion.newTaskTitle}
                                                         onChange={(e) => setTaskAiSuggestion(prev => ({ ...prev, newTaskTitle: e.target.value }))}
                                                     />
@@ -340,39 +340,39 @@ const TaskAddOrEdit: React.FC<{
                                                         axiosGetTaskAiSuggestionById();
                                                     }
                                                 }}
-                                                className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 text-sm font-medium px-2 py-1 rounded-full shadow-lg"
+                                                className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 text-sm font-medium px-2 py-1 rounded-sm shadow-lg"
                                             >
                                                 {
                                                     taskAiSuggestionLoading ? 'Loading...' : '🤖 AI'
                                                 }
                                             </button>
-                                            <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded-full">Status: {status}</span>
+                                            <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded-sm">Status: {status}</span>
                                             {
                                                 dueDate && (
-                                                    <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-2 py-1 rounded-full">
+                                                    <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-2 py-1 rounded-sm">
                                                         Due Date: {new Date(dueDate).toLocaleDateString()} {new Date(dueDate).toLocaleTimeString()}
                                                     </span>
                                                 )
                                             }
                                             {formData.isCompleted && (
-                                                <span className={`bg-green-100 text-green-800 text-sm font-medium px-2 py-1 rounded-full`}>
+                                                <span className={`bg-green-100 text-green-800 text-sm font-medium px-2 py-1 rounded-sm`}>
                                                     Completed
                                                 </span>
                                             )}
                                             {formData.isArchived && (
-                                                <span className={`bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded-full`}>
+                                                <span className={`bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded-sm`}>
                                                     Archived
                                                 </span>
                                             )}
                                             {formData.priority && (
-                                                <span className={`bg-green-100 text-green-800 text-sm font-medium px-2 py-1 rounded-full`}>
+                                                <span className={`bg-green-100 text-green-800 text-sm font-medium px-2 py-1 rounded-sm`}>
                                                     Priority: {formData.priority.replace(' ', '-')}
                                                 </span>
                                             )}
                                             {labels.map((label, index) => (
                                                 <span
                                                     key={index}
-                                                    className={`bg-purple-100 text-purple-500 text-sm font-medium px-2 py-1 rounded-full mr-1`}
+                                                    className={`bg-purple-100 text-purple-500 text-sm font-medium px-2 py-1 rounded-sm mr-1`}
                                                 >
                                                     <span>{label}</span>
                                                     <span
@@ -392,7 +392,7 @@ const TaskAddOrEdit: React.FC<{
                                             {taskAiSuggestion.newTaskTags.map((label, index) => (
                                                 <span
                                                     key={index}
-                                                    className={`bg-blue-100 text-blue-500 text-sm font-medium px-2 py-1 rounded-full mr-1`}
+                                                    className={`bg-blue-100 text-blue-500 text-sm font-medium px-2 py-1 rounded-sm mr-1`}
                                                     onClick={() => {
                                                         setLabels([...labels, label.trim()]);
                                                         setTaskAiSuggestion(prev => ({ ...prev, newTaskTags: prev.newTaskTags.filter((_, i) => i !== index) }));
@@ -403,7 +403,7 @@ const TaskAddOrEdit: React.FC<{
                                             ))}
                                             <button
                                                 onClick={() => setIsAddingLabel(!isAddingLabel)}
-                                                className="bg-blue-500 text-white text-sm font-medium px-2 py-1 rounded-full"
+                                                className="bg-blue-500 text-white text-sm font-medium px-2 py-1 rounded-sm"
                                             >
                                                 Add Label
                                             </button>
@@ -415,12 +415,12 @@ const TaskAddOrEdit: React.FC<{
                                         {isTaskAddModalIsOpen.modalType === 'edit' && (
                                             <Fragment>
                                                 <div
-                                                    className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2 cursor-pointer"
+                                                    className="py-2 flex items-center gap-2 bg-gray-100 rounded-sm p-2 cursor-pointer"
                                                     onClick={() => setFormData({ ...formData, isCompleted: !formData.isCompleted })}
                                                 >
                                                     <input
                                                         type="checkbox"
-                                                        className="border border-gray-300 rounded-lg w-4 h-4 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                        className="border border-gray-300 rounded-sm w-4 h-4 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
                                                         checked={formData.isCompleted}
                                                     />
                                                     <label className="block font-medium">Completed</label>
@@ -428,22 +428,22 @@ const TaskAddOrEdit: React.FC<{
 
                                                 {/* archived */}
                                                 <div
-                                                    className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2 cursor-pointer"
+                                                    className="py-2 flex items-center gap-2 bg-gray-100 rounded-sm p-2 cursor-pointer"
                                                     onClick={() => setFormData({ ...formData, isArchived: !formData.isArchived })}
                                                 >
                                                     <input
                                                         type="checkbox"
-                                                        className="border border-gray-300 rounded-lg w-4 h-4 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                        className="border border-gray-300 rounded-sm w-4 h-4 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
                                                         checked={formData.isArchived}
                                                     />
                                                     <label className="block font-medium">Archived</label>
                                                 </div>
 
                                                 {/* priority */}
-                                                <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2">
+                                                <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-sm p-2">
                                                     <label className="block font-medium">Priority:</label>
                                                     <select
-                                                        className="border border-gray-300 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                        className="border border-gray-300 rounded-sm p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
                                                         value={formData.priority}
                                                         onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                                                     >
@@ -459,7 +459,7 @@ const TaskAddOrEdit: React.FC<{
                                         )}
 
                                         {/* workspace */}
-                                        <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2">
+                                        <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-sm p-2">
                                             <label className="block font-medium">Workspace:</label>
                                             <ComponentSelectWorkspace
                                                 workspaceId={workspaceId}
@@ -471,7 +471,7 @@ const TaskAddOrEdit: React.FC<{
                                         </div>
 
                                         {/* status */}
-                                        <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2">
+                                        <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-sm p-2">
                                             <label className="block font-medium">Status:</label>
                                             {workspaceId.length === 24 && (
                                                 <ComponentSelectTaskStatus
@@ -486,11 +486,11 @@ const TaskAddOrEdit: React.FC<{
                                         </div>
 
                                         {/* due date */}
-                                        <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2">
+                                        <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-sm p-2">
                                             <label className="block font-medium">Due Date:</label>
                                             <input
                                                 type="datetime-local"
-                                                className="border border-gray-300 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                className="border border-gray-300 rounded-sm p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
                                                 value={getDateTimeForInputTypeDateTimeLocal(dueDate)}
                                                 onChange={(e) => {
                                                     console.log(e.target.value);
@@ -501,7 +501,7 @@ const TaskAddOrEdit: React.FC<{
                                             {dueDate && (
                                                 <button
                                                     onClick={() => setDueDate('')}
-                                                    className="ml-2 px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition duration-200"
+                                                    className="ml-2 px-2 py-1 bg-red-500 text-white text-xs rounded-sm hover:bg-red-600 transition duration-200"
                                                 >
                                                     Clear
                                                 </button>
@@ -511,10 +511,10 @@ const TaskAddOrEdit: React.FC<{
                                         {/* reminder preset time label */}
                                         {
                                             dueDate && (
-                                                <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-lg p-2">
+                                                <div className="py-2 flex items-center gap-2 bg-gray-100 rounded-sm p-2">
                                                     <label className="block font-medium">Reminder:</label>
                                                     <select
-                                                        className="border border-gray-300 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                        className="border border-gray-300 rounded-sm p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
                                                         value={reminderPresetTimeLabel}
                                                         onChange={(e) => setReminderPresetTimeLabel(e.target.value)}
                                                     >
@@ -531,14 +531,14 @@ const TaskAddOrEdit: React.FC<{
                                         <div className="py-2">
                                             <input
                                                 type="text"
-                                                className="border border-gray-300 rounded-lg w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                                className="border border-gray-300 rounded-sm w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
                                                 placeholder="Enter label"
                                                 value={newLabel}
                                                 onChange={(e) => setNewLabel(e.target.value)}
                                             />
                                             <button
                                                 onClick={handleAddLabel}
-                                                className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200"
+                                                className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-sm shadow hover:bg-blue-700 transition duration-200"
                                             >
                                                 Add
                                             </button>
@@ -548,7 +548,7 @@ const TaskAddOrEdit: React.FC<{
                                     <div className="py-2">
                                         <label className="block mb-1 font-medium">Description:</label>
                                         <textarea
-                                            className="border border-gray-300 rounded-lg w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                                            className="border border-gray-300 rounded-sm w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
                                             placeholder="Enter task description"
                                             value={taskDescription}
                                             onChange={(e) => setTaskDescription(e.target.value)}
@@ -557,16 +557,16 @@ const TaskAddOrEdit: React.FC<{
 
                                         {taskAiSuggestion.display && (
                                             <div className='mt-1'>
-                                                <div className='p-1 border rounded-lg bg-blue-100'>
+                                                <div className='p-1 border rounded-sm bg-blue-100'>
                                                     <span className="font-bold">AI Suggestion:</span>
                                                     <textarea
-                                                        className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 mt-1"
+                                                        className="w-full border border-gray-300 rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 mt-1"
                                                         value={taskAiSuggestion.newTaskDescription}
                                                         onChange={(e) => setTaskAiSuggestion(prev => ({ ...prev, newTaskDescription: e.target.value }))}
                                                         rows={5}
                                                     />
                                                     <button
-                                                        className='bg-blue-500 text-white text-xs font-medium px-2 py-1 rounded mt-2'
+                                                        className='bg-blue-500 text-white text-xs font-medium px-2 py-1 rounded-sm mt-2'
                                                         onClick={() => {
                                                             setTaskDescription(taskAiSuggestion.newTaskDescription);
                                                         }}
@@ -598,12 +598,12 @@ const TaskAddOrEdit: React.FC<{
                                     <button
                                         type="button"
                                         onClick={toggleModal}
-                                        className="bg-gray-300 text-gray-700 py-1 px-2 rounded hover:bg-gray-400"
+                                        className="bg-gray-300 text-gray-700 py-1 px-2 rounded-sm hover:bg-gray-400"
                                     >Cancel</button>
                                     <button
                                         type="button"
                                         onClick={handleSubmit}
-                                        className="bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-600"
+                                        className="bg-blue-500 text-white py-1 px-2 rounded-sm hover:bg-blue-600"
                                     >
                                         {
                                             isTaskAddModalIsOpen.modalType === 'add' ? 'Add' : 'Save'

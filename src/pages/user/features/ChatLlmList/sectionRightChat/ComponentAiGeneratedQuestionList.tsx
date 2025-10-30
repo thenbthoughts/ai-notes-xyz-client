@@ -193,47 +193,47 @@ const ComponentAiGeneratedQuestionList = ({
         return (
             <div>
                 <div className="space-y-2">
-                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded p-2 border border-blue-200">
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-sm p-2 border border-blue-200">
                         <p className="text-gray-700 font-medium text-sm">{threadInfo.threadTitle}</p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div className="bg-green-50 rounded p-2 border border-green-200">
+                        <div className="bg-green-50 rounded-sm p-2 border border-green-200">
                             <div className="flex items-center gap-1.5">
-                                <div className={`w-2 h-2 rounded-full ${threadInfo.isPersonalContextEnabled ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                                <div className={`w-2 h-2 rounded-sm ${threadInfo.isPersonalContextEnabled ? 'bg-green-500' : 'bg-gray-400'}`}></div>
                                 <span className="text-xs text-gray-700">Personal Context</span>
                             </div>
                         </div>
 
-                        <div className="bg-orange-50 rounded p-2 border border-orange-200">
+                        <div className="bg-orange-50 rounded-sm p-2 border border-orange-200">
                             <div className="flex items-center gap-1.5">
-                                <div className={`w-2 h-2 rounded-full ${threadInfo.isAutoAiContextSelectEnabled ? 'bg-orange-500' : 'bg-gray-400'}`}></div>
+                                <div className={`w-2 h-2 rounded-sm ${threadInfo.isAutoAiContextSelectEnabled ? 'bg-orange-500' : 'bg-gray-400'}`}></div>
                                 <span className="text-xs text-gray-700">Auto AI Context</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-indigo-50 rounded p-2 border border-indigo-200 flex items-center justify-between">
+                    <div className="bg-indigo-50 rounded-sm p-2 border border-indigo-200 flex items-center justify-between">
                         <div>
                             <span className="text-sm font-medium text-gray-800">{threadInfo.aiModelName}</span>
                             <span className="text-xs text-gray-500 ml-2">({threadInfo.aiModelProvider})</span>
                         </div>
-                        <div className="w-4 h-4 bg-indigo-100 rounded-full flex items-center justify-center">
+                        <div className="w-4 h-4 bg-indigo-100 rounded-sm flex items-center justify-center">
                             <div className="w-2 h-2 bg-indigo-500 rounded-sm"></div>
                         </div>
                     </div>
 
                     {threadInfo.aiSummary && (
-                        <div className="bg-gray-50 rounded p-2 border border-gray-200">
+                        <div className="bg-gray-50 rounded-sm p-2 border border-gray-200">
                             <p className="text-xs text-gray-600 leading-relaxed">{threadInfo.aiSummary}</p>
                         </div>
                     )}
 
                     {threadInfo.tagsAi && threadInfo.tagsAi.length > 0 && (
-                        <div className="bg-purple-50 rounded p-2 border border-purple-200">
+                        <div className="bg-purple-50 rounded-sm p-2 border border-purple-200">
                             <div className="flex flex-wrap gap-1">
                                 {threadInfo.tagsAi.map((tag, index) => (
-                                    <span key={index} className="px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-medium border border-purple-200">
+                                    <span key={index} className="px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded-sm text-xs font-medium border border-purple-200">
                                         {tag}
                                     </span>
                                 ))}
@@ -248,14 +248,14 @@ const ComponentAiGeneratedQuestionList = ({
     return (
         <div className='py-3'>
             <div className='px-2'>
-                <div className="bg-white border border-gray-300 rounded-lg px-3 py-2 shadow-md inline-block w-full whitespace-pre-wrap">
+                <div className="bg-white border border-gray-300 rounded-sm px-3 py-2 shadow-md inline-block w-full whitespace-pre-wrap">
                     <div className='text-center'>
                         <button
                             onClick={() => {
                                 fetchQuestions();
                                 setTab('generate')
                             }}
-                            className="mb-2 mt-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white px-3 py-1.5 rounded-md shadow-sm hover:from-purple-600 hover:to-blue-700 transition duration-200 transform hover:scale-105 inline-flex items-center gap-1.5 text-sm font-medium mr-2"
+                            className="mb-2 mt-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white px-3 py-1.5 rounded-sm shadow-sm hover:from-purple-600 hover:to-blue-700 transition duration-200 transform hover:scale-105 inline-flex items-center gap-1.5 text-sm font-medium mr-2"
                         >
                             <LucideZap className="w-4 h-4" />
                             Generate AI Questions
@@ -265,7 +265,7 @@ const ComponentAiGeneratedQuestionList = ({
                                 fetchThreadInfo();
                                 setTab('info');
                             }}
-                            className="mb-2 mt-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white px-3 py-1.5 rounded-md shadow-sm hover:from-purple-600 hover:to-blue-700 transition duration-200 transform hover:scale-105 inline-flex items-center gap-1.5 text-sm font-medium mr-2"
+                            className="mb-2 mt-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white px-3 py-1.5 rounded-sm shadow-sm hover:from-purple-600 hover:to-blue-700 transition duration-200 transform hover:scale-105 inline-flex items-center gap-1.5 text-sm font-medium mr-2"
                         >
                             <LucideInfo className="w-4 h-4" />
                             Info
@@ -277,7 +277,7 @@ const ComponentAiGeneratedQuestionList = ({
                                 fetchThreadInfo();
                                 fetchThreadInfoAndDownload();
                             }}
-                            className="mb-2 mt-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white px-3 py-1.5 rounded-md shadow-sm hover:from-purple-600 hover:to-blue-700 transition duration-200 transform hover:scale-105 inline-flex items-center gap-1.5 text-sm font-medium mr-2"
+                            className="mb-2 mt-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white px-3 py-1.5 rounded-sm shadow-sm hover:from-purple-600 hover:to-blue-700 transition duration-200 transform hover:scale-105 inline-flex items-center gap-1.5 text-sm font-medium mr-2"
                         >
                             <LucideDownload className="w-4 h-4" />
                             Download

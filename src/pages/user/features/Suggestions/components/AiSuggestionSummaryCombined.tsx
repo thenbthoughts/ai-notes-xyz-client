@@ -101,7 +101,7 @@ const AiSuggestionSummaryCombined = () => {
     }, [autoLoad]);
 
     return (
-        <div className="mb-2 p-2.5 md:p-3 rounded-lg shadow bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+        <div className="mb-2 p-2.5 md:p-3 rounded-sm shadow bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 mb-1">
                 <div className="flex items-center gap-1.5 flex-1">
                     <LucideSparkles className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
@@ -112,7 +112,7 @@ const AiSuggestionSummaryCombined = () => {
                         onClick={() => {
                             setAutoLoad(!autoLoad);
                         }}
-                        className={`p-1 px-2 rounded transition-colors text-xs flex items-center flex-1 sm:flex-initial justify-center ${autoLoad ? 'bg-green-100 hover:bg-green-200' : 'bg-gray-100 hover:bg-gray-200'}`}
+                        className={`p-1 px-2 rounded-sm transition-colors text-xs flex items-center flex-1 sm:flex-initial justify-center ${autoLoad ? 'bg-green-100 hover:bg-green-200' : 'bg-gray-100 hover:bg-gray-200'}`}
                         title={autoLoad ? 'Auto-load enabled' : 'Auto-load disabled'}
                     >
                         <LucideZap
@@ -123,7 +123,7 @@ const AiSuggestionSummaryCombined = () => {
                     <button
                         onClick={handleRefresh}
                         disabled={isLoading}
-                        className="p-1 rounded hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="p-1 rounded-sm hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         title="Refresh summary"
                     >
                         <LucideRefreshCw
@@ -141,7 +141,7 @@ const AiSuggestionSummaryCombined = () => {
 
             {isLoading ? (
                 <div className="flex items-center justify-center py-4">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-sm h-6 w-6 border-b-2 border-blue-600"></div>
                     <span className="ml-2 text-xs md:text-sm text-gray-600">Loading summary...</span>
                 </div>
             ) : (

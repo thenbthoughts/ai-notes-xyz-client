@@ -63,7 +63,7 @@ const TaskWorkspaceCrud = () => {
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-3 sm:p-4 md:p-6">
                 <div className="max-w-7xl mx-auto">
                     <div className="animate-pulse">
-                        <div className="h-6 sm:h-8 bg-gray-300 rounded w-1/2 sm:w-1/3 mb-4"></div>
+                        <div className="h-6 sm:h-8 bg-gray-300 rounded-sm w-1/2 sm:w-1/3 mb-4"></div>
                         <div className="grid gap-3 sm:gap-4">
                             {[1, 2, 3].map(i => (
                                 <div key={i} className="h-24 sm:h-32 bg-white rounded-xl shadow-sm"></div>
@@ -97,14 +97,14 @@ const TaskWorkspaceCrud = () => {
                 {taskWorkspace.length === 0 ? (
                     <div className="text-center py-12 sm:py-16">
                         <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-12 max-w-sm sm:max-w-md mx-auto">
-                            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-sm flex items-center justify-center mx-auto mb-4">
                                 <LucidePlus className="text-indigo-600" size={20} />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">No workspaces yet</h3>
                             <p className="text-sm sm:text-base text-gray-600 mb-6">Create your first workspace to get started!</p>
                             <button
                                 onClick={() => openModal()}
-                                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 text-sm sm:text-base w-full sm:w-auto"
+                                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-sm hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 text-sm sm:text-base w-full sm:w-auto"
                             >
                                 Create Now
                             </button>
@@ -121,7 +121,7 @@ const TaskWorkspaceCrud = () => {
                                     <div className="flex flex-col sm:flex-row gap-2">
                                         <button
                                             onClick={() => visitWorkspace(workspace._id)}
-                                            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm font-medium"
+                                            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 sm:px-4 py-2 rounded-sm hover:from-green-600 hover:to-emerald-700 transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm font-medium"
                                         >
                                             <LucideEye size={14} className="sm:w-4 sm:h-4" />
                                             Open
@@ -129,14 +129,14 @@ const TaskWorkspaceCrud = () => {
                                         <div className="flex gap-2 sm:gap-1">
                                             <button
                                                 onClick={() => openModal(workspace)}
-                                                className="flex-1 sm:flex-none p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                className="flex-1 sm:flex-none p-2 text-blue-600 hover:bg-blue-50 rounded-sm transition-colors"
                                                 title="Edit"
                                             >
                                                 <LucideEdit size={14} className="sm:w-4 sm:h-4 mx-auto" />
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(workspace)}
-                                                className="flex-1 sm:flex-none p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                className="flex-1 sm:flex-none p-2 text-red-600 hover:bg-red-50 rounded-sm transition-colors"
                                                 title="Delete"
                                             >
                                                 <LucideTrash size={14} className="sm:w-4 sm:h-4 mx-auto" />

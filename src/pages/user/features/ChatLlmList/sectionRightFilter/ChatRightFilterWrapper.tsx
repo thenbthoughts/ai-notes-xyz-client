@@ -54,7 +54,7 @@ const ChatRightFilterWrapper = ({
                         });
                     }}
                 >
-                    <div className={`py-3 rounded ${chatHistoryModalOpen.isOpen ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                    <div className={`py-3 rounded-sm ${chatHistoryModalOpen.isOpen ? 'bg-blue-600' : 'bg-gray-600'}`}>
                         <LucideList
                             style={{
                                 width: '100%',
@@ -70,7 +70,7 @@ const ChatRightFilterWrapper = ({
             <div
                 className='p-1 cursor-pointer'
             >
-                <div className={`py-3 rounded bg-gray-600`}>
+                <div className={`py-3 rounded-sm bg-gray-600`}>
                     <Link to={'/user/setting'}>
                         <LucideSettings
                             style={{
@@ -87,7 +87,7 @@ const ChatRightFilterWrapper = ({
             <div
                 className='p-1 cursor-pointer'
             >
-                <div className={`py-3 rounded bg-gray-600`}>
+                <div className={`py-3 rounded-sm bg-gray-600`}>
                     <Link to={'/user/chat'}>
                         <LucidePlus
                             style={{
@@ -153,7 +153,7 @@ const ChatRightFilterWrapper = ({
                         setRefreshRandomNumFetchChat(randomNum);
                     }}
                 >
-                    <div className={`py-3 rounded bg-gray-600`}>
+                    <div className={`py-3 rounded-sm bg-gray-600`}>
                         <LucideRefreshCcw
                             style={{
                                 width: '100%',
@@ -181,7 +181,7 @@ const ChatRightFilterWrapper = ({
                         });
                     }}
                 >
-                    <div className={`py-3 rounded bg-gray-600`}>
+                    <div className={`py-3 rounded-sm bg-gray-600`}>
                         <LucideSettings2
                             style={{
                                 width: '100%',

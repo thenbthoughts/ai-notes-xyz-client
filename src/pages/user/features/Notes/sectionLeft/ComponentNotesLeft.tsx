@@ -126,35 +126,35 @@ const ComponentNotesLeft = () => {
             {/* buttons -> add, random, clear */}
             <div className="flex flex-wrap gap-2 mb-4">
                 <button
-                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300"
+                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
                     onClick={notesAddAxiosLocal}
                 >
                     <LucidePlus size={14} />
                     Add
                 </button>
                 <button
-                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300"
+                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
                     onClick={openRandomNote}
                 >
                     <LucideRefreshCcw size={14} />
                     Random
                 </button>
                 <button
-                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300"
+                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
                     onClick={clearFilters}
                 >
                     <LucideList size={14} />
                     Clear
                 </button>
                 <button
-                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300"
+                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
                     onClick={notesQuickDailyNotesAddAxiosLocal}
                 >
                     <LucidePlus size={14} />
                     Quick Daily Notes
                 </button>
                 <button
-                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300"
+                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
                     onClick={() => notesWorkspaceChatWithAiLocal({ notesWorkspaceId: workspaceId })}
                 >
                     <LucideMessageCircle size={14} />
@@ -183,7 +183,7 @@ const ComponentNotesLeft = () => {
                     debounceTimeout={500}
                     type="text"
                     placeholder="Search..."
-                    className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="border border-gray-300 rounded-sm p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     onChange={(e) => setSearchTerm(e.target.value)}
                     value={searchTerm}
                 />
@@ -235,7 +235,7 @@ const ComponentNotesLeft = () => {
 
 const ComponentNotesLeftRender = () => {
     return (
-        // Main container with light background, padding, rounded corners and max width for presentation
+        // Main container with light background, padding, rounded-sm corners and max width for presentation
         <div
             style={{
                 paddingTop: '10px',
@@ -243,7 +243,7 @@ const ComponentNotesLeftRender = () => {
             }}
         >
             <div
-                className="bg-white rounded-lg shadow-md"
+                className="bg-white rounded-sm shadow-md"
                 style={{
                     paddingTop: '10px',
                     paddingBottom: '10px',
@@ -265,7 +265,7 @@ const ComponentNotesLeftRender = () => {
 
 const ComponentNotesLeftModelRender = () => {
     return (
-        // Main container with light background, padding, rounded corners and max width for presentation
+        // Main container with light background, padding, rounded-sm corners and max width for presentation
         <div
             style={{
                 position: 'fixed',

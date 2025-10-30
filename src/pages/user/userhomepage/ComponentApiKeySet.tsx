@@ -82,7 +82,7 @@ const ComponentApiKeySet = () => {
 
     return (
         <div className='my-2'>
-            <div className="text-left p-2 border border-blue-400 rounded-md shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300">
+            <div className="text-left p-2 border border-blue-400 rounded-sm shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300">
                 <div className="flex items-center justify-between mb-1">
                     <h2 className="text-base font-bold text-blue-800">
                         <Link to="/user/setting/api-key">
@@ -92,7 +92,7 @@ const ComponentApiKeySet = () => {
                     </h2>
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="p-1 border border-blue-400 rounded bg-blue-100 hover:bg-blue-200 transition duration-200"
+                        className="p-1 border border-blue-400 rounded-sm bg-blue-100 hover:bg-blue-200 transition duration-200"
                         title={isExpanded ? "Collapse" : "Expand"}
                     >
                         {isExpanded ? (
@@ -108,9 +108,9 @@ const ComponentApiKeySet = () => {
                         <span className="text-xs font-medium text-blue-700">Required APIs</span>
                         <span className="text-xs font-bold text-blue-800">{completedCount} / {totalCount}</span>
                     </div>
-                    <div className="w-full bg-blue-200 rounded-full h-1">
+                    <div className="w-full bg-blue-200 rounded-sm h-1">
                         <div
-                            className="bg-blue-600 h-1 rounded-full transition-all duration-300"
+                            className="bg-blue-600 h-1 rounded-sm transition-all duration-300"
                             style={{ width: `${(completedCount / totalCount) * 100}%` }}
                         ></div>
                     </div>
@@ -122,7 +122,7 @@ const ComponentApiKeySet = () => {
                             {apiKeyStatus.map((api) => {
                                 const ApiIcon = api.icon;
                                 return (
-                                    <div key={api.key} className="flex flex-col gap-1 p-1 bg-white bg-opacity-50 rounded border border-blue-200">
+                                    <div key={api.key} className="flex flex-col gap-1 p-1 bg-white bg-opacity-50 rounded-sm border border-blue-200">
                                         <div className="flex items-center gap-1">
                                             <ApiIcon size={12} className={`text-${api.color}-600 flex-shrink-0`} />
                                             <div className="min-w-0 flex-1">
@@ -149,7 +149,7 @@ const ComponentApiKeySet = () => {
                         <div className="mt-2 pt-2 border-t border-blue-200">
                             <button
                                 onClick={() => window.location.href = '/user/setting/api-key'}
-                                className="w-full bg-blue-500 text-white text-xs font-medium py-1.5 px-2 rounded hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center gap-1"
+                                className="w-full bg-blue-500 text-white text-xs font-medium py-1.5 px-2 rounded-sm hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center gap-1"
                             >
                                 <LucideSettings size={12} />
                                 Configure API Keys

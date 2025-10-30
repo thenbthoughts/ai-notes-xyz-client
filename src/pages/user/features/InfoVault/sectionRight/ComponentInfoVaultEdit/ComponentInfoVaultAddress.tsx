@@ -95,7 +95,7 @@ const AddressItem = ({
     }, [formData]);
 
     return (
-        <div className="border border-gray-200 bg-white p-3 rounded-lg hover:shadow-sm transition-shadow">
+        <div className="border border-gray-200 bg-white p-3 rounded-sm hover:shadow-sm transition-shadow">
             <div className="flex flex-col gap-2">
                 <div className="grid grid-cols-1 gap-2">
                     <label className="text-xs font-medium text-gray-700">Address</label>
@@ -105,7 +105,7 @@ const AddressItem = ({
                         placeholder="Address"
                         value={formData.address}
                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                        className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors resize-vertical"
+                        className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors resize-vertical"
                         rows={3}
                     />
                 </div>
@@ -119,7 +119,7 @@ const AddressItem = ({
                             placeholder="City"
                             value={formData.city}
                             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                         />
                     </div>
                     <div>
@@ -130,7 +130,7 @@ const AddressItem = ({
                             placeholder="State"
                             value={formData.state}
                             onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                         />
                     </div>
                     <div>
@@ -141,7 +141,7 @@ const AddressItem = ({
                             placeholder="Pincode"
                             value={formData.pincode}
                             onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
-                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                         />
                     </div>
                 </div>
@@ -155,7 +155,7 @@ const AddressItem = ({
                             placeholder="Country/Region"
                             value={formData.countryRegion}
                             onChange={(e) => setFormData({ ...formData, countryRegion: e.target.value })}
-                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                         />
                     </div>
                     <div>
@@ -166,7 +166,7 @@ const AddressItem = ({
                             placeholder="PO Box"
                             value={formData.poBox}
                             onChange={(e) => setFormData({ ...formData, poBox: e.target.value })}
-                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                         />
                     </div>
                     <div>
@@ -177,7 +177,7 @@ const AddressItem = ({
                             placeholder="Label (e.g., home, work)"
                             value={formData.label}
                             onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                         />
                     </div>
                 </div>
@@ -193,7 +193,7 @@ const AddressItem = ({
                             placeholder="Latitude (e.g., 40.7128)"
                             value={formData.latitude}
                             onChange={(e) => setFormData({ ...formData, latitude: parseFloat(e.target.value) || 0 })}
-                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                         />
                     </div>
                     <div>
@@ -205,7 +205,7 @@ const AddressItem = ({
                             placeholder="Longitude (e.g., -74.0060)"
                             value={formData.longitude}
                             onChange={(e) => setFormData({ ...formData, longitude: parseFloat(e.target.value) || 0 })}
-                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
+                            className="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-sm text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-colors"
                         />
                     </div>
                 </div>
@@ -217,7 +217,7 @@ const AddressItem = ({
                             type="checkbox"
                             checked={formData.isPrimary}
                             onChange={(e) => setFormData({ ...formData, isPrimary: e.target.checked })}
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 focus:ring-2"
                         />
                         <span className="text-sm text-gray-700 flex items-center gap-1">
                             Primary Address
@@ -228,7 +228,7 @@ const AddressItem = ({
 
             <div className="flex gap-1 mt-2">
                 <button
-                    className="text-blue-400 hover:text-blue-600 p-1 rounded-full hover:bg-blue-50 transition-colors"
+                    className="text-blue-400 hover:text-blue-600 p-1 rounded-sm hover:bg-blue-50 transition-colors"
                     title="Save address"
                     onClick={() => handleSaveAddress()}
                 >
@@ -240,7 +240,7 @@ const AddressItem = ({
                     <span className="pl-1 inline">Save</span>
                 </button>
                 <button
-                    className="text-red-400 hover:text-red-600 p-1 rounded-full hover:bg-red-50 transition-colors"
+                    className="text-red-400 hover:text-red-600 p-1 rounded-sm hover:bg-red-50 transition-colors"
                     title="Delete address"
                     onClick={() => handleDelete()}
                 >
@@ -310,7 +310,7 @@ const ComponentInfoVaultAddress = ({ infoVaultId }: { infoVaultId: string }) => 
             {/* Add Address Button */}
             <div className="flex flex-col sm:flex-row gap-2">
                 <button
-                    className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors duration-200 flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors duration-200 flex items-center justify-center gap-2"
                     disabled={uploading}
                     onClick={handleAddAddress}
                     type="button"
@@ -327,7 +327,7 @@ const ComponentInfoVaultAddress = ({ infoVaultId }: { infoVaultId: string }) => 
             ) : (
                 <div className="space-y-2">
                     {addresses.length === 0 && (
-                        <div className="text-gray-400 text-sm py-4 text-center bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="text-gray-400 text-sm py-4 text-center bg-gray-50 rounded-sm border border-gray-200">
                             No addresses added yet.
                         </div>
                     )}

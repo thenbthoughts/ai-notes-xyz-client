@@ -196,7 +196,7 @@ const ThreadSetting = ({
                         {/* Thread Setting */}
                         <div className="flex justify-between items-center bg-gradient-to-r from-blue-50 to-indigo-50">
                             <div className="flex items-center space-x-3">
-                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-sm flex items-center justify-center">
                                     <LucideSettings className="w-4 h-4 text-white" />
                                 </div>
                                 <h1 className="text-2xl font-bold text-gray-800 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
@@ -205,7 +205,7 @@ const ThreadSetting = ({
                             </div>
                             <button
                                 onClick={closeModal}
-                                className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group"
+                                className="p-2 rounded-sm hover:bg-gray-100 transition-colors duration-200 group"
                                 aria-label="Close settings"
                             >
                                 <LucideX className="w-5 h-5 text-gray-500 group-hover:text-gray-700 transition-colors duration-200" />
@@ -221,7 +221,7 @@ const ThreadSetting = ({
                             <input
                                 type="text"
                                 value={formData.threadTitle}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-1 lg:p-2"
+                                className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
                                 onChange={(e) => setFormData({ ...formData, threadTitle: e.target.value })}
                             />
                         </div>
@@ -231,14 +231,14 @@ const ThreadSetting = ({
                             <label className="block text-sm font-medium text-gray-700">System Prompt</label>
                             <textarea
                                 value={formData.systemPrompt}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-1 lg:p-2"
+                                className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
                                 onChange={(e) => setFormData({ ...formData, systemPrompt: e.target.value })}
                                 rows={3}
                             />
                             {formData.systemPrompt.length > 0 && (
                                 <button
                                     type="button"
-                                    className="mt-1 lg:mt-2 px-2 lg:px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded transition-colors duration-200"
+                                    className="mt-1 lg:mt-2 px-2 lg:px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-sm transition-colors duration-200"
                                     onClick={() => setFormData({ ...formData, systemPrompt: '' })}
                                 >
                                     Clear System Prompt
@@ -251,7 +251,7 @@ const ThreadSetting = ({
                         <div className="mb-2 lg:mb-3">
                             <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">AI Model Provider</label>
                             <select
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-1 lg:p-2"
+                                className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
                                 value={aiModelProvider}
                                 onChange={(e) => setAiModelProvider(e.target.value as "openrouter" | "groq")}
                             >
@@ -286,7 +286,7 @@ const ThreadSetting = ({
                             >
                                 <input
                                     type="checkbox"
-                                    className="mt-1 rounded-md p-1 lg:p-2 mr-2"
+                                    className="mt-1 rounded-sm p-1 lg:p-2 mr-2"
                                     checked={formData.isPersonalContextEnabled}
                                 />
                                 <span className="text-sm text-gray-700 cursor-pointer">Personal Context Enable</span>
@@ -303,7 +303,7 @@ const ThreadSetting = ({
                             >
                                 <input
                                     type="checkbox"
-                                    className="mt-1 rounded-md p-1 lg:p-2 mr-2"
+                                    className="mt-1 rounded-sm p-1 lg:p-2 mr-2"
                                     checked={formData.isAutoAiContextSelectEnabled}
                                 />
                                 <span className="text-sm text-gray-700 cursor-pointer">Auto AI Context Enable</span>
@@ -328,7 +328,7 @@ const ThreadSetting = ({
                         >
                             {/* button -> close */}
                             <button
-                                className="w-full bg-gray-500 hover:bg-gray-600 text-white text-sm px-2 py-1 rounded-md transition-colors duration-200 w-full"
+                                className="w-full bg-gray-500 hover:bg-gray-600 text-white text-sm px-2 py-1 rounded-sm transition-colors duration-200 w-full"
                                 onClick={() => {
                                     closeModal();
                                 }}
@@ -344,7 +344,7 @@ const ThreadSetting = ({
                             <Fragment>
                                 {requestEdit.loading && (
                                     <button
-                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm px-2 py-1 rounded-md transition-colors duration-200 w-full"
+                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm px-2 py-1 rounded-sm transition-colors duration-200 w-full"
                                     >
                                         <LucideLoader className="w-4 h-4 inline-block"
                                             style={{
@@ -355,7 +355,7 @@ const ThreadSetting = ({
                                 )}
                                 {!requestEdit.loading && (
                                     <button
-                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm px-2 py-1 rounded-md transition-colors duration-200 w-full"
+                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm px-2 py-1 rounded-sm transition-colors duration-200 w-full"
                                         onClick={() => {
                                             editRecord();
                                         }}
@@ -378,7 +378,7 @@ const ThreadSetting = ({
 
     return (
         <div
-            className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded p-1 lg:p-2 h-full"
+            className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-sm p-1 lg:p-2 h-full"
             style={{
                 overflowY: 'auto',
             }}

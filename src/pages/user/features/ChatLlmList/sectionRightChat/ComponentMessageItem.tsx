@@ -120,7 +120,7 @@ const ComponentAiTaskByNotesId = ({
                             <div className="flex justify-center">
                                 <Link
                                     to={'/user/task'}
-                                    className="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out"
+                                    className="bg-blue-600 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-700 transition duration-300 ease-in-out"
                                 >
                                     Go to Tasks
                                 </Link>
@@ -141,7 +141,7 @@ const ComponentAiTaskByNotesId = ({
                                                 <p className="text-xs">Tags: {task.taskTags.join(', ')}</p>
                                                 <button
                                                     onClick={() => addTask(task)}
-                                                    className="mt-2 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition"
+                                                    className="mt-2 bg-blue-600 text-white p-2 rounded-sm hover:bg-blue-700 transition"
                                                 >
                                                     Add Task
                                                 </button>
@@ -306,7 +306,7 @@ const ComponentMessageItem = ({
                                         textSplit: textSplit,
                                     });
                                 }}
-                                className="px-2 py-1 rounded bg-green-500 text-white mb-1 mr-1"
+                                className="px-2 py-1 rounded-sm bg-green-500 text-white mb-1 mr-1"
                             >
                                 <LucideAudioLines
                                     style={{
@@ -328,7 +328,7 @@ const ComponentMessageItem = ({
                                         toast.success('Copied to clipboard!');
                                     });
                                 }}
-                                className="px-2 py-1 rounded bg-gray-300 text-white mb-1 mr-1"
+                                className="px-2 py-1 rounded-sm bg-gray-300 text-white mb-1 mr-1"
                             >
                                 <LucideClipboard
                                     style={{
@@ -347,7 +347,7 @@ const ComponentMessageItem = ({
                     )}
                     <button
                         onClick={() => handleDeleteMessage()}
-                        className="px-2 py-1 rounded bg-red-500 text-white mb-1 mr-1"
+                        className="px-2 py-1 rounded-sm bg-red-500 text-white mb-1 mr-1"
                     >
                         <LucideTrash
                             style={{
@@ -370,7 +370,7 @@ const ComponentMessageItem = ({
                                 );
                                 setCallGenerateAiTaskListRandomNum(randomNum)
                             }}
-                            className="px-2 py-1 rounded bg-green-500 text-white my-1 mr-1"
+                            className="px-2 py-1 rounded-sm bg-green-500 text-white my-1 mr-1"
                         >
                             🚀 Tasks
                         </button>
@@ -382,7 +382,7 @@ const ComponentMessageItem = ({
                             onClick={() => {
                                 setShowAiGeneratedFileInfo(!showAiGeneratedFileInfo);
                             }}
-                            className="px-2 py-1 rounded bg-blue-500 text-white mb-1 mr-1"
+                            className="px-2 py-1 rounded-sm bg-blue-500 text-white mb-1 mr-1"
                         >
                             {showAiGeneratedFileInfo ? (
                                 <LucideInfo
@@ -460,7 +460,7 @@ const ComponentMessageItem = ({
         return (
             <Fragment>
                 {showAiGeneratedFileInfo && (
-                    <div className="my-2 border border-gray-300 rounded-lg p-2 bg-gray-50">
+                    <div className="my-2 border border-gray-300 rounded-sm p-2 bg-gray-50">
                         <p className="text-xs text-gray-600 leading-relaxed">{itemMessage.fileContentAi}</p>
                     </div>
                 )}
@@ -475,14 +475,14 @@ const ComponentMessageItem = ({
         >
             {isDeleted && (
                 <div
-                    className="bg-white border border-gray-300 rounded-lg p-4 shadow-md inline-block max-w-[650px] whitespace-pre-wrap"
+                    className="bg-white border border-gray-300 rounded-sm p-4 shadow-md inline-block max-w-[650px] whitespace-pre-wrap"
                 >
                     <span className="text-gray-500 text-xs">Deleted</span>
                 </div>
             )}
             {!isDeleted && (
                 <div
-                    className="bg-white border border-gray-300 rounded-lg px-3 py-2 shadow-md inline-block max-w-[800px] min-w-[40%]"
+                    className="bg-white border border-gray-300 rounded-sm px-3 py-2 shadow-md inline-block max-w-[800px] min-w-[40%]"
                 >
                     {(
                         itemMessage.aiModelProvider === '' && itemMessage.aiModelName === ''

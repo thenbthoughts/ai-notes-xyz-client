@@ -46,7 +46,7 @@ const ComponentNotesItem = ({
                 <div className="flex flex-col gap-1">
                     {/* Status indicators */}
                     <div className="flex items-center gap-1 mb-1">
-                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${
+                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded-sm text-xs font-medium ${
                             taskScheduleObj.isActive 
                                 ? 'bg-green-100 text-green-800' 
                                 : 'bg-gray-100 text-gray-800'
@@ -54,12 +54,12 @@ const ComponentNotesItem = ({
                             {taskScheduleObj.isActive ? 'Active' : 'Inactive'}
                         </span>
                         
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-xs font-medium bg-blue-100 text-blue-800">
                             {taskScheduleObj.taskType}
                         </span>
                         
                         {taskScheduleObj.shouldSendEmail && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-xs font-medium bg-purple-100 text-purple-800">
                                 Send Email
                             </span>
                         )}
@@ -103,7 +103,7 @@ const ComponentNotesItem = ({
 
                     {/* Next execution time */}
                     {taskScheduleObj.scheduleExecutionTimeArr && taskScheduleObj.scheduleExecutionTimeArr.length > 0 && (
-                        <div className="mt-1 p-1 bg-blue-50 rounded text-xs">
+                        <div className="mt-1 p-1 bg-blue-50 rounded-sm text-xs">
                             <span className="text-blue-600 font-medium">Next:</span>
                             <span className="text-blue-800 ml-1">
                                 {new Date(taskScheduleObj.scheduleExecutionTimeArr[0]).toLocaleString()}
@@ -117,7 +117,7 @@ const ComponentNotesItem = ({
                     <div className="action-buttons my-4">
                         <Link
                             to={`/user/task-schedule?action=edit&id=${taskScheduleObj._id}`}
-                            className="px-3 py-1 rounded bg-green-100 text-green-800 text-sm font-semibold hover:bg-green-200 mr-1"
+                            className="px-3 py-1 rounded-sm bg-green-100 text-green-800 text-sm font-semibold hover:bg-green-200 mr-1"
                         >
                             <LucideEdit
                                 className="w-4 h-4 inline-block mr-2"
@@ -126,7 +126,7 @@ const ComponentNotesItem = ({
                             Edit
                         </Link>
                         <button
-                            className="px-3 py-1 rounded bg-red-100 text-red-800 text-sm font-semibold hover:bg-red-200 mr-1"
+                            className="px-3 py-1 rounded-sm bg-red-100 text-red-800 text-sm font-semibold hover:bg-red-200 mr-1"
                             onClick={deleteItem}
                         >
                             <LucideTrash2
@@ -143,7 +143,7 @@ const ComponentNotesItem = ({
 
     return (
         <div
-            className="py-1 bg-white rounded px-2"
+            className="py-1 bg-white rounded-sm px-2"
             style={{ borderBottom: '1px solid #ccc' }}
         >
             {isDeleted && (

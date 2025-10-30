@@ -62,7 +62,7 @@ const ComponentNotificationList = () => {
     const renderCount = () => {
         return (
             <div className="mb-4 flex items-center gap-3">
-                <div className="flex items-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-lg px-4 py-2 shadow-sm border border-blue-200">
+                <div className="flex items-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-sm px-4 py-2 shadow-sm border border-blue-200">
                     
                     <span className="text-lg font-bold text-blue-700 tracking-wide">{totalCount}</span>
                     <span className="ml-2 text-gray-700 font-medium">Notifications</span>
@@ -97,12 +97,12 @@ const ComponentNotificationList = () => {
                         renderOnZeroPageCount={null}
                         forcePage={page - 1}
                         containerClassName="flex flex-wrap justify-center items-center gap-1 sm:space-x-1"
-                        pageClassName="border border-gray-300 rounded-md hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        previousClassName="border border-gray-300 rounded-md hover:bg-gray-200 text-base sm:text-lg m-0.5"
+                        pageClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
+                        previousClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
                         previousLinkClassName="text-gray-700 px-2 sm:px-3"
-                        nextClassName="border border-gray-300 rounded-md hover:bg-gray-200 text-base sm:text-lg m-0.5"
+                        nextClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
                         nextLinkClassName="text-gray-700 px-2 sm:px-3"
-                        breakClassName="border border-gray-300 rounded-md text-base sm:text-lg m-0.5"
+                        breakClassName="border border-gray-300 rounded-sm text-base sm:text-lg m-0.5"
                         breakLinkClassName="text-gray-700 px-2 sm:px-3"
                         activeLinkClassName="bg-blue-500 text-white"
                         pageLinkClassName="text-gray-700 px-2 sm:px-3"

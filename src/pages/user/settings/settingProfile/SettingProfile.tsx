@@ -136,20 +136,20 @@ const InputEmailVerify = ({
             <div>
                 <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
                     Email
-                    <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                    <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                         Not set
                     </span>
                 </label>
                 <input
                     type="email"
                     id="email"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={disableEmailField}
                 />
                 <div>
-                    <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded mt-2">
+                    <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded-sm mt-2">
                         <strong>Warning:</strong> Please ensure your email address is correct if provided,
                         as it will be used for login notifications, daily AI summaries,
                         server status updates, and other important communications.
@@ -157,26 +157,26 @@ const InputEmailVerify = ({
                 </div>
 
                 {requestSendOtp.loading && (
-                    <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded mt-2">
+                    <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded-sm mt-2">
                         Sending OTP...
                     </p>
                 )}
 
                 {requestSendOtp.error && (
-                    <p className="text-sm text-red-500 bg-red-50 p-2 rounded mt-2">
+                    <p className="text-sm text-red-500 bg-red-50 p-2 rounded-sm mt-2">
                         {requestSendOtp.error}
                     </p>
                 )}
 
                 {requestSendOtp.success && (
-                    <p className="text-sm text-green-500 bg-green-50 p-2 rounded mt-2">
+                    <p className="text-sm text-green-500 bg-green-50 p-2 rounded-sm mt-2">
                         {requestSendOtp.success}
                     </p>
                 )}
 
                 <button
                     type="button"
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm focus:outline-none focus:shadow-outline"
                     onClick={sendOtp}
                 >
                     Send OTP
@@ -184,7 +184,7 @@ const InputEmailVerify = ({
             </div>
 
             {requestVerifyOtp.success && (
-                <p className="text-sm text-green-500 bg-green-50 p-2 rounded mt-2">
+                <p className="text-sm text-green-500 bg-green-50 p-2 rounded-sm mt-2">
                     {requestVerifyOtp.success}
                 </p>
             )}
@@ -198,26 +198,26 @@ const InputEmailVerify = ({
                     <input
                         type="number"
                         id="otp"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={otp}
                         onChange={(e) => setOtp(e.target.value)}
                     />
 
                     {requestVerifyOtp.loading && (
-                        <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded mt-2">
+                        <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded-sm mt-2">
                             Verifying OTP...
                         </p>
                     )}
 
                     {requestVerifyOtp.error && (
-                        <p className="text-sm text-red-500 bg-red-50 p-2 rounded mt-2">
+                        <p className="text-sm text-red-500 bg-red-50 p-2 rounded-sm mt-2">
                             {requestVerifyOtp.error}
                         </p>
                     )}
 
                     <button
                         type="button"
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm focus:outline-none focus:shadow-outline"
                         onClick={verifyOtp}
                     >
                         Verify OTP
@@ -337,7 +337,7 @@ const Setting = () => {
                     <input
                         type="text"
                         id="username"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={username}
                         disabled // Input is disabled
                     />
@@ -349,7 +349,7 @@ const Setting = () => {
                     <input
                         type="text"
                         id="name"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                     />
@@ -364,19 +364,19 @@ const Setting = () => {
                         <div className="mb-4">
                             <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
                                 Email
-                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-full text-sm font-semibold ml-3">
+                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
                                     Valid
                                 </span>
                             </label>
                             <input
                                 type="email"
                                 id="email"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 value={email}
                                 disabled
                             />
                             <div className="mb-2">
-                                <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded mt-2">
+                                <p className="text-sm text-yellow-600 bg-yellow-50 p-2 rounded-sm mt-2">
                                     <strong>Warning:</strong> Please ensure your email address is correct if provided,
                                     as it will be used for login notifications, daily AI summaries,
                                     server status updates, and other important communications.
@@ -384,7 +384,7 @@ const Setting = () => {
                             </div>
                             <button
                                 type="button"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm focus:outline-none focus:shadow-outline"
                                 onClick={clearEmail}
                             >
                                 Clear
@@ -399,7 +399,7 @@ const Setting = () => {
                     <input
                         type="date"
                         id="dateOfBirth"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={dateOfBirth}
                         onChange={(e) => setDateOfBirth(e.target.value)}
                     />
@@ -411,7 +411,7 @@ const Setting = () => {
                     <input
                         type="text"
                         id="profilePictureLink"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={profilePictureLink}
                         onChange={(e) => setProfilePictureLink(e.target.value)}
                     />
@@ -422,7 +422,7 @@ const Setting = () => {
                     </label>
                     <textarea
                         id="bio"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
                     />
@@ -442,7 +442,7 @@ const Setting = () => {
                     <input
                         type="text"
                         id="city"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
                     />
@@ -454,7 +454,7 @@ const Setting = () => {
                     <input
                         type="text"
                         id="state"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={state}
                         onChange={(e) => setState(e.target.value)}
                     />
@@ -466,7 +466,7 @@ const Setting = () => {
                     <input
                         type="text"
                         id="zipCode"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={zipCode}
                         onChange={(e) => setZipCode(e.target.value)}
                     />
@@ -478,7 +478,7 @@ const Setting = () => {
                     <input
                         type="text"
                         id="country"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={country}
                         onChange={(e) => setCountry(e.target.value)}
                     />
@@ -507,7 +507,7 @@ const Setting = () => {
 
                 <button
                     type="submit"
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm focus:outline-none focus:shadow-outline"
                 >
                     Update
                 </button>

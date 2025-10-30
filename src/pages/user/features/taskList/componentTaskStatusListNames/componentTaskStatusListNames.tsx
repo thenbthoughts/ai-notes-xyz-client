@@ -133,14 +133,14 @@ const componentTaskStatusListNames = ({
                     List
                     <button
                         onClick={fetchGroupList}
-                        className="ml-4 bg-blue-500 text-white p-1 rounded hover:bg-blue-600 transition flex items-center"
+                        className="ml-4 bg-blue-500 text-white p-1 rounded-sm hover:bg-blue-600 transition flex items-center"
                     >
                         <LucideRefreshCcw size={16} className="" />
                     </button>
                 </h2>
                 <div className="flex flex-col mb-2">
                     {listArr.map((list) => (
-                        <div key={list._id} className="border border-gray-300 p-1 rounded-lg mb-1 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-center">
+                        <div key={list._id} className="border border-gray-300 p-1 rounded-sm mb-1 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-center">
                             <span>{list.statusTitle}</span>
                             <div>
                                 <div>

@@ -8,7 +8,7 @@ const AiSuggestions = () => {
 
     const renderHeading = () => {
         return (
-            <div className="mb-2 p-2.5 md:p-3 rounded-lg shadow text-white bg-gradient-to-r from-purple-600 to-indigo-600">
+            <div className="mb-2 p-2.5 md:p-3 rounded-sm shadow text-white bg-gradient-to-r from-purple-600 to-indigo-600">
                 <div className="flex items-center gap-1.5 mb-1">
                     <LucideBrain className="w-6 h-6 md:w-7 md:h-7" />
                     <h1 className="text-xl md:text-2xl font-bold">AI Suggestions</h1>

@@ -211,7 +211,7 @@ const CalendarWrapper = () => {
                     <Link
                         to="/user/life-events"
                         className="
-                            bg-white text-indigo-500 border-none rounded-md
+                            bg-white text-indigo-500 border-none rounded-sm
                             px-4 py-2 font-semibold text-base cursor-pointer
                             shadow-md transition hover:bg-indigo-50
                             whitespace-nowrap mb-1 flex-shrink-0
@@ -237,7 +237,7 @@ const CalendarWrapper = () => {
         return (
             <div className="pb-3">
                 <label 
-                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-full px-2.5 py-1 backdrop-blur-sm select-none"
+                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
                     onChange={() => setFilterEventTypeTasks((prev) => !prev)}
                 >
                     <input
@@ -248,7 +248,7 @@ const CalendarWrapper = () => {
                     <span className="align-middle">Tasks</span>
                 </label>
                 <label 
-                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-full px-2.5 py-1 backdrop-blur-sm select-none"
+                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
                     onChange={() => setFilterEventTypeLifeEvents((prev) => !prev)}
                 >
                     <input
@@ -259,7 +259,7 @@ const CalendarWrapper = () => {
                     <span className="align-middle">Life Events</span>
                 </label>
                 <label 
-                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-full px-2.5 py-1 backdrop-blur-sm select-none"
+                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
                     onChange={() => setFilterEventTypeInfoVault((prev) => !prev)}
                 >
                     <input
@@ -270,7 +270,7 @@ const CalendarWrapper = () => {
                     <span className="align-middle">Info Vault</span>
                 </label>
                 <label 
-                    className="inline-block text-white text-xs cursor-pointer hover:opacity-80 transition-opacity bg-white/10 rounded-full px-2.5 py-1 backdrop-blur-sm select-none"
+                    className="inline-block text-white text-xs cursor-pointer hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
                     onChange={() => setFilterEventTypeDiary((prev) => !prev)}
                 >
                     <input
@@ -424,7 +424,7 @@ const CalendarWrapper = () => {
 
     const renderRightList = () => {
         return (
-            <div className='bg-white rounded-lg my-2 p-1 md:p-2'>
+            <div className='bg-white rounded-sm my-2 p-1 md:p-2'>
                 {/* heading */}
                 <h1 className='text-lg font-semibold text-gray-800'>Events</h1>
 
@@ -446,27 +446,27 @@ const CalendarWrapper = () => {
                         return (
                             <div className="mb-2">
                                 {events.length > 0 && (
-                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-gray-600 font-medium bg-gray-50 rounded px-2 py-1">
+                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-gray-600 font-medium bg-gray-50 rounded-sm px-2 py-1">
                                         📅 <span>All:</span> <span>{events.length}</span>
                                     </div>
                                 )}
                                 {taskCount > 0 && (
-                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-indigo-600 font-medium bg-indigo-50 rounded px-2 py-1">
+                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-indigo-600 font-medium bg-indigo-50 rounded-sm px-2 py-1">
                                         📝 <span>Tasks:</span> <span>{taskCount}</span>
                                     </div>
                                 )}
                                 {lifeEventCount > 0 && (
-                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-purple-600 font-medium bg-purple-50 rounded px-2 py-1">
+                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-purple-600 font-medium bg-purple-50 rounded-sm px-2 py-1">
                                         🎉 <span>Life Events:</span> <span>{lifeEventCount}</span>
                                     </div>
                                 )}
                                 {staticDateCount > 0 && (
-                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-blue-600 font-medium bg-blue-50 rounded px-2 py-1">
+                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-blue-600 font-medium bg-blue-50 rounded-sm px-2 py-1">
                                         📌 <span>Significant Dates:</span> <span>{staticDateCount}</span>
                                     </div>
                                 )}
                                 {significantDateCount > 0 && (
-                                    <div className="inline-block align-middle mb-1 items-center gap-1 text-green-600 font-medium bg-green-50 rounded px-2 py-1">
+                                    <div className="inline-block align-middle mb-1 items-center gap-1 text-green-600 font-medium bg-green-50 rounded-sm px-2 py-1">
                                         ⭐ <span>Significant Dates (Repeated):</span> <span>{significantDateCount}</span>
                                     </div>
                                 )}
@@ -481,7 +481,7 @@ const CalendarWrapper = () => {
                         key={event.title}
                         className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-md p-1 mb-2 flex items-center gap-2 hover:scale-[1.025] transition-transform duration-200"
                     >
-                        <div className="flex-shrink-0 w-7 h-7 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-lg text-white shadow">
+                        <div className="flex-shrink-0 w-7 h-7 bg-white bg-opacity-20 rounded-sm flex items-center justify-center text-lg text-white shadow">
                             {event.extendedProps?.fromCollection === 'tasks' && '📝'}
                             {event.extendedProps?.fromCollection === 'lifeEvents' && '🎉'}
                             {event.extendedProps?.fromCollection === 'infoVaultSignificantDate' && '📌'}
@@ -536,7 +536,7 @@ const CalendarWrapper = () => {
             <div className='flex flex-col lg:flex-row gap-4'>
                 {/* left */}
                 <div className='w-full lg:w-3/4'>
-                    <div className='bg-white rounded-lg md:p-4 my-2'>
+                    <div className='bg-white rounded-sm md:p-4 my-2'>
                         <FullCalendar
                             ref={calendarRef}
                             plugins={[
@@ -563,7 +563,7 @@ const CalendarWrapper = () => {
 
                 {/* right */}
                 <div className='w-full lg:w-1/4'>
-                    <div className='bg-white rounded-lg'>
+                    <div className='bg-white rounded-sm'>
                         {renderRightList()}
                     </div>
                 </div>
@@ -596,7 +596,7 @@ function renderEventContent(eventInfo: {
             <div className='text-xs text-gray-500'>
                 <Link
                     to={eventInfo.event.extendedProps.moreInfoLink || ''}
-                    className='p-1 text-center block bg-white rounded-md flex flex-col lg:flex-row items-center justify-center'
+                    className='p-1 text-center block bg-white rounded-sm flex flex-col lg:flex-row items-center justify-center'
                 >
                     <LucideLink
                         size={12}

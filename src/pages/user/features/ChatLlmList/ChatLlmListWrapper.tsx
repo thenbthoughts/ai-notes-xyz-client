@@ -64,7 +64,7 @@ const ChatLlmListWrapper = () => {
                     width: 'calc(100vw - 50px)'
                 }}
             >
-                <div className='container mx-auto px-1'>
+                <div className='mx-auto px-1'>
                     <div
                         style={{
                             display: 'flex',

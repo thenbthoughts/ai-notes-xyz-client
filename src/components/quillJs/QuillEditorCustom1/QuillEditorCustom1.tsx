@@ -249,7 +249,7 @@ const QuillEditorCustom1 = ({
 
         {/* Copy Button */}
         <button
-          className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-md mr-2"
+          className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-sm mr-2"
           onClick={async () => {
             const markdownContent = await htmlToMarkdown({
               html: processedValue,
@@ -260,7 +260,7 @@ const QuillEditorCustom1 = ({
         >Copy</button>
 
         <button
-          className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-md"
+          className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-sm"
           onClick={async () => {
             const quill = quillRef.current?.getEditor?.();
             if(quill) {

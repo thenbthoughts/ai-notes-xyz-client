@@ -94,7 +94,7 @@ const SettingChangePassword = () => {
                     <input
                         type={showOldPassword ? "text" : "password"}
                         id="oldPassword"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={oldPassword}
                         onChange={(e) => setOldPassword(e.target.value)}
                         placeholder="Enter your current password"
@@ -125,7 +125,7 @@ const SettingChangePassword = () => {
                     <input
                         type={showNewPassword ? "text" : "password"}
                         id="newPassword"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="Enter your new password (minimum 8 characters)"
@@ -156,7 +156,7 @@ const SettingChangePassword = () => {
                     <input
                         type={showConfirmPassword ? "text" : "password"}
                         id="confirmPassword"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Confirm your new password"
@@ -195,7 +195,7 @@ const SettingChangePassword = () => {
                 <button
                     onClick={handleChangePassword}
                     disabled={request.loading}
-                    className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {request.loading ? 'Changing Password...' : 'Change Password'}
                 </button>

@@ -78,7 +78,7 @@ const ComponentFromBrithdayToToday = () => {
             {/* Birthday set */}
             {birthday !== '0000-00-00' && (
                 <Fragment>
-                    <div className="text-left p-2 border border-blue-400 rounded-md shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-1 hover:bg-blue-200 transition duration-300">
+                    <div className="text-left p-2 border border-blue-400 rounded-sm shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-1 hover:bg-blue-200 transition duration-300">
                         <div className="grid grid-cols-1 gap-1">
                             <p className="text-sm font-semibold text-blue-700">
                                 <LucideClock size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
@@ -89,7 +89,7 @@ const ComponentFromBrithdayToToday = () => {
                             </p>
                         </div>
                     </div>
-                    <div className="text-left p-2 border border-green-400 rounded-md shadow-md bg-gradient-to-r from-green-100 to-green-300 mb-1 hover:bg-green-200 transition duration-300">
+                    <div className="text-left p-2 border border-green-400 rounded-sm shadow-md bg-gradient-to-r from-green-100 to-green-300 mb-1 hover:bg-green-200 transition duration-300">
                         <h2 className="text-lg font-bold mb-0 text-green-800">
                             <LucideCake size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
                             Next Birthday
@@ -100,7 +100,7 @@ const ComponentFromBrithdayToToday = () => {
             )}
 
             {/* New Section for Achievements */}
-            <div className="text-left p-2 border border-yellow-400 rounded-md shadow-md bg-gradient-to-r from-yellow-100 to-yellow-300 mb-2 hover:bg-yellow-200 transition duration-300">
+            <div className="text-left p-2 border border-yellow-400 rounded-sm shadow-md bg-gradient-to-r from-yellow-100 to-yellow-300 mb-2 hover:bg-yellow-200 transition duration-300">
                 <h2 className="text-lg font-bold mb-0 text-yellow-800">
                     <LucideQuote size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
                     Quote
@@ -116,7 +116,7 @@ const ComponentFromBrithdayToToday = () => {
 
             {/* Birthday not set yet */}
             {birthday === '0000-00-00' && (
-                <Link to="/user/setting" className="text-left p-2 border border-red-400 rounded-md shadow-md bg-gradient-to-r from-red-100 to-red-300 hover:bg-red-200 transition duration-300 block">
+                <Link to="/user/setting" className="text-left p-2 border border-red-400 rounded-sm shadow-md bg-gradient-to-r from-red-100 to-red-300 hover:bg-red-200 transition duration-300 block">
                     <p className="text-sm font-semibold text-red-700">
                         No birthday set yet. Click here to set your birthday.
                     </p>

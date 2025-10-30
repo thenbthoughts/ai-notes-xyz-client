@@ -50,7 +50,7 @@ const ComponentRightWrapper = ({
             className="p-1 md:p-3"
         >
 
-            <div className="mb-6 p-4 rounded-lg shadow-lg text-white bg-yellow-500">
+            <div className="mb-6 p-4 rounded-sm shadow-lg text-white bg-yellow-500">
                 <h1 className="text-3xl font-extrabold mb-2 drop-shadow-md">Schedule</h1>
                 <p className="text-lg font-medium drop-shadow-sm">Schedule your tasks and events.</p>
             </div>

@@ -43,7 +43,7 @@ const ComponentLifeEventsEditCategory = ({ value, onChange, categoryId }: {
         <div>
             {loading && (
                 <select
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                     value={value}
                     onChange={onChange}
                 >
@@ -52,7 +52,7 @@ const ComponentLifeEventsEditCategory = ({ value, onChange, categoryId }: {
             )}
             {!loading && (
                 <select
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                     value={value}
                     onChange={onChange}
                 >

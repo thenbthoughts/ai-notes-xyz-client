@@ -150,7 +150,7 @@ const TaskList: React.FC = () => {
     const renderLeft = () => {
         return (
             <div
-                className="bg-white shadow rounded p-4"
+                className="bg-white shadow rounded-sm p-4"
                 id='task-filter'
             >
                 {/* <TasksBoardNamesList /> */}
@@ -176,7 +176,7 @@ const TaskList: React.FC = () => {
                             debounceTimeout={750}
                             type="text"
                             placeholder="Search tasks..."
-                            className="border border-gray-300 p-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+                            className="border border-gray-300 p-1 rounded-sm w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                             id='task-search'
@@ -189,7 +189,7 @@ const TaskList: React.FC = () => {
                         <select
                             value={priority}
                             onChange={(e) => setPriority(e.target.value)}
-                            className="border border-gray-300 p-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+                            className="border border-gray-300 p-1 rounded-sm w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
                         >
                             <option value="">All Priorities</option>
                             <option value="very-high">Very High</option>
@@ -206,7 +206,7 @@ const TaskList: React.FC = () => {
                         <select
                             value={isArchived}
                             onChange={(e) => setIsArchived(e.target.value)}
-                            className="border border-gray-300 p-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+                            className="border border-gray-300 p-1 rounded-sm w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
                         >
                             <option value="">All Tasks</option>
                             <option value="archived">Archived</option>
@@ -220,7 +220,7 @@ const TaskList: React.FC = () => {
                         <select
                             value={isCompleted}
                             onChange={(e) => setIsCompleted(e.target.value)}
-                            className="border border-gray-300 p-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+                            className="border border-gray-300 p-1 rounded-sm w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
                         >
                             <option value="">All Tasks</option>
                             <option value="completed">Completed</option>
@@ -247,7 +247,7 @@ const TaskList: React.FC = () => {
             >
                 {loading && (
                     <div className="text-center mt-4">
-                        <button className="bg-blue-500 text-white p-2 rounded-lg" disabled>
+                        <button className="bg-blue-500 text-white p-2 rounded-sm" disabled>
                             Loading...
                         </button>
                     </div>
@@ -281,7 +281,7 @@ const TaskList: React.FC = () => {
                                 };
 
                                 return (
-                                    <div key={itemTaskStatus._id} className="mb-4 p-4 rounded shadow bg-gray-100">
+                                    <div key={itemTaskStatus._id} className="mb-4 p-4 rounded-sm shadow bg-gray-100">
                                         <div className="flex items-center justify-between mb-2">
                                             <h2 className="text-xl font-semibold text-blue-600">
                                                 {itemTaskStatus.statusTitle}{' '}

@@ -182,7 +182,7 @@ const ComponentScheduleSendMyselfEmail = ({
     };
 
     return (
-        <div className="py-2 border border-gray-200 rounded-lg p-4">
+        <div className="py-2 border border-gray-200 rounded-sm p-4">
 
             <h1 className="text-2xl font-bold text-gray-800 my-4">Send Myself Email</h1>
 
@@ -192,7 +192,7 @@ const ComponentScheduleSendMyselfEmail = ({
                 <input
                     type="text"
                     value={formDataSendMyselfEmail.emailSubject}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                     onChange={(e) => setFormDataSendMyselfEmail({ ...formDataSendMyselfEmail, emailSubject: e.target.value })}
                     placeholder="Enter email subject"
                 />
@@ -203,7 +203,7 @@ const ComponentScheduleSendMyselfEmail = ({
                 <label className="block text-sm font-medium text-gray-700">Email Content</label>
                 <textarea
                     value={formDataSendMyselfEmail.emailContent}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 min-h-[100px] resize-vertical"
+                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2 min-h-[100px] resize-vertical"
                     onChange={(e) => setFormDataSendMyselfEmail({ ...formDataSendMyselfEmail, emailContent: e.target.value })}
                     placeholder="Enter email content..."
                 />
@@ -250,7 +250,7 @@ const ComponentScheduleSendMyselfEmail = ({
                         <label className="block text-sm font-medium text-gray-700">System Prompt</label>
                         <textarea
                             value={formDataSendMyselfEmail.systemPrompt}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 min-h-[80px] resize-vertical"
+                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2 min-h-[80px] resize-vertical"
                             onChange={(e) => setFormDataSendMyselfEmail({ ...formDataSendMyselfEmail, systemPrompt: e.target.value })}
                             placeholder="Enter system prompt for AI..."
                         />
@@ -261,7 +261,7 @@ const ComponentScheduleSendMyselfEmail = ({
                         <label className="block text-sm font-medium text-gray-700">User Prompt</label>
                         <textarea
                             value={formDataSendMyselfEmail.userPrompt}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 min-h-[80px] resize-vertical"
+                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2 min-h-[80px] resize-vertical"
                             onChange={(e) => setFormDataSendMyselfEmail({ ...formDataSendMyselfEmail, userPrompt: e.target.value })}
                             placeholder="Enter user prompt for AI..."
                         />
@@ -271,7 +271,7 @@ const ComponentScheduleSendMyselfEmail = ({
                     <div className="py-2">
                         <label className="block text-sm font-medium text-gray-700">Provider</label>
                         <select
-                            className="w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+                            className="w-full border border-gray-300 rounded-sm shadow-sm p-2 text-sm"
                             value={formDataSendMyselfEmail.aiModelProvider}
                             onChange={(e) => {
                                 setFormDataSendMyselfEmail({ 

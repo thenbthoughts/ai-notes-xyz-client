@@ -124,7 +124,7 @@ const UserHomepage = () => {
                                 <div className="pb-2">
                                     {/* Refresh button */}
                                     <button
-                                        className="text-left p-3 border border-blue-400 rounded-md shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300 w-full"
+                                        className="text-left p-3 border border-blue-400 rounded-sm shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300 w-full"
                                         onClick={() => window.location.reload()}
                                     >
                                         <div className="flex justify-between items-center ">
@@ -138,7 +138,7 @@ const UserHomepage = () => {
                                     {/* login */}
                                     <Link to="/login">
                                         <div
-                                            className="text-left p-3 border border-blue-400 rounded-md shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300"
+                                            className="text-left p-3 border border-blue-400 rounded-sm shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300"
                                         >
                                             <div className="flex justify-between items-center ">
                                                 <h2 className="text-lg font-bold text-blue-800 cursor-pointer">
@@ -152,7 +152,7 @@ const UserHomepage = () => {
                                     {/* register */}
                                     <Link to="/register">
                                         <div
-                                            className="text-left p-3 border border-blue-400 rounded-md shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300"
+                                            className="text-left p-3 border border-blue-400 rounded-sm shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300"
                                         >
                                             <div className="flex justify-between items-center ">
                                                 <h2 className="text-lg font-bold text-blue-800 cursor-pointer">
@@ -185,7 +185,7 @@ const UserHomepage = () => {
                             }}
                         >
                             {authState.isLoggedIn === 'pending' && (
-                                <Link to="/" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                <Link to="/" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                                         <LucideLoader size={32} />
                                     </div>
@@ -194,19 +194,19 @@ const UserHomepage = () => {
                             )}
                             {authState.isLoggedIn === 'true' && (
                                 <>
-                                    <Link to="/user/chat" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/user/chat" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideMessageSquare size={32} />
                                         </div>
                                         <div>Chat</div>
                                     </Link>
-                                    <Link to="/user/search" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/user/search" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideSearch size={32} />
                                         </div>
                                         <div>Search</div>
                                     </Link>
-                                    <Link to="/user/suggestions" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/user/suggestions" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideLightbulb size={32} />
                                         </div>
@@ -214,7 +214,7 @@ const UserHomepage = () => {
                                     </Link>
                                     <Link
                                         to="/user/task"
-                                        className='block p-3 border bg-cyan-100 rounded hover:shadow-md'
+                                        className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'
                                     >
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideList size={32} />
@@ -264,49 +264,49 @@ const UserHomepage = () => {
                                             </Fragment>
                                         )}
                                     </Link>
-                                    <Link to="/user/notes" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/user/notes" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideFileText size={32} />
                                         </div>
                                         <div>Notes</div>
                                     </Link>
-                                    <Link to="/user/life-events" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/user/life-events" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideCalendar1 size={32} />
                                         </div>
                                         <div>Life Events</div>
                                     </Link>
-                                    <Link to="/user/info-vault" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/user/info-vault" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideInfo size={32} />
                                         </div>
                                         <div>Info Vault</div>
                                     </Link>
-                                    <Link to="/user/maps" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/user/maps" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideMap size={32} />
                                         </div>
                                         <div>Maps</div>
                                     </Link>
-                                    <Link to="/user/calender" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/user/calender" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideCalendar1 size={32} />
                                         </div>
                                         <div>Calendar</div>
                                     </Link>
-                                    <Link to="/user/task-schedule" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/user/task-schedule" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideClock size={32} />
                                         </div>
                                         <div>Schedule</div>
                                     </Link>
-                                    <Link to="/user/setting" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/user/setting" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideSettings size={32} />
                                         </div>
                                         <div>Settings</div>
                                     </Link>
-                                    <Link to="/logout" className='block p-3 border bg-red-400 rounded hover:shadow-md'>
+                                    <Link to="/logout" className='block p-3 border bg-red-400 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideLogOut size={32} />
                                         </div>
@@ -317,13 +317,13 @@ const UserHomepage = () => {
 
                             {authState.isLoggedIn === 'false' && (
                                 <>
-                                    <Link to="/login" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/login" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideLogIn size={32} />
                                         </div>
                                         <div>Login</div>
                                     </Link>
-                                    <Link to="/register" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                                    <Link to="/register" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <LucideUserPlus size={32} />
                                         </div>
@@ -331,7 +331,7 @@ const UserHomepage = () => {
                                     </Link>
                                 </>
                             )}
-                            <Link to="/about" className='block p-3 border bg-cyan-100 rounded hover:shadow-md'>
+                            <Link to="/about" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                                     <LucideInfo size={32} />
                                 </div>
@@ -339,7 +339,7 @@ const UserHomepage = () => {
                             </Link>
                             <a
                                 href="https://ai-notes.xyz/docs/selfhost/selfhost-docker-build"
-                                className='block p-3 border bg-cyan-100 rounded hover:shadow-md'
+                                className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'
                             >
                                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                                     {/* <LucideGitBranch size={32} /> */}
