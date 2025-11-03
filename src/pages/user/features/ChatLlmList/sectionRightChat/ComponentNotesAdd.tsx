@@ -295,6 +295,15 @@ const ComponentNotesAdd = ({
                                 fileType = 'video';
                             } else if (['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(extension || '')) {
                                 fileType = 'audio';
+                            } else if ([
+                                'md', 'markdown', 'txt', 'csv', 'json', 'log',
+                                'pdf', 'docx', 'xls', 'xlsx',
+                            ].includes(
+                                extension || ''
+                            )) {
+                                fileType = 'document';
+                            } else {
+                                fileType = 'file';
                             }
 
                             await axiosCustom.post("/api/chat-llm/chat-add/notesAdd", {
