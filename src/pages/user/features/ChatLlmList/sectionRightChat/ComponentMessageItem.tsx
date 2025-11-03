@@ -168,6 +168,7 @@ const ComponentMessageItem = ({
     const [isDeleted, setIsDeleted] = useState(false);
     const [showAllTags, setShowAllTags] = useState(false);
     const [showAiGeneratedFileInfo, setShowAiGeneratedFileInfo] = useState(false);
+    const [showExtractedText, setShowExtractedText] = useState(false);
     const [
         callGenerateAiTaskListRandomNum,
         setCallGenerateAiTaskListRandomNum, // whenever the func is called 
@@ -248,9 +249,25 @@ const ComponentMessageItem = ({
 
     const renderDocument = () => {
         return (
-            <div className="flex items-center">
+            <div className="">
                 <span className="mr-2">📄</span>
                 <span>{itemMessage.content}</span>
+                <span className="text-xs text-gray-500">{itemMessage.fileContentAi}</span>
+                <span className="ml-2 text-xs text-gray-400">
+                    ({typeof itemMessage.fileContentText === 'string' ? itemMessage.fileContentText.length : 0} chars)
+                </span>
+                {showExtractedText && (
+                    <div className="text-xs text-gray-500 py-2"
+                        style={{
+                            height: '300px',
+                            maxHeight: '80vh',
+                            overflowY: 'auto',
+                            whiteSpace: 'pre-wrap',
+                        }}
+                    >
+                        {itemMessage.fileContentText}
+                    </div>
+                )}
             </div>
         );
     };
@@ -412,6 +429,45 @@ const ComponentMessageItem = ({
                                 />
                             )}
                             <span className="ml-1">AI Details</span>
+                        </button>
+                    )}
+
+                    {/* If the message contains extracted text, display a button to view/copy it */}
+                    {itemMessage.fileContentText && itemMessage.fileContentText.length > 0 && (
+                        <button
+                            onClick={() => {
+                                setShowExtractedText(!showExtractedText);
+                            }}
+                            className="px-2 py-1 rounded-sm bg-yellow-500 text-white mb-1 mr-1"
+                        >
+                            {showExtractedText ? (
+                                <LucideEyeOff
+                                    style={{
+                                        color: '#FFFFFF',
+                                        marginBottom: '0',
+                                        display: 'inline-block',
+                                        lineHeight: '24px',
+                                        width: "19px",
+                                        height: "19px",
+                                        position: 'relative',
+                                        top: '-2px',
+                                    }}
+                                />
+                            ) : (
+                                <LucideEyeOff
+                                    style={{
+                                        color: '#FFFFFF',
+                                        marginBottom: '0',
+                                        display: 'inline-block',
+                                        lineHeight: '24px',
+                                        width: "19px",
+                                        height: "19px",
+                                        position: 'relative',
+                                        top: '-2px',
+                                    }}
+                                />
+                            )}
+                            <span className="ml-1">{showExtractedText ? 'Hide Extracted Text' : 'Show Extracted Text'}</span>
                         </button>
                     )}
                 </div>

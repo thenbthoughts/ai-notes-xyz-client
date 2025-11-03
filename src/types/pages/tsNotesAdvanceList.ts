@@ -15,6 +15,7 @@ export interface tsMessageItem {
 
     // file
     fileUrl: string;
+    fileContentText: string;
     fileContentAi: string;
 
     // model info
