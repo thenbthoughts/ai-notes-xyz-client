@@ -43,6 +43,7 @@ interface NotesInfo {
     notesWorkspaceId: string;
     title: string;
     description: string;
+    descriptionMarkdown: string;
     isStar: boolean;
     tags: string[];
     aiSummary: string;
@@ -89,11 +90,18 @@ interface LifeEventInfo {
 interface InfoVaultSignificantDate {
     _id: string;
     username: string;
-    title: string;
+    infoVaultId: string;
+    label: string;
     description: string;
     tags: string[];
+    date: string;
     dateUtc: string;
     createdAtUtc: string;
+    createdAtIpAddress: string;
+    createdAtUserAgent: string;
+    updatedAtUtc: string;
+    updatedAtIpAddress: string;
+    updatedAtUserAgent: string;
     fromCollection: string;
 }
 
@@ -320,7 +328,7 @@ const Search = () => {
                     filterTaskIsCompleted: filterTaskIsCompleted,
                     filterTaskIsArchived: filterTaskIsArchived,
                     filterTaskWorkspaceIds: filterTaskWorkspaceIds,
-                    
+
                     // filter -> notes
                     filterNotesWorkspaceIds: filterNotesWorkspaceIds,
 
@@ -419,7 +427,7 @@ const Search = () => {
                         {filters.filterEventTypeTasks && (
                             <div className="space-y-3 border border-gray-300 rounded-sm p-3">
                                 <h4 className="text-sm font-semibold text-gray-700">Task Filters</h4>
-                                
+
                                 <div>
                                     <label className="text-sm font-medium text-gray-700">Task Status:</label>
                                     <div className="flex gap-2 mt-1">
@@ -500,7 +508,7 @@ const Search = () => {
                         {filters.filterEventTypeNotes && (
                             <div className="space-y-3 border border-gray-300 rounded-sm p-3">
                                 <h4 className="text-sm font-semibold text-gray-700">Notes Filters</h4>
-                                
+
                                 <div>
                                     <label className="text-sm font-medium text-gray-700">Notes Workspace:</label>
                                     <ComponentNotesWorkspaceSelect
@@ -569,7 +577,7 @@ const Search = () => {
         // Extract data from notes collection
         if (item.fromCollection === 'notes' && item.notesInfo) {
             title = item.notesInfo.title;
-            description = item.notesInfo.description;
+            description = item.notesInfo.descriptionMarkdown;
             itemDate = item.notesInfo.createdAtUtc;
             itemLink = `/user/notes?action=edit&id=${item.notesInfo._id}&workspace=${item.notesInfo.notesWorkspaceId}`;
             eventTypeLabel = 'Note';
@@ -595,7 +603,7 @@ const Search = () => {
         if ((item.fromCollection === 'infoVaultSignificantDate' || item.fromCollection === 'infoVaultSignificantDateRepeat')) {
             const infoVaultData = item.infoVaultSignificantDate || item.infoVaultSignificantDateRepeat;
             if (infoVaultData) {
-                title = infoVaultData.title;
+                title = infoVaultData.label;
                 description = infoVaultData.description;
                 itemDate = infoVaultData.dateUtc || infoVaultData.createdAtUtc;
                 itemLink = `/user/info-vault?action=edit&id=${infoVaultData._id}`;
@@ -628,14 +636,6 @@ const Search = () => {
                             <span className={`text-xs px-2 py-1 rounded-sm font-medium ${eventTypeColor}`}>
                                 {eventTypeLabel}
                             </span>
-                            <Link
-                                to={itemLink}
-                                target="_blank"
-                                className="text-blue-600 hover:text-blue-800 transition-colors"
-                                title="Open in new tab"
-                            >
-                                <LucideExternalLink className="w-4 h-4" />
-                            </Link>
                             {isStar && (
                                 <span className="text-yellow-500" title="Starred">★</span>
                             )}
@@ -695,29 +695,52 @@ const Search = () => {
                                     Impact: {eventImpact}
                                 </span>
                             )}
+                            
+                            {/* Tags/Labels */}
+                            {(labels.length > 0 || tags.length > 0) && (
+                                <Fragment>
+                                    {labels.slice(0, 5).map((label: string, idx: number) => (
+                                        <span
+                                            key={`label-${idx}`}
+                                            className="px-2 py-0.5 bg-purple-100 text-purple-800 rounded"
+                                        >
+                                            {label}
+                                        </span>
+                                    ))}
+                                    {tags.slice(0, 5).map((tag: string, idx: number) => (
+                                        <span
+                                            key={`tag-${idx}`}
+                                            className="px-2 py-0.5 bg-gray-100 text-gray-800 rounded"
+                                        >
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </Fragment>
+                            )}
                         </div>
 
-                        {/* Tags/Labels */}
-                        {(labels.length > 0 || tags.length > 0) && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                                {labels.slice(0, 5).map((label: string, idx: number) => (
-                                    <span
-                                        key={`label-${idx}`}
-                                        className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 rounded"
-                                    >
-                                        {label}
-                                    </span>
-                                ))}
-                                {tags.slice(0, 5).map((tag: string, idx: number) => (
-                                    <span
-                                        key={`tag-${idx}`}
-                                        className="text-xs px-2 py-0.5 bg-purple-50 text-purple-700 rounded"
-                                    >
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
+
+                        {/* Link */}
+                        <div className="flex gap-2 mt-2">
+                            {/* Open in new tab */}
+                            <Link
+                                to={itemLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-blue-600 hover:underline text-xs font-medium mr-3"
+                            >
+                                <LucideExternalLink className="w-4 h-4" />
+                                Open in new tab
+                            </Link>
+                            {/* Open here */}
+                            <Link
+                                to={itemLink}
+                                className="inline-flex items-center gap-1 text-blue-600 hover:underline text-xs font-medium"
+                            >
+                                <LucideExternalLink className="w-4 h-4" />
+                                Open in current tab
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -760,7 +783,7 @@ const Search = () => {
                             <span>Loading...</span>
                         ) : (
                             <span>
-                                Found {totalCount} result{totalCount !== 1 ? 's' : ''} 
+                                Found {totalCount} result{totalCount !== 1 ? 's' : ''}
                                 {page > 1 && ` (Page ${page})`}
                             </span>
                         )}
@@ -780,7 +803,7 @@ const Search = () => {
                             {search ? 'No results found' : 'Start searching'}
                         </h3>
                         <p className="text-gray-600">
-                            {search 
+                            {search
                                 ? 'Try adjusting your filters or search terms'
                                 : 'Enter a search query to find tasks, notes, life events, and more'
                             }
