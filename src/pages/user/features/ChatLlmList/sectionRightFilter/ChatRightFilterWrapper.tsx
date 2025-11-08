@@ -5,7 +5,8 @@ import {
     LucidePlus,
     LucideRefreshCcw,
     LucideSettings,
-    LucideSettings2
+    LucideSettings2,
+    LucideSidebar
 } from 'lucide-react';
 
 import { Link } from 'react-router-dom';
@@ -13,7 +14,7 @@ import { Link } from 'react-router-dom';
 import useResponsiveScreen, {
     screenList
 } from '../../../../../hooks/useResponsiveScreen.tsx';
-import { jotaiChatHistoryModalOpen, jotaiChatLlmThreadSetting } from '../jotai/jotaiChatLlmThreadSetting.ts';
+import { jotaiChatHistoryModalOpen, jotaiChatLlmThreadSetting, jotaiHideSidebar } from '../jotai/jotaiChatLlmThreadSetting.ts';
 import { useAtom } from 'jotai';
 import { toast } from 'react-hot-toast';
 
@@ -35,6 +36,11 @@ const ChatRightFilterWrapper = ({
         chatLlmThreadSetting,
         setChatLlmThreadSetting,
     ] = useAtom(jotaiChatLlmThreadSetting);
+
+    const [
+        hideSidebar,
+        setHideSidebar,
+    ] = useAtom(jotaiHideSidebar);
 
     return (
         <div className='w-full'>
@@ -137,6 +143,28 @@ const ChatRightFilterWrapper = ({
                         style={{
                             width: '100%',
                             color: 'white', // Set icon color to white
+                        }}
+                        className=''
+                    />
+                </div>
+            </div>
+
+            {/* hide sidebar */}
+            <div
+                className='p-1 cursor-pointer'
+                onClick={() => {
+                    setHideSidebar((prevProps) => {
+                        return {
+                            isOpen: !prevProps.isOpen,
+                        };
+                    });
+                }}
+            >
+                <div className={`py-3 rounded-sm ${hideSidebar.isOpen ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                    <LucideSidebar
+                        style={{
+                            width: '100%',
+                            color: 'white',
                         }}
                         className=''
                     />
