@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 
 export const jotaiHideSidebar = atom({
-    isOpen: false,
+    isOpen: true,
     // true mean open
     // false mean not open
 });
