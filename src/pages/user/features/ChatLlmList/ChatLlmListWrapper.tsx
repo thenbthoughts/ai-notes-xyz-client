@@ -11,7 +11,7 @@ import useResponsiveScreen, {
 import ComponentRightChatWrapper from './sectionRightChat/ComponentRightWrapper.tsx';
 
 import ChatRightFilterWrapper from './sectionRightFilter/ChatRightFilterWrapper.tsx';
-import { jotaiChatHistoryModalOpen, jotaiChatLlmThreadSetting, jotaiHideSidebar } from './jotai/jotaiChatLlmThreadSetting.ts';
+import { jotaiChatHistoryModalOpen, jotaiChatLlmThreadSetting, jotaiHideRightSidebar, jotaiHideSidebar } from './jotai/jotaiChatLlmThreadSetting.ts';
 import { useAtom, useAtomValue } from 'jotai';
 import { useLocation } from 'react-router-dom';
 import siteInfo from '../../../../config/siteInfo.ts';
@@ -24,6 +24,7 @@ const ChatLlmListWrapper = () => {
 
     const chatHistoryModalOpen = useAtomValue(jotaiChatHistoryModalOpen);
     const hideSidebar = useAtomValue(jotaiHideSidebar);
+    const hideRightSidebar = useAtomValue(jotaiHideRightSidebar);
     const [
         chatLlmThreadSetting,
         setChatLlmThreadSetting,
@@ -61,7 +62,7 @@ const ChatLlmListWrapper = () => {
             {renderSeo()}
             <div
                 style={{
-                    width: 'calc(100vw - 50px)'
+                    width: hideRightSidebar.isOpen === true ? 'calc(100vw - 50px)' : '100vw'
                 }}
             >
                 <div className='mx-auto px-1'>
@@ -75,17 +76,17 @@ const ChatLlmListWrapper = () => {
                             screenWidth === screenList.lg &&
                             hideSidebar.isOpen === true
                         ) && (
-                            <div
-                                style={{
-                                    width: '25%'
-                                }}
-                            >
-                                <ComponentChatHistoryRender />
-                            </div>
-                        )}
+                                <div
+                                    style={{
+                                        width: '25%'
+                                    }}
+                                >
+                                    <ComponentChatHistoryRender />
+                                </div>
+                            )}
                         <div
                             style={{
-                                width: (screenWidth === screenList.lg && hideSidebar.isOpen === true)? '75%' : '100%'
+                                width: (screenWidth === screenList.lg && hideSidebar.isOpen === true) ? '75%' : '100%'
                             }}
                         >
                             <div style={{
@@ -108,16 +109,21 @@ const ChatLlmListWrapper = () => {
             </div>
 
             {/* part 3 -> 50px */}
-            <div
-                style={{
-                    width: '50px',
-                }}
-                className='text-center flex flex-col items-center justify-center'
-            >
-                <ChatRightFilterWrapper
-                    setRefreshRandomNumFetchChat={setRefreshRandomNumFetchChat}
-                />
-            </div>
+            {(
+                hideRightSidebar.isOpen === true ||
+                screenWidth === screenList.lg
+            ) && (
+                <div
+                    style={{
+                        width: '50px',
+                    }}
+                    className='text-center flex flex-col items-center justify-center'
+                >
+                    <ChatRightFilterWrapper
+                        setRefreshRandomNumFetchChat={setRefreshRandomNumFetchChat}
+                    />
+                </div>
+            )}
 
             {/* screen list */}
             {screenWidth === screenList.sm && (

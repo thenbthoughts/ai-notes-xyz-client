@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideRepeat, LucideSend, LucideVideo, LucideX } from 'lucide-react';
+import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideRepeat, LucideSend, LucideSidebar, LucideVideo, LucideX } from 'lucide-react';
 import envKeys from '../../../../../config/envKeys';
 import axios from 'axios';
 import axiosCustom from '../../../../../config/axiosCustom';
@@ -14,6 +14,8 @@ import FileUploadEnvCheck from '../../../../../components/FileUploadEnvCheck';
 import { useSetAtom } from 'jotai';
 import { jotaiChatLlmFooterHeight } from '../jotai/jotaiChatLlmThreadSetting';
 import ComponentUploadImage from './ComponentUploadImage';
+import useResponsiveScreen, { screenList } from '../../../../../hooks/useResponsiveScreen';
+import { jotaiHideRightSidebar } from '../jotai/jotaiChatLlmThreadSetting.ts';
 
 const TextAndFileInput = ({
     value,
@@ -252,7 +254,8 @@ const ComponentNotesAdd = ({
 }) => {
     const actionContainerRef = useRef<HTMLDivElement>(null);
     const setChatLlmFooterHeight = useSetAtom(jotaiChatLlmFooterHeight);
-
+    const screenWidth = useResponsiveScreen();
+    const setHideRightSidebar = useSetAtom(jotaiHideRightSidebar);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [newNote, setNewNote] = useState('');
     const [files, setFiles] = useState<string[]>([]);
@@ -422,64 +425,95 @@ const ComponentNotesAdd = ({
             />
 
             {/* action container - 50px */}
-            <div className={cssNoteAdvanceList.actionContainer}>
-                {/* send */}
-                <button
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                    style={{ height: '40px' }}
-                    onClick={handleAddNote}
-                    disabled={isSubmitting}
+            <div
+                className='flex'
+            >
+                <div className={cssNoteAdvanceList.actionContainer}
+                    style={{
+                        width: screenWidth === screenList.lg ? '100%' : 'calc(100vw - 50px)'
+                    }}
                 >
-                    {isSubmitting ? (
-                        <LucideLoader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                        <LucideSend style={{ height: '20px' }} />
-                    )}
-                </button>
-
-                {/* file */}
-                <FileUploadEnvCheck iconType="file">
-                    <ComponentUploadFile
-                        setFiles={setFiles}
-                    />
-                </FileUploadEnvCheck>
-
-                {/* camera */}
-                <FileUploadEnvCheck iconType="file">
-                    <ComponentUploadImage
-                        setFiles={setFiles}
-                    />
-                </FileUploadEnvCheck>
-
-                {/* audio */}
-                <FileUploadEnvCheck iconType="audio">
-                    <ComponentRecordAudio
-                        setRefreshParentRandomNum={setRefreshParentRandomNum}
-                        threadId={threadId}
-                    />
-                </FileUploadEnvCheck>
-
-                {isSubmitting === false && (
+                    {/* send */}
                     <button
                         className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
                         style={{ height: '40px' }}
-                        onClick={regenerateResponse}
+                        onClick={handleAddNote}
                         disabled={isSubmitting}
                     >
-                        <LucideRepeat style={{ height: '20px' }} />
+                        {isSubmitting ? (
+                            <LucideLoader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                            <LucideSend style={{ height: '20px' }} />
+                        )}
                     </button>
-                )}
 
-                {/* auto select context notes */}
-                <button
-                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded-sm whitespace-nowrap"
-                    style={{ height: '40px' }}
-                    onClick={() => {
-                        handleAutoSelectContext({ threadId: threadId });
+                    {/* file */}
+                    <FileUploadEnvCheck iconType="file">
+                        <ComponentUploadFile
+                            setFiles={setFiles}
+                        />
+                    </FileUploadEnvCheck>
+
+                    {/* camera */}
+                    <FileUploadEnvCheck iconType="file">
+                        <ComponentUploadImage
+                            setFiles={setFiles}
+                        />
+                    </FileUploadEnvCheck>
+
+                    {/* audio */}
+                    <FileUploadEnvCheck iconType="audio">
+                        <ComponentRecordAudio
+                            setRefreshParentRandomNum={setRefreshParentRandomNum}
+                            threadId={threadId}
+                        />
+                    </FileUploadEnvCheck>
+
+                    {isSubmitting === false && (
+                        <button
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
+                            style={{ height: '40px' }}
+                            onClick={regenerateResponse}
+                            disabled={isSubmitting}
+                        >
+                            <LucideRepeat style={{ height: '20px' }} />
+                        </button>
+                    )}
+
+                    {/* auto select context notes */}
+                    <button
+                        className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded-sm whitespace-nowrap"
+                        style={{ height: '40px' }}
+                        onClick={() => {
+                            handleAutoSelectContext({ threadId: threadId });
+                        }}
+                    >
+                        AI: Auto Context
+                    </button>
+                </div>
+                <div
+                    style={{
+                        display: screenWidth === screenList.sm ? 'inline-block' : 'none',
+                        width: screenWidth === screenList.lg ? '100%' : '50px',
                     }}
                 >
-                    AI: Auto Context
-                </button>
+                    <LucideSidebar
+                        style={{
+                            width: '100%',
+                            height: '50px',
+                            color: 'white',
+                            cursor: 'pointer',
+                            padding: '10px',
+                        }}
+                        onClick={() => {
+                            setHideRightSidebar((prevProps) => {
+                                return {
+                                    isOpen: !prevProps.isOpen,
+                                };
+                            });
+                        }}
+                    />
+                </div>
             </div>
         </div>
     );
