@@ -141,7 +141,7 @@ const AiSuggestionSummaryCombined = () => {
 
             {isLoading ? (
                 <div className="flex items-center justify-center py-4">
-                    <div className="animate-spin rounded-sm h-6 w-6 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                     <span className="ml-2 text-xs md:text-sm text-gray-600">Loading summary...</span>
                 </div>
             ) : (
