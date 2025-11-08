@@ -11,7 +11,7 @@ import useResponsiveScreen, {
 import ComponentRightChatWrapper from './sectionRightChat/ComponentRightWrapper.tsx';
 
 import ChatRightFilterWrapper from './sectionRightFilter/ChatRightFilterWrapper.tsx';
-import { jotaiChatHistoryModalOpen, jotaiChatLlmThreadSetting } from './jotai/jotaiChatLlmThreadSetting.ts';
+import { jotaiChatHistoryModalOpen, jotaiChatLlmThreadSetting, jotaiHideSidebar } from './jotai/jotaiChatLlmThreadSetting.ts';
 import { useAtom, useAtomValue } from 'jotai';
 import { useLocation } from 'react-router-dom';
 import siteInfo from '../../../../config/siteInfo.ts';
@@ -23,7 +23,7 @@ const ChatLlmListWrapper = () => {
     const screenWidth = useResponsiveScreen();
 
     const chatHistoryModalOpen = useAtomValue(jotaiChatHistoryModalOpen);
-
+    const hideSidebar = useAtomValue(jotaiHideSidebar);
     const [
         chatLlmThreadSetting,
         setChatLlmThreadSetting,
@@ -71,7 +71,10 @@ const ChatLlmListWrapper = () => {
                             flexDirection: 'row'
                         }}
                     >
-                        {screenWidth === screenList.lg && (
+                        {(
+                            screenWidth === screenList.lg &&
+                            hideSidebar.isOpen === true
+                        ) && (
                             <div
                                 style={{
                                     width: '25%'
@@ -82,7 +85,7 @@ const ChatLlmListWrapper = () => {
                         )}
                         <div
                             style={{
-                                width: screenWidth === screenList.lg ? '75%' : '100%'
+                                width: (screenWidth === screenList.lg && hideSidebar.isOpen === true)? '75%' : '100%'
                             }}
                         >
                             <div style={{
