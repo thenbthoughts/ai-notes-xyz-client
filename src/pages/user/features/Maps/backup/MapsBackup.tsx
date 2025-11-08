@@ -562,7 +562,7 @@ const MapSearchProduct = () => {
 
             <div className="w-10 h-10 bg-white rounded-sm border flex items-center justify-center ml-2 shadow-sm">
                 {listLoading ? (
-                    <div className="animate-spin rounded-sm h-4 w-4 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                 ) : listLoadingError ? (
                     <span className="text-red-500 text-sm">❌</span>
                 ) : (
