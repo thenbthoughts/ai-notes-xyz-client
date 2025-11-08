@@ -6,6 +6,12 @@ export const jotaiHideSidebar = atom({
     // false mean not open
 });
 
+export const jotaiHideRightSidebar = atom({
+    isOpen: true,
+    // true mean open
+    // false mean not open
+});
+
 export const jotaiChatLlmThreadSetting = atom({
     isOpen: false,
     threadId: '',

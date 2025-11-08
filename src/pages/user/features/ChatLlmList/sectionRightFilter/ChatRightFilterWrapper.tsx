@@ -21,7 +21,7 @@ import { toast } from 'react-hot-toast';
 const ChatRightFilterWrapper = ({
     setRefreshRandomNumFetchChat,
 }: {
-    setRefreshRandomNumFetchChat: React.Dispatch<React.SetStateAction<number>> 
+    setRefreshRandomNumFetchChat: React.Dispatch<React.SetStateAction<number>>
 }) => {
 
     // useState
@@ -150,26 +150,28 @@ const ChatRightFilterWrapper = ({
             </div>
 
             {/* hide sidebar */}
-            <div
-                className='p-1 cursor-pointer'
-                onClick={() => {
-                    setHideSidebar((prevProps) => {
-                        return {
-                            isOpen: !prevProps.isOpen,
-                        };
-                    });
-                }}
-            >
-                <div className={`py-3 rounded-sm ${hideSidebar.isOpen ? 'bg-blue-600' : 'bg-gray-600'}`}>
-                    <LucideSidebar
-                        style={{
-                            width: '100%',
-                            color: 'white',
-                        }}
-                        className=''
-                    />
+            {screenWidth === screenList.lg && (
+                <div
+                    className='p-1 cursor-pointer'
+                    onClick={() => {
+                        setHideSidebar((prevProps) => {
+                            return {
+                                isOpen: !prevProps.isOpen,
+                            };
+                        });
+                    }}
+                >
+                    <div className={`py-3 rounded-sm ${hideSidebar.isOpen ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                        <LucideSidebar
+                            style={{
+                                width: '100%',
+                                color: 'white',
+                            }}
+                            className=''
+                        />
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* thread setting */}
             {chatLlmThreadSetting.threadId.length === 24 && (
