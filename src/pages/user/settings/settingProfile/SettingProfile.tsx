@@ -4,6 +4,251 @@ import axiosCustom from "../../../../config/axiosCustom";
 import SettingSelectTimeZone from "./SettingSelectTimeZone";
 import SettingRevalidate from "./SettingRevalidate";
 import SettingHeader from "../SettingHeader";
+import Select from "react-select";
+
+const languagesArr = [
+    'English',
+    'Mandarin Chinese',
+    'Spanish',
+    'Hindi',
+    'Arabic',
+    'Bengali',
+    'Portuguese',
+    'Russian',
+    'Japanese',
+    'French',
+    'German',
+    'Urdu',
+    'Indonesian',
+    'Italian',
+    'Turkish',
+    'Korean',
+    'Vietnamese',
+    'Persian',
+    'Polish',
+    'Ukrainian',
+    'Thai',
+    'Dutch',
+    'Romanian',
+    'Greek',
+    'Czech',
+    'Swedish',
+    'Hungarian',
+    'Hebrew',
+    'Tagalog',
+    'Cantonese',
+    'Tamil',
+    'Telugu',
+    'Marathi',
+    'Gujarati',
+    'Kannada',
+    'Malayalam',
+    'Punjabi',
+    'Burmese',
+    'Swahili',
+    'Javanese',
+    'Hausa',
+    'Pashto',
+    'Sundanese',
+    'Amharic',
+    'Malagasy',
+    'Sinhala',
+    'Khmer',
+    'Malay',
+    'Somali',
+    'Cebuano',
+    'Kazakh',
+    'Shona',
+    'Kinyarwanda',
+    'Zulu',
+    'Yoruba',
+    'Igbo',
+    'Fula',
+    'Uzbek',
+    'Azerbaijani',
+    'Belarusian',
+    'Bulgarian',
+    'Afrikaans',
+    'Bosnian',
+    'Croatian',
+    'Danish',
+    'Estonian',
+    'Finnish',
+    'Georgian',
+    'Hakka',
+    'Hiligaynon',
+    'Icelandic',
+    'Irish',
+    'Kyrgyz',
+    'Lao',
+    'Latvian',
+    'Lithuanian',
+    'Macedonian',
+    'Madurese',
+    'Maltese',
+    'Mongolian',
+    'Mossi',
+    'Norwegian',
+    'Slovak',
+    'Slovenian',
+    'Tajik',
+    'Tibetan',
+    'Turkmen',
+    'Uyghur',
+    'Welsh',
+    'Xhosa',
+    'Albanian',
+    'Armenian',
+    'Balochi',
+    'Chittagonian',
+    'Catalan',
+    'Serbian',
+    'Wu Chinese',
+    'Min Nan Chinese',
+    'Hokkien',
+    'Bhojpuri',
+    'Awadhi',
+    'Chhattisgarhi',
+    'Haryanvi',
+    'Rajasthani',
+    'Quechua',
+    'Aymara',
+    'Guarani',
+    'Nahuatl',
+    'Mayan languages',
+    'Berber',
+    'Tigrinya',
+    'Oromo',
+    'Wolof',
+    'Fulani',
+    'Lingala',
+    'Kongo',
+    'Chichewa',
+    'Sesotho',
+    'Setswana',
+    'Tsonga',
+    'Venda',
+    'Ndebele',
+    'Swazi',
+    'Luxembourgish',
+    'Frisian',
+    'Basque',
+    'Galician',
+    'Occitan',
+    'Corsican',
+    'Sardinian',
+    'Sicilian',
+    'Venetian',
+    'Romansh',
+    'Breton',
+    'Scottish Gaelic',
+    'Manx',
+    'Faroese',
+    'Greenlandic',
+    'Sami languages',
+    'Tatar',
+    'Bashkir',
+    'Chechen',
+    'Avar',
+    'Ossetian',
+    'Kabardian',
+    'Yakut',
+    'Tuvan',
+    'Buryat',
+    'Kalmyk',
+    'Chuvash',
+    'Mari',
+    'Udmurt',
+    'Komi',
+    'Kurdish',
+    'Dari',
+    'Gilaki',
+    'Mazandarani',
+    'Luri',
+    'Talysh',
+    'Dzongkha',
+    'Mizo',
+    'Khasi',
+    'Garo',
+    'Tripuri',
+    'Meitei',
+    'Tulu',
+    'Kodava',
+    'Saraiki',
+    'Hindko',
+    'Brahui',
+    'Shina',
+    'Khowar',
+    'Burushaski',
+    'Wakhi',
+    'Shan',
+    'Karen',
+    'Kachin',
+    'Chin',
+    'Mon',
+    'Rakhine',
+    'Hmong',
+    'Mien',
+    'Lahu',
+    'Akha',
+    'Lisu',
+    'Wa',
+    'Dai',
+    'Zhuang',
+    'Manchu',
+    'Yi',
+    'Bai',
+    'Hani',
+    'Miao',
+    'Dong',
+    'Yao',
+    'Tujia',
+    'Bouyei',
+    'Ainu',
+    'Ryukyuan',
+    'Okinawan',
+    'Tok Pisin',
+    'Hiri Motu',
+    'Bislama',
+    'Fijian',
+    'Samoan',
+    'Tongan',
+    'Tahitian',
+    'Maori',
+    'Hawaiian',
+    'Chamorro',
+    'Palauan',
+    'Marshallese',
+    'Chuukese',
+    'Pohnpeian',
+    'Kosraean',
+    'Yapese',
+    'Nauruan',
+    'Tuvaluan',
+    'Kiribati',
+    'Rotuman',
+    'Niuean',
+    'Tokelauan',
+    'Esperanto',
+    'Latin',
+    'Pali',
+    'Classical Chinese',
+    'Serbo-Croatian',
+    'Oriya',
+    'Odia',
+    'Assamese',
+    'Maithili',
+    'Santali',
+    'Kashmiri',
+    'Nepali',
+    'Sindhi',
+    'Konkani',
+    'Dogri',
+    'Manipuri',
+    'Bodo',
+    'Sanskrit',
+    'Marwadi'
+] as string[];
 
 const InputEmailVerify = ({
     setReloadRandomNum
@@ -238,6 +483,7 @@ const Setting = () => {
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [profilePictureLink, setProfilePictureLink] = useState("");
     const [bio, setBio] = useState("");
+    const [languages, setLanguages] = useState<string[]>([]);
 
     // location
     const [city, setCity] = useState("");
@@ -271,6 +517,7 @@ const Setting = () => {
             setUsername(response.data.username); // Set username from response
             setDateOfBirth(response.data.dateOfBirth);
             setProfilePictureLink(response.data.profilePictureLink);
+            setLanguages(response.data?.languages || []);
             setBio(response.data.bio);
             setCity(response.data.city);
             setState(response.data.state);
@@ -311,7 +558,7 @@ const Setting = () => {
         try {
             const response = await axiosCustom.post(
                 `/api/user/crud/updateUser`,
-                { name, email, dateOfBirth, profilePictureLink, bio, city, state, zipCode, country },
+                { name, email, dateOfBirth, profilePictureLink, bio, languages, city, state, zipCode, country },
                 {
                     headers: {
                         'Content-Type': 'application/json'
@@ -414,6 +661,36 @@ const Setting = () => {
                         className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={profilePictureLink}
                         onChange={(e) => setProfilePictureLink(e.target.value)}
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="languages" className="block text-gray-700 font-bold mb-2">
+                        Languages
+                    </label>
+                    <Select
+                        placeholder="Enter languages..."
+                        isMulti
+                        isSearchable
+                        id="languages"
+                        value={languages.map((language: string) => ({
+                            value: language,
+                            label: language
+                        }))}
+                        onChange={(selectedOptions) => {
+                            setLanguages(selectedOptions.map((opt: { value: string; label: string }) => opt.value));
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && (e.target as HTMLInputElement).value) {
+                                e.preventDefault();
+                                const newLanguage = (e.target as HTMLInputElement).value;
+                                setLanguages([...(languages || []), newLanguage as any as never]);
+                                (e.target as HTMLInputElement).value = '';
+                            }
+                        }}
+                        options={languagesArr.map((language: string) => ({
+                            value: language,
+                            label: language
+                        }))}
                     />
                 </div>
                 <div className="mb-4">
