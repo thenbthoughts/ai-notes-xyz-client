@@ -72,6 +72,9 @@ const NavigationDrawer = () => {
                                 <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
                                     <Link to="/user/info-vault" className="text-white block p-2" onClick={handleLinkClick}>📝 Info Vault</Link>
                                 </li>
+                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
+                                    <Link to="/user/drive" className="text-white block p-2" onClick={handleLinkClick}>📁 Drive</Link>
+                                </li>
                             </Fragment>
                         )}
                         {authState.isLoggedIn === 'true' && (
