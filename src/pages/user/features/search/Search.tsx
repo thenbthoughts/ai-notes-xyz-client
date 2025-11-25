@@ -87,24 +87,6 @@ interface LifeEventInfo {
     fromCollection: string;
 }
 
-interface InfoVaultSignificantDate {
-    _id: string;
-    username: string;
-    infoVaultId: string;
-    label: string;
-    description: string;
-    tags: string[];
-    date: string;
-    dateUtc: string;
-    createdAtUtc: string;
-    createdAtIpAddress: string;
-    createdAtUserAgent: string;
-    updatedAtUtc: string;
-    updatedAtIpAddress: string;
-    updatedAtUserAgent: string;
-    fromCollection: string;
-}
-
 interface ChatLlmThreadInfo {
     _id: string;
     username: string;
@@ -116,14 +98,24 @@ interface ChatLlmThreadInfo {
     fromCollection: string;
 }
 
+interface InfoVaultInfo {
+    _id: string;
+    username: string;
+    title: string;
+    content: string;
+    tags: string[];
+    createdAtUtc: string;
+    updatedAtUtc: string;
+    fromCollection: string;
+}
+
 interface SearchResultItem {
     _id: string;
-    fromCollection: 'tasks' | 'notes' | 'lifeEvents' | 'infoVaultSignificantDate' | 'infoVaultSignificantDateRepeat' | 'chatLlmThread';
+    collectionName: 'tasks' | 'notes' | 'lifeEvents' | 'infoVault' | 'chatLlmThread';
     taskInfo?: TaskInfo;
     notesInfo?: NotesInfo;
     lifeEventInfo?: LifeEventInfo;
-    infoVaultSignificantDate?: InfoVaultSignificantDate;
-    infoVaultSignificantDateRepeat?: InfoVaultSignificantDate;
+    infoVaultInfo?: InfoVaultInfo;
     chatLlmThreadInfo?: ChatLlmThreadInfo;
 }
 
@@ -280,6 +272,7 @@ const Search = () => {
     const perPage = 20;
     const [totalCount, setTotalCount] = useState(0);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
+    const [isReindexing, setIsReindexing] = useState(false);
 
     // Fetch list when refresh triggered
     useEffect(() => {
@@ -351,6 +344,25 @@ const Search = () => {
             }
         } finally {
             setIsLoading(false);
+        }
+    }
+
+    // Handle reindex all
+    const handleReindexAll = async () => {
+        setIsReindexing(true);
+        try {
+            const config = {
+                method: 'post',
+                url: `/api/search/crud/reindex-all`,
+                data: {},
+            };
+            const response = await axiosCustom(config);
+            toast.success(response.data.message || 'Reindexing started successfully');
+        } catch (error) {
+            console.error(error);
+            toast.error('Failed to start reindexing');
+        } finally {
+            setIsReindexing(false);
         }
     }
 
@@ -552,7 +564,7 @@ const Search = () => {
         let description = '';
         let itemDate = '';
         let itemLink = '#';
-        let eventTypeLabel: string = item.fromCollection;
+        let eventTypeLabel: string = item.collectionName;
         let eventTypeColor = 'bg-gray-100 text-gray-800';
         let isStar = false;
         let status = '';
@@ -562,7 +574,7 @@ const Search = () => {
         let tags: string[] = [];
 
         // Extract data from tasks collection
-        if (item.fromCollection === 'tasks' && item.taskInfo) {
+        if (item.collectionName === 'tasks' && item.taskInfo) {
             title = item.taskInfo.title;
             description = item.taskInfo.description;
             itemDate = item.taskInfo.createdAt;
@@ -575,7 +587,7 @@ const Search = () => {
         }
 
         // Extract data from notes collection
-        if (item.fromCollection === 'notes' && item.notesInfo) {
+        if (item.collectionName === 'notes' && item.notesInfo) {
             title = item.notesInfo.title;
             description = item.notesInfo.descriptionMarkdown;
             itemDate = item.notesInfo.createdAtUtc;
@@ -587,7 +599,7 @@ const Search = () => {
         }
 
         // Extract data from life events collection
-        if (item.fromCollection === 'lifeEvents' && item.lifeEventInfo) {
+        if (item.collectionName === 'lifeEvents' && item.lifeEventInfo) {
             title = item.lifeEventInfo.title;
             description = item.lifeEventInfo.description;
             itemDate = item.lifeEventInfo.eventDateUtc || item.lifeEventInfo.createdAtUtc;
@@ -599,22 +611,8 @@ const Search = () => {
             tags = item.lifeEventInfo.tags || [];
         }
 
-        // Extract data from info vault
-        if ((item.fromCollection === 'infoVaultSignificantDate' || item.fromCollection === 'infoVaultSignificantDateRepeat')) {
-            const infoVaultData = item.infoVaultSignificantDate || item.infoVaultSignificantDateRepeat;
-            if (infoVaultData) {
-                title = infoVaultData.label;
-                description = infoVaultData.description;
-                itemDate = infoVaultData.dateUtc || infoVaultData.createdAtUtc;
-                itemLink = `/user/info-vault?action=edit&id=${infoVaultData._id}`;
-                eventTypeLabel = item.fromCollection === 'infoVaultSignificantDateRepeat' ? 'Info Vault (Repeat)' : 'Info Vault';
-                eventTypeColor = 'bg-orange-100 text-orange-800';
-                tags = infoVaultData.tags || [];
-            }
-        }
-
         // Extract data from chat llm threads
-        if (item.fromCollection === 'chatLlmThread' && item.chatLlmThreadInfo) {
+        if (item.collectionName === 'chatLlmThread' && item.chatLlmThreadInfo) {
             title = item.chatLlmThreadInfo.threadTitle;
             description = item.chatLlmThreadInfo.aiSummary;
             itemDate = item.chatLlmThreadInfo.createdAtUtc;
@@ -622,6 +620,16 @@ const Search = () => {
             eventTypeLabel = 'Chat LLM';
             eventTypeColor = 'bg-pink-100 text-pink-800';
             tags = item.chatLlmThreadInfo.tagsAi || [];
+        }
+
+        // Extract data from info vault
+        if (item.collectionName === 'infoVault' && item.infoVaultInfo) {
+            title = item.infoVaultInfo.title;
+            description = item.infoVaultInfo.content;
+            itemDate = item.infoVaultInfo.updatedAtUtc;
+            itemLink = `/user/info-vault?action=edit&id=${item.infoVaultInfo._id}`;
+            eventTypeLabel = 'Info Vault';
+            eventTypeColor = 'bg-orange-100 text-orange-800';
         }
 
         return (
@@ -677,7 +685,7 @@ const Search = () => {
                                     Priority: {priority}
                                 </span>
                             )}
-                            {item.fromCollection === 'tasks' && item.taskInfo && (
+                            {item.collectionName === 'tasks' && item.taskInfo && (
                                 <Fragment>
                                     <span className={`px-2 py-0.5 rounded-sm ${item.taskInfo.isCompleted ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                                         {item.taskInfo.isCompleted ? 'Completed' : 'Not Completed'}
@@ -751,9 +759,18 @@ const Search = () => {
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-6xl mx-auto px-4">
                 {/* Page Header */}
-                <div className="mb-6">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Search</h1>
-                    <p className="text-gray-600">Search across all your tasks, notes, life events, and more</p>
+                <div className="mb-6 flex items-start justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Search</h1>
+                        <p className="text-gray-600">Search across all your tasks, notes, life events, and more</p>
+                    </div>
+                    <button
+                        onClick={handleReindexAll}
+                        disabled={isReindexing}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                    >
+                        {isReindexing ? 'Indexing...' : 'Index All'}
+                    </button>
                 </div>
 
                 {/* Search Input */}

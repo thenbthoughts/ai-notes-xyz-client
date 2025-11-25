@@ -27,6 +27,7 @@ const UserHomepage = lazy(() => import("./pages/user/userhomepage/UserHomepage.t
 // pages -> setting
 const SettingProfile = lazy(() => import("./pages/user/settings/settingProfile/SettingProfile.tsx"));
 const SettingApiKey = lazy(() => import("./pages/user/settings/settingApiKeys/SettingApiKey.tsx"));
+const SettingS3Buckets = lazy(() => import("./pages/user/settings/settingS3Buckets/SettingS3Buckets.tsx"));
 const SettingModelPreference = lazy(() => import("./pages/user/settings/settingModelPreference/SettingModelPreference.tsx"));
 const LoginHistory = lazy(() => import("./pages/user/settings/loginHistory/loginHistory.tsx"));
 const SettingChangePassword = lazy(() => import("./pages/user/settings/changePassword/SettingChangePassword.tsx"));
@@ -66,6 +67,9 @@ const AiSuggestionsDemo = lazy(() => import("./pages/user/features/Suggestions/d
 
 // pages -> search
 const Search = lazy(() => import("./pages/user/features/search/Search.tsx"));
+
+// pages -> drive
+const DriveWrapper = lazy(() => import("./pages/user/features/Drive/DriveWrapper.tsx"));
 
 function App() {
   const Layout = () => {
@@ -250,6 +254,14 @@ function App() {
           ),
         },
         {
+          path: "/user/setting/s3-buckets",
+          element: (
+            <UnauthorizedRoute>
+              <SettingS3Buckets />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
           path: "/user/setting/model-preference",
           element: (
             <UnauthorizedRoute>
@@ -316,6 +328,14 @@ function App() {
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
               <MapsWrapper />
             </Suspense>
+          )
+        },
+        {
+          path: '/user/drive',
+          element: (
+            <UnauthorizedRoute>
+              <DriveWrapper />
+            </UnauthorizedRoute>
           )
         }
       ]
