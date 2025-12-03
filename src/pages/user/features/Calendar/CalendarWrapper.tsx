@@ -64,7 +64,7 @@ const CalendarWrapper = () => {
     const [filterEventTypeLifeEvents, setFilterEventTypeLifeEvents] = useState<boolean>(true);
     const [filterEventTypeInfoVault, setFilterEventTypeInfoVault] = useState<boolean>(true);
     const [filterEventTypeDiary, setFilterEventTypeDiary] = useState<boolean>(true);
-    const [filterEventTypeTaskSchedule, setFilterEventTypeTaskSchedule] = useState<boolean>(true);
+    const [filterEventTypeTaskSchedule, setFilterEventTypeTaskSchedule] = useState<boolean>(false);
 
     const fetchEvents = async () => {
         try {
