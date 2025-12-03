@@ -14,14 +14,14 @@ interface Event {
     allDay: true,
     extendedProps?: {
         recordId: string;
-        fromCollection: 'tasks' | 'lifeEvents' | 'infoVaultSignificantDate' | 'infoVaultSignificantDateRepeat';
+        fromCollection: 'tasks' | 'lifeEvents' | 'infoVaultSignificantDate' | 'infoVaultSignificantDateRepeat' | 'taskSchedules';
         moreInfoLink: string;
     };
 }
 
 interface tsCalenderApiRes {
     _id: string;
-    fromCollection: 'tasks' | 'lifeEvents' | 'infoVaultSignificantDate' | 'infoVaultSignificantDateRepeat';
+    fromCollection: 'tasks' | 'lifeEvents' | 'infoVaultSignificantDate' | 'infoVaultSignificantDateRepeat' | 'taskSchedules';
     taskInfo?: {
         _id: string;
         title: string;
@@ -45,6 +45,11 @@ interface tsCalenderApiRes {
         date: Date;
         normalizedDate: Date;
     };
+    taskScheduleInfo?: {
+        _id: string;
+        title: string;
+        scheduleExecutionTime: Date;
+    };
 }
 
 const CalendarWrapper = () => {
@@ -59,6 +64,7 @@ const CalendarWrapper = () => {
     const [filterEventTypeLifeEvents, setFilterEventTypeLifeEvents] = useState<boolean>(true);
     const [filterEventTypeInfoVault, setFilterEventTypeInfoVault] = useState<boolean>(true);
     const [filterEventTypeDiary, setFilterEventTypeDiary] = useState<boolean>(true);
+    const [filterEventTypeTaskSchedule, setFilterEventTypeTaskSchedule] = useState<boolean>(false);
 
     const fetchEvents = async () => {
         try {
@@ -81,6 +87,7 @@ const CalendarWrapper = () => {
                 filterEventTypeLifeEvents,
                 filterEventTypeInfoVault,
                 filterEventTypeDiary,
+                filterEventTypeTaskSchedule,
             });
 
             let resDocs = result.data.docs as tsCalenderApiRes[];
@@ -145,6 +152,17 @@ const CalendarWrapper = () => {
                                 },
                             });
                         }
+                    } else if (doc.fromCollection === 'taskSchedules' && doc.taskScheduleInfo) {
+                        tempArr.push({
+                            title: doc.taskScheduleInfo.title,
+                            start: new Date(doc.taskScheduleInfo.scheduleExecutionTime),
+                            allDay: true,
+                            extendedProps: {
+                                recordId: doc.taskScheduleInfo._id,
+                                fromCollection: 'taskSchedules',
+                                moreInfoLink: `/user/task-schedule?action=edit&id=${doc.taskScheduleInfo._id}`,
+                            },
+                        });
                     }
                 }
             }
@@ -172,6 +190,7 @@ const CalendarWrapper = () => {
         filterEventTypeLifeEvents,
         filterEventTypeInfoVault,
         filterEventTypeDiary,
+        filterEventTypeTaskSchedule,
     ]);
 
     const renderSearchBox = () => {
@@ -270,7 +289,7 @@ const CalendarWrapper = () => {
                     <span className="align-middle">Info Vault</span>
                 </label>
                 <label 
-                    className="inline-block text-white text-xs cursor-pointer hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
+                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
                     onChange={() => setFilterEventTypeDiary((prev) => !prev)}
                 >
                     <input
@@ -279,6 +298,17 @@ const CalendarWrapper = () => {
                         checked={filterEventTypeDiary}
                     />
                     <span className="align-middle">Diary</span>
+                </label>
+                <label 
+                    className="inline-block text-white text-xs cursor-pointer hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
+                    onChange={() => setFilterEventTypeTaskSchedule((prev) => !prev)}
+                >
+                    <input
+                        type="checkbox"
+                        className="w-3 h-3 cursor-pointer align-middle mr-1"
+                        checked={filterEventTypeTaskSchedule}
+                    />
+                    <span className="align-middle">Task Schedule</span>
                 </label>
             </div>
         )
@@ -443,6 +473,7 @@ const CalendarWrapper = () => {
                         const lifeEventCount = events.filter(event => event.extendedProps?.fromCollection === 'lifeEvents').length;
                         const staticDateCount = events.filter(event => event.extendedProps?.fromCollection === 'infoVaultSignificantDate').length;
                         const significantDateCount = events.filter(event => event.extendedProps?.fromCollection === 'infoVaultSignificantDateRepeat').length;
+                        const taskScheduleCount = events.filter(event => event.extendedProps?.fromCollection === 'taskSchedules').length;
                         return (
                             <div className="mb-2">
                                 {events.length > 0 && (
@@ -466,8 +497,13 @@ const CalendarWrapper = () => {
                                     </div>
                                 )}
                                 {significantDateCount > 0 && (
-                                    <div className="inline-block align-middle mb-1 items-center gap-1 text-green-600 font-medium bg-green-50 rounded-sm px-2 py-1">
+                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-green-600 font-medium bg-green-50 rounded-sm px-2 py-1">
                                         ⭐ <span>Significant Dates (Repeated):</span> <span>{significantDateCount}</span>
+                                    </div>
+                                )}
+                                {taskScheduleCount > 0 && (
+                                    <div className="inline-block align-middle mb-1 items-center gap-1 text-orange-600 font-medium bg-orange-50 rounded-sm px-2 py-1">
+                                        ⏰ <span>Task Schedules:</span> <span>{taskScheduleCount}</span>
                                     </div>
                                 )}
                             </div>
@@ -486,6 +522,7 @@ const CalendarWrapper = () => {
                             {event.extendedProps?.fromCollection === 'lifeEvents' && '🎉'}
                             {event.extendedProps?.fromCollection === 'infoVaultSignificantDate' && '📌'}
                             {event.extendedProps?.fromCollection === 'infoVaultSignificantDateRepeat' && '⭐'}
+                            {event.extendedProps?.fromCollection === 'taskSchedules' && '⏰'}
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="text-sm font-semibold text-white">
@@ -578,7 +615,7 @@ function renderEventContent(eventInfo: {
         title: string;
         extendedProps: {
             recordId: string;
-            fromCollection: 'tasks' | 'lifeEvents';
+            fromCollection: 'tasks' | 'lifeEvents' | 'taskSchedules';
             moreInfoLink: string;
         };
     };
