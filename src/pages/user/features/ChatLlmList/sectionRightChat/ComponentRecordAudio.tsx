@@ -1,14 +1,14 @@
 import { Fragment } from "react/jsx-runtime";
 import envKeys from "../../../../../config/envKeys";
 import toast from "react-hot-toast";
-import axios from "axios";
 import { useEffect } from "react";
 import axiosCustom from "../../../../../config/axiosCustom";
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { LucideMic, LucidePause, LucidePlay, LucideMicOff } from "lucide-react";
 import { handleAutoSelectContextFirstMessage } from "../utils/chatLlmThreadAxios";
+import { uploadFeatureFile } from "../../../../../utils/featureFileUpload";
 
-const ComponentUploadFile = ({
+const ComponentRecordAudio = ({
     setRefreshParentRandomNum,
     threadId,
 }: {
@@ -101,22 +101,18 @@ const ComponentUploadFile = ({
 
             const tempFile = new File([blob], 'audio.webm', { type: 'audio/webm' });
 
-            const formData = new FormData();
-            formData.append('file', tempFile);
-
-            const config = {
-                method: 'post',
-                url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
-                data: formData,
-                withCredentials: true,
-            };
-
-            const response = await axios.request(config);
+            const fileName = await uploadFeatureFile({
+                file: tempFile,
+                featureType: 'chat',
+                parentEntityId: threadId,
+                subType: 'messages',
+                apiUrl: envKeys.API_URL,
+            });
 
             setRefreshParentRandomNum(Math.random() * 1_000_000);
 
             await apiAddNote({
-                tempFilePath: response.data.fileName
+                tempFilePath: fileName
             });
 
             toast.success('Audio uploaded successfully!', {
@@ -215,4 +211,4 @@ const ComponentUploadFile = ({
     )
 };
 
-export default ComponentUploadFile;
+export default ComponentRecordAudio;

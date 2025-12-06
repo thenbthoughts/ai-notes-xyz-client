@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideRepeat, LucideSend, LucideSidebar, LucideVideo, LucideX } from 'lucide-react';
 import envKeys from '../../../../../config/envKeys';
-import axios from 'axios';
 import axiosCustom from '../../../../../config/axiosCustom';
 
 import cssNoteAdvanceList from './scss/noteAdvanceList.module.scss';
@@ -10,6 +9,7 @@ import ComponentUploadFile from './ComponentUploadFile';
 import ComponentRecordAudio from './ComponentRecordAudio';
 import { handleAutoSelectContextFirstMessage, handleAutoSelectContext } from '../utils/chatLlmThreadAxios';
 import FileUploadEnvCheck from '../../../../../components/FileUploadEnvCheck';
+import { uploadFeatureFile } from '../../../../../utils/featureFileUpload';
 
 import { useSetAtom } from 'jotai';
 import { jotaiChatLlmFooterHeight } from '../jotai/jotaiChatLlmThreadSetting';
@@ -21,11 +21,13 @@ const TextAndFileInput = ({
     value,
     setValue,
     setFiles,
+    threadId,
 }: {
     value: string;
     setValue: React.Dispatch<React.SetStateAction<string>>;
     files: string[];
     setFiles: React.Dispatch<React.SetStateAction<string[]>>;
+    threadId: string;
 }) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -39,19 +41,20 @@ const TextAndFileInput = ({
     }, [value]);
 
     const uploadFileToStorage = async (file: File) => {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const config = {
-            method: 'post',
-            url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
-            data: formData,
-            withCredentials: true,
-        };
-
-        const response = await axios.request(config);
-        setFiles(prev => [...prev, response.data.fileName]);
-        toast.success(`File "${file.name}" uploaded successfully!`);
+        try {
+            const filePath = await uploadFeatureFile({
+                file,
+                featureType: 'chat',
+                parentEntityId: threadId,
+                subType: 'messages',
+                apiUrl: envKeys.API_URL,
+            });
+            setFiles(prev => [...prev, filePath]);
+            toast.success(`File "${file.name}" uploaded successfully!`);
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            toast.error(`Failed to upload "${file.name}"`);
+        }
     };
 
     const uploadFilesToStorage = async (files: File[]) => {
@@ -422,6 +425,7 @@ const ComponentNotesAdd = ({
                 setValue={setNewNote}
                 files={files}
                 setFiles={setFiles}
+                threadId={threadId}
             />
 
             {/* action container - 50px */}
@@ -451,6 +455,7 @@ const ComponentNotesAdd = ({
                     <FileUploadEnvCheck iconType="file">
                         <ComponentUploadFile
                             setFiles={setFiles}
+                            threadId={threadId}
                         />
                     </FileUploadEnvCheck>
 
@@ -458,6 +463,7 @@ const ComponentNotesAdd = ({
                     <FileUploadEnvCheck iconType="file">
                         <ComponentUploadImage
                             setFiles={setFiles}
+                            threadId={threadId}
                         />
                     </FileUploadEnvCheck>
 
