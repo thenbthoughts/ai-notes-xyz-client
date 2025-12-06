@@ -1,5 +1,4 @@
 import { useRef, useState, useCallback, useMemo } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -7,6 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import styleQuillCustom from "./scss/TestReactQuill.module.scss";
 
 import envKeys from "../../../config/envKeys";
+import { uploadFeatureFile } from "../../../utils/featureFileUpload";
 
 const QuillEditor = () => {
   const [value, setValue] = useState("");
@@ -30,17 +30,12 @@ const QuillEditor = () => {
 
               console.log("Selected file:", file);
 
-              const formData = new FormData();
-              formData.append('file', file);
-
-              const config = {
-                method: 'post',
-                url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
-                data: formData,
-                withCredentials: true,
-              };
-
-              const response = await axios.request(config);
+              // Note: This is a test component. Using placeholder values for testing.
+              const fileName = await uploadFeatureFile({
+                file,
+                parentEntityId: 'test-entity-id',
+                apiUrl: envKeys.API_URL,
+              });
 
               toast.success('Audio uploaded successfully!', {
                 id: 'audio-upload',
@@ -48,10 +43,9 @@ const QuillEditor = () => {
 
               toast.dismiss(toastDismissId);
 
-              console.log("Image upload response:", response.data);
-              console.log("Image upload response:", response.data.fileName);
+              console.log("Image upload response:", fileName);
 
-              let finalImageUrl = `${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${response.data.fileName}`;
+              let finalImageUrl = `${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${fileName}`;
 
               const quill = quillRef.current?.getEditor?.();
               const range = quill?.getSelection?.();

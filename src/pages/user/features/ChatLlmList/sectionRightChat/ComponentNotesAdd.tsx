@@ -44,9 +44,7 @@ const TextAndFileInput = ({
         try {
             const filePath = await uploadFeatureFile({
                 file,
-                featureType: 'chat',
                 parentEntityId: threadId,
-                subType: 'messages',
                 apiUrl: envKeys.API_URL,
             });
             setFiles(prev => [...prev, filePath]);

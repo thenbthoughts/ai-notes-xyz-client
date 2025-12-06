@@ -21,9 +21,7 @@ const ComponentUploadImage = ({
 
         return await uploadFeatureFile({
             file,
-            featureType: 'chat',
             parentEntityId: threadId,
-            subType: 'messages',
             apiUrl: envKeys.API_URL,
         });
     };

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Trash2, Send, LucideFile, LucideDownload, LucideFileAudio } from 'lucide-react';
-import axios from 'axios';
 import axiosCustom from '../../config/axiosCustom';
 import { DateTime } from 'luxon';
 import toast from 'react-hot-toast';
@@ -8,6 +7,7 @@ import envKeys from '../../config/envKeys';
 import ComponentTaskCommentListAudioInput from './ComponentTaskCommentListAudioInput';
 import FileUploadEnvCheck from '../../components/FileUploadEnvCheck';
 import { commentAddAudioToTextAxios } from './commentCommonAxiosUtils';
+import { uploadFeatureFile } from '../../utils/featureFileUpload';
 
 interface TaskComment {
     _id: string;
@@ -47,19 +47,17 @@ const ComponentTaskCommentListFileUpload = ({
         setUploading(true);
         for (let i = 0; i < fileList.length; i++) {
             const file = fileList[i];
-            const formData = new FormData();
-            formData.append("file", file);
 
             let randomToastUploadId = `upload-${Math.floor(Math.random() * 1_000_000)}`;
 
             toast.loading("Uploading...", { id: randomToastUploadId });
             try {
-                const uploadRes = await axios.post(
-                    `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
-                    formData,
-                    { withCredentials: true }
-                );
-                const fileUrl = uploadRes.data.fileName;
+                const fileUrl = await uploadFeatureFile({
+                    file,
+                    parentEntityId: entityId,
+                    apiUrl: envKeys.API_URL,
+                });
+
                 const fileType = getFileType(file);
                 await axiosCustom.post("/api/comment-common/crud/commentCommonAdd", {
                     // comment type and reference id
@@ -296,21 +294,12 @@ const ComponentTaskCommentAdd = ({
         let randomToastUploadId = `upload-${Math.floor(Math.random() * 1_000_000)}`;
         const toastDismissId = toast.loading("Uploading...", { id: `upload-${randomToastUploadId}` });
         try {
+            const fileUrl = await uploadFeatureFile({
+                file,
+                parentEntityId: entityId,
+                apiUrl: envKeys.API_URL,
+            });
 
-            const formData = new FormData();
-            formData.append('file', file);
-
-            const config = {
-                method: 'post',
-                url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
-                data: formData,
-                withCredentials: true,
-            };
-
-            const response = await axios.request(config);
-            // setFiles(prev => [...prev, response.data.fileName]);
-
-            const fileUrl = response.data.fileName;
             const fileType = getFileType(file);
 
             await axiosCustom.post("/api/comment-common/crud/commentCommonAdd", {

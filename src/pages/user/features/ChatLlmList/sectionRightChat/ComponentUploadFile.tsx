@@ -24,9 +24,7 @@ const ComponentUploadFile = ({
         // The backend should handle organizing files when the message is created
         return await uploadFeatureFile({
             file,
-            featureType: 'chat',
             parentEntityId: threadId,
-            subType: 'messages',
             apiUrl: envKeys.API_URL,
         });
     };

@@ -327,6 +327,9 @@ const ComponentNotesEdit = ({
                     <QuillEditorCustom1
                         value={formData.description}
                         setValue={(value) => setFormData({ ...formData, description: value })}
+                        featureType="notes"
+                        parentEntityId={notesObj._id}
+                        subType="messages"
                     />
                 </div>
 

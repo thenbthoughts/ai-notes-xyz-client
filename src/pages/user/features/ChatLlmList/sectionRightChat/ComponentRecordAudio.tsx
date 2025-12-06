@@ -103,9 +103,7 @@ const ComponentRecordAudio = ({
 
             const fileName = await uploadFeatureFile({
                 file: tempFile,
-                featureType: 'chat',
                 parentEntityId: threadId,
-                subType: 'messages',
                 apiUrl: envKeys.API_URL,
             });
 
