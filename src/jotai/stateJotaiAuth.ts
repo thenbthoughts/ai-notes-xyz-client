@@ -3,6 +3,7 @@ import { atom } from 'jotai';
 type AuthState = {
     isLoggedIn: 'pending' | 'true' | 'false';
 
+    fileStorageType: 'gridfs' | 's3';
     apiKeyGroqValid: boolean;
     apiKeyOpenrouterValid: boolean;
     apiKeyS3Valid: boolean;
@@ -16,6 +17,7 @@ type AuthState = {
 const stateJotaiAuthAtom = atom<AuthState>({
     isLoggedIn: 'pending',
 
+    fileStorageType: 'gridfs',
     apiKeyGroqValid: false,
     apiKeyOpenrouterValid: false,
     apiKeyS3Valid: false,

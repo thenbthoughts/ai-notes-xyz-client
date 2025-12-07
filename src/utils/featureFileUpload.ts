@@ -19,7 +19,7 @@ export const uploadFeatureFile = async ({
         formData.append('file', file);
         formData.append('parentEntityId', parentEntityId);
 
-        const response = await fetch(`${apiUrl}/api/uploads/crudS3/uploadFile`, {
+        const response = await fetch(`${apiUrl}/api/uploads/crud/uploadFile`, {
             method: 'POST',
             body: formData,
             credentials: 'include',

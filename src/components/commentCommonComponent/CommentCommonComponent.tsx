@@ -5,7 +5,6 @@ import { DateTime } from 'luxon';
 import toast from 'react-hot-toast';
 import envKeys from '../../config/envKeys';
 import ComponentTaskCommentListAudioInput from './ComponentTaskCommentListAudioInput';
-import FileUploadEnvCheck from '../../components/FileUploadEnvCheck';
 import { commentAddAudioToTextAxios } from './commentCommonAxiosUtils';
 import { uploadFeatureFile } from '../../utils/featureFileUpload';
 
@@ -144,7 +143,7 @@ const ComponentTaskCommentItem = ({
     };
 
     const getFileUrl = (fileUrl: string) =>
-        `${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${fileUrl}`;
+        `${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${fileUrl}`;
 
     return (
         <div>
@@ -425,28 +424,20 @@ const ComponentTaskCommentList: React.FC<{
 
             {/* upload file */}
             <div>
-                <FileUploadEnvCheck
-                    iconType="file"
-                >
-                    <ComponentTaskCommentListFileUpload
-                        entityId={entityId}
-                        setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
-                        commentType={commentType}
-                    />
-                </FileUploadEnvCheck>
+                <ComponentTaskCommentListFileUpload
+                    entityId={entityId}
+                    setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
+                    commentType={commentType}
+                />
             </div>
 
             {/* audio input */}
             <div>
-                <FileUploadEnvCheck
-                    iconType="audio"
-                >
                     <ComponentTaskCommentListAudioInput
                         entityId={entityId}
                         setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
                         commentType={commentType}
                     />
-                </FileUploadEnvCheck>
             </div>
 
             <div className="space-y-1 mt-2">

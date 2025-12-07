@@ -205,7 +205,7 @@ const ComponentMessageItem = ({
         return (
             <div className="pb-3">
                 <img
-                    src={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${itemMessage?.fileUrl}`}
+                    src={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${itemMessage?.fileUrl}`}
                     alt="Attached photo"
                     className="max-w-full rounded"
                     loading="lazy"
@@ -222,7 +222,7 @@ const ComponentMessageItem = ({
         return (
             <div className="w-full">
                 <audio
-                    src={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${itemMessage.fileUrl}`}
+                    src={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${itemMessage.fileUrl}`}
                     controls
                     className="w-full mb-1"
                     preload="none"
@@ -238,7 +238,7 @@ const ComponentMessageItem = ({
         return (
             <div>
                 <video
-                    src={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${itemMessage.fileUrl}`}
+                    src={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${itemMessage.fileUrl}`}
                     controls
                     className="max-w-full rounded"
                     preload="none"

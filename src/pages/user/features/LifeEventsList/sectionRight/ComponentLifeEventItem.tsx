@@ -96,7 +96,7 @@ const ComponentLifeEventItem = ({
     }
 
     const getFileUrl = (fileUrl: string) =>
-        `${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${fileUrl}`;
+        `${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${fileUrl}`;
 
     const renderFiles = () => {
         return (
