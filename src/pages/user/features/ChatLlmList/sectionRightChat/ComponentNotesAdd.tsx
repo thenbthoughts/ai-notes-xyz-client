@@ -464,6 +464,7 @@ const ComponentNotesAdd = ({
                     <ComponentRecordAudio
                         setRefreshParentRandomNum={setRefreshParentRandomNum}
                         threadId={threadId}
+                        setChatInputValue={setNewNote}
                     />
 
                     {isSubmitting === false && (
