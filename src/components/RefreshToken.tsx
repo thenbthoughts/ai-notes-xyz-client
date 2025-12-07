@@ -29,6 +29,7 @@ const RefreshToken = () => {
             isLoggedIn: 'true' as "pending" | "true" | "false",
             apiKeyGroqValid: false,
             apiKeyOpenrouterValid: false,
+            fileStorageType: 'gridfs' as 'gridfs' | 's3',
             apiKeyS3Valid: false,
             apiKeyOllamaValid: false,
             apiKeyQdrantValid: false,
@@ -44,6 +45,13 @@ const RefreshToken = () => {
 
             const userInfoFromApi = resultUser.data.user;
             if (userInfoFromApi) {
+                if (typeof userInfoFromApi?.fileStorageType === 'string') {
+                    if(userInfoFromApi?.fileStorageType === 'gridfs') {
+                        tempData.fileStorageType = 'gridfs';
+                    } else if (userInfoFromApi?.fileStorageType === 's3') {
+                        tempData.fileStorageType = 's3';
+                    }
+                }
                 if (typeof userInfoFromApi?.apiKeyGroqValid === 'boolean') {
                     tempData.apiKeyGroqValid = userInfoFromApi?.apiKeyGroqValid;
                 }
@@ -72,6 +80,7 @@ const RefreshToken = () => {
             console.error('Refresh token failed:', error);
             setAuthState({
                 isLoggedIn: 'false',
+                fileStorageType: 'gridfs',
                 apiKeyGroqValid: false,
                 apiKeyOpenrouterValid: false,
                 apiKeyS3Valid: false,

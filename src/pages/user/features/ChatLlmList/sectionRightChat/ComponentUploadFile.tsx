@@ -2,29 +2,31 @@ import { Fragment } from "react/jsx-runtime";
 import toast from "react-hot-toast";
 import { ChangeEvent, useRef } from "react";
 import { LucideFile } from "lucide-react";
+import { uploadFeatureFile } from "../../../../../utils/featureFileUpload";
 import envKeys from "../../../../../config/envKeys";
-import axios from "axios";
 
 const ComponentUploadFile = ({
     setFiles,
+    threadId,
 }: {
     setFiles: React.Dispatch<React.SetStateAction<string[]>>;
+    threadId?: string;
 }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const uploadFileToStorage = async (file: File): Promise<string> => {
-        const formData = new FormData();
-        formData.append('file', file);
+        if (!threadId) {
+            throw new Error('Thread ID is required for file upload');
+        }
 
-        const config = {
-            method: 'post',
-            url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
-            data: formData,
-            withCredentials: true,
-        };
-
-        const response = await axios.request(config);
-        return response.data.fileName;
+        // For chat messages, we upload to the thread level
+        // Since message doesn't exist yet, we'll use a placeholder for subEntityId
+        // The backend should handle organizing files when the message is created
+        return await uploadFeatureFile({
+            file,
+            parentEntityId: threadId,
+            apiUrl: envKeys.API_URL,
+        });
     };
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {

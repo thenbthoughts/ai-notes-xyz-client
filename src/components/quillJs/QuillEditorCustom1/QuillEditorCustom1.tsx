@@ -1,5 +1,4 @@
 import { useRef, useCallback, useMemo, useState, useEffect } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -8,6 +7,7 @@ import htmlToMarkdown from '@wcj/html-to-markdown';
 import styleQuillCustom from "./scss/QuillEditorCustom1.module.scss";
 
 import envKeys from "../../../config/envKeys";
+import { uploadFeatureFile } from "../../../utils/featureFileUpload";
 
 const preprocessContent = (content: string): string => {
   // Convert plain text line breaks to HTML line breaks
@@ -19,12 +19,21 @@ const preprocessContent = (content: string): string => {
   return content;
 };
 
+type FeatureType = 'notes' | 'task' | 'lifeevent' | 'infovault' | 'chat';
+type SubType = 'messages' | 'comments';
+
 const QuillEditorCustom1 = ({
     value,
     setValue,
+    featureType,
+    parentEntityId,
+    subType = 'messages',
 }: {
     value: string;
-    setValue: (value: string) => void;  
+    setValue: (value: string) => void;
+    featureType?: FeatureType;
+    parentEntityId?: string;
+    subType?: SubType;
 }) => {
   const quillRef = useRef<any>(null);
 
@@ -85,29 +94,45 @@ const QuillEditorCustom1 = ({
     const toastDismissId = toast.loading('Uploading image...');
     
     try {
-      const formData = new FormData();
-      formData.append('file', file);
+      let fileName: string;
+      
+      if (parentEntityId) {
+        // Use the new structured upload
+        fileName = await uploadFeatureFile({
+          file,
+          parentEntityId,
+          apiUrl: envKeys.API_URL,
+        });
+      } else {
+        // Fallback to basic upload for backward compatibility
+        const formData = new FormData();
+        formData.append('file', file);
 
-      const config = {
-        method: 'post',
-        url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
-        data: formData,
-        withCredentials: true,
-      };
+        const response = await fetch(`${envKeys.API_URL}/api/uploads/crudS3/uploadFile`, {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+        });
 
-      const response = await axios.request(config);
+        if (!response.ok) {
+          throw new Error('Upload failed');
+        }
+
+        const data = await response.json();
+        fileName = data.fileName;
+      }
       
       toast.success('Image uploaded successfully!');
       toast.dismiss(toastDismissId);
 
-      return `${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${response.data.fileName}`;
+      return `${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${fileName}`;
     } catch (err) {
       toast.error('Image upload failed');
       toast.dismiss(toastDismissId);
       console.error("Image upload failed:", err);
       throw err;
     }
-  }, []);
+  }, [featureType, parentEntityId, subType]);
 
   // Handle manual image upload
   const handleImageUpload = useCallback(() => {

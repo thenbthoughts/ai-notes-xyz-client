@@ -1,13 +1,13 @@
 import { Fragment } from "react/jsx-runtime";
 import envKeys from "../../config/envKeys";
 import toast from "react-hot-toast";
-import axios from "axios";
 import { useEffect } from "react";
 import axiosCustom from "../../config/axiosCustom";
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { LucideMic, LucidePause, LucidePlay, LucideMicOff } from "lucide-react";
 import { ICommentType } from "./CommentCommonComponent";
 import { commentAddAudioToTextAxios } from "./commentCommonAxiosUtils";
+import { uploadFeatureFile } from "../../utils/featureFileUpload";
 
 const ComponentUploadFile = ({
     entityId,
@@ -44,17 +44,11 @@ const ComponentUploadFile = ({
 
             const tempFile = new File([blob], 'audio.webm', { type: 'audio/webm' });
 
-            const formData = new FormData();
-            formData.append('file', tempFile);
-
-            const config = {
-                method: 'post',
-                url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
-                data: formData,
-                withCredentials: true,
-            };
-
-            const response = await axios.request(config);
+            const fileName = await uploadFeatureFile({
+                file: tempFile,
+                parentEntityId: entityId,
+                apiUrl: envKeys.API_URL,
+            });
 
             // add a comment
             // First add the audio file
@@ -71,7 +65,7 @@ const ComponentUploadFile = ({
 
                 // file type, url, title, description
                 fileType: 'audio',
-                fileUrl: response.data.fileName,
+                fileUrl: fileName,
                 fileTitle: 'audio.webm',
                 fileDescription: 'Audio recording',
             });
@@ -79,7 +73,7 @@ const ComponentUploadFile = ({
             setTaskCommentsReloadRandomNumCurrent(Math.random() * 1_000_000);
 
             await commentAddAudioToTextAxios({
-                fileName: response.data.fileName,
+                fileName: fileName,
                 commentType,
                 entityId,
             })

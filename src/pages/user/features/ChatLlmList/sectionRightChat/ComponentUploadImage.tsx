@@ -3,28 +3,27 @@ import toast from "react-hot-toast";
 import { ChangeEvent, useRef } from "react";
 import { LucideCamera } from "lucide-react";
 import envKeys from "../../../../../config/envKeys";
-import axios from "axios";
+import { uploadFeatureFile } from "../../../../../utils/featureFileUpload";
 
 const ComponentUploadImage = ({
     setFiles,
+    threadId,
 }: {
     setFiles: React.Dispatch<React.SetStateAction<string[]>>;
+    threadId: string;
 }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const uploadFileToStorage = async (file: File): Promise<string> => {
-        const formData = new FormData();
-        formData.append('file', file);
+        if (!threadId) {
+            throw new Error('Thread ID is required for file upload');
+        }
 
-        const config = {
-            method: 'post',
-            url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
-            data: formData,
-            withCredentials: true,
-        };
-
-        const response = await axios.request(config);
-        return response.data.fileName;
+        return await uploadFeatureFile({
+            file,
+            parentEntityId: threadId,
+            apiUrl: envKeys.API_URL,
+        });
     };
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {

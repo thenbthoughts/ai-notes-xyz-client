@@ -2,14 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideRepeat, LucideSend, LucideSidebar, LucideVideo, LucideX } from 'lucide-react';
 import envKeys from '../../../../../config/envKeys';
-import axios from 'axios';
 import axiosCustom from '../../../../../config/axiosCustom';
 
 import cssNoteAdvanceList from './scss/noteAdvanceList.module.scss';
 import ComponentUploadFile from './ComponentUploadFile';
 import ComponentRecordAudio from './ComponentRecordAudio';
 import { handleAutoSelectContextFirstMessage, handleAutoSelectContext } from '../utils/chatLlmThreadAxios';
-import FileUploadEnvCheck from '../../../../../components/FileUploadEnvCheck';
+import { uploadFeatureFile } from '../../../../../utils/featureFileUpload';
 
 import { useSetAtom } from 'jotai';
 import { jotaiChatLlmFooterHeight } from '../jotai/jotaiChatLlmThreadSetting';
@@ -21,11 +20,13 @@ const TextAndFileInput = ({
     value,
     setValue,
     setFiles,
+    threadId,
 }: {
     value: string;
     setValue: React.Dispatch<React.SetStateAction<string>>;
     files: string[];
     setFiles: React.Dispatch<React.SetStateAction<string[]>>;
+    threadId: string;
 }) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -39,19 +40,18 @@ const TextAndFileInput = ({
     }, [value]);
 
     const uploadFileToStorage = async (file: File) => {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const config = {
-            method: 'post',
-            url: `${envKeys.API_URL}/api/uploads/crudS3/uploadFile`,
-            data: formData,
-            withCredentials: true,
-        };
-
-        const response = await axios.request(config);
-        setFiles(prev => [...prev, response.data.fileName]);
-        toast.success(`File "${file.name}" uploaded successfully!`);
+        try {
+            const filePath = await uploadFeatureFile({
+                file,
+                parentEntityId: threadId,
+                apiUrl: envKeys.API_URL,
+            });
+            setFiles(prev => [...prev, filePath]);
+            toast.success(`File "${file.name}" uploaded successfully!`);
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            toast.error(`Failed to upload "${file.name}"`);
+        }
     };
 
     const uploadFilesToStorage = async (files: File[]) => {
@@ -123,12 +123,12 @@ const ComponentFilesDisplay = ({
                         if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(extension || '')) {
                             return (
                                 <a
-                                    href={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${file}`}
+                                    href={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${file}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
                                     <img
-                                        src={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${file}`}
+                                        src={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${file}`}
                                         alt={file}
                                         className={iconSizeClassName}
                                         style={{
@@ -142,7 +142,7 @@ const ComponentFilesDisplay = ({
                         if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'].includes(extension || '')) {
                             return (
                                 <a
-                                    href={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${file}`}
+                                    href={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${file}`}
                                     target="_blank"
                                     rel="noopener
                                     noreferrer"
@@ -156,7 +156,7 @@ const ComponentFilesDisplay = ({
                         if (['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(extension || '')) {
                             return (
                                 <a
-                                    href={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${file}`}
+                                    href={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${file}`}
                                     target="_blank"
                                     rel="noopener
                                     noreferrer"
@@ -170,7 +170,7 @@ const ComponentFilesDisplay = ({
                         if (extension === 'pdf') {
                             return (
                                 <a
-                                    href={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${file}`}
+                                    href={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${file}`}
                                     target="_blank"
                                     rel="noopener
                                     noreferrer"
@@ -184,7 +184,7 @@ const ComponentFilesDisplay = ({
                         if (['txt', 'doc', 'docx'].includes(extension || '')) {
                             return (
                                 <a
-                                    href={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${file}`}
+                                    href={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${file}`}
                                     target="_blank"
                                     rel="noopener
                                     noreferrer"
@@ -197,7 +197,7 @@ const ComponentFilesDisplay = ({
                         // Default file icon
                         return (
                             <a
-                                href={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${file}`}
+                                href={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${file}`}
                                 target="_blank"
                                 rel="noopener
                                 noreferrer"
@@ -225,7 +225,7 @@ const ComponentFilesDisplay = ({
                                     </div>
                                     <div>
                                         <a
-                                            href={`${envKeys.API_URL}/api/uploads/crudS3/getFile?fileName=${file}`}
+                                            href={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${file}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             download={file.split('/').pop() || file}
@@ -422,6 +422,7 @@ const ComponentNotesAdd = ({
                 setValue={setNewNote}
                 files={files}
                 setFiles={setFiles}
+                threadId={threadId}
             />
 
             {/* action container - 50px */}
@@ -448,26 +449,22 @@ const ComponentNotesAdd = ({
                     </button>
 
                     {/* file */}
-                    <FileUploadEnvCheck iconType="file">
-                        <ComponentUploadFile
-                            setFiles={setFiles}
-                        />
-                    </FileUploadEnvCheck>
+                    <ComponentUploadFile
+                        setFiles={setFiles}
+                        threadId={threadId}
+                    />
 
                     {/* camera */}
-                    <FileUploadEnvCheck iconType="file">
-                        <ComponentUploadImage
-                            setFiles={setFiles}
-                        />
-                    </FileUploadEnvCheck>
+                    <ComponentUploadImage
+                        setFiles={setFiles}
+                        threadId={threadId}
+                    />
 
                     {/* audio */}
-                    <FileUploadEnvCheck iconType="audio">
-                        <ComponentRecordAudio
-                            setRefreshParentRandomNum={setRefreshParentRandomNum}
-                            threadId={threadId}
-                        />
-                    </FileUploadEnvCheck>
+                    <ComponentRecordAudio
+                        setRefreshParentRandomNum={setRefreshParentRandomNum}
+                        threadId={threadId}
+                    />
 
                     {isSubmitting === false && (
                         <button

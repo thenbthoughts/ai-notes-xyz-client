@@ -34,6 +34,7 @@ export default function Component() {
             // Set isLoggedIn in the atom after successful logout
             setAuthState({
                 isLoggedIn: 'false',
+                fileStorageType: 'gridfs',
                 apiKeyGroqValid: false,
                 apiKeyOpenrouterValid: false,
                 apiKeyS3Valid: false,
@@ -57,6 +58,7 @@ export default function Component() {
             setError("Logout failed. Please try again.");
             setAuthState({
                 isLoggedIn: 'false',
+                fileStorageType: 'gridfs',
                 apiKeyGroqValid: false,
                 apiKeyOpenrouterValid: false,
                 apiKeyS3Valid: false,
