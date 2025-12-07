@@ -5,15 +5,16 @@ import { useEffect } from "react";
 import axiosCustom from "../../../../../config/axiosCustom";
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { LucideMic, LucidePause, LucidePlay, LucideMicOff } from "lucide-react";
-import { handleAutoSelectContextFirstMessage } from "../utils/chatLlmThreadAxios";
 import { uploadFeatureFile } from "../../../../../utils/featureFileUpload";
 
 const ComponentRecordAudio = ({
     setRefreshParentRandomNum,
     threadId,
+    setChatInputValue,
 }: {
     setRefreshParentRandomNum: React.Dispatch<React.SetStateAction<number>>;
     threadId: string;
+    setChatInputValue: React.Dispatch<React.SetStateAction<string>>;
 }) => {
 
     const {
@@ -38,6 +39,7 @@ const ComponentRecordAudio = ({
         tempFilePath: string,
     }) => {
         try {
+            console.log(tempFilePath,'called apiAddNote');
             // Call axios
 
             // fileType (text, image, video, location, contacts, file)
@@ -67,19 +69,8 @@ const ComponentRecordAudio = ({
                 // refresh parent random num
                 setRefreshParentRandomNum(Math.random() * 1_000_000);
 
-                // select auto context first message
-                await handleAutoSelectContextFirstMessage({
-                    threadId: threadId,
-                    messageCount: 2,
-                });
-
-                // process notes
-                await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
-                    threadId: threadId,
-                });
-
                 // Handle the response
-                toast.success(`Image added is added successfully!`);
+                toast.success(`Audio added is added successfully!`);
             } catch (error) {
                 console.error(error);
                 toast.error('Error adding note. Please try again.');
@@ -92,6 +83,30 @@ const ComponentRecordAudio = ({
         }
     };
 
+    const setChatInputAudioText = async (tempFilePath: string) => {
+        try {
+            const response = await axiosCustom.post("/api/llm/crud/audioToText", {
+                fileUrl: tempFilePath,
+            });
+            const audioText = response.data.data.contentAudioToText;
+
+            // Set the audio text to the chat input
+            if (audioText && audioText.trim() !== '') {
+                setChatInputValue((prev) => {
+                    if(prev === '') {
+                        return audioText;
+                    } else {
+                        return `${prev}\n${audioText}`;
+                    }
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Error getting audio text! Please try again.');
+            return '';
+        }
+    }
+
     const handleAudioUpload = async (blob: Blob) => {
         try {
             const toastDismissId = toast.loading('Loading...');
@@ -101,17 +116,21 @@ const ComponentRecordAudio = ({
 
             const tempFile = new File([blob], 'audio.webm', { type: 'audio/webm' });
 
+            // upload to s3
             const fileName = await uploadFeatureFile({
                 file: tempFile,
                 parentEntityId: threadId,
                 apiUrl: envKeys.API_URL,
             });
 
-            setRefreshParentRandomNum(Math.random() * 1_000_000);
-
+            // add to chat thread
             await apiAddNote({
                 tempFilePath: fileName
             });
+
+            // step 3: get audio text and add to chat input
+            const audioText = await setChatInputAudioText(fileName);
+            console.log(audioText,'audioText');
 
             toast.success('Audio uploaded successfully!', {
                 id: 'audio-upload',
