@@ -71,6 +71,10 @@ const Search = lazy(() => import("./pages/user/features/search/Search.tsx"));
 // pages -> drive
 const DriveWrapper = lazy(() => import("./pages/user/features/Drive/DriveWrapper.tsx"));
 
+// pages -> ai context helper
+const LlmKeywordList = lazy(() => import("./pages/user/features/AiContextHelper/LlmKeywords/LlmKeyword.tsx"));
+const LlmKeywordGraph = lazy(() => import("./pages/user/features/AiContextHelper/LlmKeywordGraph/LlmKeywordGraph.tsx"));
+
 function App() {
   const Layout = () => {
     return (
@@ -335,6 +339,25 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <DriveWrapper />
+            </UnauthorizedRoute>
+          )
+        },
+
+        // 
+        // -----
+        {
+          path: '/user/llm-keyword-list',
+          element: (
+            <UnauthorizedRoute>
+              <LlmKeywordList />
+            </UnauthorizedRoute>
+          )
+        },
+        {
+          path: '/user/llm-keyword-graph',
+          element: (
+            <UnauthorizedRoute>
+              <LlmKeywordGraph />
             </UnauthorizedRoute>
           )
         }
