@@ -21,6 +21,9 @@ const TestDevWrapper = () => {
             </p>
 
             <p>
+                <Link to="/user/llm-keyword-list" target="_blank" rel="noopener noreferrer">Go to LLM Keyword List</Link>
+            </p>
+            <p>
                 <Link to="/user/llm-keyword-graph" target="_blank" rel="noopener noreferrer">Go to LLM Keyword Graph</Link>
             </p>
 

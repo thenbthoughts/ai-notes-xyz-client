@@ -22,7 +22,7 @@ interface GraphLink extends d3.SimulationLinkDatum<GraphNode> {
     target: string | GraphNode;
 }
 
-export const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ data, onNodeClick }) => {
+const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ data, onNodeClick }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const [zoomLevel, setZoomLevel] = useState(1);
 
@@ -262,7 +262,7 @@ export const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ data, onNodeClic
     );
 };
 
-export const ExportGraph = () => {
+const ExportGraph = () => {
 
     const getRandomDate = (daysAgo: number = 30) => {
         const date = new Date();
@@ -380,3 +380,5 @@ export const ExportGraph = () => {
         </div>
     );
 };
+
+export default ExportGraph;

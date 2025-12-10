@@ -72,7 +72,8 @@ const Search = lazy(() => import("./pages/user/features/search/Search.tsx"));
 const DriveWrapper = lazy(() => import("./pages/user/features/Drive/DriveWrapper.tsx"));
 
 // pages -> ai context helper
-const LlmKeywordGraph = lazy(() => import("./pages/user/features/AiContextHelper/LlmKeywordGraph/LlmKeywordGraph.tsx").then(module => ({ default: module.ExportGraph })));
+const LlmKeywordList = lazy(() => import("./pages/user/features/AiContextHelper/LlmKeywords/LlmKeyword.tsx"));
+const LlmKeywordGraph = lazy(() => import("./pages/user/features/AiContextHelper/LlmKeywordGraph/LlmKeywordGraph.tsx"));
 
 function App() {
   const Layout = () => {
@@ -338,6 +339,17 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <DriveWrapper />
+            </UnauthorizedRoute>
+          )
+        },
+
+        // 
+        // -----
+        {
+          path: '/user/llm-keyword-list',
+          element: (
+            <UnauthorizedRoute>
+              <LlmKeywordList />
             </UnauthorizedRoute>
           )
         },
