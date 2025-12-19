@@ -24,3 +24,5 @@ export const jotaiChatHistoryModalOpen = atom({
 });
 
 export const jotaiChatLlmFooterHeight = atom(165);
+
+export const jotaiChatThreadRefreshRandomNum = atom(0);
