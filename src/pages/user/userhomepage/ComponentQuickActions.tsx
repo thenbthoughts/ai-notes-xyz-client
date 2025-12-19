@@ -1,13 +1,15 @@
-import { LucideZap, LucideChevronUp, LucideChevronDown, LucideFileText, LucideListTodo } from 'lucide-react';
+import { LucideZap, LucideChevronUp, LucideChevronDown, LucideFileText, LucideListTodo, LucidePlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
 import { notesQuickDailyNotesAddAxios, notesQuickTaskAddAxios } from '../features/Notes/utils/notesListAxios';
 import toast from 'react-hot-toast';
+import axiosCustom from '../../../config/axiosCustom';
 
 
 const QuickActionsComponent = () => {
     const [isActionsExpanded, setIsActionsExpanded] = useState(true);
+    const [isAddThreadLoading, setIsAddThreadLoading] = useState(false);
 
     const navigate = useNavigate();
 
@@ -31,6 +33,37 @@ const QuickActionsComponent = () => {
         }
     }
 
+    const addNewThread = async () => {
+        setIsAddThreadLoading(true);
+        try {
+            const result = await axiosCustom.post(
+                '/api/chat-llm/threads-crud/threadsAdd',
+                {
+                    isPersonalContextEnabled: false,
+                    isAutoAiContextSelectEnabled: false,
+
+                    // selected model
+                    aiModelProvider: 'openrouter',
+                    aiModelName: 'openrouter/auto',
+                }
+            );
+
+            const tempThreadId = result?.data?.thread?._id;
+            if (tempThreadId) {
+                if (typeof tempThreadId === 'string') {
+                    const redirectUrl = `/user/chat?id=${tempThreadId}`;
+                    navigate(redirectUrl);
+                }
+            }
+
+            toast.success('New thread added successfully!');
+        } catch (error) {
+            alert('Error adding new thread: ' + error);
+        } finally {
+            setIsAddThreadLoading(false);
+        }
+    };
+
     return (
         <div className="text-left p-3 border border-amber-400 rounded-sm shadow-md bg-gradient-to-r from-amber-100 to-amber-300 mb-2 hover:bg-amber-200 transition duration-300">
             <div className="flex justify-between items-center mb-2">
@@ -53,6 +86,16 @@ const QuickActionsComponent = () => {
             {isActionsExpanded && (
                 <div className="space-y-2">
                     <div className="flex gap-2 flex-wrap">
+                        <button
+                            onClick={() => {
+                                addNewThread();
+                            }}
+                            disabled={isAddThreadLoading}
+                            className="flex items-center px-3 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
+                        >
+                            <LucidePlus size={14} className="mr-1" />
+                            New Chat Thread
+                        </button>
                         <button
                             onClick={() => {
                                 notesQuickDailyNotesAddAxiosLocal();

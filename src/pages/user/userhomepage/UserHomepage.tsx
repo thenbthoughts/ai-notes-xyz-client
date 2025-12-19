@@ -112,8 +112,8 @@ const UserHomepage = () => {
                             <Fragment>
                                 <div className="pb-2">
                                     <ComponentCurrentDateTime />
-                                    <ComponentFromBrithdayToToday />
                                     <ComponentQuickActions />
+                                    <ComponentFromBrithdayToToday />
                                     <ComponentPinnedTask />
                                     <ComponentApiKeySet />
                                 </div>
