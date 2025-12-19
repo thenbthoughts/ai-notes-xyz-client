@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import Select from "react-select";
 import { tsSchemaAiModelListGroq } from "../../../../../types/pages/settings/dataModelGroq";
 import { tsSchemaAiModelListOpenrouter } from "../../../../../types/pages/settings/dataModelOpenrouter";
+import { jotaiChatThreadRefreshRandomNum } from "../jotai/jotaiChatLlmThreadSetting";
+import { useSetAtom } from "jotai";
 
 
 const SelectAiModelOpenrouter = ({
@@ -243,7 +245,7 @@ const LastUsedLlmModel = ({
 
 const ComponentThreadAdd = () => {
     const navigate = useNavigate();
-
+    const setJotaiChatThreadRefreshRandomNum = useSetAtom(jotaiChatThreadRefreshRandomNum);
     const [formData, setFormData] = useState({
         isPersonalContextEnabled: false,
         isAutoAiContextSelectEnabled: false,
@@ -254,7 +256,10 @@ const ComponentThreadAdd = () => {
 
     const [selectRandomModel, setSelectRandomModel] = useState(0);
 
+    const [isAddThreadLoading, setIsAddThreadLoading] = useState(false);
+
     const addNewThread = async () => {
+        setIsAddThreadLoading(true);
         try {
             const result = await axiosCustom.post(
                 '/api/chat-llm/threads-crud/threadsAdd',
@@ -271,6 +276,8 @@ const ComponentThreadAdd = () => {
             const tempThreadId = result?.data?.thread?._id;
             if (tempThreadId) {
                 if (typeof tempThreadId === 'string') {
+                    setJotaiChatThreadRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
+
                     const redirectUrl = `/user/chat?id=${tempThreadId}`;
                     navigate(redirectUrl);
                 }
@@ -279,6 +286,8 @@ const ComponentThreadAdd = () => {
             toast.success('New thread added successfully!');
         } catch (error) {
             alert('Error adding new thread: ' + error);
+        } finally {
+            setIsAddThreadLoading(false);
         }
     };
 
@@ -427,6 +436,7 @@ const ComponentThreadAdd = () => {
                 <div className="mb-4">
                     <button
                         onClick={addNewThread}
+                        disabled={isAddThreadLoading}
                         className="w-full p-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 hover:from-blue-400 hover:via-indigo-400 hover:to-purple-500 rounded-xl shadow-lg hover:shadow-blue-500/30 text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden group"
                     >
                         <div className="inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

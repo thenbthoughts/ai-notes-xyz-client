@@ -4,12 +4,12 @@ import { DebounceInput } from 'react-debounce-input';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import ReactPaginate from 'react-paginate';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { DateTime } from 'luxon';
 import { AxiosRequestConfig } from 'axios';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
-import { jotaiChatHistoryModalOpen } from '../jotai/jotaiChatLlmThreadSetting.ts';
+import { jotaiChatHistoryModalOpen, jotaiChatThreadRefreshRandomNum } from '../jotai/jotaiChatLlmThreadSetting.ts';
 
 /**
  * ComponentChatHistory displays the chat history section.
@@ -18,6 +18,7 @@ import { jotaiChatHistoryModalOpen } from '../jotai/jotaiChatLlmThreadSetting.ts
 const ComponentChatHistory = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const chatThreadRefreshRandomNum = useAtomValue(jotaiChatThreadRefreshRandomNum);
 
     const setChatHistoryModalOpen = useSetAtom(jotaiChatHistoryModalOpen);
 
@@ -75,6 +76,7 @@ const ComponentChatHistory = () => {
     }, [
         page,
         refreshRandomNum,
+        chatThreadRefreshRandomNum,
     ]);
 
     useEffect(() => {
@@ -86,7 +88,7 @@ const ComponentChatHistory = () => {
         );
     }, [
         searchTerm,
-        isFavourite
+        isFavourite,
     ]);
 
     const deleteThread = async (argThreadId: string) => {
