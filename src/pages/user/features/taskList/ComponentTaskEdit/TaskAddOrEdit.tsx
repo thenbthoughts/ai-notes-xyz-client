@@ -191,7 +191,7 @@ const TaskAddOrEdit: React.FC<{
         };
 
         try {
-            await axiosCustom.request(config);
+            const result = await axiosCustom.request(config);
             setTaskTitle('');
             setTaskDescription('');
             setComments([]);
@@ -200,8 +200,9 @@ const TaskAddOrEdit: React.FC<{
             setLabels([]); // Reset labels
             setReminderPresetTimeLabel('before-1-day');
             if (isTaskAddModalIsOpen.modalType === 'add') {
+                let resRecordId = result.data._id;
                 // Redirect to task list with workspace parameter
-                window.location.href = `/user/task?workspace=${workspaceId}`;
+                window.location.href = `/user/task?workspace=${workspaceId}&edit-task-id=${resRecordId}`;
             } else {
                 toggleModal();
             }
