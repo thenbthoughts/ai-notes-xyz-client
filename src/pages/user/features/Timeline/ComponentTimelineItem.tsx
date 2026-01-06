@@ -70,10 +70,10 @@ const ComponentTimelineItem = ({
 
         switch (item.entityType) {
             case 'task':
-                navigate(`/user/task?action=edit&id=${entityId}`);
+                navigate(`/user/task?workspace=${item.workspaceId}&edit-task-id=${entityId}`);
                 break;
             case 'note':
-                navigate(`/user/notes?action=edit&id=${entityId}`);
+                navigate(`/user/notes?action=edit&id=${entityId}&workspace=${item.workspaceId}`);
                 break;
             case 'lifeEvent':
                 navigate(`/user/life-events?action=edit&id=${entityId}`);
