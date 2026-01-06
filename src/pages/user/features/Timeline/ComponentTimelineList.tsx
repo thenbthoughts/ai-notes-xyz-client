@@ -4,7 +4,7 @@ import { TimelineItem, timelineGetAxios } from './utils/timelineAxios.ts';
 import ComponentTimelineItem from './ComponentTimelineItem.tsx';
 import ReactPaginate from 'react-paginate';
 
-const perPage = 10;
+const perPage = 30;
 
 const ComponentTimelineList = ({
     refreshRandomNumParent,
