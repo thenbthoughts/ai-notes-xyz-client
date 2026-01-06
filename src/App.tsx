@@ -49,6 +49,7 @@ const TaskWorkspaceCrud = lazy(() => import("./pages/user/features/TaskWorkspace
 const CalendarWrapper = lazy(() => import("./pages/user/features/Calendar/CalendarWrapper.tsx"));
 const FinanceWrapper = lazy(() => import("./pages/user/features/Finance/FinanceWrapper.tsx"));
 const TaskScheduleWrapper = lazy(() => import("./pages/user/features/taskSchedule/TaskScheduleWrapper.tsx"));
+const TimelineWrapper = lazy(() => import("./pages/user/features/Timeline/TimelineWrapper.tsx"));
 
 // pages -> test
 const TestDevWrapper = lazy(() => import("./pages/test/testDev/TestDevWrapper.tsx"));
@@ -201,6 +202,14 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <TaskScheduleWrapper />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
+          path: "/user/timeline",
+          element: (
+            <UnauthorizedRoute>
+              <TimelineWrapper />
             </UnauthorizedRoute>
           ),
         },
