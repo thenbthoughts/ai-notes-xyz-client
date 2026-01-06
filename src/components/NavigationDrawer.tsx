@@ -70,6 +70,9 @@ const NavigationDrawer = () => {
                                     <Link to="/user/task-schedule" className="text-white block p-2" onClick={handleLinkClick}>📝 Schedule</Link>
                                 </li>
                                 <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
+                                    <Link to="/user/timeline" className="text-white block p-2" onClick={handleLinkClick}>⏱️ Timeline</Link>
+                                </li>
+                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
                                     <Link to="/user/info-vault" className="text-white block p-2" onClick={handleLinkClick}>📝 Info Vault</Link>
                                 </li>
                                 <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">

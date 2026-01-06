@@ -14,7 +14,8 @@ import {
     LucideMap,
     LucideRefreshCcw,
     LucideLightbulb,
-    LucideSearch
+    LucideSearch,
+    LucideCalendar
 } from 'lucide-react'; // Importing lucide icons
 import { useAtomValue } from 'jotai';
 import { Fragment, useEffect, useState } from 'react';
@@ -205,6 +206,12 @@ const UserHomepage = () => {
                                             <LucideSearch size={32} />
                                         </div>
                                         <div>Search</div>
+                                    </Link>
+                                    <Link to="/user/timeline" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
+                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                            <LucideCalendar size={32} />
+                                        </div>
+                                        <div>Timeline</div>
                                     </Link>
                                     <Link to="/user/suggestions" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
