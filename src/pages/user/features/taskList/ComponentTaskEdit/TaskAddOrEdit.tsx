@@ -10,6 +10,7 @@ import ComponentSelectTaskStatus from './ComponentSelectTaskStatus';
 import getDateTimeForInputTypeDateTimeLocal from '../../../../../utils/getDateTimeForInputTypeDateTimeLocal';
 import { reminderLabelToMsArr } from './taskEditCons';
 import CommentCommonComponent from '../../../../../components/commentCommonComponent/CommentCommonComponent';
+import CommonComponentAiFaq from '../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq';
 
 const TaskAddOrEdit: React.FC<{
     isTaskAddModalIsOpen: {
@@ -591,6 +592,13 @@ const TaskAddOrEdit: React.FC<{
                                         <CommentCommonComponent
                                             commentType="task"
                                             recordId={isTaskAddModalIsOpen.recordId}
+                                        />
+                                    )}
+
+                                    {/* ai faq */}
+                                    {isTaskAddModalIsOpen.modalType === 'edit' && (
+                                        <CommonComponentAiFaq
+                                            sourceId={isTaskAddModalIsOpen.recordId}
                                         />
                                     )}
                                 </div>

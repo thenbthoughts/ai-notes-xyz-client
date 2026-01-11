@@ -11,7 +11,7 @@ import { jotaiStateNotesWorkspaceRefresh } from '../../stateJotai/notesStateJota
 import { INotes } from '../../../../../../types/pages/tsNotes.ts';
 import QuillEditorCustom1 from '../../../../../../components/quillJs/QuillEditorCustom1/QuillEditorCustom1.tsx';
 import CommentCommonComponent from '../../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
-
+import CommonComponentAiFaq from '../../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq.tsx';
 
 const ComponentNotesEditWorkspace = ({
     workspaceId,
@@ -445,6 +445,11 @@ const ComponentNotesEdit = ({
                         </div>
                     </div>
                 )}
+
+                {/* field -> ai faq */}
+                <CommonComponentAiFaq
+                    sourceId={notesObj._id}
+                />
             </div>
         )
     }
