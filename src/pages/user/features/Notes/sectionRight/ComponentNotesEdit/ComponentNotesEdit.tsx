@@ -9,9 +9,10 @@ import htmlToMarkdown from '@wcj/html-to-markdown';
 
 import { jotaiStateNotesWorkspaceRefresh } from '../../stateJotai/notesStateJotai.ts';
 import { INotes } from '../../../../../../types/pages/tsNotes.ts';
-import QuillEditorCustom1 from '../../../../../../components/quillJs/QuillEditorCustom1/QuillEditorCustom1.tsx';
-import CommentCommonComponent from '../../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
-import CommonComponentAiFaq from '../../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq.tsx';
+import QuillEditorCustom1 from '../../../../../../components/quillJs/QuillEditorCustom1/QuillEditorCustom1';
+import CommentCommonComponent from '../../../../../../components/commentCommonComponent/CommentCommonComponent';
+import CommonComponentAiFaq from '../../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq';
+import CommonComponentAiKeywords from '../../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords';
 
 const ComponentNotesEditWorkspace = ({
     workspaceId,
@@ -448,6 +449,11 @@ const ComponentNotesEdit = ({
 
                 {/* field -> ai faq */}
                 <CommonComponentAiFaq
+                    sourceId={notesObj._id}
+                />
+
+                {/* field -> ai keyword */}
+                <CommonComponentAiKeywords
                     sourceId={notesObj._id}
                 />
             </div>

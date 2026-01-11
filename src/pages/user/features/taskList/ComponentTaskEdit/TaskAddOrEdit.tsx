@@ -11,6 +11,7 @@ import getDateTimeForInputTypeDateTimeLocal from '../../../../../utils/getDateTi
 import { reminderLabelToMsArr } from './taskEditCons';
 import CommentCommonComponent from '../../../../../components/commentCommonComponent/CommentCommonComponent';
 import CommonComponentAiFaq from '../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq';
+import CommonComponentAiKeywords from '../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords';
 
 const TaskAddOrEdit: React.FC<{
     isTaskAddModalIsOpen: {
@@ -598,6 +599,13 @@ const TaskAddOrEdit: React.FC<{
                                     {/* ai faq */}
                                     {isTaskAddModalIsOpen.modalType === 'edit' && (
                                         <CommonComponentAiFaq
+                                            sourceId={isTaskAddModalIsOpen.recordId}
+                                        />
+                                    )}
+
+                                    {/* ai keyword */}
+                                    {isTaskAddModalIsOpen.modalType === 'edit' && (
+                                        <CommonComponentAiKeywords
                                             sourceId={isTaskAddModalIsOpen.recordId}
                                         />
                                     )}
