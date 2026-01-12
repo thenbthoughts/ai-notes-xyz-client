@@ -8,6 +8,7 @@ export interface tsMessageItem {
 
     type: string;
     content: string;
+    reasoningContent: string;
     username: string;
     tags: string[];
     visibility: string;
@@ -45,4 +46,11 @@ export interface tsMessageItem {
     priority?: string;
     status?: string;
     starred?: boolean;
+
+    // stats
+    promptTokens: number;
+    completionTokens: number;
+    reasoningTokens: number;
+    totalTokens: number;
+    costInUsd: number;
 }

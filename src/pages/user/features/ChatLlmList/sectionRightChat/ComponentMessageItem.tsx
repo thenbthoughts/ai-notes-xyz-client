@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 import envKeys from "../../../../../config/envKeys";
 import axiosCustom from "../../../../../config/axiosCustom";
-import { LucideAudioLines, LucideClipboard, LucideInfo, LucideTrash, LucideEyeOff } from "lucide-react";
+import { LucideAudioLines, LucideClipboard, LucideInfo, LucideTrash, LucideEyeOff, LucideGauge } from "lucide-react";
 import { jotaiTtsModalOpenStatus } from '../../../../../jotai/stateJotaiTextToSpeechModal';
 import { useSetAtom } from 'jotai';
 import { tsMessageItem } from '../../../../../types/pages/tsNotesAdvanceList';
@@ -169,6 +169,7 @@ const ComponentMessageItem = ({
     const [showAllTags, setShowAllTags] = useState(false);
     const [showAiGeneratedFileInfo, setShowAiGeneratedFileInfo] = useState(false);
     const [showExtractedText, setShowExtractedText] = useState(false);
+    const [showUsage, setShowUsage] = useState(false);
     const [
         callGenerateAiTaskListRandomNum,
         setCallGenerateAiTaskListRandomNum, // whenever the func is called 
@@ -279,12 +280,22 @@ const ComponentMessageItem = ({
     const renderText = () => {
         let mdContent = itemMessage.content.replace('AI: ', '');
         return (
-            <div
-                className="prose prose-sm max-w-none break-words"
-            >
-                <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                >{mdContent}</ReactMarkdown>
+            <div>
+                {itemMessage?.reasoningContent?.length >= 1 && (
+                    <div
+                        className="bg-blue-100 rounded-sm p-2 mb-2"
+                    >
+                        <div className="font-semibold text-blue-500 mb-1">Reasoning:</div>
+                        <span className="text-xs text-blue-500">{itemMessage?.reasoningContent}</span>
+                    </div>
+                )}
+                <div
+                    className="prose prose-sm max-w-none break-words"
+                >
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                    >{mdContent}</ReactMarkdown>
+                </div>
             </div>
         );
     };
@@ -470,6 +481,30 @@ const ComponentMessageItem = ({
                             <span className="ml-1">{showExtractedText ? 'Hide Extracted Text' : 'Show Extracted Text'}</span>
                         </button>
                     )}
+
+                    {/* stats */}
+                    {itemMessage.type === 'text' && (
+                        <button
+                            onClick={() => {
+                                setShowUsage(!showUsage);
+                            }}
+                            className="px-2 py-1 rounded-sm bg-purple-500 text-white mb-1 mr-1"
+                        >
+                            <LucideGauge
+                                style={{
+                                    color: '#FFFFFF',
+                                    marginBottom: '0',
+                                    display: 'inline-block',
+                                    lineHeight: '24px',
+                                    width: "19px",
+                                    height: "19px",
+                                    position: 'relative',
+                                    top: '-2px',
+                                }}
+                            />
+                            <span className="ml-1">Usage</span>
+                        </button>
+                    )}
                 </div>
             </div>
         )
@@ -524,6 +559,23 @@ const ComponentMessageItem = ({
         )
     }
 
+    const renderUsage = () => {
+        return (
+            <div>
+                {showUsage && (
+                    <div className="my-2 border border-gray-300 rounded-sm p-2 bg-gray-50">
+                        <p className="text-xs text-gray-600 leading-relaxed">Stats</p>
+                        <p className="text-xs text-gray-500">Prompt Tokens: {itemMessage?.promptTokens}</p>
+                        <p className="text-xs text-gray-500">Completion Tokens: {itemMessage?.completionTokens}</p>
+                        <p className="text-xs text-gray-500">Reasoning Tokens: {itemMessage?.reasoningTokens}</p>
+                        <p className="text-xs text-gray-500">Total Tokens: {itemMessage?.totalTokens}</p>
+                        <p className="text-xs text-gray-500">Cost: ${itemMessage?.costInUsd?.toFixed(10)}</p>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
     return (
         <div
             id={`message-id-${itemMessage._id}`}
@@ -550,6 +602,7 @@ const ComponentMessageItem = ({
                         )}
                     {renderMessageContent()}
                     {renderAiGeneratedFileInfo()}
+                    {renderUsage()}
                     {renderButtons()}
                     <ComponentAiTaskByNotesId
                         itemMessageId={itemMessage._id}
