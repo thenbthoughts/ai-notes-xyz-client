@@ -145,6 +145,8 @@ const ThreadSetting = ({
 
     const [aiModelProvider, setAiModelProvider] = useState(threadSetting.aiModelProvider || "openrouter" as "openrouter" | "groq");
     const [aiModelName, setAiModelName] = useState(threadSetting.aiModelName || "openrouter/auto");
+    const [temperature, setTemperature] = useState<number>(threadSetting.chatLlmTemperature || 1);
+    const [maxTokens, setMaxTokens] = useState<number>(threadSetting.chatLlmMaxTokens || 4096);
 
     const editRecord = async () => {
         setRequestEdit({
@@ -166,6 +168,10 @@ const ThreadSetting = ({
                     // selected model
                     aiModelProvider: aiModelProvider,
                     aiModelName: aiModelName,
+
+                    // model parameters
+                    chatLlmTemperature: temperature,
+                    chatLlmMaxTokens: maxTokens,
                 },
             } as AxiosRequestConfig;
 
@@ -275,6 +281,36 @@ const ThreadSetting = ({
                                 setAiModelName={setAiModelName}
                             />
                         )}
+
+                        {/* field -> chatLlmTemperature */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-3 mb-2 lg:mb-3">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Temperature</label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max="2"
+                                    step="0.1"
+                                    value={temperature}
+                                    onChange={(e) => setTemperature(parseFloat(e.target.value) || 1)}
+                                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
+                                />
+                                <p className="mt-1 text-xs text-gray-500">Controls randomness (0-2). Lower values make output more deterministic.</p>
+                            </div>
+
+                            {/* field -> chatLlmMaxTokens */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Max Tokens</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value={maxTokens}
+                                    onChange={(e) => setMaxTokens(parseInt(e.target.value) || 4096)}
+                                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
+                                />
+                                <p className="mt-1 text-xs text-gray-500">Maximum number of tokens in the response.</p>
+                            </div>
+                        </div>
 
                         {/* field -> isPersonalContextEnabled */}
                         <div className="mb-2 lg:mb-3">
