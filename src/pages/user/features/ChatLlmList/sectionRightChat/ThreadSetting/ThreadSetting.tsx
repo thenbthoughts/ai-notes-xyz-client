@@ -147,6 +147,7 @@ const ThreadSetting = ({
     const [aiModelName, setAiModelName] = useState(threadSetting.aiModelName || "openrouter/auto");
     const [temperature, setTemperature] = useState<number>(threadSetting.chatLlmTemperature || 1);
     const [maxTokens, setMaxTokens] = useState<number>(threadSetting.chatLlmMaxTokens || 4096);
+    const [chatMemoryLimit, setChatMemoryLimit] = useState<number>(threadSetting.chatMemoryLimit || 0);
 
     const editRecord = async () => {
         setRequestEdit({
@@ -172,6 +173,7 @@ const ThreadSetting = ({
                     // model parameters
                     chatLlmTemperature: temperature,
                     chatLlmMaxTokens: maxTokens,
+                    chatMemoryLimit: chatMemoryLimit,
                 },
             } as AxiosRequestConfig;
 
@@ -282,20 +284,19 @@ const ThreadSetting = ({
                             />
                         )}
 
-                        {/* field -> chatLlmTemperature */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-3 mb-2 lg:mb-3">
+                        {/* field -> model parameters */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-3 mb-2 lg:mb-3">
+                            {/* field -> chatMemoryLimit */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Temperature</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Memory Limit</label>
                                 <input
                                     type="number"
                                     min="0"
-                                    max="2"
-                                    step="0.1"
-                                    value={temperature}
-                                    onChange={(e) => setTemperature(parseFloat(e.target.value) || 1)}
+                                    value={chatMemoryLimit}
+                                    onChange={(e) => setChatMemoryLimit(parseInt(e.target.value) || 0)}
                                     className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
                                 />
-                                <p className="mt-1 text-xs text-gray-500">Controls randomness (0-2). Lower values make output more deterministic.</p>
+                                <p className="mt-1 text-xs text-gray-500">Maximum number of previous messages to include in context (0 = unlimited).</p>
                             </div>
 
                             {/* field -> chatLlmMaxTokens */}
@@ -309,6 +310,21 @@ const ThreadSetting = ({
                                     className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
                                 />
                                 <p className="mt-1 text-xs text-gray-500">Maximum number of tokens in the response.</p>
+                            </div>
+
+                            {/* field -> chatLlmTemperature */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Temperature</label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max="2"
+                                    step="0.1"
+                                    value={temperature}
+                                    onChange={(e) => setTemperature(parseFloat(e.target.value) || 1)}
+                                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
+                                />
+                                <p className="mt-1 text-xs text-gray-500">Controls randomness (0-2). Lower values make output more deterministic.</p>
                             </div>
                         </div>
 
