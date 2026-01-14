@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosCustom from '../../../../config/axiosCustom';
+import SettingHeader from '../SettingHeader';
 
 interface OllamaModel {
     _id: string;
@@ -136,6 +137,10 @@ const OllamaModelList: React.FC = () => {
                 <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
                     <span className="text-blue-600">Ollama</span> Model Manager
                 </h2>
+            </div>
+
+            <div>
+                <SettingHeader />
             </div>
 
             {error && (
