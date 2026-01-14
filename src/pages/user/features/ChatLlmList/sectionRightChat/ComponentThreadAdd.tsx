@@ -82,7 +82,7 @@ const SelectAiModelOpenrouter = ({
 
     return (
         <div className="mb-2">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">OpenRouter Model</h3>
             <Select<{ value: string; label: string }>
                 value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.id === aiModelName)?.name || "" } : undefined}
                 onChange={(selectedOption: { value: string; label: string } | null) => {
@@ -156,7 +156,7 @@ const SelectAiModelGroq = ({
 
     return (
         <div className="mb-2">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Model</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">GROQ Model</h3>
             <Select<{ value: string; label: string }>
                 value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.id === aiModelName)?.id || "" } : undefined}
                 onChange={(selectedOption: { value: string; label: string } | null) => {
@@ -179,6 +179,68 @@ const SelectAiModelGroq = ({
     )
 }
 
+const SelectAiModelOllama = ({
+    aiModelName,
+    setAiModelName,
+}: {
+    aiModelName: string;
+    setAiModelName: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+    const [ollamaModels, setOllamaModels] = useState<
+        Array<{ _id: string; modelName: string; modelLabel: string }>
+    >([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>("");
+
+    useEffect(() => {
+        const fetchOllamaModels = async () => {
+            setLoading(true);
+            setError("");
+            try {
+                const res = await axiosCustom.get("/api/dynamic-data/model-ollama/modelOllamaGet");
+                setOllamaModels(res.data.docs || []);
+            } catch (err) {
+                setError("Failed to fetch models");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchOllamaModels();
+    }, []);
+
+    useEffect(() => {
+        // Set default to first model if not set
+        if (ollamaModels.length > 0 && !aiModelName) {
+            setAiModelName(ollamaModels[0].modelName);
+        }
+    }, [ollamaModels, aiModelName, setAiModelName]);
+
+    return (
+        <div className="mb-2">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Ollama Model</h3>
+            {loading ? (
+                <div className="text-gray-500 text-sm">Loading models...</div>
+            ) : error ? (
+                <div className="text-red-600 text-sm">{error}</div>
+            ) : ollamaModels.length === 0 ? (
+                <div className="text-sm text-gray-500">No Ollama models found. Go to Ollama settings to add models.</div>
+            ) : (
+                <select
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    value={aiModelName}
+                    onChange={e => setAiModelName(e.target.value)}
+                >
+                    {ollamaModels.map(model => (
+                        <option key={model._id} value={model.modelName}>
+                            {model.modelLabel || model.modelName}
+                        </option>
+                    ))}
+                </select>
+            )}
+        </div>
+    );
+};
+
 const LastUsedLlmModel = ({
     aiModelName,
     setAiModelName,
@@ -186,9 +248,9 @@ const LastUsedLlmModel = ({
 }: {
     aiModelName: string;
     setAiModelName: React.Dispatch<React.SetStateAction<string>>;
-    setAiModelProvider: React.Dispatch<React.SetStateAction<"openrouter" | "groq">>;
+    setAiModelProvider: React.Dispatch<React.SetStateAction<"openrouter" | "groq" | "ollama">>;
 }) => {
-    const [topLlmModels, setTopLlmModels] = useState<Array<{aiModelProvider: string, aiModelName: string}>>([]);
+    const [topLlmModels, setTopLlmModels] = useState<Array<{ aiModelProvider: string, aiModelName: string }>>([]);
 
     const [showMoreModels, setShowMoreModels] = useState(false);
 
@@ -205,9 +267,9 @@ const LastUsedLlmModel = ({
         fetchTopLlmModels();
     }, []);
 
-    const handleModelSelect = (model: {aiModelProvider: string, aiModelName: string}) => {
-        if (model.aiModelProvider === 'openrouter' || model.aiModelProvider === 'groq') {
-            setAiModelProvider(model.aiModelProvider as "openrouter" | "groq");
+    const handleModelSelect = (model: { aiModelProvider: string, aiModelName: string }) => {
+        if (model.aiModelProvider === 'openrouter' || model.aiModelProvider === 'groq' || model.aiModelProvider === 'ollama') {
+            setAiModelProvider(model.aiModelProvider as "openrouter" | "groq" | "ollama");
         }
         setAiModelName(model.aiModelName);
     };
@@ -218,9 +280,8 @@ const LastUsedLlmModel = ({
                 <button
                     key={index}
                     onClick={() => handleModelSelect(model)}
-                    className={`text-left px-2 py-1 text-sm rounded-sm border hover:bg-gray-50 ${
-                        aiModelName === model.aiModelName ? 'bg-blue-50 border-blue-200' : 'border-gray-200'
-                    }`}
+                    className={`text-left px-2 py-1 text-sm rounded-sm border hover:bg-gray-50 ${aiModelName === model.aiModelName ? 'bg-blue-50 border-blue-200' : 'border-gray-200'
+                        }`}
                 >
                     <div>
                         <span className="inline-block text-gray-700 text-sm">
@@ -251,7 +312,7 @@ const ComponentThreadAdd = () => {
         isAutoAiContextSelectEnabled: false,
     });
 
-    const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq");
+    const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq" | "ollama");
     const [aiModelName, setAiModelName] = useState("openrouter/auto");
 
     const [selectRandomModel, setSelectRandomModel] = useState(0);
@@ -334,18 +395,33 @@ const ComponentThreadAdd = () => {
                     {/* field -> modelProvider */}
                     <div className="mb-2">
                         <h3 className="text-sm font-medium text-gray-700 mb-2">Provider</h3>
-                        <select
-                            className="w-full border border-gray-300 rounded-sm shadow-sm p-2 text-sm"
-                            value={aiModelProvider}
-                            onChange={(e) => {
-                                setAiModelProvider(e.target.value as "openrouter" | "groq");
-                                setAiModelName('');
-                                setSelectRandomModel(Math.floor(Math.random() * 1000000));
-                            }}
-                        >
-                            <option value="openrouter">OpenRouter</option>
-                            <option value="groq">GROQ</option>
-                        </select>
+                        <div className="flex flex-col sm:flex-row gap-2 mb-2">
+                            {[
+                                { label: 'OpenRouter', value: 'openrouter' },
+                                { label: 'GROQ', value: 'groq' },
+                                { label: 'Ollama', value: 'ollama' }
+                            ].map((provider) => (
+                                <button
+                                    key={provider.value}
+                                    onClick={() => {
+                                        setAiModelProvider(provider.value as "openrouter" | "groq" | "ollama");
+                                        setAiModelName('');
+                                        setSelectRandomModel(Math.floor(Math.random() * 1000000));
+                                    }}
+                                    className={
+                                        `flex-1 px-3 py-2 text-sm rounded-sm border transition-colors
+                                        ${aiModelProvider === provider.value
+                                            ? 'bg-blue-600 text-white border-blue-600'
+                                            : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'
+                                        }
+                                        font-semibold`
+                                    }
+                                    aria-pressed={aiModelProvider === provider.value}
+                                >
+                                    {provider.label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     {/* field -> select model -> openrouter */}
@@ -366,6 +442,25 @@ const ComponentThreadAdd = () => {
                             selectRandomModel={selectRandomModel}
                             key={'select-model-groq'}
                         />
+                    )}
+
+                    {/* field -> select model -> ollama */}
+                    {aiModelProvider === 'ollama' && (
+                        <div>
+                            <SelectAiModelOllama
+                                aiModelName={aiModelName}
+                                setAiModelName={setAiModelName}
+                                key={'select-model-ollama'}
+                            />
+
+                            <div className="text-sm text-gray-500 mt-2">
+                                Manage your Ollama models in the
+                                <Link
+                                    to="/user/setting/ollama-models"
+                                    className="text-blue-500 hover:text-blue-700"
+                                >Ollama Settings</Link>.
+                            </div>
+                        </div>
                     )}
 
                     {/* field -> select model -> llm */}

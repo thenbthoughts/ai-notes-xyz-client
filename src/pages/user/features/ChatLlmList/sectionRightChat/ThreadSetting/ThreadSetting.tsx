@@ -120,6 +120,60 @@ const SelectAiModelGroq = ({
     )
 }
 
+const SelectAiModelOllama = ({
+    aiModelName,
+    setAiModelName,
+}: {
+    aiModelName: string;
+    setAiModelName: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+    const [modelArr, setModelArr] = useState([] as any[]);
+    const [isLoadingModel, setIsLoadingModel] = useState(true);
+
+    useEffect(() => {
+        const fetchModelData = async () => {
+            try {
+                setIsLoadingModel(true);
+                const response = await axiosCustom.get('/api/dynamic-data/model-ollama/modelOllamaGet');
+
+                if (response.data.docs && response.data.docs.length > 0) {
+                    setModelArr(response.data.docs);
+                }
+            } catch (error) {
+                console.error('Error fetching ollama model data:', error);
+                // Keep default model if API fails
+            } finally {
+                setIsLoadingModel(false);
+            }
+        };
+        fetchModelData();
+    }, []);
+
+    return (
+        <div className="mb-1 lg:mb-2">
+            <h3 className="text-sm font-medium text-gray-700 mb-1 lg:mb-2">Model</h3>
+            <Select<{ value: string; label: string }>
+                value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.modelName === aiModelName)?.modelLabel || "" } : undefined}
+                onChange={(selectedOption: { value: string; label: string } | null) => {
+                    if (selectedOption) {
+                        setAiModelName(selectedOption.value);
+                    }
+                }}
+                options={
+                    modelArr.map((model: any) => ({
+                        value: model.modelName,
+                        label: model.modelLabel
+                    }))
+                }
+
+                placeholder="Select a model..."
+                isLoading={isLoadingModel}
+                isSearchable={true}
+            />
+        </div>
+    )
+}
+
 const ThreadSetting = ({
     closeModal,
     threadSetting,
@@ -143,7 +197,7 @@ const ThreadSetting = ({
         error: '',
     });
 
-    const [aiModelProvider, setAiModelProvider] = useState(threadSetting.aiModelProvider || "openrouter" as "openrouter" | "groq");
+    const [aiModelProvider, setAiModelProvider] = useState(threadSetting.aiModelProvider || "openrouter" as "openrouter" | "groq" | "ollama");
     const [aiModelName, setAiModelName] = useState(threadSetting.aiModelName || "openrouter/auto");
     const [temperature, setTemperature] = useState<number>(threadSetting.chatLlmTemperature || 1);
     const [maxTokens, setMaxTokens] = useState<number>(threadSetting.chatLlmMaxTokens || 4096);
@@ -258,14 +312,29 @@ const ThreadSetting = ({
                         {/* field -> aiModelProvider */}
                         <div className="mb-2 lg:mb-3">
                             <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">AI Model Provider</label>
-                            <select
-                                className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
-                                value={aiModelProvider}
-                                onChange={(e) => setAiModelProvider(e.target.value as "openrouter" | "groq")}
-                            >
-                                <option value="openrouter">OpenRouter</option>
-                                <option value="groq">GROQ</option>
-                            </select>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                {[
+                                    { label: 'OpenRouter', value: 'openrouter' },
+                                    { label: 'GROQ', value: 'groq' },
+                                    { label: 'Ollama', value: 'ollama' }
+                                ].map((provider) => (
+                                    <button
+                                        key={provider.value}
+                                        onClick={() => setAiModelProvider(provider.value as "openrouter" | "groq" | "ollama")}
+                                        className={
+                                            `flex-1 px-3 py-2 text-sm rounded-sm border transition-colors
+                                            ${aiModelProvider === provider.value
+                                                ? 'bg-blue-600 text-white border-blue-600'
+                                                : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'
+                                            }
+                                            font-semibold`
+                                        }
+                                        aria-pressed={aiModelProvider === provider.value}
+                                    >
+                                        {provider.label}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
                         {/* field -> select model -> openrouter */}
@@ -279,6 +348,14 @@ const ThreadSetting = ({
                         {/* field -> select model -> groq */}
                         {aiModelProvider === 'groq' && (
                             <SelectAiModelGroq
+                                aiModelName={aiModelName}
+                                setAiModelName={setAiModelName}
+                            />
+                        )}
+
+                        {/* field -> select model -> ollama */}
+                        {aiModelProvider === 'ollama' && (
+                            <SelectAiModelOllama
                                 aiModelName={aiModelName}
                                 setAiModelName={setAiModelName}
                             />
