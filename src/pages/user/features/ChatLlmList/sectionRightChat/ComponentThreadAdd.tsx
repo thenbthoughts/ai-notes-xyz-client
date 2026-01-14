@@ -250,7 +250,7 @@ const LastUsedLlmModel = ({
     setAiModelName: React.Dispatch<React.SetStateAction<string>>;
     setAiModelProvider: React.Dispatch<React.SetStateAction<"openrouter" | "groq" | "ollama">>;
 }) => {
-    const [topLlmModels, setTopLlmModels] = useState<Array<{aiModelProvider: string, aiModelName: string}>>([]);
+    const [topLlmModels, setTopLlmModels] = useState<Array<{ aiModelProvider: string, aiModelName: string }>>([]);
 
     const [showMoreModels, setShowMoreModels] = useState(false);
 
@@ -267,7 +267,7 @@ const LastUsedLlmModel = ({
         fetchTopLlmModels();
     }, []);
 
-    const handleModelSelect = (model: {aiModelProvider: string, aiModelName: string}) => {
+    const handleModelSelect = (model: { aiModelProvider: string, aiModelName: string }) => {
         if (model.aiModelProvider === 'openrouter' || model.aiModelProvider === 'groq' || model.aiModelProvider === 'ollama') {
             setAiModelProvider(model.aiModelProvider as "openrouter" | "groq" | "ollama");
         }
@@ -280,9 +280,8 @@ const LastUsedLlmModel = ({
                 <button
                     key={index}
                     onClick={() => handleModelSelect(model)}
-                    className={`text-left px-2 py-1 text-sm rounded-sm border hover:bg-gray-50 ${
-                        aiModelName === model.aiModelName ? 'bg-blue-50 border-blue-200' : 'border-gray-200'
-                    }`}
+                    className={`text-left px-2 py-1 text-sm rounded-sm border hover:bg-gray-50 ${aiModelName === model.aiModelName ? 'bg-blue-50 border-blue-200' : 'border-gray-200'
+                        }`}
                 >
                     <div>
                         <span className="inline-block text-gray-700 text-sm">
@@ -411,10 +410,9 @@ const ComponentThreadAdd = () => {
                                     }}
                                     className={
                                         `flex-1 px-3 py-2 text-sm rounded-sm border transition-colors
-                                        ${
-                                            aiModelProvider === provider.value
-                                                ? 'bg-blue-600 text-white border-blue-600'
-                                                : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'
+                                        ${aiModelProvider === provider.value
+                                            ? 'bg-blue-600 text-white border-blue-600'
+                                            : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'
                                         }
                                         font-semibold`
                                     }
@@ -448,11 +446,21 @@ const ComponentThreadAdd = () => {
 
                     {/* field -> select model -> ollama */}
                     {aiModelProvider === 'ollama' && (
-                        <SelectAiModelOllama
-                            aiModelName={aiModelName}
-                            setAiModelName={setAiModelName}
-                            key={'select-model-ollama'}
-                        />
+                        <div>
+                            <SelectAiModelOllama
+                                aiModelName={aiModelName}
+                                setAiModelName={setAiModelName}
+                                key={'select-model-ollama'}
+                            />
+
+                            <div className="text-sm text-gray-500 mt-2">
+                                Manage your Ollama models in the
+                                <Link
+                                    to="/user/setting/ollama-models"
+                                    className="text-blue-500 hover:text-blue-700"
+                                >Ollama Settings</Link>.
+                            </div>
+                        </div>
                     )}
 
                     {/* field -> select model -> llm */}
