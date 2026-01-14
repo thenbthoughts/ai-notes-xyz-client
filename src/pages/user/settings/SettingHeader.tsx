@@ -12,6 +12,7 @@ const SettingHeader = () => {
             <div className="mb-5">
                 <Link to="/user/setting/" className="text-white hover:underline mr-2">Profile Settings</Link>{'|'}
                 <Link to="/user/setting/model-preference" className="text-white hover:underline mx-2">Model Preferences</Link>{'|'}
+                <Link to="/user/setting/ollama-models" className="text-white hover:underline mx-2">Ollama Models</Link>{'|'}
                 <Link to="/user/setting/login-history" className="text-white hover:underline mx-2">Login History</Link>{'|'}
                 <Link to="/user/setting/api-key" className="text-white hover:underline mx-2">API Keys</Link> {'|'}
                 <Link to="/user/setting/s3-buckets" className="text-white hover:underline mx-2">S3 Buckets</Link> {'|'}

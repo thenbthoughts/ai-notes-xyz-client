@@ -31,6 +31,7 @@ const SettingS3Buckets = lazy(() => import("./pages/user/settings/settingS3Bucke
 const SettingModelPreference = lazy(() => import("./pages/user/settings/settingModelPreference/SettingModelPreference.tsx"));
 const LoginHistory = lazy(() => import("./pages/user/settings/loginHistory/loginHistory.tsx"));
 const SettingChangePassword = lazy(() => import("./pages/user/settings/changePassword/SettingChangePassword.tsx"));
+const SettingOllamaModels = lazy(() => import("./pages/user/settings/ollamaModelList/ollamaModelList.tsx"));
 const NotificationWrapper = lazy(() => import("./pages/user/settings/notification/NotificationWrapper.tsx"));
 
 // pages -> ai
@@ -306,6 +307,14 @@ function App() {
             </UnauthorizedRoute>
           ),
         },
+        {
+          path: "/user/setting/ollama-models",
+          element: (
+            <UnauthorizedRoute>
+              <SettingOllamaModels />
+            </UnauthorizedRoute>
+          ),
+        },  
         // -----
 
         {
