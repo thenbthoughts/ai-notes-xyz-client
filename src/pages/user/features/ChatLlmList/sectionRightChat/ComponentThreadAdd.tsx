@@ -454,7 +454,7 @@ const ComponentThreadAdd = () => {
                             />
 
                             <div className="text-sm text-gray-500 mt-2">
-                                Manage your Ollama models in the
+                                Manage your Ollama models in the{' '}
                                 <Link
                                     to="/user/setting/ollama-models"
                                     className="text-blue-500 hover:text-blue-700"
