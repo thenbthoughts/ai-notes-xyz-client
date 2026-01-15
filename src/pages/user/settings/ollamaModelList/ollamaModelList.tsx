@@ -10,6 +10,10 @@ interface OllamaModel {
     username: string;
     modelLabel: string;
     modelName: string;
+    isInputModalityText: 'true' | 'false' | 'pending';
+    isInputModalityImage: 'true' | 'false' | 'pending';
+    isInputModalityAudio: 'true' | 'false' | 'pending';
+    isInputModalityVideo: 'true' | 'false' | 'pending';
     raw: any;
 };
 
@@ -299,6 +303,42 @@ const OllamaModelList: React.FC = () => {
                                                             <div className="text-gray-600">{rawData.details.quantization_level}</div>
                                                         </div>
                                                     )}
+
+                                                    {/* Input Modalities */}
+                                                    <div className="col-span-1 sm:col-span-2">
+                                                        <span className="font-medium text-gray-700">Input Modalities:</span>
+                                                        <div className="flex flex-wrap gap-1 mt-1">
+                                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                                                model.isInputModalityText === 'true' ? 'bg-green-100 text-green-800' :
+                                                                model.isInputModalityText === 'false' ? 'bg-red-100 text-red-800' :
+                                                                'bg-yellow-100 text-yellow-800'
+                                                            }`}>
+                                                                Text {model.isInputModalityText === 'pending' ? '(pending)' : ''}
+                                                            </span>
+                                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                                                model.isInputModalityImage === 'true' ? 'bg-green-100 text-green-800' :
+                                                                model.isInputModalityImage === 'false' ? 'bg-red-100 text-red-800' :
+                                                                'bg-yellow-100 text-yellow-800'
+                                                            }`}>
+                                                                Image {model.isInputModalityImage === 'pending' ? '(pending)' : ''}
+                                                            </span>
+                                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                                                model.isInputModalityAudio === 'true' ? 'bg-green-100 text-green-800' :
+                                                                model.isInputModalityAudio === 'false' ? 'bg-red-100 text-red-800' :
+                                                                'bg-yellow-100 text-yellow-800'
+                                                            }`}>
+                                                                Audio {model.isInputModalityAudio === 'pending' ? '(pending)' : ''}
+                                                            </span>
+                                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                                                model.isInputModalityVideo === 'true' ? 'bg-green-100 text-green-800' :
+                                                                model.isInputModalityVideo === 'false' ? 'bg-red-100 text-red-800' :
+                                                                'bg-yellow-100 text-yellow-800'
+                                                            }`}>
+                                                                Video {model.isInputModalityVideo === 'pending' ? '(pending)' : ''}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
                                                     {rawData.details?.family && (
                                                         <div>
                                                             <span className="font-medium text-gray-700">Family:</span>
