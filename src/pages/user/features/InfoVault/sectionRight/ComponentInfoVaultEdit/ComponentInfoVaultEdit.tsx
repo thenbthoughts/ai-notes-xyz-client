@@ -13,6 +13,8 @@ import ComponentInfoVaultWebsite from './ComponentInfoVaultWebsite.tsx';
 import ComponentInfoVaultSignificantDate from './ComponentInfoVaultSignificantDate.tsx';
 import ComponentInfoVaultAddress from './ComponentInfoVaultAddress.tsx';
 import CommentCommonComponent from '../../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
+import CommonComponentAiKeywords from '../../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords.tsx';
+import CommonComponentAiFaq from '../../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq.tsx';
 
 const ComponentInfoVaultEdit = ({
     infoVaultObj
@@ -445,6 +447,16 @@ const ComponentInfoVaultEdit = ({
                         </div>
                     </div>
                 )}
+
+                {/* field -> ai keyword */}
+                <CommonComponentAiKeywords
+                    sourceId={infoVaultObj._id}
+                />
+
+                {/* field -> ai faq */}
+                <CommonComponentAiFaq
+                    sourceId={infoVaultObj._id}
+                />
             </div>
         )
     }
