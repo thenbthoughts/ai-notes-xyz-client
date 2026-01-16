@@ -10,6 +10,8 @@ import toast from 'react-hot-toast';
 import ComponentLifeEventsEditCategory from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategory.tsx';
 import ComponentLifeEventsEditCategorySub from './ComponentLifeEventsEditCategory/ComponentLifeEventsEditCategorySub.tsx';
 import CommentCommonComponent from '../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
+import CommonComponentAiKeywords from '../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords.tsx';
+import CommonComponentAiFaq from '../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq.tsx';
 
 const ComponentLifeEventsEdit = ({
     lifeEventObj
@@ -293,6 +295,16 @@ const ComponentLifeEventsEdit = ({
                         </div>
                     </div>
                 )}
+
+                {/* field -> ai keyword */}
+                <CommonComponentAiKeywords
+                    sourceId={lifeEventObj._id}
+                />
+
+                {/* field -> ai faq */}
+                <CommonComponentAiFaq
+                    sourceId={lifeEventObj._id}
+                />
             </div>
         )
     }
