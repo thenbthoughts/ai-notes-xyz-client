@@ -10,7 +10,7 @@ interface IOpenaiCompatibleModel {
     _id: string;
     providerName?: string;
     baseUrl: string;
-    apiKey: string;
+    apiKey?: string; // Optional - not returned from server
     modelName?: string;
     customHeaders?: string;
     createdAt?: Date;
@@ -97,8 +97,8 @@ const OpenaiCompatibleModelModal = ({ isOpen, onClose, editingConfig, onSuccess 
             return;
         }
 
-        // Validate API Key
-        if (!formData.apiKey.trim()) {
+        // Validate API Key (only required for new configs, optional for edits)
+        if (!editingConfig && !formData.apiKey.trim()) {
             toast.error('API Key is required');
             return;
         }
@@ -149,7 +149,8 @@ const OpenaiCompatibleModelModal = ({ isOpen, onClose, editingConfig, onSuccess 
                         _id: editingConfig._id,
                         providerName: formData.providerName.trim() || undefined,
                         baseUrl: formData.baseUrl.trim(),
-                        apiKey: formData.apiKey.trim(),
+                        // Only send apiKey if it's been changed (not empty)
+                        ...(formData.apiKey.trim() ? { apiKey: formData.apiKey.trim() } : {}),
                         modelName: formData.modelName.trim() || undefined,
                         customHeaders: formData.customHeaders.trim() || undefined,
                         isInputModalityText: formData.isInputModalityText,
@@ -164,7 +165,7 @@ const OpenaiCompatibleModelModal = ({ isOpen, onClose, editingConfig, onSuccess 
                     : {
                         providerName: formData.providerName.trim() || undefined,
                         baseUrl: formData.baseUrl.trim(),
-                        apiKey: formData.apiKey.trim(),
+                        apiKey: formData.apiKey.trim(), // Required for new configs
                         modelName: formData.modelName.trim() || undefined,
                         customHeaders: formData.customHeaders.trim() || undefined,
                         isInputModalityText: formData.isInputModalityText,

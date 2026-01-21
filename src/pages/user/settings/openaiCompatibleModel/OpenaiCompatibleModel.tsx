@@ -12,7 +12,7 @@ interface IOpenaiCompatibleModel {
     _id: string;
     providerName?: string;
     baseUrl: string;
-    apiKey: string;
+    apiKey?: string; // Optional - not returned from server
     modelName?: string;
     customHeaders?: string;
     createdAt?: Date;
@@ -205,7 +205,7 @@ const OpenaiCompatibleModel = () => {
                                         )}
                                         <div>
                                             <span className="font-semibold text-gray-700">API Key:</span>
-                                            <span className="ml-2 text-gray-600 font-mono">{maskApiKey(config.apiKey)}</span>
+                                            <span className="ml-2 text-gray-600 font-mono">••••••••••••••••</span>
                                         </div>
                                         {config.customHeaders && (
                                             <div>
