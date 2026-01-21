@@ -4,6 +4,13 @@ import toast from 'react-hot-toast';
 import { LucideDownload, LucideInfo, LucideZap } from 'lucide-react';
 import { IChatLlmThread } from '../../../../../types/pages/schemaChatLlmThread.types';
 
+// Helper function to format model name for display
+const formatModelNameForDisplay = (aiModelName: string): string => {
+    // For all providers, just format slashes
+    // aiModelName now contains only the model name (no configId prefix)
+    return aiModelName.replace('/', ' / ').replace('/', ' / ');
+};
+
 const ComponentAiGeneratedQuestionList = ({
     threadId,
 }: {
@@ -115,8 +122,8 @@ const ComponentAiGeneratedQuestionList = ({
             threadStr += `Thread Title: ${threadInfo.threadTitle}\n`;
             threadStr += `Is Personal Context Enabled: ${threadInfo.isPersonalContextEnabled}\n`;
             threadStr += `Is Auto AI Context Select Enabled: ${threadInfo.isAutoAiContextSelectEnabled}\n`;
-            threadStr += `AI Model Name: ${threadInfo.aiModelName}\n`;
-            threadStr += `AI Model Provider: ${threadInfo.aiModelProvider}\n`;
+            threadStr += `AI Model Name: ${formatModelNameForDisplay(threadInfo.aiModelName)}\n`;
+            threadStr += `AI Model Provider: ${threadInfo.aiModelProvider === 'openai-compatible' ? 'OpenAI Compatible' : threadInfo.aiModelProvider}\n`;
             threadStr += `AI Summary: ${threadInfo.aiSummary}\n`;
             threadStr += `AI Tasks: ${threadInfo.aiTasks.join(', ')}\n`;
             threadStr += `Tags AI: ${threadInfo.tagsAi.join(', ')}\n`;
@@ -215,8 +222,12 @@ const ComponentAiGeneratedQuestionList = ({
 
                     <div className="bg-indigo-50 rounded-sm p-2 border border-indigo-200 flex items-center justify-between">
                         <div>
-                            <span className="text-sm font-medium text-gray-800">{threadInfo.aiModelName}</span>
-                            <span className="text-xs text-gray-500 ml-2">({threadInfo.aiModelProvider})</span>
+                            <span className="text-sm font-medium text-gray-800">
+                                {formatModelNameForDisplay(threadInfo.aiModelName)}
+                            </span>
+                            <span className="text-xs text-gray-500 ml-2">
+                                ({threadInfo.aiModelProvider === 'openai-compatible' ? 'OpenAI Compatible' : threadInfo.aiModelProvider})
+                            </span>
                         </div>
                         <div className="w-4 h-4 bg-indigo-100 rounded-sm flex items-center justify-center">
                             <div className="w-2 h-2 bg-indigo-500 rounded-sm"></div>

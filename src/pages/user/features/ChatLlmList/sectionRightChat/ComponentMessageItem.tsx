@@ -596,8 +596,17 @@ const ComponentMessageItem = ({
                         itemMessage.aiModelProvider === '' && itemMessage.aiModelName === ''
                     ) === false && (
                             <p className="text-xs text-gray-400 hover:text-gray-800 pb-1">
-                                {itemMessage.aiModelProvider !== '' ? `${itemMessage.aiModelProvider} - ` : ''}
-                                {itemMessage.aiModelName}:
+                                {(() => {
+                                    // Format model name for display
+                                    // aiModelName now contains only the model name (no configId prefix)
+                                    const displayModelName = itemMessage.aiModelName;
+                                    
+                                    const displayProvider = itemMessage.aiModelProvider === 'openai-compatible' 
+                                        ? 'OpenAI Compatible' 
+                                        : itemMessage.aiModelProvider;
+                                    
+                                    return `${displayProvider !== '' ? `${displayProvider} - ` : ''}${displayModelName}:`;
+                                })()}
                             </p>
                         )}
                     {renderMessageContent()}

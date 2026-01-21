@@ -12,6 +12,7 @@ export interface IChatLlmThread {
     // selected model
     aiModelName: string,
     aiModelProvider: string,
+    aiModelOpenAiCompatibleConfigId?: string | null,
 
     // model info
     aiSummary: string;

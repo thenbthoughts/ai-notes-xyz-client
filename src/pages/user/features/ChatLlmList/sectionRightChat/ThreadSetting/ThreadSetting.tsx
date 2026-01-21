@@ -7,6 +7,7 @@ import Select from "react-select";
 import { tsSchemaAiModelListGroq } from "../../../../../../types/pages/settings/dataModelGroq";
 import { tsSchemaAiModelListOpenrouter } from "../../../../../../types/pages/settings/dataModelOpenrouter";
 import ThreadSettingContextSearch from "./ThreadSettingContextSearch";
+import { Link } from "react-router-dom";
 
 const SelectAiModelOpenrouter = ({
     aiModelName,
@@ -174,6 +175,94 @@ const SelectAiModelOllama = ({
     )
 }
 
+const SelectAiModelOpenaiCompatible = ({
+    aiModelName,
+    setAiModelName,
+    aiModelOpenAiCompatibleConfigId,
+    setAiModelOpenAiCompatibleConfigId,
+}: {
+    aiModelName: string;
+    setAiModelName: React.Dispatch<React.SetStateAction<string>>;
+    aiModelOpenAiCompatibleConfigId: string | null;
+    setAiModelOpenAiCompatibleConfigId: React.Dispatch<React.SetStateAction<string | null>>;
+}) => {
+    interface IOpenaiCompatibleModel {
+        _id: string;
+        providerName?: string;
+        baseUrl: string;
+        modelName?: string;
+    }
+
+    const [configs, setConfigs] = useState<IOpenaiCompatibleModel[]>([]);
+    const [isLoadingModel, setIsLoadingModel] = useState(true);
+
+    useEffect(() => {
+        const fetchConfigs = async () => {
+            setIsLoadingModel(true);
+            try {
+                const response = await axiosCustom.post<{ docs: IOpenaiCompatibleModel[] }>(
+                    `/api/user/openai-compatible-model/crud/openaiCompatibleModelGet`,
+                    {},
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        withCredentials: true,
+                    }
+                );
+                setConfigs(response.data.docs || []);
+            } catch (error) {
+                console.error('Error fetching OpenAI compatible models:', error);
+            } finally {
+                setIsLoadingModel(false);
+            }
+        };
+        fetchConfigs();
+    }, []);
+
+    return (
+        <div className="mb-1 lg:mb-2">
+            <h3 className="text-sm font-medium text-gray-700 mb-1 lg:mb-2">OpenAI Compatible Model</h3>
+            {isLoadingModel ? (
+                <div className="text-sm text-gray-500">Loading configurations...</div>
+            ) : configs.length === 0 ? (
+                <div className="text-sm text-gray-500 mb-2">
+                    No configurations found. 
+                    <Link to="/user/setting/openai-compatible-model" className="text-blue-600 hover:underline ml-1">
+                        Create one here
+                    </Link>
+                </div>
+            ) : (
+                <Select<{ value: string; label: string }>
+                    value={aiModelOpenAiCompatibleConfigId ? {
+                        value: aiModelOpenAiCompatibleConfigId,
+                        label: (() => {
+                            const config = configs.find(c => c._id === aiModelOpenAiCompatibleConfigId);
+                            if (!config) return '';
+                            const displayName = config.providerName || config.baseUrl;
+                            return aiModelName ? `${displayName} - ${aiModelName}` : displayName;
+                        })()
+                    } : undefined}
+                    onChange={(selectedOption: { value: string; label: string } | null) => {
+                        if (selectedOption) {
+                            const config = configs.find(c => c._id === selectedOption.value);
+                            setAiModelOpenAiCompatibleConfigId(selectedOption.value);
+                            setAiModelName(config?.modelName || '');
+                        }
+                    }}
+                    options={configs.map((config) => {
+                        const displayName = config.providerName || config.baseUrl;
+                        const label = config.modelName ? `${displayName} - ${config.modelName}` : displayName;
+                        return { value: config._id, label };
+                    })}
+                    placeholder="Select a configuration..."
+                    isSearchable={true}
+                />
+            )}
+        </div>
+    );
+}
+
 const ThreadSetting = ({
     closeModal,
     threadSetting,
@@ -197,8 +286,11 @@ const ThreadSetting = ({
         error: '',
     });
 
-    const [aiModelProvider, setAiModelProvider] = useState(threadSetting.aiModelProvider || "openrouter" as "openrouter" | "groq" | "ollama");
+    const [aiModelProvider, setAiModelProvider] = useState(threadSetting.aiModelProvider || "openrouter" as "openrouter" | "groq" | "ollama" | "openai-compatible");
     const [aiModelName, setAiModelName] = useState(threadSetting.aiModelName || "openrouter/auto");
+    const [aiModelOpenAiCompatibleConfigId, setAiModelOpenAiCompatibleConfigId] = useState<string | null>(
+        threadSetting.aiModelOpenAiCompatibleConfigId || null
+    );
     const [temperature, setTemperature] = useState<number>(threadSetting.chatLlmTemperature || 1);
     const [maxTokens, setMaxTokens] = useState<number>(threadSetting.chatLlmMaxTokens || 4096);
     const [chatMemoryLimit, setChatMemoryLimit] = useState<number>(threadSetting.chatMemoryLimit || 0);
@@ -223,6 +315,7 @@ const ThreadSetting = ({
                     // selected model
                     aiModelProvider: aiModelProvider,
                     aiModelName: aiModelName,
+                    aiModelOpenAiCompatibleConfigId: aiModelOpenAiCompatibleConfigId,
 
                     // model parameters
                     chatLlmTemperature: temperature,
@@ -316,11 +409,17 @@ const ThreadSetting = ({
                                 {[
                                     { label: 'OpenRouter', value: 'openrouter' },
                                     { label: 'GROQ', value: 'groq' },
-                                    { label: 'Ollama', value: 'ollama' }
+                                    { label: 'Ollama', value: 'ollama' },
+                                    { label: 'OpenAI Compatible', value: 'openai-compatible' }
                                 ].map((provider) => (
                                     <button
                                         key={provider.value}
-                                        onClick={() => setAiModelProvider(provider.value as "openrouter" | "groq" | "ollama")}
+                                        onClick={() => {
+                                            setAiModelProvider(provider.value as "openrouter" | "groq" | "ollama" | "openai-compatible");
+                                            if (provider.value !== 'openai-compatible') {
+                                                setAiModelOpenAiCompatibleConfigId(null);
+                                            }
+                                        }}
                                         className={
                                             `flex-1 px-3 py-2 text-sm rounded-sm border transition-colors
                                             ${aiModelProvider === provider.value
@@ -358,6 +457,16 @@ const ThreadSetting = ({
                             <SelectAiModelOllama
                                 aiModelName={aiModelName}
                                 setAiModelName={setAiModelName}
+                            />
+                        )}
+
+                        {/* field -> select model -> openai-compatible */}
+                        {aiModelProvider === 'openai-compatible' && (
+                            <SelectAiModelOpenaiCompatible
+                                aiModelName={aiModelName}
+                                setAiModelName={setAiModelName}
+                                aiModelOpenAiCompatibleConfigId={aiModelOpenAiCompatibleConfigId}
+                                setAiModelOpenAiCompatibleConfigId={setAiModelOpenAiCompatibleConfigId}
                             />
                         )}
 
