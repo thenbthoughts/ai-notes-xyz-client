@@ -48,6 +48,7 @@ const OpenaiCompatibleModelModal = ({ isOpen, onClose, editingConfig, onSuccess 
         isOutputModalityVideo: 'false',
     });
     const [loading, setLoading] = useState(false);
+    const [showApiKey, setShowApiKey] = useState(false);
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
 
     useEffect(() => {
@@ -259,18 +260,33 @@ const OpenaiCompatibleModelModal = ({ isOpen, onClose, editingConfig, onSuccess 
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            API Key <span className="text-red-500">*</span>
+                            API Key {editingConfig ? '(Optional)' : <span className="text-red-500">*</span>}
                         </label>
                         <input
-                            type="password"
+                            type={showApiKey ? "text" : "password"}
                             value={formData.apiKey}
                             onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}
                             className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="sk-..."
                             disabled={loading}
-                            required
+                            {...(!editingConfig && { required: true })}
                         />
-                        <p className="text-gray-500 text-xs mt-1">Your API key for authentication</p>
+                        <div className="flex items-center mt-2">
+                            <input
+                                type="checkbox"
+                                id="showApiKey"
+                                checked={showApiKey}
+                                onChange={(e) => setShowApiKey(e.target.checked)}
+                                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                disabled={loading}
+                            />
+                            <label htmlFor="showApiKey" className="ml-2 text-sm text-gray-700 cursor-pointer">
+                                Show API Key
+                            </label>
+                        </div>
+                        <p className="text-gray-500 text-xs mt-1">
+                            Your API key for authentication{editingConfig ? ' (leave empty to keep current)' : ''}
+                        </p>
                     </div>
 
                     <div>
