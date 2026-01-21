@@ -33,6 +33,7 @@ const LoginHistory = lazy(() => import("./pages/user/settings/loginHistory/login
 const SettingChangePassword = lazy(() => import("./pages/user/settings/changePassword/SettingChangePassword.tsx"));
 const SettingOllamaModels = lazy(() => import("./pages/user/settings/ollamaModelList/ollamaModelList.tsx"));
 const NotificationWrapper = lazy(() => import("./pages/user/settings/notification/NotificationWrapper.tsx"));
+const OpenaiCompatibleModel = lazy(() => import("./pages/user/settings/openaiCompatibleModel/OpenaiCompatibleModel.tsx"));
 
 // pages -> ai
 const ChatLlmListWrapper = lazy(() => import('./pages/user/features/ChatLlmList/ChatLlmListWrapper.tsx'));
@@ -312,6 +313,14 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <SettingOllamaModels />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
+          path: "/user/setting/openai-compatible-model",
+          element: (
+            <UnauthorizedRoute>
+              <OpenaiCompatibleModel />
             </UnauthorizedRoute>
           ),
         },  
