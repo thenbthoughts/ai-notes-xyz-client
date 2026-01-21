@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSetAtom } from "jotai";
-import { LucidePlus, LucideEdit, LucideTrash } from 'lucide-react';
+import { LucidePlus, LucideEdit, LucideTrash, LucideCopy } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
@@ -12,7 +12,7 @@ interface IOpenaiCompatibleModel {
     _id: string;
     providerName?: string;
     baseUrl: string;
-    apiKey: string;
+    apiKey?: string; // Optional - not returned from server
     modelName?: string;
     customHeaders?: string;
     createdAt?: Date;
@@ -72,6 +72,33 @@ const OpenaiCompatibleModel = () => {
         setEditingConfig(null);
     };
 
+    const handleCopy = async (config: IOpenaiCompatibleModel) => {
+        try {
+            await axiosCustom.post(
+                `/api/user/openai-compatible-model/crud/openaiCompatibleModelCopy`,
+                { _id: config._id },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true,
+                }
+            );
+            toast.success('Configuration copied successfully!');
+            fetchConfigs();
+            
+            const randomNum = Math.floor(Math.random() * 1_000_000);
+            setAuthStateReload(randomNum);
+        } catch (error: any) {
+            console.error("Error copying config:", error);
+            let errorStr = '';
+            if (typeof error?.response?.data?.error === 'string') {
+                errorStr = error?.response?.data?.error;
+            }
+            toast.error(`Failed to copy configuration. ${errorStr}`);
+        }
+    };
+
     const handleDelete = async (config: IOpenaiCompatibleModel) => {
         const configName = config.providerName || config.baseUrl || 'this configuration';
         if (!window.confirm(`Delete "${configName}"?`)) return;
@@ -102,10 +129,6 @@ const OpenaiCompatibleModel = () => {
         }
     };
 
-    const maskApiKey = (key: string) => {
-        if (!key || key.length < 8) return '••••••••';
-        return key.substring(0, 4) + '••••••••' + key.substring(key.length - 4);
-    };
 
     if (loading) {
         return (
@@ -205,7 +228,7 @@ const OpenaiCompatibleModel = () => {
                                         )}
                                         <div>
                                             <span className="font-semibold text-gray-700">API Key:</span>
-                                            <span className="ml-2 text-gray-600 font-mono">{maskApiKey(config.apiKey)}</span>
+                                            <span className="ml-2 text-gray-600 font-mono">••••••••••••••••</span>
                                         </div>
                                         {config.customHeaders && (
                                             <div>
@@ -263,6 +286,13 @@ const OpenaiCompatibleModel = () => {
                                         title="Edit"
                                     >
                                         <LucideEdit size={18} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleCopy(config)}
+                                        className="p-2 text-green-600 hover:bg-green-50 rounded-sm transition-colors"
+                                        title="Copy"
+                                    >
+                                        <LucideCopy size={18} />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(config)}
