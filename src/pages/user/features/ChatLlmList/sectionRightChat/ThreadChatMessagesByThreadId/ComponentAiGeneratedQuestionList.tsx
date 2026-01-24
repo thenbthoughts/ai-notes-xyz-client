@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import axiosCustom from '../../../../../config/axiosCustom';
+import axiosCustom from '../../../../../../config/axiosCustom';
 import toast from 'react-hot-toast';
 import { LucideDownload, LucideInfo, LucideZap } from 'lucide-react';
-import { IChatLlmThread } from '../../../../../types/pages/schemaChatLlmThread.types';
+import { IChatLlmThread } from '../../../../../../types/pages/schemaChatLlmThread.types';
 
 // Helper function to format model name for display
 const formatModelNameForDisplay = (aiModelName: string): string => {

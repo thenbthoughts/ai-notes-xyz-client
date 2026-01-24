@@ -1,16 +1,16 @@
 import { Fragment } from "react/jsx-runtime";
 import toast from "react-hot-toast";
 import { ChangeEvent, useRef } from "react";
-import { LucideFile } from "lucide-react";
-import { uploadFeatureFile } from "../../../../../utils/featureFileUpload";
-import envKeys from "../../../../../config/envKeys";
+import { LucideCamera } from "lucide-react";
+import envKeys from "../../../../../../config/envKeys";
+import { uploadFeatureFile } from "../../../../../../utils/featureFileUpload";
 
-const ComponentUploadFile = ({
+const ComponentUploadImage = ({
     setFiles,
     threadId,
 }: {
     setFiles: React.Dispatch<React.SetStateAction<string[]>>;
-    threadId?: string;
+    threadId: string;
 }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -19,9 +19,6 @@ const ComponentUploadFile = ({
             throw new Error('Thread ID is required for file upload');
         }
 
-        // For chat messages, we upload to the thread level
-        // Since message doesn't exist yet, we'll use a placeholder for subEntityId
-        // The backend should handle organizing files when the message is created
         return await uploadFeatureFile({
             file,
             parentEntityId: threadId,
@@ -74,7 +71,7 @@ const ComponentUploadFile = ({
                     }
                 }}
             >
-                <LucideFile
+                <LucideCamera
                     style={{
                         height: '20px',
                     }}
@@ -87,9 +84,11 @@ const ComponentUploadFile = ({
                 multiple
                 hidden
                 ref={fileInputRef}
+                accept="image/*"
+                capture="environment"
             />
         </Fragment>
     )
 };
 
-export default ComponentUploadFile;
+export default ComponentUploadImage;

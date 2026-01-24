@@ -3,12 +3,12 @@ import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import envKeys from "../../../../../config/envKeys";
-import axiosCustom from "../../../../../config/axiosCustom";
+import envKeys from "../../../../../../config/envKeys";
+import axiosCustom from "../../../../../../config/axiosCustom";
 import { LucideAudioLines, LucideClipboard, LucideInfo, LucideTrash, LucideEyeOff, LucideGauge } from "lucide-react";
-import { jotaiTtsModalOpenStatus } from '../../../../../jotai/stateJotaiTextToSpeechModal';
+import { jotaiTtsModalOpenStatus } from '../../../../../../jotai/stateJotaiTextToSpeechModal';
 import { useSetAtom } from 'jotai';
-import { tsMessageItem } from '../../../../../types/pages/tsNotesAdvanceList';
+import { tsMessageItem } from '../../../../../../types/pages/tsNotesAdvanceList';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 

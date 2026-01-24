@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideRepeat, LucideSend, LucideSidebar, LucideVideo, LucideX } from 'lucide-react';
-import envKeys from '../../../../../config/envKeys';
-import axiosCustom from '../../../../../config/axiosCustom';
+import envKeys from '../../../../../../config/envKeys.tsx';
+import axiosCustom from '../../../../../../config/axiosCustom.ts';
 
 import cssNoteAdvanceList from './scss/noteAdvanceList.module.scss';
 import ComponentUploadFile from './ComponentUploadFile';
 import ComponentRecordAudio from './ComponentRecordAudio';
-import { handleAutoSelectContextFirstMessage, handleAutoSelectContext } from '../utils/chatLlmThreadAxios';
-import { uploadFeatureFile } from '../../../../../utils/featureFileUpload';
+import { handleAutoSelectContextFirstMessage, handleAutoSelectContext } from '../../utils/chatLlmThreadAxios.ts';
+import { uploadFeatureFile } from '../../../../../../utils/featureFileUpload.ts';
 
 import { useSetAtom } from 'jotai';
-import { jotaiChatLlmFooterHeight } from '../jotai/jotaiChatLlmThreadSetting';
+import { jotaiChatLlmFooterHeight } from '../../jotai/jotaiChatLlmThreadSetting.ts';
 import ComponentUploadImage from './ComponentUploadImage';
-import useResponsiveScreen, { screenList } from '../../../../../hooks/useResponsiveScreen';
-import { jotaiHideRightSidebar } from '../jotai/jotaiChatLlmThreadSetting.ts';
+import useResponsiveScreen, { screenList } from '../../../../../../hooks/useResponsiveScreen.tsx';
+import { jotaiHideRightSidebar } from '../../jotai/jotaiChatLlmThreadSetting.ts';
 
 const TextAndFileInput = ({
     value,

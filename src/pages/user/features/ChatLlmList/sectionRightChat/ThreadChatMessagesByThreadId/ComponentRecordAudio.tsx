@@ -1,11 +1,11 @@
 import { Fragment } from "react/jsx-runtime";
-import envKeys from "../../../../../config/envKeys";
+import envKeys from "../../../../../../config/envKeys";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
-import axiosCustom from "../../../../../config/axiosCustom";
+import axiosCustom from "../../../../../../config/axiosCustom";
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { LucideMic, LucidePause, LucidePlay, LucideMicOff } from "lucide-react";
-import { uploadFeatureFile } from "../../../../../utils/featureFileUpload";
+import { uploadFeatureFile } from "../../../../../../utils/featureFileUpload";
 
 const ComponentRecordAudio = ({
     setRefreshParentRandomNum,
