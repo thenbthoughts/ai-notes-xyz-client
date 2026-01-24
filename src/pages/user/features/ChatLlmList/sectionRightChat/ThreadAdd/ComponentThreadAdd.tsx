@@ -1,12 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import axiosCustom from "../../../../../config/axiosCustom";
+import axiosCustom from "../../../../../../config/axiosCustom";
 import toast from "react-hot-toast";
 import { MessageCircle, Settings, ExternalLink } from "lucide-react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
-import { tsSchemaAiModelListGroq } from "../../../../../types/pages/settings/dataModelGroq";
-import { tsSchemaAiModelListOpenrouter } from "../../../../../types/pages/settings/dataModelOpenrouter";
-import { jotaiChatThreadRefreshRandomNum } from "../jotai/jotaiChatLlmThreadSetting";
+import { tsSchemaAiModelListGroq } from "../../../../../../types/pages/settings/dataModelGroq";
+import { tsSchemaAiModelListOpenrouter } from "../../../../../../types/pages/settings/dataModelOpenrouter";
+import { jotaiChatThreadRefreshRandomNum } from "../../jotai/jotaiChatLlmThreadSetting";
 import { useSetAtom } from "jotai";
 
 

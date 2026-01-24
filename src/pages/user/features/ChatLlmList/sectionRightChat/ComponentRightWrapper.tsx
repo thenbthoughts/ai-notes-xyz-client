@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import CRightChatById from "./CRightChatById";
-import ComponentThreadAdd from "./ComponentThreadAdd";
+import CRightChatById from "./ThreadChatMessagesByThreadId/CRightChatById";
+import ComponentThreadAdd from "./ThreadAdd/ComponentThreadAdd";
 
 const ComponentRightWrapper = ({
     refreshRandomNumParent,

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
 
-import axiosCustom from '../../../../../config/axiosCustom.ts';
+import axiosCustom from '../../../../../../config/axiosCustom.ts';
 import ComponentNotesAdd from './ComponentNotesAdd.tsx';
 import { DateTime } from 'luxon';
 
@@ -9,12 +9,12 @@ import ComponentMessageItem from './ComponentMessageItem.tsx';
 
 import {
     tsMessageItem
-} from '../../../../../types/pages/tsNotesAdvanceList.ts'
+} from '../../../../../../types/pages/tsNotesAdvanceList.ts'
 
 import ComponentAiGeneratedQuestionList from './ComponentAiGeneratedQuestionList.tsx';
-import ThreadSettingWrapper from './ThreadSetting/ThreadSettingWrapper.tsx';
+import ThreadSettingWrapper from '../ThreadSetting/ThreadSettingWrapper.tsx';
 import { useAtomValue } from 'jotai';
-import { jotaiChatLlmFooterHeight } from '../jotai/jotaiChatLlmThreadSetting';
+import { jotaiChatLlmFooterHeight } from '../../jotai/jotaiChatLlmThreadSetting.ts';
 
 const CRightChatById = ({
     threadId,
