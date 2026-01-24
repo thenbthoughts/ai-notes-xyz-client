@@ -56,6 +56,7 @@ const TimelineWrapper = lazy(() => import("./pages/user/features/Timeline/Timeli
 // pages -> test
 const TestDevWrapper = lazy(() => import("./pages/test/testDev/TestDevWrapper.tsx"));
 const TestUserHomepageBackupDelete = lazy(() => import("./pages/user/userhomepage/backup-delete/UserHomepage-backup-delete.tsx"));
+const TestMarkdown = lazy(() => import("./pages/test/TestMarkdown.tsx"));
 
 // components -> settings
 const ModelOpenrouterInsertAll = lazy(() => import('./components/settings/ModelOpenrouterInsertAll.tsx'));
@@ -350,6 +351,14 @@ function App() {
           element: (
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
               <TestUserHomepageBackupDelete />
+            </Suspense>
+          )
+        },
+        {
+          path: '/test/markdown',
+          element: (
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+              <TestMarkdown />
             </Suspense>
           )
         },

@@ -136,11 +136,12 @@ const CRightChatById = ({
             <div
                 style={{
                     height: `${getCssHeightForMessages()}`,
-                    overflowY: 'scroll'
+                    overflowY: 'scroll',
+                    overflowX: 'hidden',
                 }}
             >
-                <div className="flex bg-background w-full">
-                    <div className="flex-1 flex flex-col">
+                <div className="flex bg-background w-full overflow-hidden">
+                    <div className="flex-1 flex flex-col min-w-0">
 
                         <div id="messagesScrollUp" />
 
@@ -164,10 +165,10 @@ const CRightChatById = ({
                         </div>
 
                         {/* section render messages */}
-                        <div>
+                        <div className="w-full min-w-0 overflow-hidden">
                             {messages.map((itemMessage) => {
                                 return (
-                                    <div key={`key-message-${itemMessage._id}`}>
+                                    <div key={`key-message-${itemMessage._id}`} className="w-full min-w-0">
                                         <ComponentMessageItem
                                             itemMessage={itemMessage}
                                         />

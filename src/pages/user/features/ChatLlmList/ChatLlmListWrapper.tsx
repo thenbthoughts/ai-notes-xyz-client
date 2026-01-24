@@ -86,12 +86,14 @@ const ChatLlmListWrapper = () => {
                             )}
                         <div
                             style={{
-                                width: (screenWidth === screenList.lg && hideSidebar.isOpen === true) ? '75%' : '100%'
+                                width: (screenWidth === screenList.lg && hideSidebar.isOpen === true) ? '75%' : '100%',
+                                minWidth: 0,
                             }}
                         >
                             <div style={{
                                 maxWidth: '1000px',
                                 margin: '0 auto',
+                                // overflow: 'hidden',
                             }}>
                                 <div
                                     style={{
