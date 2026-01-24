@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
 
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
-import ComponentNotesAdd from './ComponentNotesAdd.tsx';
+import ComponentNotesAdd from './ComponentChatMessageInput.tsx';
 import { DateTime } from 'luxon';
 
 import ComponentMessageItem from './ComponentMessageItem.tsx';
@@ -136,11 +136,11 @@ const CRightChatById = ({
             <div
                 style={{
                     height: `${getCssHeightForMessages()}`,
-                    overflowY: 'scroll'
+                    overflowY: 'scroll',
                 }}
             >
                 <div className="flex bg-background w-full">
-                    <div className="flex-1 flex flex-col">
+                    <div className="flex-1 flex flex-col min-w-0">
 
                         <div id="messagesScrollUp" />
 
@@ -164,10 +164,10 @@ const CRightChatById = ({
                         </div>
 
                         {/* section render messages */}
-                        <div>
+                        <div className="w-full min-w-0">
                             {messages.map((itemMessage) => {
                                 return (
-                                    <div key={`key-message-${itemMessage._id}`}>
+                                    <div key={`key-message-${itemMessage._id}`} className="w-full min-w-0">
                                         <ComponentMessageItem
                                             itemMessage={itemMessage}
                                         />

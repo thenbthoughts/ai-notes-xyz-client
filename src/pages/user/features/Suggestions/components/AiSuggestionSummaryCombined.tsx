@@ -1,8 +1,7 @@
 import { LucideSparkles, LucideRefreshCw, LucideZap } from "lucide-react";
 import { useEffect, useState } from "react";
 import axiosCustom from "../../../../../config/axiosCustom";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import MarkdownRenderer from "../../../../../components/markdown/MarkdownRenderer";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
@@ -145,7 +144,7 @@ const AiSuggestionSummaryCombined = () => {
                     <span className="ml-2 text-xs md:text-sm text-gray-600">Loading summary...</span>
                 </div>
             ) : (
-                <div className="prose prose-sm max-w-none"
+                <div
                     style={{
                         overflowY: 'auto',
                         maxHeight: '80vh',
@@ -156,11 +155,7 @@ const AiSuggestionSummaryCombined = () => {
                             <span className="text-xs md:text-sm text-gray-600">No summary available yet.</span>
                         </div>
                     )}
-                    <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                    >
-                        {summary}
-                    </ReactMarkdown>
+                    <MarkdownRenderer content={summary} />
                 </div>
             )}
         </div>

@@ -13,3 +13,97 @@ body {
   background-size: cover;
   background-position: center;
 }
+
+/* Markdown content styling */
+.markdown-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Inline code can wrap */
+.markdown-content > p > code,
+.markdown-content code:not([class*="language-"]) {
+  word-break: break-all;
+  white-space: normal;
+}
+
+/* Code blocks scroll horizontally */
+.markdown-content .overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* Syntax highlighter scrollbar styling (dark theme for code) */
+.markdown-content .group > .overflow-x-auto {
+  scrollbar-color: #4b5563 #1f2937;
+}
+
+.markdown-content .group > .overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.markdown-content .group > .overflow-x-auto::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 4px;
+}
+
+.markdown-content .group > .overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+.markdown-content .group > .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Table scrollbar styling (light theme) */
+.markdown-content .overflow-hidden > .overflow-x-auto {
+  scrollbar-color: #d1d5db #f3f4f6;
+}
+
+.markdown-content .overflow-hidden > .overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.markdown-content .overflow-hidden > .overflow-x-auto::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+.markdown-content .overflow-hidden > .overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.markdown-content .overflow-hidden > .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Strong and emphasis styling */
+.markdown-content strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+/* Checkbox styling for task lists */
+.markdown-content input[type="checkbox"] {
+  margin-right: 0.5rem;
+  accent-color: #10b981;
+}
+
+/* Nested list indentation */
+.markdown-content ul ul,
+.markdown-content ol ol,
+.markdown-content ul ol,
+.markdown-content ol ul {
+  margin-left: 1rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}

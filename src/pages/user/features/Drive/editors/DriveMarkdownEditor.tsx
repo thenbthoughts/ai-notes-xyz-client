@@ -3,8 +3,7 @@ import { DriveFile } from '../../../../../types/pages/Drive.types';
 import { driveGetFileUrl, driveUpdateFile } from '../utils/driveAxios';
 import { LucideX, LucideSave, LucideEye, LucideEdit } from 'lucide-react';
 import toast from 'react-hot-toast';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import MarkdownRenderer from '../../../../../components/markdown/MarkdownRenderer';
 
 interface DriveMarkdownEditorProps {
     file: DriveFile;
@@ -133,10 +132,8 @@ const DriveMarkdownEditor = ({ file, bucketName, onClose, onSave }: DriveMarkdow
                         </div>
                     )}
                     {(viewMode === 'preview' || viewMode === 'split') && (
-                        <div className={`${viewMode === 'split' ? 'w-1/2' : 'w-full'} overflow-auto p-4 prose max-w-none`}>
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {content}
-                            </ReactMarkdown>
+                        <div className={`${viewMode === 'split' ? 'w-1/2' : 'w-full'} overflow-auto p-4`}>
+                            <MarkdownRenderer content={content} />
                         </div>
                     )}
                 </div>
