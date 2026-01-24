@@ -227,7 +227,7 @@ const SelectAiModelOpenaiCompatible = ({
                 <div className="text-sm text-gray-500">Loading configurations...</div>
             ) : configs.length === 0 ? (
                 <div className="text-sm text-gray-500 mb-2">
-                    No configurations found. 
+                    No configurations found.
                     <Link to="/user/setting/openai-compatible-model" className="text-blue-600 hover:underline ml-1">
                         Create one here
                     </Link>
@@ -532,21 +532,23 @@ const ThreadSetting = ({
                         </div>
 
                         {/* field -> isAutoAiContextSelectEnabled */}
-                        <div className="mb-2 lg:mb-3">
-                            <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Auto AI Context</label>
-                            <div
-                                onClick={() => {
-                                    setFormData({ ...formData, isAutoAiContextSelectEnabled: !formData.isAutoAiContextSelectEnabled });
-                                }}
-                            >
-                                <input
-                                    type="checkbox"
-                                    className="mt-1 rounded-sm p-1 lg:p-2 mr-2"
-                                    checked={formData.isAutoAiContextSelectEnabled}
-                                />
-                                <span className="text-sm text-gray-700 cursor-pointer">Auto AI Context Enable</span>
+                        {formData.isPersonalContextEnabled && (
+                            <div className="mb-2 lg:mb-3">
+                                <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Auto AI Context</label>
+                                <div
+                                    onClick={() => {
+                                        setFormData({ ...formData, isAutoAiContextSelectEnabled: !formData.isAutoAiContextSelectEnabled });
+                                    }}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        className="mt-1 rounded-sm p-1 lg:p-2 mr-2"
+                                        checked={formData.isAutoAiContextSelectEnabled}
+                                    />
+                                    <span className="text-sm text-gray-700 cursor-pointer">Auto AI Context Enable</span>
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* field -> context search */}
                         {formData.isPersonalContextEnabled && (
