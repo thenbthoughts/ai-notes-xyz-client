@@ -93,7 +93,6 @@ const ChatLlmListWrapper = () => {
                             <div style={{
                                 maxWidth: '1000px',
                                 margin: '0 auto',
-                                // overflow: 'hidden',
                             }}>
                                 <div
                                     style={{
