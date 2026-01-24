@@ -5,14 +5,14 @@ import envKeys from '../../../../../../config/envKeys.tsx';
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
 
 import cssNoteAdvanceList from './scss/noteAdvanceList.module.scss';
-import ComponentUploadFile from './ComponentUploadFile';
-import ComponentRecordAudio from './ComponentRecordAudio';
+import ComponentUploadFile from './ComponentUploadFile.tsx';
+import ComponentRecordAudio from './ComponentRecordAudio.tsx';
 import { handleAutoSelectContextFirstMessage, handleAutoSelectContext } from '../../utils/chatLlmThreadAxios.ts';
 import { uploadFeatureFile } from '../../../../../../utils/featureFileUpload.ts';
 
 import { useSetAtom } from 'jotai';
 import { jotaiChatLlmFooterHeight } from '../../jotai/jotaiChatLlmThreadSetting.ts';
-import ComponentUploadImage from './ComponentUploadImage';
+import ComponentUploadImage from './ComponentUploadImage.tsx';
 import useResponsiveScreen, { screenList } from '../../../../../../hooks/useResponsiveScreen.tsx';
 import { jotaiHideRightSidebar } from '../../jotai/jotaiChatLlmThreadSetting.ts';
 
@@ -245,7 +245,7 @@ const ComponentFilesDisplay = ({
     );
 }
 
-const ComponentNotesAdd = ({
+const ComponentChatMessageInput = ({
     setRefreshParentRandomNum,
     threadId,
 }: {
@@ -516,4 +516,4 @@ const ComponentNotesAdd = ({
     );
 };
 
-export default ComponentNotesAdd;
+export default ComponentChatMessageInput;

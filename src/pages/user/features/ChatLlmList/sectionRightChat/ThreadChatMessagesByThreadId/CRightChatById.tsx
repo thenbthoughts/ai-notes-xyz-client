@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
 
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
-import ComponentNotesAdd from './ComponentNotesAdd.tsx';
+import ComponentNotesAdd from './ComponentChatMessageInput.tsx';
 import { DateTime } from 'luxon';
 
 import ComponentMessageItem from './ComponentMessageItem.tsx';
