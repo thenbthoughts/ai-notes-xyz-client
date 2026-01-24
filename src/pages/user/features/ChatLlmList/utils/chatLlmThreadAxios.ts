@@ -73,10 +73,8 @@ export const handleAutoSelectContext = async ({
 
 export const handleAutoSelectContextFirstMessage = async ({
     threadId,
-    messageCount,
 }: {
     threadId: string;
-    messageCount: 1 | 2;
 }) => {
     
     try {
@@ -121,17 +119,12 @@ export const handleAutoSelectContextFirstMessage = async ({
         const response = await axiosCustom.request(config);
         const notes = response.data.docs;
 
-        // messageCount = 1, then it is a text message, then select context
-        // messageCount = 2, then it is a image or audio, then select context
+        console.log('notes', notes.length);
 
-        console.log('notes', notes.length, 'messageCount', messageCount);
-
-        if (notes.length === messageCount) {
-            // select context
-            await handleAutoSelectContext({
-                threadId: threadId,
-            })
-        }
+        // select context
+        await handleAutoSelectContext({
+            threadId: threadId,
+        })
 
         toast.success('Context selected successfully!');
     } catch (error) {

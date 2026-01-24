@@ -277,7 +277,7 @@ const SelectAiModelOpenaiCompatible = ({
                     }
                 );
                 setConfigs(response.data.docs || []);
-                
+
                 // Auto-select first config if none selected
                 if (!aiModelOpenAiCompatibleConfigId && response.data.docs && response.data.docs.length > 0) {
                     const firstConfig = response.data.docs[0];
@@ -300,7 +300,7 @@ const SelectAiModelOpenaiCompatible = ({
                 <div className="text-sm text-gray-500">Loading configurations...</div>
             ) : configs.length === 0 ? (
                 <div className="text-sm text-gray-500 mb-2">
-                    No configurations found. 
+                    No configurations found.
                     <Link to="/user/setting/openai-compatible-model" className="text-blue-600 hover:underline ml-1">
                         Create one here
                     </Link>
@@ -637,20 +637,22 @@ const ComponentThreadAdd = () => {
                         </div>
 
                         {/* field -> isAutoAiContextSelectEnabled */}
-                        <div className="flex-1">
-                            <div
-                                onClick={() => {
-                                    setFormData({ ...formData, isAutoAiContextSelectEnabled: !formData.isAutoAiContextSelectEnabled });
-                                }}
-                            >
-                                <input
-                                    type="checkbox"
-                                    className="rounded-sm mr-2"
-                                    checked={formData.isAutoAiContextSelectEnabled}
-                                />
-                                <span className="text-sm text-gray-700 cursor-pointer">Auto AI Context Enable</span>
+                        {formData.isPersonalContextEnabled && (
+                            <div className="flex-1">
+                                <div
+                                    onClick={() => {
+                                        setFormData({ ...formData, isAutoAiContextSelectEnabled: !formData.isAutoAiContextSelectEnabled });
+                                    }}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        className="rounded-sm mr-2"
+                                        checked={formData.isAutoAiContextSelectEnabled}
+                                    />
+                                    <span className="text-sm text-gray-700 cursor-pointer">Auto AI Context Enable</span>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
 

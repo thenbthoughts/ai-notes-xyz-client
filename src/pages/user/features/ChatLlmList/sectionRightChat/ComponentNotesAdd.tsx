@@ -347,7 +347,6 @@ const ComponentNotesAdd = ({
                 // select auto context first message
                 await handleAutoSelectContextFirstMessage({
                     threadId: threadId,
-                    messageCount: 1,
                 });
 
                 setTimeout(() => {
