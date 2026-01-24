@@ -570,7 +570,7 @@ const ComponentMessageItem = ({
     return (
         <div
             id={`message-id-${itemMessage._id}`}
-            className="px-2 py-1 w-full min-w-0 overflow-hidden"
+            className="px-2 py-1 w-full min-w-0"
         >
             {isDeleted && (
                 <div
@@ -581,7 +581,7 @@ const ComponentMessageItem = ({
             )}
             {!isDeleted && (
                 <div
-                    className="bg-white border border-gray-300 rounded-sm px-3 py-2 shadow-md w-full md:w-auto md:inline-block md:max-w-[800px] md:min-w-[40%] overflow-hidden"
+                    className="bg-white border border-gray-300 rounded-sm px-3 py-2 shadow-md w-full md:w-auto md:inline-block md:max-w-[800px] md:min-w-[40%]"
                 >
                     {(
                         itemMessage.aiModelProvider === '' && itemMessage.aiModelName === ''

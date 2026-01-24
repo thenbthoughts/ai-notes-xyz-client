@@ -661,7 +661,7 @@ const ComponentThreadAdd = () => {
                     <button
                         onClick={addNewThread}
                         disabled={isAddThreadLoading}
-                        className="w-full p-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 hover:from-blue-400 hover:via-indigo-400 hover:to-purple-500 rounded-xl shadow-lg hover:shadow-blue-500/30 text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden group"
+                        className="w-full p-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 hover:from-blue-400 hover:via-indigo-400 hover:to-purple-500 rounded-xl shadow-lg hover:shadow-blue-500/30 text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] group"
                     >
                         <div className="inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div className="flex items-center justify-center space-x-2 z-10">
