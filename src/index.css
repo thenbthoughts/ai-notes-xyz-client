@@ -5,38 +5,11 @@
   box-sizing: border-box;
 }
 
-/*
-code {
-  max-width: 90%;
-  display: inline-block;
-  overflow-x: auto;
-  white-space: nowrap;
-  font-family: "Courier New", Courier, monospace;
-  background-color: #f5f5f5;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-}
-*/
-
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-
 body {
   padding-top: 60px;
-  /* background-color: #faf2e9; */
 
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-  background-size: 400% 400%;
-  animation: gradient 15s ease infinite;
-  min-height: 100vh;
+  background: linear-gradient(110deg, #0f6b3b 0%, #2aa05a 50%, #cfe96a 100%);
+  background-image: url(/assets/img/ai-notes-xyz-background.png);
+  background-size: cover;
+  background-position: center;
 }
