@@ -1,13 +1,15 @@
-import { LucideLoader, LucideSave, LucideSettings, LucideX } from "lucide-react";
+import { LucideLoader, LucideSave, LucideSettings, LucideX, LucideInfo } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import { AxiosRequestConfig } from "axios";
 import { toast } from "react-hot-toast";
 import Select from "react-select";
+import { Link } from "react-router-dom";
+import Tooltip from '@rc-component/tooltip';
+
 import { tsSchemaAiModelListGroq } from "../../../../../../types/pages/settings/dataModelGroq";
 import { tsSchemaAiModelListOpenrouter } from "../../../../../../types/pages/settings/dataModelOpenrouter";
 import ThreadSettingContextSearch from "./ThreadSettingContextSearch";
-import { Link } from "react-router-dom";
 
 const SelectAiModelOpenrouter = ({
     aiModelName,
@@ -278,6 +280,8 @@ const ThreadSetting = ({
         isAutoAiContextSelectEnabled: threadSetting.isAutoAiContextSelectEnabled,
         isPersonalContextEnabled: threadSetting.isPersonalContextEnabled,
         systemPrompt: threadSetting.systemPrompt,
+
+        answerEngine: threadSetting.answerEngine,
     });
 
     const [requestEdit, setRequestEdit] = useState({
@@ -316,6 +320,9 @@ const ThreadSetting = ({
                     aiModelProvider: aiModelProvider,
                     aiModelName: aiModelName,
                     aiModelOpenAiCompatibleConfigId: aiModelOpenAiCompatibleConfigId,
+
+                    // answer engine
+                    answerEngine: formData?.answerEngine || 'conciseAnswer',
 
                     // model parameters
                     chatLlmTemperature: temperature,
@@ -511,6 +518,79 @@ const ThreadSetting = ({
                                     className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
                                 />
                                 <p className="mt-1 text-xs text-gray-500">Controls randomness (0-2). Lower values make output more deterministic.</p>
+                            </div>
+                        </div>
+
+                        {/* field -> answer engine */}
+                        <div className="mb-4">
+                            <div className="flex flex-col lg:flex-row lg:space-x-8 space-y-4 lg:space-y-0">
+                                <div className="flex-1">
+                                    <div className="text-sm text-gray-700 mb-2 font-medium">Answer Engine</div>
+                                    <div className="flex flex-row space-x-6">
+                                        <label className="inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                className="form-radio text-blue-500"
+                                                name="answerEngine"
+                                                value="conciseAnswer"
+                                                checked={formData.answerEngine === "conciseAnswer"}
+                                                onChange={() => setFormData({ ...formData, answerEngine: "conciseAnswer" })}
+                                            />
+                                            <Tooltip
+                                                placement="top"
+                                                trigger={['hover', 'click']}
+                                                overlay={<span
+                                                    className="text-black bg-white rounded-md p-2 inline-block"
+                                                >
+                                                    Concise answer is a shorter and more direct response.
+                                                </span>}
+                                            >
+                                                <span className="ml-2 text-sm text-gray-700 inline-block">
+                                                    Concise
+                                                    <LucideInfo className="w-4 h-4 ml-1 inline-block"
+                                                        style={{
+                                                            position: 'relative',
+                                                            top: '-0.5px',
+                                                            left: '1px',
+                                                        }}
+                                                    />
+                                                </span>
+                                            </Tooltip>
+                                        </label>
+                                        <label className="inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                className="form-radio text-blue-500"
+                                                name="answerEngine"
+                                                value="answerMachine"
+                                                checked={formData.answerEngine === "answerMachine"}
+                                                onChange={() => setFormData({ ...formData, answerEngine: "answerMachine" })}
+                                            />
+                                            <span className="ml-2 text-sm text-gray-700 flex items-center">
+                                                <Tooltip
+                                                    placement="top"
+                                                    trigger={['hover', 'click']}
+                                                    overlay={<span
+                                                        className="text-black bg-white rounded-md p-2 inline-block"
+                                                    >
+                                                        Generates a better answer using more information.
+                                                    </span>}
+                                                >
+                                                    <span className="inline-block">
+                                                        Answer Machine
+                                                        <LucideInfo className="w-4 h-4 ml-1 inline-block"
+                                                            style={{
+                                                                position: 'relative',
+                                                                top: '-0.5px',
+                                                                left: '1px',
+                                                            }}
+                                                        />
+                                                    </span>
+                                                </Tooltip>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

@@ -356,10 +356,24 @@ const ComponentChatMessageInput = ({
                     }
                 }, 2000);
 
-                // Start streaming generation
-                await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
-                    threadId: threadId,
-                });
+                // get thread info
+                const responseThread = await axiosCustom.post(
+                    '/api/chat-llm/threads-crud/threadsGet', {
+                        threadId: threadId,
+                    }
+                );
+                const threadInfo = responseThread.data.docs[0];
+                if (threadInfo.answerEngine === 'answerMachine') {
+                    // answerMachine
+                    await axiosCustom.post("/api/chat-llm/add-auto-next-message/answerMachine", {
+                        threadId: threadId,
+                    });
+                } else {
+                    // Start streaming generation
+                    await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
+                        threadId: threadId,
+                    });
+                }
 
                 toast.dismiss(toastLoadingId);
                 toast.success('Generation completed!');
@@ -387,10 +401,25 @@ const ComponentChatMessageInput = ({
                 }
             }, 2000);
 
-            // Start streaming generation
-            await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
-                threadId: threadId,
-            });
+            // get thread info
+            const responseThread = await axiosCustom.post(
+                '/api/chat-llm/threads-crud/threadsGet', {
+                    threadId: threadId,
+                }
+            );
+            const threadInfo = responseThread.data.docs[0];
+            if (threadInfo.answerEngine === 'answerMachine') {
+                // answerMachine
+                await axiosCustom.post("/api/chat-llm/add-auto-next-message/answerMachine", {
+                    threadId: threadId,
+                });
+            } else {
+                // Start streaming generation
+                await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
+                    threadId: threadId,
+                });
+            }
+
             toast.dismiss(toastLoadingId);
             toast.success('Regeneration completed!');
 

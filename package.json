@@ -13,6 +13,7 @@
     "@fullcalendar/core": "^6.1.19",
     "@fullcalendar/daygrid": "^6.1.19",
     "@fullcalendar/react": "^6.1.19",
+    "@rc-component/tooltip": "^1.4.0",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@wcj/html-to-markdown": "^2.1.1",

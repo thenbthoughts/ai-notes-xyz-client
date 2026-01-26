@@ -7,6 +7,8 @@ import { Toaster } from "react-hot-toast";
 import { lazy, Suspense } from "react";
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
+import '@rc-component/tooltip/assets/bootstrap_white.css';
+
 // component
 import Header from './components/Header';
 import NavigationDrawer from './components/NavigationDrawer.tsx';
@@ -56,7 +58,6 @@ const TimelineWrapper = lazy(() => import("./pages/user/features/Timeline/Timeli
 // pages -> test
 const TestDevWrapper = lazy(() => import("./pages/test/testDev/TestDevWrapper.tsx"));
 const TestUserHomepageBackupDelete = lazy(() => import("./pages/user/userhomepage/backup-delete/UserHomepage-backup-delete.tsx"));
-const TestMarkdown = lazy(() => import("./pages/test/TestMarkdown.tsx"));
 
 // components -> settings
 const ModelOpenrouterInsertAll = lazy(() => import('./components/settings/ModelOpenrouterInsertAll.tsx'));
@@ -351,14 +352,6 @@ function App() {
           element: (
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
               <TestUserHomepageBackupDelete />
-            </Suspense>
-          )
-        },
-        {
-          path: '/test/markdown',
-          element: (
-            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
-              <TestMarkdown />
             </Suspense>
           )
         },
