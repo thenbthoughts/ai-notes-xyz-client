@@ -1,14 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import toast from "react-hot-toast";
-import { MessageCircle, Settings, ExternalLink } from "lucide-react";
+import { MessageCircle, Settings, ExternalLink, LucideInfo } from "lucide-react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import { tsSchemaAiModelListGroq } from "../../../../../../types/pages/settings/dataModelGroq";
 import { tsSchemaAiModelListOpenrouter } from "../../../../../../types/pages/settings/dataModelOpenrouter";
 import { jotaiChatThreadRefreshRandomNum } from "../../jotai/jotaiChatLlmThreadSetting";
 import { useSetAtom } from "jotai";
-
+import Tooltip from '@rc-component/tooltip';
 
 const SelectAiModelOpenrouter = ({
     aiModelName,
@@ -412,6 +412,9 @@ const ComponentThreadAdd = () => {
     const [formData, setFormData] = useState({
         isPersonalContextEnabled: false,
         isAutoAiContextSelectEnabled: false,
+
+        // answer type
+        answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine',
     });
 
     const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq" | "ollama" | "openai-compatible");
@@ -430,6 +433,9 @@ const ComponentThreadAdd = () => {
                 {
                     isPersonalContextEnabled: formData.isPersonalContextEnabled,
                     isAutoAiContextSelectEnabled: formData.isAutoAiContextSelectEnabled,
+
+                    // answer engine
+                    answerEngine: formData.answerEngine,
 
                     // selected model
                     aiModelProvider: aiModelProvider,
@@ -614,6 +620,79 @@ const ComponentThreadAdd = () => {
                             <span className="mr-1">🎲</span>
                             Random LLM
                         </button>
+                    </div>
+                </div>
+
+                {/* answer engine */}
+                <div className="mb-4">
+                    <div className="flex flex-col lg:flex-row lg:space-x-8 space-y-4 lg:space-y-0">
+                        <div className="flex-1">
+                            <div className="text-sm text-gray-700 mb-2">Answer Engine</div>
+                            <div className="flex flex-row space-x-6">
+                                <label className="inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        className="form-radio text-blue-500"
+                                        name="answerEngine"
+                                        value="conciseAnswer"
+                                        checked={formData.answerEngine === "conciseAnswer"}
+                                        onChange={() => setFormData({ ...formData, answerEngine: "conciseAnswer" })}
+                                    />
+                                    <Tooltip
+                                        placement="top"
+                                        trigger={['hover', 'click']}
+                                        overlay={<span
+                                            className="text-black bg-white rounded-md p-2 inline-block"
+                                        >
+                                            Concise answer is a shorter and more direct response.
+                                        </span>}
+                                    >
+                                        <span className="ml-2 text-sm text-gray-700 inline-block">
+                                            Concise
+                                            <LucideInfo className="w-4 h-4 ml-1 inline-block"
+                                                style={{
+                                                    position: 'relative',
+                                                    top: '-0.5px',
+                                                    left: '1px',
+                                                }}
+                                            />
+                                        </span>
+                                    </Tooltip>
+                                </label>
+                                <label className="inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        className="form-radio text-blue-500"
+                                        name="answerEngine"
+                                        value="answerMachine"
+                                        checked={formData.answerEngine === "answerMachine"}
+                                        onChange={() => setFormData({ ...formData, answerEngine: "answerMachine" })}
+                                    />
+                                    <span className="ml-2 text-sm text-gray-700 flex items-center">
+                                        <Tooltip
+                                            placement="top"
+                                            trigger={['hover', 'click']}
+                                            overlay={<span
+                                                className="text-black bg-white rounded-md p-2 inline-block"
+                                            >
+                                                Generates a better answer using more information.
+                                            </span>}
+                                        >
+                                            <span className="inline-block">
+                                                Answer Machine
+                                                <LucideInfo className="w-4 h-4 ml-1 inline-block"
+                                                    style={{
+                                                        position: 'relative',
+                                                        top: '-0.5px',
+                                                        left: '1px',
+                                                    }}
+                                                />
+                                            </span>
+                                        </Tooltip>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
