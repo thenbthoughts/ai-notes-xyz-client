@@ -4,7 +4,6 @@ import { useAtomValue, useSetAtom } from "jotai";
 import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
 import axiosCustom from "../../../../config/axiosCustom";
 import SettingHeader from "../SettingHeader";
-import SettingDefaultEnvKeys from "./SettingDefaultEnvKeys";
 
 import ComponentApiKeySet from "../../userhomepage/ComponentApiKeySet";
 
@@ -885,8 +884,6 @@ const SettingApiKey = () => {
             <SettingHeader />
 
             {renderApiKeys()}
-
-            <SettingDefaultEnvKeys />
         </div>
     );
 };

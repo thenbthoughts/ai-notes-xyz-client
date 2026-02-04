@@ -18,7 +18,8 @@ const SettingHeader = () => {
                 <Link to="/user/setting/openai-compatible-model" className="text-white hover:underline mx-2">OpenAI Compatible Model</Link> {'|'}
                 <Link to="/user/setting/s3-buckets" className="text-white hover:underline mx-2">S3 Buckets</Link> {'|'}
                 <Link to="/user/setting/change-password" className="text-white hover:underline mx-2">Change Password</Link> {'|'}
-                <Link to="/user/setting/notification" className="text-white hover:underline mx-2">Notification</Link>
+                <Link to="/user/setting/notification" className="text-white hover:underline mx-2">Notification</Link> {'|'}
+                <Link to="/user/setting/ai-features" className="text-white hover:underline mx-2">AI Features</Link>
             </div>
         </div>
     );

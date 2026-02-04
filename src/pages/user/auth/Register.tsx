@@ -75,29 +75,6 @@ export default function Component() {
             )
             setAuthStateReload(randomNum);
 
-            // wait for 500ms
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            // set default env key
-            try {
-                const response = await axiosCustom.post(
-                    `/api/apiKeyDefault/crud/updateApiKeyDefault`,
-                    {},
-                    {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        withCredentials: true,
-                    }
-                );
-                console.log("User updated:", response.data);
-            } catch (error) {
-                console.error("Error updating user:", error);
-            }
-
-            // wait for 750ms
-            await new Promise(resolve => setTimeout(resolve, 750));
-
             // redirect to /home
             navigate('/user/chat');
         } catch (error) {
