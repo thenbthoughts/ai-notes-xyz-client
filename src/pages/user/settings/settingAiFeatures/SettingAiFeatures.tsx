@@ -241,13 +241,9 @@ const SelectAiModelOllama = ({
 const SelectAiModelOpenaiCompatible = ({
     aiModelName,
     setAiModelName,
-    aiModelOpenAiCompatibleConfigId,
-    setAiModelOpenAiCompatibleConfigId,
 }: {
     aiModelName: string;
     setAiModelName: React.Dispatch<React.SetStateAction<string>>;
-    aiModelOpenAiCompatibleConfigId: string | null;
-    setAiModelOpenAiCompatibleConfigId: React.Dispatch<React.SetStateAction<string | null>>;
 }) => {
     interface IOpenaiCompatibleModel {
         _id: string;
@@ -276,10 +272,9 @@ const SelectAiModelOpenaiCompatible = ({
                 setConfigs(response.data.docs || []);
 
                 // Auto-select first config if none selected
-                if (!aiModelOpenAiCompatibleConfigId && response.data.docs && response.data.docs.length > 0) {
+                if (!aiModelName && response.data.docs && response.data.docs.length > 0) {
                     const firstConfig = response.data.docs[0];
-                    setAiModelOpenAiCompatibleConfigId(firstConfig._id);
-                    setAiModelName(firstConfig.modelName || '');
+                    setAiModelName(firstConfig._id);
                 }
             } catch (error) {
                 console.error('Error fetching OpenAI compatible models:', error);
@@ -303,20 +298,18 @@ const SelectAiModelOpenaiCompatible = ({
                 </div>
             ) : (
                 <Select<{ value: string; label: string }>
-                    value={aiModelOpenAiCompatibleConfigId ? {
-                        value: aiModelOpenAiCompatibleConfigId,
+                    value={aiModelName ? {
+                        value: aiModelName,
                         label: (() => {
-                            const config = configs.find(c => c._id === aiModelOpenAiCompatibleConfigId);
+                            const config = configs.find(c => c._id === aiModelName);
                             if (!config) return '';
                             const displayName = config.providerName || config.baseUrl;
-                            return aiModelName ? `${displayName} - ${aiModelName}` : displayName;
+                            return config.modelName ? `${displayName} - ${config.modelName}` : displayName;
                         })()
                     } : undefined}
                     onChange={(selectedOption: { value: string; label: string } | null) => {
                         if (selectedOption) {
-                            const config = configs.find(c => c._id === selectedOption.value);
-                            setAiModelOpenAiCompatibleConfigId(selectedOption.value);
-                            setAiModelName(config?.modelName || '');
+                            setAiModelName(selectedOption.value); // Store the config ID
                         }
                     }}
                     options={configs.map((config) => {
@@ -351,7 +344,6 @@ const SettingAiFeatures = () => {
     // Current model display state
     const [currentModelProvider, setCurrentModelProvider] = useState<AiModelProvider>('groq');
     const [currentModelName, setCurrentModelName] = useState<string>('');
-    const [currentModelOpenAiCompatibleConfigId, setCurrentModelOpenAiCompatibleConfigId] = useState<string | null>(null);
     const [selectRandomModel, setSelectRandomModel] = useState<number>(0);
 
     // Check if OpenAI Compatible has any configurations
@@ -409,7 +401,6 @@ const SettingAiFeatures = () => {
             if (validProviders.length > 0) {
                 setCurrentModelProvider(validProviders[0] as AiModelProvider);
                 setCurrentModelName('');
-                setCurrentModelOpenAiCompatibleConfigId(null);
             }
         }
     }, [authState, openaiCompatibleConfigs, currentModelProvider]);
@@ -429,8 +420,14 @@ const SettingAiFeatures = () => {
 
             // Set AI features from response, with defaults if not present
             setFeatureAiActionsEnabled(response.data.featureAiActionsEnabled ?? false);
-            setCurrentModelProvider(response.data.featureAiActionsModelProvider ?? 'groq');
-            setCurrentModelName(response.data.featureAiActionsModelName ?? '');
+            const modelProvider = response.data.featureAiActionsModelProvider ?? 'groq';
+            const modelName = response.data.featureAiActionsModelName ?? '';
+            setCurrentModelProvider(modelProvider);
+
+            // For openai-compatible provider, modelName contains the config ID
+            // For other providers, modelName contains the model name
+            setCurrentModelName(modelName);
+
             setFeatureAiActionsChatThread(response.data.featureAiActionsChatThread ?? false);
             setFeatureAiActionsChatMessage(response.data.featureAiActionsChatMessage ?? false);
             setFeatureAiActionsNotes(response.data.featureAiActionsNotes ?? false);
@@ -620,7 +617,6 @@ const SettingAiFeatures = () => {
                                     onClick={() => {
                                         setCurrentModelProvider('openai-compatible');
                                         setCurrentModelName('');
-                                        setCurrentModelOpenAiCompatibleConfigId(null);
                                         setSelectRandomModel(Math.floor(Math.random() * 1000000));
                                     }}
                                     className={
@@ -694,8 +690,6 @@ const SettingAiFeatures = () => {
                                     <SelectAiModelOpenaiCompatible
                                         aiModelName={currentModelName}
                                         setAiModelName={setCurrentModelName}
-                                        aiModelOpenAiCompatibleConfigId={currentModelOpenAiCompatibleConfigId}
-                                        setAiModelOpenAiCompatibleConfigId={setCurrentModelOpenAiCompatibleConfigId}
                                         key={'select-model-openai-compatible'}
                                     />
 

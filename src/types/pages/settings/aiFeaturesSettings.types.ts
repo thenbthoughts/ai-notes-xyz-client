@@ -2,7 +2,7 @@
 export interface AiFeaturesSettings {
     featureAiActionsEnabled: boolean;
     featureAiModelProvider: 'groq' | 'openrouter' | 'ollama' | 'openai-compatible';
-    featureAiModelName: string;
+    featureAiModelName: string; // For openai-compatible provider, this stores the config ID; for others, it stores the model name
     featureAiActionsChatThread: boolean;
     featureAiActionsChatMessage: boolean;
     featureAiActionsNotes: boolean;
