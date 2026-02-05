@@ -30,12 +30,12 @@ const UserHomepage = lazy(() => import("./pages/user/userhomepage/UserHomepage.t
 const SettingProfile = lazy(() => import("./pages/user/settings/settingProfile/SettingProfile.tsx"));
 const SettingApiKey = lazy(() => import("./pages/user/settings/settingApiKeys/SettingApiKey.tsx"));
 const SettingS3Buckets = lazy(() => import("./pages/user/settings/settingS3Buckets/SettingS3Buckets.tsx"));
-const SettingModelPreference = lazy(() => import("./pages/user/settings/settingModelPreference/SettingModelPreference.tsx"));
 const LoginHistory = lazy(() => import("./pages/user/settings/loginHistory/loginHistory.tsx"));
 const SettingChangePassword = lazy(() => import("./pages/user/settings/changePassword/SettingChangePassword.tsx"));
 const SettingOllamaModels = lazy(() => import("./pages/user/settings/ollamaModelList/ollamaModelList.tsx"));
 const NotificationWrapper = lazy(() => import("./pages/user/settings/notification/NotificationWrapper.tsx"));
 const OpenaiCompatibleModel = lazy(() => import("./pages/user/settings/openaiCompatibleModel/OpenaiCompatibleModel.tsx"));
+const SettingAiFeatures = lazy(() => import("./pages/user/settings/settingAiFeatures/SettingAiFeatures.tsx"));
 
 // pages -> ai
 const ChatLlmListWrapper = lazy(() => import('./pages/user/features/ChatLlmList/ChatLlmListWrapper.tsx'));
@@ -279,14 +279,6 @@ function App() {
           ),
         },
         {
-          path: "/user/setting/model-preference",
-          element: (
-            <UnauthorizedRoute>
-              <SettingModelPreference />
-            </UnauthorizedRoute>
-          ),
-        },
-        {
           path: "/user/setting/login-history",
           element: (
             <UnauthorizedRoute>
@@ -325,7 +317,15 @@ function App() {
               <OpenaiCompatibleModel />
             </UnauthorizedRoute>
           ),
-        },  
+        },
+        {
+          path: "/user/setting/ai-features",
+          element: (
+            <UnauthorizedRoute>
+              <SettingAiFeatures />
+            </UnauthorizedRoute>
+          ),
+        },
         // -----
 
         {
