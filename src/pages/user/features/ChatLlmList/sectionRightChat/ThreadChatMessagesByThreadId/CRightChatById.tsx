@@ -15,6 +15,7 @@ import ComponentAiGeneratedQuestionList from './ComponentAiGeneratedQuestionList
 import ThreadSettingWrapper from '../ThreadSetting/ThreadSettingWrapper.tsx';
 import { useAtomValue } from 'jotai';
 import { jotaiChatLlmFooterHeight } from '../../jotai/jotaiChatLlmThreadSetting.ts';
+import ComponentAnswerMachineStatus from './ComponentAnswerMachineStatus.tsx';
 
 const CRightChatById = ({
     threadId,
@@ -39,6 +40,7 @@ const CRightChatById = ({
     // useState - old
     const [messages, setMessages] = useState<tsMessageItem[]>([]);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
+    const [isAnswerMachineEnabled, setIsAnswerMachineEnabled] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -86,6 +88,29 @@ const CRightChatById = ({
             )
         )
     }, [refreshRandomNumParent])
+
+    // Check if Answer Machine is enabled for this thread
+    useEffect(() => {
+        const checkAnswerMachineEnabled = async () => {
+            try {
+                const responseThread = await axiosCustom.post(
+                    '/api/chat-llm/threads-crud/threadsGet', {
+                        threadId: threadId,
+                    }
+                );
+                if (responseThread.data && responseThread.data.docs && responseThread.data.docs.length > 0) {
+                    const threadInfo = responseThread.data.docs[0];
+                    setIsAnswerMachineEnabled(threadInfo.answerEngine === 'answerMachine');
+                }
+            } catch (error) {
+                console.error('Error checking Answer Machine status:', error);
+            }
+        };
+
+        if (threadId) {
+            checkAnswerMachineEnabled();
+        }
+    }, [threadId, refreshRandomNum])
 
     // functions
     const getCssHeightForMessages = () => {
@@ -176,6 +201,21 @@ const CRightChatById = ({
                             })}
                             
                         </div>
+
+                        {/* Answer Machine Status Component */}
+                        {isAnswerMachineEnabled && (
+                            <ComponentAnswerMachineStatus
+                                threadId={threadId}
+                                onComplete={() => {
+                                    // Refresh messages when Answer Machine completes
+                                    setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
+                                }}
+                                onStatusUpdate={() => {
+                                    // Refresh messages periodically while processing to show updates
+                                    setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
+                                }}
+                            />
+                        )}
 
                         <div>
                             <ComponentAiGeneratedQuestionList

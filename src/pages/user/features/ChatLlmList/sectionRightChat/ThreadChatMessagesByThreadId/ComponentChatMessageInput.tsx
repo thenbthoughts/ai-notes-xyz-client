@@ -364,21 +364,22 @@ const ComponentChatMessageInput = ({
                 );
                 const threadInfo = responseThread.data.docs[0];
                 if (threadInfo.answerEngine === 'answerMachine') {
-                    // answerMachine
+                    // answerMachine - processing happens asynchronously, polling will show status
                     await axiosCustom.post("/api/chat-llm/add-auto-next-message/answerMachine", {
                         threadId: threadId,
                     });
+                    toast.dismiss(toastLoadingId);
+                    toast.success('Answer Machine started processing...');
+                    // Don't refresh immediately - polling will handle it when complete
                 } else {
                     // Start streaming generation
                     await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
                         threadId: threadId,
                     });
+                    toast.dismiss(toastLoadingId);
+                    toast.success('Generation completed!');
+                    setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
                 }
-
-                toast.dismiss(toastLoadingId);
-                toast.success('Generation completed!');
-
-                setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
 
                 setNewNote("");
             }
@@ -409,19 +410,21 @@ const ComponentChatMessageInput = ({
             );
             const threadInfo = responseThread.data.docs[0];
             if (threadInfo.answerEngine === 'answerMachine') {
-                // answerMachine
+                // answerMachine - processing happens asynchronously, polling will show status
                 await axiosCustom.post("/api/chat-llm/add-auto-next-message/answerMachine", {
                     threadId: threadId,
                 });
+                toast.dismiss(toastLoadingId);
+                toast.success('Answer Machine started processing...');
+                // Don't refresh immediately - polling will handle it when complete
             } else {
                 // Start streaming generation
                 await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
                     threadId: threadId,
                 });
+                toast.dismiss(toastLoadingId);
+                toast.success('Regeneration completed!');
             }
-
-            toast.dismiss(toastLoadingId);
-            toast.success('Regeneration completed!');
 
         } catch (error) {
             console.error(error);
