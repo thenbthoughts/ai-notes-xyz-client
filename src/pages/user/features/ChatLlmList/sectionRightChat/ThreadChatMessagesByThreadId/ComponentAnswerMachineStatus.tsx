@@ -42,12 +42,27 @@ const ComponentAnswerMachineStatus = ({
 
     const getStatusIcon = () => {
         if (status === 'answered') {
-            return <LucideCheckCircle2 className="w-5 h-5 text-green-500" />;
+            return (
+                <div className="flex items-center gap-2">
+                    <LucideCheckCircle2 className="w-5 h-5 text-green-500" />
+                    <span className="text-xs text-green-600 font-medium">Completed</span>
+                </div>
+            );
         }
         if (status === 'error') {
-            return <LucideXCircle className="w-5 h-5 text-red-500" />;
+            return (
+                <div className="flex items-center gap-2">
+                    <LucideXCircle className="w-5 h-5 text-red-500" />
+                    <span className="text-xs text-red-600 font-medium">Error</span>
+                </div>
+            );
         }
-        return <LucideLoader2 className="w-5 h-5 animate-spin text-blue-500" />;
+        return (
+            <div className="flex items-center gap-2">
+                <LucideLoader2 className="w-5 h-5 animate-spin text-blue-500" />
+                <span className="text-xs text-blue-600 font-medium">Processing</span>
+            </div>
+        );
     };
 
     const getStatusText = () => {
