@@ -15,7 +15,20 @@ const ComponentAnswerMachineStatus = ({
 }: ComponentAnswerMachineStatusProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     
-    const { isProcessing, status, subQuestionsStatus, subQuestions, error, isLoading, countdown, refresh } = useAnswerMachinePolling({
+    const { 
+        isProcessing, 
+        status, 
+        subQuestionsStatus, 
+        subQuestions, 
+        error, 
+        isLoading, 
+        countdown, 
+        refresh,
+        answerMachineMinNumberOfIterations,
+        answerMachineMaxNumberOfIterations,
+        answerMachineCurrentIteration,
+        answerMachineErrorReason,
+    } = useAnswerMachinePolling({
         threadId,
         onComplete,
         onStatusUpdate,
@@ -81,6 +94,14 @@ const ComponentAnswerMachineStatus = ({
                             <span className="text-sm font-medium text-blue-900">
                                 {getStatusText()}
                             </span>
+                            {answerMachineMaxNumberOfIterations > 1 && (
+                                <span className="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded">
+                                    Iteration {answerMachineCurrentIteration}/{answerMachineMaxNumberOfIterations}
+                                    {answerMachineMinNumberOfIterations > 1 && answerMachineCurrentIteration < answerMachineMinNumberOfIterations && (
+                                        <span className="ml-1 text-blue-500">(min: {answerMachineMinNumberOfIterations})</span>
+                                    )}
+                                </span>
+                            )}
                         </div>
                         <div className="flex items-center gap-2">
                             {countdown > 0 && (
@@ -98,6 +119,12 @@ const ComponentAnswerMachineStatus = ({
                             </button>
                         </div>
                     </div>
+                    
+                    {answerMachineErrorReason && (
+                        <div className="mt-2 text-xs text-red-600">
+                            Error: {answerMachineErrorReason}
+                        </div>
+                    )}
                     
                     {isProcessing && subQuestionsStatus.total > 0 && (
                         <div className="mt-2">

@@ -298,6 +298,12 @@ const ThreadSetting = ({
     const [temperature, setTemperature] = useState<number>(threadSetting.chatLlmTemperature || 1);
     const [maxTokens, setMaxTokens] = useState<number>(threadSetting.chatLlmMaxTokens || 4096);
     const [chatMemoryLimit, setChatMemoryLimit] = useState<number>(threadSetting.chatMemoryLimit || 0);
+    const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(
+        threadSetting.answerMachineMinNumberOfIterations || 1
+    );
+    const [answerMachineMaxNumberOfIterations, setAnswerMachineMaxNumberOfIterations] = useState<number>(
+        threadSetting.answerMachineMaxNumberOfIterations || 1
+    );
 
     const editRecord = async () => {
         setRequestEdit({
@@ -328,6 +334,10 @@ const ThreadSetting = ({
                     chatLlmTemperature: temperature,
                     chatLlmMaxTokens: maxTokens,
                     chatMemoryLimit: chatMemoryLimit,
+
+                    // answer machine settings
+                    answerMachineMinNumberOfIterations: answerMachineMinNumberOfIterations,
+                    answerMachineMaxNumberOfIterations: answerMachineMaxNumberOfIterations,
                 },
             } as AxiosRequestConfig;
 
@@ -573,7 +583,7 @@ const ThreadSetting = ({
                                                     overlay={<span
                                                         className="text-black bg-white rounded-md p-2 inline-block"
                                                     >
-                                                        Generates a better answer using more information.
+                                                        Generates a better answer using more information. Can iterate multiple times to improve answer quality.
                                                     </span>}
                                                 >
                                                     <span className="inline-block">
@@ -592,6 +602,92 @@ const ThreadSetting = ({
                                     </div>
                                 </div>
                             </div>
+                            
+                            {/* Answer Machine Iterations Setting */}
+                            {formData.answerEngine === "answerMachine" && (
+                                <div className="mt-3 space-y-3">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">
+                                            Min Iterations
+                                            <Tooltip
+                                                placement="top"
+                                                trigger={['hover', 'click']}
+                                                overlay={<span
+                                                    className="text-black bg-white rounded-md p-2 inline-block max-w-xs"
+                                                >
+                                                    Minimum number of iterations the Answer Machine will perform. The answer machine will always run at least this many iterations, even if the answer is satisfactory earlier.
+                                                </span>}
+                                            >
+                                                <LucideInfo className="w-4 h-4 ml-1 inline-block"
+                                                    style={{
+                                                        position: 'relative',
+                                                        top: '-0.5px',
+                                                        left: '1px',
+                                                    }}
+                                                />
+                                            </Tooltip>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="100"
+                                            value={answerMachineMinNumberOfIterations}
+                                            onChange={(e) => {
+                                                const newMin = Math.max(1, Math.min(100, parseInt(e.target.value) || 1));
+                                                setAnswerMachineMinNumberOfIterations(newMin);
+                                                // Ensure max >= min
+                                                if (newMin > answerMachineMaxNumberOfIterations) {
+                                                    setAnswerMachineMaxNumberOfIterations(newMin);
+                                                }
+                                            }}
+                                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
+                                        />
+                                        <p className="mt-1 text-xs text-gray-500">
+                                            Minimum number of iterations (1-100). Default is 1. Must be ≤ Max Iterations.
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">
+                                            Max Iterations
+                                            <Tooltip
+                                                placement="top"
+                                                trigger={['hover', 'click']}
+                                                overlay={<span
+                                                    className="text-black bg-white rounded-md p-2 inline-block max-w-xs"
+                                                >
+                                                    Maximum number of times the Answer Machine will iterate to improve the answer. Higher values may produce better answers but take longer and use more tokens. Must be ≥ Min Iterations.
+                                                </span>}
+                                            >
+                                                <LucideInfo className="w-4 h-4 ml-1 inline-block"
+                                                    style={{
+                                                        position: 'relative',
+                                                        top: '-0.5px',
+                                                        left: '1px',
+                                                    }}
+                                                />
+                                            </Tooltip>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="100"
+                                            value={answerMachineMaxNumberOfIterations}
+                                            onChange={(e) => {
+                                                const newMax = Math.max(1, Math.min(100, parseInt(e.target.value) || 1));
+                                                setAnswerMachineMaxNumberOfIterations(newMax);
+                                                // Ensure max >= min
+                                                if (newMax < answerMachineMinNumberOfIterations) {
+                                                    setAnswerMachineMinNumberOfIterations(newMax);
+                                                }
+                                            }}
+                                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
+                                        />
+                                        <p className="mt-1 text-xs text-gray-500">
+                                            Maximum number of iterations (1-100). Default is 1. Must be ≥ Min Iterations.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* field -> isPersonalContextEnabled */}

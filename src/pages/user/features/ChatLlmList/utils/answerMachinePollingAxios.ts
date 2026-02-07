@@ -22,6 +22,12 @@ export interface AnswerMachinePollingStatus {
     subQuestions: SubQuestionDetail[];
     hasFinalAnswer: boolean;
     lastMessageIsAi: boolean;
+    // Answer Machine iteration info
+    answerMachineMinNumberOfIterations: number;
+    answerMachineMaxNumberOfIterations: number;
+    answerMachineCurrentIteration: number;
+    answerMachineStatus: 'not_started' | 'pending' | 'answered' | 'error';
+    answerMachineErrorReason: string;
 }
 
 export const pollAnswerMachineStatus = async (
