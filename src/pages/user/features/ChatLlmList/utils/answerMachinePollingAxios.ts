@@ -28,6 +28,26 @@ export interface AnswerMachinePollingStatus {
     answerMachineCurrentIteration: number;
     answerMachineStatus: 'not_started' | 'pending' | 'answered' | 'error';
     answerMachineErrorReason: string;
+    // Answer Machine token tracking
+    answerMachinePromptTokens: number;
+    answerMachineCompletionTokens: number;
+    answerMachineReasoningTokens: number;
+    answerMachineTotalTokens: number;
+    answerMachineCostInUsd: number;
+    // Query types used
+    answerMachineQueryTypes: string[];
+    // Per-query-type token breakdown
+    answerMachineQueryTypeTokens: {
+        [key: string]: {
+            promptTokens: number;
+            completionTokens: number;
+            reasoningTokens: number;
+            totalTokens: number;
+            costInUsd: number;
+            count: number;
+            maxSingleQueryTokens?: number; // Maximum tokens from a single execution
+        };
+    };
 }
 
 export const pollAnswerMachineStatus = async (

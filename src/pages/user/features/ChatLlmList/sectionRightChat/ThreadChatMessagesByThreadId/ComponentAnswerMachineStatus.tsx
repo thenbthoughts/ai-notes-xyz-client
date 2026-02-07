@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LucideLoader2, LucideCheckCircle2, LucideXCircle, LucideBrain, LucideChevronDown, LucideChevronUp, LucideHelpCircle, LucideRefreshCw } from 'lucide-react';
+import { LucideLoader2, LucideCheckCircle2, LucideXCircle, LucideBrain, LucideChevronDown, LucideChevronUp, LucideHelpCircle, LucideRefreshCw, LucideCoins } from 'lucide-react';
 import { useAnswerMachinePolling } from '../../utils/useAnswerMachinePolling';
 
 interface ComponentAnswerMachineStatusProps {
@@ -14,6 +14,7 @@ const ComponentAnswerMachineStatus = ({
     onStatusUpdate,
 }: ComponentAnswerMachineStatusProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isTokenUsageExpanded, setIsTokenUsageExpanded] = useState(true);
     
     const { 
         isProcessing, 
@@ -28,6 +29,13 @@ const ComponentAnswerMachineStatus = ({
         answerMachineMaxNumberOfIterations,
         answerMachineCurrentIteration,
         answerMachineErrorReason,
+        answerMachinePromptTokens,
+        answerMachineCompletionTokens,
+        answerMachineReasoningTokens,
+        answerMachineTotalTokens,
+        answerMachineCostInUsd,
+        answerMachineQueryTypes,
+        answerMachineQueryTypeTokens,
     } = useAnswerMachinePolling({
         threadId,
         onComplete,
@@ -168,6 +176,157 @@ const ComponentAnswerMachineStatus = ({
                     {status === 'answered' && (
                         <div className="mt-2 text-xs text-green-700">
                             Final answer has been generated and added to the conversation.
+                        </div>
+                    )}
+
+                    {/* Token Usage Display */}
+                    {(answerMachineTotalTokens > 0 || answerMachineCostInUsd > 0) && (
+                        <div className="mt-3 border-t border-blue-200 pt-3">
+                            <button
+                                onClick={() => setIsTokenUsageExpanded(!isTokenUsageExpanded)}
+                                className="w-full flex items-center justify-between text-sm font-medium text-blue-900 hover:text-blue-700 transition-colors mb-2"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <LucideCoins className="w-4 h-4 text-blue-600" />
+                                    <span>Token Usage</span>
+                                </div>
+                                {isTokenUsageExpanded ? (
+                                    <LucideChevronUp className="w-4 h-4" />
+                                ) : (
+                                    <LucideChevronDown className="w-4 h-4" />
+                                )}
+                            </button>
+                            
+                            {isTokenUsageExpanded && (
+                                <>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div className="bg-white rounded-sm p-2 border border-blue-100">
+                                    <div className="text-gray-600">Total Tokens</div>
+                                    <div className="text-lg font-semibold text-blue-700">
+                                        {answerMachineTotalTokens.toLocaleString()}
+                                    </div>
+                                </div>
+                                <div className="bg-white rounded-sm p-2 border border-blue-100">
+                                    <div className="text-gray-600">Cost</div>
+                                    <div className="text-lg font-semibold text-blue-700">
+                                        ${answerMachineCostInUsd.toFixed(6)}
+                                    </div>
+                                </div>
+                                <div className="bg-white rounded-sm p-2 border border-blue-100">
+                                    <div className="text-gray-600">Prompt</div>
+                                    <div className="text-sm font-medium text-gray-700">
+                                        {answerMachinePromptTokens.toLocaleString()}
+                                    </div>
+                                </div>
+                                <div className="bg-white rounded-sm p-2 border border-blue-100">
+                                    <div className="text-gray-600">Completion</div>
+                                    <div className="text-sm font-medium text-gray-700">
+                                        {answerMachineCompletionTokens.toLocaleString()}
+                                    </div>
+                                </div>
+                                {answerMachineReasoningTokens > 0 && (
+                                    <div className="bg-white rounded-sm p-2 border border-blue-100 col-span-2">
+                                        <div className="text-gray-600">Reasoning</div>
+                                        <div className="text-sm font-medium text-gray-700">
+                                            {answerMachineReasoningTokens.toLocaleString()}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {/* Query Types Breakdown */}
+                            {answerMachineQueryTypes && answerMachineQueryTypes.length > 0 && (
+                                <div className="mt-3 border-t border-blue-200 pt-3">
+                                    <div className="text-xs font-medium text-blue-900 mb-2">Query Types Used</div>
+                                    <div className="flex flex-wrap gap-1 mb-2">
+                                        {answerMachineQueryTypes.map((type) => {
+                                            const typeLabels: { [key: string]: string } = {
+                                                'question_generation': 'Question Gen',
+                                                'sub_question_answer': 'Sub-Answer',
+                                                'intermediate_answer': 'Intermediate',
+                                                'evaluation': 'Evaluation',
+                                                'final_answer': 'Final Answer',
+                                            };
+                                            return (
+                                                <span
+                                                    key={type}
+                                                    className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded"
+                                                >
+                                                    {typeLabels[type] || type}
+                                                </span>
+                                            );
+                                        })}
+                                    </div>
+                                    
+                                    {/* Per-Query-Type Token Breakdown */}
+                                    {answerMachineQueryTypeTokens && Object.keys(answerMachineQueryTypeTokens).length > 0 && (
+                                        <div className="mt-2 space-y-2">
+                                            <div className="text-xs font-medium text-blue-900 mb-1">Token Breakdown by Query Type</div>
+                                            {Object.entries(answerMachineQueryTypeTokens)
+                                                .sort(([, a]: [string, any], [, b]: [string, any]) => b.totalTokens - a.totalTokens) // Sort by total tokens descending
+                                                .map(([type, tokens]: [string, any]) => {
+                                                    const typeLabels: { [key: string]: string } = {
+                                                        'question_generation': 'Question Generation',
+                                                        'sub_question_answer': 'Sub-Question Answer',
+                                                        'intermediate_answer': 'Intermediate Answer',
+                                                        'evaluation': 'Evaluation',
+                                                        'final_answer': 'Final Answer',
+                                                    };
+                                                    const avgTokens = tokens.count > 0 ? Math.round(tokens.totalTokens / tokens.count) : 0;
+                                                    const maxSingleQueryTokens = tokens.maxSingleQueryTokens || tokens.totalTokens; // Max tokens from a single execution
+                                                    
+                                                    return (
+                                                        <div
+                                                            key={type}
+                                                            className="bg-white rounded-sm p-2 border border-blue-100 text-xs"
+                                                        >
+                                                            <div className="font-medium text-gray-800 mb-1">
+                                                                {typeLabels[type] || type}
+                                                                {tokens.count > 1 && (
+                                                                    <span className="text-gray-500 ml-1">({tokens.count} executions)</span>
+                                                                )}
+                                                            </div>
+                                                            <div className="grid grid-cols-2 gap-1 text-gray-600">
+                                                                <div>
+                                                                    <span className="text-gray-500">Total Tokens:</span>{' '}
+                                                                    <span className="font-medium">{tokens.totalTokens.toLocaleString()}</span>
+                                                                </div>
+                                                                <div>
+                                                                    <span className="text-gray-500">Max (Single Query):</span>{' '}
+                                                                    <span className="font-medium text-blue-600">{maxSingleQueryTokens.toLocaleString()}</span>
+                                                                </div>
+                                                                {tokens.count > 1 && (
+                                                                    <div>
+                                                                        <span className="text-gray-500">Avg per Execution:</span>{' '}
+                                                                        <span className="font-medium">{avgTokens.toLocaleString()}</span>
+                                                                    </div>
+                                                                )}
+                                                                <div>
+                                                                    <span className="text-gray-500">Cost:</span>{' '}
+                                                                    <span className="font-medium">${tokens.costInUsd.toFixed(6)}</span>
+                                                                </div>
+                                                            </div>
+                                                            {/* Additional breakdown for multiple executions */}
+                                                            {tokens.count > 1 && (
+                                                                <div className="mt-2 pt-2 border-t border-gray-200">
+                                                                    <div className="text-xs text-gray-500">
+                                                                        <span className="font-medium">Prompt:</span> {tokens.promptTokens.toLocaleString()} |{' '}
+                                                                        <span className="font-medium">Completion:</span> {tokens.completionTokens.toLocaleString()}
+                                                                        {tokens.reasoningTokens > 0 && (
+                                                                            <> | <span className="font-medium">Reasoning:</span> {tokens.reasoningTokens.toLocaleString()}</>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                                </>
+                            )}
                         </div>
                     )}
 

@@ -22,6 +22,26 @@ interface UseAnswerMachinePollingReturn {
     answerMachineCurrentIteration: number;
     answerMachineStatus: 'not_started' | 'pending' | 'answered' | 'error';
     answerMachineErrorReason: string;
+    // Answer Machine token tracking
+    answerMachinePromptTokens: number;
+    answerMachineCompletionTokens: number;
+    answerMachineReasoningTokens: number;
+    answerMachineTotalTokens: number;
+    answerMachineCostInUsd: number;
+    // Query types used
+    answerMachineQueryTypes: string[];
+    // Per-query-type token breakdown
+    answerMachineQueryTypeTokens: {
+        [key: string]: {
+            promptTokens: number;
+            completionTokens: number;
+            reasoningTokens: number;
+            totalTokens: number;
+            costInUsd: number;
+            count: number;
+            maxSingleQueryTokens?: number; // Maximum tokens from a single execution
+        };
+    };
 }
 
 const POLLING_INTERVAL = 10000; // 10 seconds
@@ -54,6 +74,13 @@ export const useAnswerMachinePolling = ({
         answerMachineCurrentIteration: 0,
         answerMachineStatus: 'not_started',
         answerMachineErrorReason: '',
+        answerMachinePromptTokens: 0,
+        answerMachineCompletionTokens: 0,
+        answerMachineReasoningTokens: 0,
+        answerMachineTotalTokens: 0,
+        answerMachineCostInUsd: 0,
+        answerMachineQueryTypes: [],
+        answerMachineQueryTypeTokens: {},
     });
     const [error, setError] = useState<Error | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -176,5 +203,12 @@ export const useAnswerMachinePolling = ({
         answerMachineCurrentIteration: status.answerMachineCurrentIteration,
         answerMachineStatus: status.answerMachineStatus,
         answerMachineErrorReason: status.answerMachineErrorReason,
+        answerMachinePromptTokens: status.answerMachinePromptTokens || 0,
+        answerMachineCompletionTokens: status.answerMachineCompletionTokens || 0,
+        answerMachineReasoningTokens: status.answerMachineReasoningTokens || 0,
+        answerMachineTotalTokens: status.answerMachineTotalTokens || 0,
+        answerMachineCostInUsd: status.answerMachineCostInUsd || 0,
+        answerMachineQueryTypes: status.answerMachineQueryTypes || [],
+        answerMachineQueryTypeTokens: status.answerMachineQueryTypeTokens || {},
     };
 };
