@@ -581,7 +581,7 @@ const ComponentMessageItem = ({
             )}
             {!isDeleted && (
                 <div
-                    className="bg-white border border-gray-300 rounded-sm px-3 py-2 shadow-md w-full md:w-auto md:inline-block md:max-w-[800px] md:min-w-[40%]"
+                    className="bg-white border border-gray-300 rounded-sm px-3 py-2 shadow-md w-full md:w-auto md:inline-block md:max-w-[1200px] md:min-w-[40%]"
                 >
                     {(
                         itemMessage.aiModelProvider === '' && itemMessage.aiModelName === ''

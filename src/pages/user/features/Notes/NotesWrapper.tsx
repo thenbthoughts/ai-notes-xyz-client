@@ -132,7 +132,7 @@ const NotesWrapper = () => {
                             }}
                         >
                             <div style={{
-                                maxWidth: '1000px',
+                                maxWidth: '1320px',
                                 margin: '0 auto',
                             }}>
                                 {/*  */}

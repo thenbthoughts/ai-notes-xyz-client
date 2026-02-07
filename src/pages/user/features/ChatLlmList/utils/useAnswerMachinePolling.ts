@@ -16,6 +16,12 @@ interface UseAnswerMachinePollingReturn {
     isLoading: boolean;
     countdown: number;
     refresh: () => void;
+    // Answer Machine iteration info
+    answerMachineMinNumberOfIterations: number;
+    answerMachineMaxNumberOfIterations: number;
+    answerMachineCurrentIteration: number;
+    answerMachineStatus: 'not_started' | 'pending' | 'answered' | 'error';
+    answerMachineErrorReason: string;
 }
 
 const POLLING_INTERVAL = 10000; // 10 seconds
@@ -43,6 +49,11 @@ export const useAnswerMachinePolling = ({
         subQuestions: [],
         hasFinalAnswer: false,
         lastMessageIsAi: false,
+        answerMachineMinNumberOfIterations: 1,
+        answerMachineMaxNumberOfIterations: 1,
+        answerMachineCurrentIteration: 0,
+        answerMachineStatus: 'not_started',
+        answerMachineErrorReason: '',
     });
     const [error, setError] = useState<Error | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -160,5 +171,10 @@ export const useAnswerMachinePolling = ({
         isLoading,
         countdown,
         refresh,
+        answerMachineMinNumberOfIterations: status.answerMachineMinNumberOfIterations,
+        answerMachineMaxNumberOfIterations: status.answerMachineMaxNumberOfIterations,
+        answerMachineCurrentIteration: status.answerMachineCurrentIteration,
+        answerMachineStatus: status.answerMachineStatus,
+        answerMachineErrorReason: status.answerMachineErrorReason,
     };
 };

@@ -119,13 +119,13 @@ const TableRow = ({ children }: { children?: ReactNode }) => (
 );
 
 const TableHeader = ({ children }: { children?: ReactNode }) => (
-  <th className="px-3 py-2 md:px-4 md:py-3 text-left font-semibold text-gray-700 text-xs md:text-sm whitespace-nowrap">
+  <th className="px-3 py-2 md:px-4 md:py-3 text-left font-semibold text-gray-700 text-xs md:text-sm">
     {children}
   </th>
 );
 
 const TableCell = ({ children }: { children?: ReactNode }) => (
-  <td className="px-3 py-2 md:px-4 md:py-3 text-gray-600 text-xs md:text-sm whitespace-nowrap">
+  <td className="px-3 py-2 md:px-4 md:py-3 text-gray-600 text-xs md:text-sm">
     {children}
   </td>
 );
