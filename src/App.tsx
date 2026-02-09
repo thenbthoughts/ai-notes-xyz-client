@@ -35,6 +35,7 @@ const SettingChangePassword = lazy(() => import("./pages/user/settings/changePas
 const SettingOllamaModels = lazy(() => import("./pages/user/settings/ollamaModelList/ollamaModelList.tsx"));
 const NotificationWrapper = lazy(() => import("./pages/user/settings/notification/NotificationWrapper.tsx"));
 const OpenaiCompatibleModel = lazy(() => import("./pages/user/settings/openaiCompatibleModel/OpenaiCompatibleModel.tsx"));
+const SettingMemory = lazy(() => import("./pages/user/settings/settingMemory/SettingMemory.tsx"));
 const SettingAiFeatures = lazy(() => import("./pages/user/settings/settingAiFeatures/SettingAiFeatures.tsx"));
 
 // pages -> ai
@@ -323,6 +324,14 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <SettingAiFeatures />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
+          path: "/user/setting/memory",
+          element: (
+            <UnauthorizedRoute>
+              <SettingMemory />
             </UnauthorizedRoute>
           ),
         },
