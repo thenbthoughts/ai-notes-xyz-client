@@ -99,7 +99,9 @@ const QuickActionsComponent = () => {
 
             // Create new task with date-time title
             const now = new Date();
-            const dateTimeStr = now.toISOString().replace('T', ' ').substring(0, 19);
+            const dateStr = now.toLocaleDateString('en-CA'); // YYYY-MM-DD format in local timezone
+            const timeStr = now.toLocaleTimeString('en-GB', { hour12: false }); // HH:MM:SS format in local timezone
+            const dateTimeStr = `${dateStr} ${timeStr}`;
             const taskTitle = `Task - ${dateTimeStr}`;
 
             const taskResult = await axiosCustom.post('/api/task/crud/taskAdd', {
@@ -156,7 +158,9 @@ const QuickActionsComponent = () => {
 
             // Create new notes with date-time title
             const now = new Date();
-            const dateTimeStr = now.toISOString().replace('T', ' ').substring(0, 19);
+            const dateStr = now.toLocaleDateString('en-CA'); // YYYY-MM-DD format in local timezone
+            const timeStr = now.toLocaleTimeString('en-GB', { hour12: false }); // HH:MM:SS format in local timezone
+            const dateTimeStr = `${dateStr} ${timeStr}`;
             const notesTitle = `Notes - ${dateTimeStr}`;
 
             const notesResult = await axiosCustom.post('/api/notes/crud/notesAdd', {
