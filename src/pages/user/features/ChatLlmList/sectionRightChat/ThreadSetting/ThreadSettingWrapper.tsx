@@ -49,7 +49,8 @@ const ThreadSettingWrapper = () => {
         _id: '',
         threadTitle: '',
         isAutoAiContextSelectEnabled: false,
-        isPersonalContextEnabled: false,
+        isPersonalContextEnabled: true,
+        isMemoryEnabled: true,
     });
 
     const [
