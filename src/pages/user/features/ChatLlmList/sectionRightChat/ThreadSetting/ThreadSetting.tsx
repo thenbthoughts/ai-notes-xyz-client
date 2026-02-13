@@ -279,6 +279,7 @@ const ThreadSetting = ({
         threadTitle: threadSetting.threadTitle,
         isAutoAiContextSelectEnabled: threadSetting.isAutoAiContextSelectEnabled,
         isPersonalContextEnabled: threadSetting.isPersonalContextEnabled,
+        isMemoryEnabled: threadSetting.isMemoryEnabled,
         systemPrompt: threadSetting.systemPrompt,
 
         answerEngine: threadSetting.answerEngine,
@@ -326,6 +327,9 @@ const ThreadSetting = ({
                     aiModelProvider: aiModelProvider,
                     aiModelName: aiModelName,
                     aiModelOpenAiCompatibleConfigId: aiModelOpenAiCompatibleConfigId,
+
+                    // memory settings
+                    isMemoryEnabled: formData.isMemoryEnabled,
 
                     // answer engine
                     answerEngine: formData?.answerEngine || 'conciseAnswer',
@@ -695,7 +699,13 @@ const ThreadSetting = ({
                             <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Personal Context</label>
                             <div
                                 onClick={() => {
-                                    setFormData({ ...formData, isPersonalContextEnabled: !formData.isPersonalContextEnabled });
+                                    const newIsPersonalContextEnabled = !formData.isPersonalContextEnabled;
+                                    setFormData({
+                                        ...formData,
+                                        isPersonalContextEnabled: newIsPersonalContextEnabled,
+                                        // Disable memory when personal context is disabled
+                                        isMemoryEnabled: newIsPersonalContextEnabled ? formData.isMemoryEnabled : false
+                                    });
                                 }}
                             >
                                 <input
@@ -723,6 +733,26 @@ const ThreadSetting = ({
                                     />
                                     <span className="text-sm text-gray-700 cursor-pointer">Auto AI Context Enable</span>
                                 </div>
+                            </div>
+                        )}
+
+                        {/* field -> isMemoryEnabled */}
+                        {formData.isPersonalContextEnabled && (
+                            <div className="mb-2 lg:mb-3">
+                                <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">Memory</label>
+                                <div
+                                    onClick={() => {
+                                        setFormData({ ...formData, isMemoryEnabled: !formData.isMemoryEnabled });
+                                    }}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        className="mt-1 rounded-sm p-1 lg:p-2 mr-2"
+                                        checked={formData.isMemoryEnabled}
+                                    />
+                                    <span className="text-sm text-gray-700 cursor-pointer">Memory Enable</span>
+                                </div>
+                                <p className="mt-1 text-xs text-gray-500">When enabled, AI will use your stored memories to provide more personalized responses.</p>
                             </div>
                         )}
 

@@ -410,8 +410,9 @@ const ComponentThreadAdd = () => {
     const navigate = useNavigate();
     const setJotaiChatThreadRefreshRandomNum = useSetAtom(jotaiChatThreadRefreshRandomNum);
     const [formData, setFormData] = useState({
-        isPersonalContextEnabled: false,
+        isPersonalContextEnabled: true,
         isAutoAiContextSelectEnabled: false,
+        isMemoryEnabled: true,
 
         // answer type
         answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine',
@@ -436,6 +437,7 @@ const ComponentThreadAdd = () => {
                 {
                     isPersonalContextEnabled: formData.isPersonalContextEnabled,
                     isAutoAiContextSelectEnabled: formData.isAutoAiContextSelectEnabled,
+                    isMemoryEnabled: formData.isMemoryEnabled,
 
                     // answer engine
                     answerEngine: formData.answerEngine,
@@ -796,7 +798,13 @@ const ComponentThreadAdd = () => {
                         <div className="flex-1">
                             <div
                                 onClick={() => {
-                                    setFormData({ ...formData, isPersonalContextEnabled: !formData.isPersonalContextEnabled });
+                                    const newIsPersonalContextEnabled = !formData.isPersonalContextEnabled;
+                                    setFormData({
+                                        ...formData,
+                                        isPersonalContextEnabled: newIsPersonalContextEnabled,
+                                        // Disable memory when personal context is disabled
+                                        isMemoryEnabled: newIsPersonalContextEnabled ? formData.isMemoryEnabled : false
+                                    });
                                 }}
                             >
                                 <input
@@ -822,6 +830,24 @@ const ComponentThreadAdd = () => {
                                         checked={formData.isAutoAiContextSelectEnabled}
                                     />
                                     <span className="text-sm text-gray-700 cursor-pointer">Auto AI Context Enable</span>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* field -> isMemoryEnabled */}
+                        {formData.isPersonalContextEnabled && (
+                            <div className="flex-1">
+                                <div
+                                    onClick={() => {
+                                        setFormData({ ...formData, isMemoryEnabled: !formData.isMemoryEnabled });
+                                    }}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        className="rounded-sm mr-2"
+                                        checked={formData.isMemoryEnabled}
+                                    />
+                                    <span className="text-sm text-gray-700 cursor-pointer">Memory Enable</span>
                                 </div>
                             </div>
                         )}
