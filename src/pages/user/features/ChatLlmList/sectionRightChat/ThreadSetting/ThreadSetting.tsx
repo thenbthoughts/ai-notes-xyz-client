@@ -299,14 +299,25 @@ const ThreadSetting = ({
     const [temperature, setTemperature] = useState<number>(threadSetting.chatLlmTemperature || 1);
     const [maxTokens, setMaxTokens] = useState<number>(threadSetting.chatLlmMaxTokens || 4096);
     const [chatMemoryLimit, setChatMemoryLimit] = useState<number>(threadSetting.chatMemoryLimit || 0);
-    const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(
-        threadSetting.answerMachineMinNumberOfIterations || 1
-    );
-    const [answerMachineMaxNumberOfIterations, setAnswerMachineMaxNumberOfIterations] = useState<number>(
-        threadSetting.answerMachineMaxNumberOfIterations || 1
-    );
+    // Ensure loaded values satisfy the constraint: min <= max
+    const loadedMin = threadSetting.answerMachineMinNumberOfIterations || 1;
+    const loadedMax = threadSetting.answerMachineMaxNumberOfIterations || 1;
+    const validatedMin = Math.min(loadedMin, loadedMax); // If min > max, use the smaller value for min
+    const validatedMax = Math.max(loadedMin, loadedMax); // If min > max, use the larger value for max
+
+    const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(validatedMin);
+    const [answerMachineMaxNumberOfIterations, setAnswerMachineMaxNumberOfIterations] = useState<number>(validatedMax);
+
+    // Input display states (strings) to allow empty inputs
+    const [minIterationsInput, setMinIterationsInput] = useState<string>(validatedMin.toString());
+    const [maxIterationsInput, setMaxIterationsInput] = useState<string>(validatedMax.toString());
 
     const editRecord = async () => {
+        if (answerMachineMinNumberOfIterations > answerMachineMaxNumberOfIterations) {
+            toast.error('Minimum iterations cannot be greater than maximum iterations');
+            return;
+        }
+
         setRequestEdit({
             loading: true,
             success: '',
@@ -632,16 +643,25 @@ const ThreadSetting = ({
                                             </Tooltip>
                                         </label>
                                         <input
-                                            type="number"
-                                            min="1"
-                                            max="100"
-                                            value={answerMachineMinNumberOfIterations}
+                                            value={minIterationsInput}
                                             onChange={(e) => {
-                                                const newMin = Math.max(1, Math.min(100, parseInt(e.target.value) || 1));
-                                                setAnswerMachineMinNumberOfIterations(newMin);
-                                                // Ensure max >= min
-                                                if (newMin > answerMachineMaxNumberOfIterations) {
-                                                    setAnswerMachineMaxNumberOfIterations(newMin);
+                                                const inputValue = e.target.value;
+                                                setMinIterationsInput(inputValue);
+
+                                                // Only update the numeric state if input is not empty
+                                                if (inputValue !== '') {
+                                                    const parsedValue = parseInt(inputValue);
+                                                    if (!isNaN(parsedValue)) {
+                                                        const newMin = Math.max(1, Math.min(100, parsedValue));
+                                                        setAnswerMachineMinNumberOfIterations(newMin);
+                                                    }
+                                                }
+                                            }}
+                                            onBlur={() => {
+                                                // When input loses focus, ensure it has a valid value
+                                                if (minIterationsInput === '') {
+                                                    setMinIterationsInput('1');
+                                                    setAnswerMachineMinNumberOfIterations(1);
                                                 }
                                             }}
                                             className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
@@ -672,16 +692,25 @@ const ThreadSetting = ({
                                             </Tooltip>
                                         </label>
                                         <input
-                                            type="number"
-                                            min="1"
-                                            max="100"
-                                            value={answerMachineMaxNumberOfIterations}
+                                            value={maxIterationsInput}
                                             onChange={(e) => {
-                                                const newMax = Math.max(1, Math.min(100, parseInt(e.target.value) || 1));
-                                                setAnswerMachineMaxNumberOfIterations(newMax);
-                                                // Ensure max >= min
-                                                if (newMax < answerMachineMinNumberOfIterations) {
-                                                    setAnswerMachineMinNumberOfIterations(newMax);
+                                                const inputValue = e.target.value;
+                                                setMaxIterationsInput(inputValue);
+
+                                                // Only update the numeric state if input is not empty
+                                                if (inputValue !== '') {
+                                                    const parsedValue = parseInt(inputValue);
+                                                    if (!isNaN(parsedValue)) {
+                                                        const newMax = Math.max(1, Math.min(100, parsedValue));
+                                                        setAnswerMachineMaxNumberOfIterations(newMax);
+                                                    }
+                                                }
+                                            }}
+                                            onBlur={() => {
+                                                // When input loses focus, ensure it has a valid value
+                                                if (maxIterationsInput === '') {
+                                                    setMaxIterationsInput('1');
+                                                    setAnswerMachineMaxNumberOfIterations(1);
                                                 }
                                             }}
                                             className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"

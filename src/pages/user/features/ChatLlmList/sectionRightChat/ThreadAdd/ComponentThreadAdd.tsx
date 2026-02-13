@@ -417,9 +417,13 @@ const ComponentThreadAdd = () => {
         // answer type
         answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine',
     });
-    
+
     const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(1);
     const [answerMachineMaxNumberOfIterations, setAnswerMachineMaxNumberOfIterations] = useState<number>(1);
+
+    // Input display states (strings) to allow empty inputs
+    const [minIterationsInput, setMinIterationsInput] = useState<string>('1');
+    const [maxIterationsInput, setMaxIterationsInput] = useState<string>('1');
 
     const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq" | "ollama" | "openai-compatible");
     const [aiModelName, setAiModelName] = useState("openrouter/auto");
@@ -430,6 +434,11 @@ const ComponentThreadAdd = () => {
     const [isAddThreadLoading, setIsAddThreadLoading] = useState(false);
 
     const addNewThread = async () => {
+        if (answerMachineMinNumberOfIterations > answerMachineMaxNumberOfIterations) {
+            toast.error('Minimum iterations cannot be greater than maximum iterations');
+            return;
+        }
+
         setIsAddThreadLoading(true);
         try {
             const result = await axiosCustom.post(
@@ -703,7 +712,7 @@ const ComponentThreadAdd = () => {
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Answer Machine Iterations Setting */}
                     {formData.answerEngine === "answerMachine" && (
                         <div className="mt-3 space-y-3">
@@ -729,16 +738,25 @@ const ComponentThreadAdd = () => {
                                     </Tooltip>
                                 </label>
                                 <input
-                                    type="number"
-                                    min="1"
-                                    max="100"
-                                    value={answerMachineMinNumberOfIterations}
+                                    value={minIterationsInput}
                                     onChange={(e) => {
-                                        const newMin = Math.max(1, Math.min(100, parseInt(e.target.value) || 1));
-                                        setAnswerMachineMinNumberOfIterations(newMin);
-                                        // Ensure max >= min
-                                        if (newMin > answerMachineMaxNumberOfIterations) {
-                                            setAnswerMachineMaxNumberOfIterations(newMin);
+                                        const inputValue = e.target.value;
+                                        setMinIterationsInput(inputValue);
+
+                                        // Only update the numeric state if input is not empty
+                                        if (inputValue !== '') {
+                                            const parsedValue = parseInt(inputValue);
+                                            if (!isNaN(parsedValue)) {
+                                                const newMin = Math.max(1, Math.min(100, parsedValue));
+                                                setAnswerMachineMinNumberOfIterations(newMin);
+                                            }
+                                        }
+                                    }}
+                                    onBlur={() => {
+                                        // When input loses focus, ensure it has a valid value
+                                        if (minIterationsInput === '') {
+                                            setMinIterationsInput('1');
+                                            setAnswerMachineMinNumberOfIterations(1);
                                         }
                                     }}
                                     className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
@@ -769,16 +787,25 @@ const ComponentThreadAdd = () => {
                                     </Tooltip>
                                 </label>
                                 <input
-                                    type="number"
-                                    min="1"
-                                    max="100"
-                                    value={answerMachineMaxNumberOfIterations}
+                                    value={maxIterationsInput}
                                     onChange={(e) => {
-                                        const newMax = Math.max(1, Math.min(100, parseInt(e.target.value) || 1));
-                                        setAnswerMachineMaxNumberOfIterations(newMax);
-                                        // Ensure max >= min
-                                        if (newMax < answerMachineMinNumberOfIterations) {
-                                            setAnswerMachineMinNumberOfIterations(newMax);
+                                        const inputValue = e.target.value;
+                                        setMaxIterationsInput(inputValue);
+
+                                        // Only update the numeric state if input is not empty
+                                        if (inputValue !== '') {
+                                            const parsedValue = parseInt(inputValue);
+                                            if (!isNaN(parsedValue)) {
+                                                const newMax = Math.max(1, Math.min(100, parsedValue));
+                                                setAnswerMachineMaxNumberOfIterations(newMax);
+                                            }
+                                        }
+                                    }}
+                                    onBlur={() => {
+                                        // When input loses focus, ensure it has a valid value
+                                        if (maxIterationsInput === '') {
+                                            setMaxIterationsInput('1');
+                                            setAnswerMachineMaxNumberOfIterations(1);
                                         }
                                     }}
                                     className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-1 lg:p-2"
