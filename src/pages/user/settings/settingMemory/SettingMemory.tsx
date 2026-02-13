@@ -1,6 +1,7 @@
 import SettingHeader from "../SettingHeader";
 import { LucideBrain } from 'lucide-react';
 import ComponentMemoryList from './sectionRight/ComponentMemoryList';
+import ComponentMemorySettings from './sectionRight/ComponentMemorySettings';
 
 const SettingMemory = () => {
 
@@ -30,6 +31,8 @@ const SettingMemory = () => {
                 <SettingHeader />
 
                 {renderHeader()}
+
+                <ComponentMemorySettings />
 
                 <ComponentMemoryList />
             </div>
