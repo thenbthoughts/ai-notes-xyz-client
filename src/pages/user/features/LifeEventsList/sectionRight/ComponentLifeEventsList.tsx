@@ -9,6 +9,7 @@ import ComponentLifeEventItem from './ComponentLifeEventItem.tsx';
 import { jotaiStateLifeEventSearch, jotaiStateLifeEventCategory, jotaiStateLifeEventCategorySub, jotaiStateLifeEventIsStar, jotaiStateLifeEventImpact, jotaiStateLifeEventDateRange,
     jotaiStateLifeEventAiCategory,
     jotaiStateLifeEventAiCategorySub,
+    jotaiStateLifeEventHideDailyDiary,
 } from '../stateJotai/lifeEventStateJotai.ts';
 import ReactPaginate from 'react-paginate';
 import { PlusCircle } from 'lucide-react';
@@ -33,6 +34,7 @@ const ComponentLifeEventsList = () => {
     const isStar = useAtomValue(jotaiStateLifeEventIsStar);
     const eventImpact = useAtomValue(jotaiStateLifeEventImpact);
     const dateRange = useAtomValue(jotaiStateLifeEventDateRange);
+    const hideDailyDiary = useAtomValue(jotaiStateLifeEventHideDailyDiary);
 
     const [
         refreshRandomNum,
@@ -72,6 +74,7 @@ const ComponentLifeEventsList = () => {
         isStar,
         eventImpact,
         dateRange,
+        hideDailyDiary,
     ])
 
     const fetchList = async ({
@@ -104,6 +107,7 @@ const ComponentLifeEventsList = () => {
                     categorySubId: categorySubId,
                     isStar: isStar,
                     eventImpact: eventImpact,
+                    hideDailyDiary: hideDailyDiary,
 
                     startDate,
                     endDate,

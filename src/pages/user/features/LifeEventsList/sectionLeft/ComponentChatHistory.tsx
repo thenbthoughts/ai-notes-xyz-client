@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { lifeEventAddAxios } from '../utils/lifeEventsListAxios.ts';
 
-import { jotaiStateLifeEventSearch, jotaiStateLifeEventCategory, jotaiStateLifeEventCategorySub, jotaiStateLifeEventIsStar, jotaiStateLifeEventImpact, jotaiStateLifeEventDateRange } from '../stateJotai/lifeEventStateJotai.ts';
+import { jotaiStateLifeEventSearch, jotaiStateLifeEventCategory, jotaiStateLifeEventCategorySub, jotaiStateLifeEventIsStar, jotaiStateLifeEventImpact, jotaiStateLifeEventDateRange, jotaiStateLifeEventHideDailyDiary } from '../stateJotai/lifeEventStateJotai.ts';
 import { useAtom, useSetAtom } from 'jotai';
 import ComponentFilterCategory from './ComponentFilterCategory.tsx';
 import ComponentFilterCategorySub from './ComponentFilterCategorySub.tsx';
@@ -19,6 +19,7 @@ const ComponentChatHistory = () => {
     const [isStar, setIsStar] = useAtom(jotaiStateLifeEventIsStar);
     const [impact, setImpact] = useAtom(jotaiStateLifeEventImpact);
     const [dateRange, setDateRange] = useAtom(jotaiStateLifeEventDateRange); // Added date range state
+    const [hideDailyDiary, setHideDailyDiary] = useAtom(jotaiStateLifeEventHideDailyDiary);
 
     // Fetch chat threads from API
 
@@ -40,6 +41,7 @@ const ComponentChatHistory = () => {
         setIsStar('');
         setImpact('');
         setDateRange({ startDate: null, endDate: null });
+        setHideDailyDiary(true);
     };
 
     const setDateRangeToPreset = (preset: string) => {
@@ -273,6 +275,19 @@ const ComponentChatHistory = () => {
                         Huge
                     </label>
                 </div>
+            </div>
+
+            {/* hide daily diary */}
+            <div className="mb-4">
+                <label className="flex items-center">
+                    <input
+                        type="checkbox"
+                        checked={hideDailyDiary}
+                        onChange={(e) => setHideDailyDiary(e.target.checked)}
+                        className="form-checkbox h-4 w-4 text-indigo-600"
+                    />
+                    <span className="ml-2 font-medium">Hide Daily Diary</span>
+                </label>
             </div>
 
         </div>

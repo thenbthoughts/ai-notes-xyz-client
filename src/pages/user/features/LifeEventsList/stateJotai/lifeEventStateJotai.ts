@@ -24,3 +24,6 @@ export const jotaiStateLifeEventIsStar = atom<'' | 'true' | 'false'>('');
 export const jotaiStateLifeEventImpact = atom<
   'very-low' | 'low' | 'medium' | 'large' | 'huge' | ''
 >('');
+
+// Hide Daily Diary Checkbox
+export const jotaiStateLifeEventHideDailyDiary = atom<boolean>(true);
