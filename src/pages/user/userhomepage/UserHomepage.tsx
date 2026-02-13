@@ -230,7 +230,15 @@ const UserHomepage = () => {
                                         {dashboardStats.taskCompletedCount > 0 && dashboardStats.totalCount > 0 && (
                                             <Fragment>
 
-                                                <div>{dashboardStats.taskCompletedCount} / {dashboardStats.totalCount}</div>
+                                                <div>
+                                                    {dashboardStats.taskCompletedCount} / {dashboardStats.totalCount}
+                                                    {Math.round((dashboardStats.taskCompletedCount / dashboardStats.totalCount) * 100) >= 1 && (
+                                                        <span className='text-green-600 font-bold'>
+                                                            {' '}
+                                                            ({Math.round((dashboardStats.taskCompletedCount / dashboardStats.totalCount) * 100)}%)
+                                                        </span>
+                                                    )}
+                                                </div>
 
                                                 {/* cool up progress bar */}
                                                 <div
