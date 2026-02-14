@@ -418,12 +418,12 @@ const ComponentThreadAdd = () => {
         answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine',
     });
 
-    const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(1);
-    const [answerMachineMaxNumberOfIterations, setAnswerMachineMaxNumberOfIterations] = useState<number>(1);
+    const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(3);
+    const [answerMachineMaxNumberOfIterations, setAnswerMachineMaxNumberOfIterations] = useState<number>(7);
 
     // Input display states (strings) to allow empty inputs
-    const [minIterationsInput, setMinIterationsInput] = useState<string>('1');
-    const [maxIterationsInput, setMaxIterationsInput] = useState<string>('1');
+    const [minIterationsInput, setMinIterationsInput] = useState<string>('3');
+    const [maxIterationsInput, setMaxIterationsInput] = useState<string>('7');
 
     const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq" | "ollama" | "openai-compatible");
     const [aiModelName, setAiModelName] = useState("openrouter/auto");
