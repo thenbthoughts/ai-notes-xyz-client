@@ -48,6 +48,43 @@ export interface AnswerMachinePollingStatus {
             maxSingleQueryTokens?: number; // Maximum tokens from a single execution
         };
     };
+    // All answer machine runs
+    answerMachineRuns: AnswerMachineRun[];
+}
+
+export interface AnswerMachineRun {
+    id: string;
+    createdAtUtc: string;
+    status: 'pending' | 'answered' | 'error' | 'not_started';
+    errorReason: string;
+    currentIteration: number;
+    intermediateAnswers: string[];
+    finalAnswer: string;
+    subQuestionsStatus: {
+        pending: number;
+        answered: number;
+        error: number;
+        skipped: number;
+        total: number;
+    };
+    subQuestions: SubQuestionDetail[];
+    totalPromptTokens: number;
+    totalCompletionTokens: number;
+    totalReasoningTokens: number;
+    totalTokens: number;
+    costInUsd: number;
+    queryTypes: string[];
+    queryTypeTokens: {
+        [key: string]: {
+            promptTokens: number;
+            completionTokens: number;
+            reasoningTokens: number;
+            totalTokens: number;
+            costInUsd: number;
+            count: number;
+            maxSingleQueryTokens?: number;
+        };
+    };
 }
 
 export const pollAnswerMachineStatus = async (

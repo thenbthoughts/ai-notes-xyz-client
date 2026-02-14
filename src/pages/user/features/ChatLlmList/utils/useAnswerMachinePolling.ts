@@ -42,6 +42,43 @@ interface UseAnswerMachinePollingReturn {
             maxSingleQueryTokens?: number; // Maximum tokens from a single execution
         };
     };
+    // All answer machine runs
+    answerMachineRuns: AnswerMachineRun[];
+}
+
+interface AnswerMachineRun {
+    id: string;
+    createdAtUtc: string;
+    status: 'pending' | 'answered' | 'error' | 'not_started';
+    errorReason: string;
+    currentIteration: number;
+    intermediateAnswers: string[];
+    finalAnswer: string;
+    subQuestionsStatus: {
+        pending: number;
+        answered: number;
+        error: number;
+        skipped: number;
+        total: number;
+    };
+    subQuestions: SubQuestionDetail[];
+    totalPromptTokens: number;
+    totalCompletionTokens: number;
+    totalReasoningTokens: number;
+    totalTokens: number;
+    costInUsd: number;
+    queryTypes: string[];
+    queryTypeTokens: {
+        [key: string]: {
+            promptTokens: number;
+            completionTokens: number;
+            reasoningTokens: number;
+            totalTokens: number;
+            costInUsd: number;
+            count: number;
+            maxSingleQueryTokens?: number;
+        };
+    };
 }
 
 const POLLING_INTERVAL = 10000; // 10 seconds
@@ -81,6 +118,7 @@ export const useAnswerMachinePolling = ({
         answerMachineCostInUsd: 0,
         answerMachineQueryTypes: [],
         answerMachineQueryTypeTokens: {},
+        answerMachineRuns: [],
     });
     const [error, setError] = useState<Error | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -210,5 +248,6 @@ export const useAnswerMachinePolling = ({
         answerMachineCostInUsd: status.answerMachineCostInUsd || 0,
         answerMachineQueryTypes: status.answerMachineQueryTypes || [],
         answerMachineQueryTypeTokens: status.answerMachineQueryTypeTokens || {},
+        answerMachineRuns: status.answerMachineRuns || [],
     };
 };

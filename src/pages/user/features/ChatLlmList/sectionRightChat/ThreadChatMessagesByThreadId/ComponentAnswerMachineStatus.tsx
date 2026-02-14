@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LucideLoader2, LucideCheckCircle2, LucideXCircle, LucideBrain, LucideChevronDown, LucideChevronUp, LucideHelpCircle, LucideRefreshCw, LucideCoins } from 'lucide-react';
+import { LucideLoader2, LucideCheckCircle2, LucideXCircle, LucideBrain, LucideChevronDown, LucideChevronUp, LucideHelpCircle, LucideRefreshCw, LucideCoins, LucideHistory } from 'lucide-react';
 import { useAnswerMachinePolling } from '../../utils/useAnswerMachinePolling';
 
 interface ComponentAnswerMachineStatusProps {
@@ -8,6 +8,7 @@ interface ComponentAnswerMachineStatusProps {
     onStatusUpdate?: () => void;
 }
 
+
 const ComponentAnswerMachineStatus = ({
     threadId,
     onComplete,
@@ -15,15 +16,17 @@ const ComponentAnswerMachineStatus = ({
 }: ComponentAnswerMachineStatusProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isTokenUsageExpanded, setIsTokenUsageExpanded] = useState(true);
+    const [isPastRunsExpanded, setIsPastRunsExpanded] = useState(false);
+    const [expandedRuns, setExpandedRuns] = useState<Set<string>>(new Set());
     
-    const { 
-        isProcessing, 
-        status, 
-        subQuestionsStatus, 
-        subQuestions, 
-        error, 
-        isLoading, 
-        countdown, 
+    const {
+        isProcessing,
+        status,
+        subQuestionsStatus,
+        subQuestions,
+        error,
+        isLoading,
+        countdown,
         refresh,
         answerMachineMinNumberOfIterations,
         answerMachineMaxNumberOfIterations,
@@ -36,15 +39,16 @@ const ComponentAnswerMachineStatus = ({
         answerMachineCostInUsd,
         answerMachineQueryTypes,
         answerMachineQueryTypeTokens,
+        answerMachineRuns,
     } = useAnswerMachinePolling({
         threadId,
         onComplete,
         onStatusUpdate,
     });
 
-    // Always show when Answer Machine is selected (parent component handles this)
-    // Hide only when explicitly completed and not processing
-    if (status === 'answered' && !isProcessing && subQuestionsStatus.total === 0) {
+
+    // Show when processing or when completed with results to display
+    if (!isProcessing && status !== 'answered' && answerMachineRuns.length === 0) {
         return null;
     }
 
@@ -326,6 +330,179 @@ const ComponentAnswerMachineStatus = ({
                                 </div>
                             )}
                                 </>
+                            )}
+                        </div>
+                    )}
+
+                    {/* All Answer Machine Runs Section */}
+                    {answerMachineRuns.length > 0 && (
+                        <div className="mt-3 border-t border-blue-200 pt-3">
+                            <button
+                                onClick={() => setIsPastRunsExpanded(!isPastRunsExpanded)}
+                                className="w-full flex items-center justify-between text-sm font-medium text-blue-900 hover:text-blue-700 transition-colors mb-2"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <LucideHistory className="w-4 h-4 text-blue-600" />
+                                    <span>All Runs ({answerMachineRuns.length})</span>
+                                </div>
+                                {isPastRunsExpanded ? (
+                                    <LucideChevronUp className="w-4 h-4" />
+                                ) : (
+                                    <LucideChevronDown className="w-4 h-4" />
+                                )}
+                            </button>
+                            {isPastRunsExpanded && (
+                                <div className="space-y-2">
+                                    {answerMachineRuns.map((run, index) => {
+                                        const isExpanded = expandedRuns.has(run.id);
+                                        const isCurrentRun = index === 0 && isProcessing;
+
+                                        return (
+                                            <div
+                                                key={run.id}
+                                                className="bg-white rounded-sm p-3 border border-blue-100 text-xs"
+                                            >
+                                                <button
+                                                    onClick={() => {
+                                                        const newExpanded = new Set(expandedRuns);
+                                                        if (isExpanded) {
+                                                            newExpanded.delete(run.id);
+                                                        } else {
+                                                            newExpanded.add(run.id);
+                                                        }
+                                                        setExpandedRuns(newExpanded);
+                                                    }}
+                                                    className="w-full flex items-center justify-between mb-2 hover:bg-blue-50 rounded px-1 py-1 -mx-1 -my-1 transition-colors"
+                                                >
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                                            {isCurrentRun ? 'Current Run' : `Run ${answerMachineRuns.length - index}`}
+                                                        </span>
+                                                        <span className={`text-xs font-medium px-2 py-1 rounded ${
+                                                            run.status === 'answered' ? 'bg-green-100 text-green-700' :
+                                                            run.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                            run.status === 'error' ? 'bg-red-100 text-red-700' :
+                                                            'bg-gray-100 text-gray-700'
+                                                        }`}>
+                                                            {run.status}
+                                                        </span>
+                                                        {isCurrentRun && (
+                                                            <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded animate-pulse">
+                                                                Processing
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="text-gray-500">
+                                                            {new Date(run.createdAtUtc).toLocaleDateString()}
+                                                        </div>
+                                                        {isExpanded ? (
+                                                            <LucideChevronUp className="w-4 h-4" />
+                                                        ) : (
+                                                            <LucideChevronDown className="w-4 h-4" />
+                                                        )}
+                                                    </div>
+                                                </button>
+
+                                                {isExpanded && (
+                                                    <div className="mt-3 space-y-3">
+                                                        {/* Run Summary */}
+                                                        <div className="grid grid-cols-2 gap-2 text-gray-600">
+                                                            <div>
+                                                                <span className="text-gray-500">Questions:</span> {run.subQuestionsStatus.total}
+                                                            </div>
+                                                            <div>
+                                                                <span className="text-gray-500">Iterations:</span> {run.currentIteration}
+                                                            </div>
+                                                            <div>
+                                                                <span className="text-gray-500">Tokens:</span> {run.totalTokens.toLocaleString()}
+                                                            </div>
+                                                            <div>
+                                                                <span className="text-gray-500">Cost:</span> ${run.costInUsd.toFixed(6)}
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Final Answer */}
+                                                        {run.finalAnswer && (
+                                                            <div>
+                                                                <div className="text-xs font-medium text-gray-700 mb-1">Final Answer:</div>
+                                                                <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded max-h-20 overflow-y-auto">
+                                                                    {run.finalAnswer}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Intermediate Answers */}
+                                                        {run.intermediateAnswers.length > 0 && (
+                                                            <div>
+                                                                <div className="text-xs font-medium text-gray-700 mb-1">Intermediate Answers ({run.intermediateAnswers.length}):</div>
+                                                                <div className="space-y-1 max-h-32 overflow-y-auto">
+                                                                    {run.intermediateAnswers.map((answer, idx) => (
+                                                                        <div key={idx} className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                                                                            <span className="font-medium">Iteration {idx + 1}:</span> {answer}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Sub-questions */}
+                                                        {run.subQuestions.length > 0 && (
+                                                            <div>
+                                                                <div className="text-xs font-medium text-gray-700 mb-1">Sub-questions ({run.subQuestions.length}):</div>
+                                                                <div className="space-y-1 max-h-40 overflow-y-auto">
+                                                                    {run.subQuestions.map((sq) => (
+                                                                        <div key={sq.id} className="text-xs bg-gray-50 p-3 rounded border">
+                                                                            <div className="flex items-center gap-2 mb-2">
+                                                                                <span className={`text-xs font-medium px-2 py-1 rounded ${
+                                                                                    sq.status === 'answered' ? 'bg-green-100 text-green-700' :
+                                                                                    sq.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                                                    sq.status === 'error' ? 'bg-red-100 text-red-700' :
+                                                                                    'bg-gray-100 text-gray-700'
+                                                                                }`}>
+                                                                                    {sq.status}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div className="mb-2">
+                                                                                <div className="font-medium text-blue-800 mb-1">Question:</div>
+                                                                                <div className="text-gray-800 bg-white p-2 rounded border">{sq.question}</div>
+                                                                            </div>
+                                                                            {sq.answer && (
+                                                                                <div className="mb-2">
+                                                                                    <div className="font-medium text-green-800 mb-1">Answer:</div>
+                                                                                    <div className="text-gray-700 bg-white p-2 rounded border">{sq.answer}</div>
+                                                                                </div>
+                                                                            )}
+                                                                            {sq.errorReason && (
+                                                                                <div className="text-red-600 bg-red-50 p-2 rounded border">
+                                                                                    <span className="font-medium">Error:</span> {sq.errorReason}
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Query Types */}
+                                                        {run.queryTypes.length > 0 && (
+                                                            <div>
+                                                                <div className="text-xs font-medium text-gray-700 mb-1">Query Types:</div>
+                                                                <div className="flex flex-wrap gap-1">
+                                                                    {run.queryTypes.map((type) => (
+                                                                        <span key={type} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                                                                            {type.replace('_', ' ')}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             )}
                         </div>
                     )}
