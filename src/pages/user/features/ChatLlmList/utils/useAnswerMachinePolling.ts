@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { pollAnswerMachineStatus, AnswerMachinePollingStatus, SubQuestionDetail } from './answerMachinePollingAxios';
+import { pollAnswerMachineStatus, AnswerMachinePollingStatus, SubQuestionDetail, AnswerMachineJobDetail } from './answerMachinePollingAxios';
 
 interface UseAnswerMachinePollingReturn {
     isProcessing: boolean;
@@ -19,9 +19,6 @@ interface UseAnswerMachinePollingReturn {
     // Answer Machine iteration info
     answerMachineMinNumberOfIterations: number;
     answerMachineMaxNumberOfIterations: number;
-    answerMachineCurrentIteration: number;
-    answerMachineStatus: 'not_started' | 'pending' | 'answered' | 'error';
-    answerMachineErrorReason: string;
     // Answer Machine token tracking
     answerMachinePromptTokens: number;
     answerMachineCompletionTokens: number;
@@ -42,6 +39,7 @@ interface UseAnswerMachinePollingReturn {
             maxSingleQueryTokens?: number; // Maximum tokens from a single execution
         };
     };
+    answerMachineJobs: AnswerMachineJobDetail[];
 }
 
 const POLLING_INTERVAL = 10000; // 10 seconds
@@ -71,9 +69,6 @@ export const useAnswerMachinePolling = ({
         lastMessageIsAi: false,
         answerMachineMinNumberOfIterations: 1,
         answerMachineMaxNumberOfIterations: 1,
-        answerMachineCurrentIteration: 0,
-        answerMachineStatus: 'not_started',
-        answerMachineErrorReason: '',
         answerMachinePromptTokens: 0,
         answerMachineCompletionTokens: 0,
         answerMachineReasoningTokens: 0,
@@ -81,6 +76,7 @@ export const useAnswerMachinePolling = ({
         answerMachineCostInUsd: 0,
         answerMachineQueryTypes: [],
         answerMachineQueryTypeTokens: {},
+        answerMachineJobs: [],
     });
     const [error, setError] = useState<Error | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -139,6 +135,17 @@ export const useAnswerMachinePolling = ({
 
     const refresh = async () => {
         await poll();
+        // Restart countdown timer if it's not already running
+        if (!countdownRef.current) {
+            countdownRef.current = setInterval(() => {
+                setCountdown((prev) => {
+                    if (prev <= 1) {
+                        return POLLING_INTERVAL / 1000;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        }
         setCountdown(POLLING_INTERVAL / 1000);
     };
 
@@ -200,9 +207,6 @@ export const useAnswerMachinePolling = ({
         refresh,
         answerMachineMinNumberOfIterations: status.answerMachineMinNumberOfIterations,
         answerMachineMaxNumberOfIterations: status.answerMachineMaxNumberOfIterations,
-        answerMachineCurrentIteration: status.answerMachineCurrentIteration,
-        answerMachineStatus: status.answerMachineStatus,
-        answerMachineErrorReason: status.answerMachineErrorReason,
         answerMachinePromptTokens: status.answerMachinePromptTokens || 0,
         answerMachineCompletionTokens: status.answerMachineCompletionTokens || 0,
         answerMachineReasoningTokens: status.answerMachineReasoningTokens || 0,
@@ -210,5 +214,6 @@ export const useAnswerMachinePolling = ({
         answerMachineCostInUsd: status.answerMachineCostInUsd || 0,
         answerMachineQueryTypes: status.answerMachineQueryTypes || [],
         answerMachineQueryTypeTokens: status.answerMachineQueryTypeTokens || {},
+        answerMachineJobs: status.answerMachineJobs || [],
     };
 };

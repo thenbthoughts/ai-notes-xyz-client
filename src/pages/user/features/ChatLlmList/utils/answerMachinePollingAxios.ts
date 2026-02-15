@@ -9,6 +9,21 @@ export interface SubQuestionDetail {
     errorReason?: string;
 }
 
+export interface AnswerMachineJobDetail {
+    id: string;
+    parentMessageId: string;
+    status: 'pending' | 'answered' | 'error';
+    errorReason: string;
+    finalAnswer: string;
+    intermediateAnswers: string[];
+    minNumberOfIterations: number;
+    maxNumberOfIterations: number;
+    currentIteration: number;
+    subQuestions: SubQuestionDetail[];
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface AnswerMachinePollingStatus {
     isProcessing: boolean;
     status: 'pending' | 'answered' | 'error' | 'not_started';
@@ -25,9 +40,6 @@ export interface AnswerMachinePollingStatus {
     // Answer Machine iteration info
     answerMachineMinNumberOfIterations: number;
     answerMachineMaxNumberOfIterations: number;
-    answerMachineCurrentIteration: number;
-    answerMachineStatus: 'not_started' | 'pending' | 'answered' | 'error';
-    answerMachineErrorReason: string;
     // Answer Machine token tracking
     answerMachinePromptTokens: number;
     answerMachineCompletionTokens: number;
@@ -48,6 +60,7 @@ export interface AnswerMachinePollingStatus {
             maxSingleQueryTokens?: number; // Maximum tokens from a single execution
         };
     };
+    answerMachineJobs: AnswerMachineJobDetail[];
 }
 
 export const pollAnswerMachineStatus = async (
