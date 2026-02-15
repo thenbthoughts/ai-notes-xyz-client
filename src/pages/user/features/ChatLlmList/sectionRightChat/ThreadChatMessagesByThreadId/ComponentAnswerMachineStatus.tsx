@@ -14,21 +14,20 @@ const ComponentAnswerMachineStatus = ({
     onStatusUpdate,
 }: ComponentAnswerMachineStatusProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isJobsExpanded, setIsJobsExpanded] = useState(true);
     const [isTokenUsageExpanded, setIsTokenUsageExpanded] = useState(true);
-    
-    const { 
-        isProcessing, 
-        status, 
-        subQuestionsStatus, 
-        subQuestions, 
-        error, 
-        isLoading, 
-        countdown, 
+
+    const {
+        isProcessing,
+        status,
+        subQuestionsStatus,
+        subQuestions,
+        error,
+        isLoading,
+        countdown,
         refresh,
         answerMachineMinNumberOfIterations,
         answerMachineMaxNumberOfIterations,
-        answerMachineCurrentIteration,
-        answerMachineErrorReason,
         answerMachinePromptTokens,
         answerMachineCompletionTokens,
         answerMachineReasoningTokens,
@@ -36,6 +35,7 @@ const ComponentAnswerMachineStatus = ({
         answerMachineCostInUsd,
         answerMachineQueryTypes,
         answerMachineQueryTypeTokens,
+        answerMachineJobs,
     } = useAnswerMachinePolling({
         threadId,
         onComplete,
@@ -73,6 +73,18 @@ const ComponentAnswerMachineStatus = ({
         );
     };
 
+    // Get current iteration from the latest job
+    const getCurrentIteration = () => {
+        if (answerMachineJobs.length > 0) {
+            // Sort jobs by creation date (most recent first) and get the current iteration
+            const latestJob = answerMachineJobs.sort((a, b) =>
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            )[0];
+            return latestJob.currentIteration;
+        }
+        return 1; // Default to 1 if no jobs available
+    };
+
     const getStatusText = () => {
         if (status === 'answered') {
             return 'Answer Machine completed';
@@ -103,6 +115,22 @@ const ComponentAnswerMachineStatus = ({
         return Math.min(100, subQuestionProgress + finalAnswerProgress);
     };
 
+    const getPillClassByStatus = (statusText: string) => {
+        if (statusText === 'answered') {
+            return 'bg-green-100 text-green-700';
+        }
+        if (statusText === 'pending') {
+            return 'bg-yellow-100 text-yellow-700';
+        }
+        if (statusText === 'error') {
+            return 'bg-red-100 text-red-700';
+        }
+        if (statusText === 'skipped') {
+            return 'bg-gray-100 text-gray-700';
+        }
+        return 'bg-gray-100 text-gray-700';
+    };
+
     return (
         <div className="w-full px-2 py-3">
             <div className="bg-blue-50 border border-blue-200 rounded-sm p-3 flex items-start gap-3">
@@ -119,8 +147,8 @@ const ComponentAnswerMachineStatus = ({
                             </span>
                             {answerMachineMaxNumberOfIterations > 1 && (
                                 <span className="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded">
-                                    Iteration {answerMachineCurrentIteration}/{answerMachineMaxNumberOfIterations}
-                                    {answerMachineMinNumberOfIterations > 1 && answerMachineCurrentIteration < answerMachineMinNumberOfIterations && (
+                                    Iteration {getCurrentIteration()}/{answerMachineMaxNumberOfIterations}
+                                    {answerMachineMinNumberOfIterations > 1 && getCurrentIteration() < answerMachineMinNumberOfIterations && (
                                         <span className="ml-1 text-blue-500">(min: {answerMachineMinNumberOfIterations})</span>
                                     )}
                                 </span>
@@ -142,13 +170,8 @@ const ComponentAnswerMachineStatus = ({
                             </button>
                         </div>
                     </div>
-                    
-                    {answerMachineErrorReason && (
-                        <div className="mt-2 text-xs text-red-600">
-                            Error: {answerMachineErrorReason}
-                        </div>
-                    )}
-                    
+
+
                     {isProcessing && subQuestionsStatus.total > 0 && (
                         <div className="mt-2">
                             <div className="w-full bg-blue-200 rounded-full h-2 mb-1">
@@ -179,6 +202,108 @@ const ComponentAnswerMachineStatus = ({
                         </div>
                     )}
 
+                    {answerMachineJobs.length > 0 && (
+                        <div className="mt-3 border-t border-blue-200 pt-3">
+                            <button
+                                onClick={() => setIsJobsExpanded(!isJobsExpanded)}
+                                className="w-full flex items-center justify-between text-sm font-medium text-blue-900 hover:text-blue-700 transition-colors"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <LucideBrain className="w-4 h-4" />
+                                    <span>Job List ({answerMachineJobs.length})</span>
+                                </div>
+                                {isJobsExpanded ? (
+                                    <LucideChevronUp className="w-4 h-4" />
+                                ) : (
+                                    <LucideChevronDown className="w-4 h-4" />
+                                )}
+                            </button>
+
+                            {isJobsExpanded && (
+                                <div className="mt-3 space-y-3 max-h-96 overflow-y-auto">
+                                    {answerMachineJobs.map((job, index) => (
+                                        <div
+                                            key={job.id}
+                                            className="bg-white rounded-sm p-3 border border-blue-100"
+                                        >
+                                            <div className="flex items-start justify-between gap-2 mb-2">
+                                                <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                                    Job {answerMachineJobs.length - index}
+                                                </span>
+                                                <span className={`text-xs font-medium px-2 py-1 rounded ${getPillClassByStatus(job.status)}`}>
+                                                    {job.status}
+                                                </span>
+                                            </div>
+
+                                            <div className="text-xs text-gray-600 mb-2">
+                                                Iteration: {job.currentIteration}/{job.maxNumberOfIterations}
+                                            </div>
+
+                                            {job.finalAnswer && (
+                                                <div className="text-sm text-gray-700 bg-gray-50 rounded-sm p-2 mt-2">
+                                                    <strong>Final answer:</strong>
+                                                    <div className="mt-1 whitespace-pre-wrap">{job.finalAnswer}</div>
+                                                </div>
+                                            )}
+
+                                            {job.intermediateAnswers.length > 0 && (
+                                                <div className="text-sm text-gray-700 bg-gray-50 rounded-sm p-2 mt-2">
+                                                    <strong>Intermediate answer:</strong>
+                                                    <div className="mt-1 space-y-1">
+                                                        {job.intermediateAnswers.map((intermediateAnswer, intermediateIndex) => (
+                                                            <div key={`${job.id}-intermediate-${intermediateIndex}`} className="whitespace-pre-wrap">
+                                                                {intermediateAnswer}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {job.subQuestions.length > 0 && (
+                                                <div className="mt-2">
+                                                    <div className="text-sm font-medium text-gray-800 mb-2">
+                                                        Sub question ({job.subQuestions.length})
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        {job.subQuestions.map((subQuestion, subQuestionIndex) => (
+                                                            <div
+                                                                key={subQuestion.id}
+                                                                className="border border-gray-200 rounded-sm p-2 bg-gray-50"
+                                                            >
+                                                                <div className="flex items-center gap-2 mb-1">
+                                                                    <span className="text-xs font-semibold text-blue-600">
+                                                                        Q{subQuestionIndex + 1}
+                                                                    </span>
+                                                                    <span className={`text-xs font-medium px-2 py-0.5 rounded ${getPillClassByStatus(subQuestion.status)}`}>
+                                                                        {subQuestion.status}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="text-xs text-gray-800 whitespace-pre-wrap">
+                                                                    {subQuestion.question || 'N/A'}
+                                                                </div>
+                                                                {subQuestion.answer && (
+                                                                    <div className="text-xs text-gray-700 mt-1 whitespace-pre-wrap">
+                                                                        <strong>Answer:</strong> {subQuestion.answer}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {job.errorReason && (
+                                                <div className="text-xs text-red-600 mt-2">
+                                                    <strong>Error:</strong> {job.errorReason}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     {/* Token Usage Display */}
                     {(answerMachineTotalTokens > 0 || answerMachineCostInUsd > 0) && (
                         <div className="mt-3 border-t border-blue-200 pt-3">
@@ -196,7 +321,7 @@ const ComponentAnswerMachineStatus = ({
                                     <LucideChevronDown className="w-4 h-4" />
                                 )}
                             </button>
-                            
+
                             {isTokenUsageExpanded && (
                                 <>
                             <div className="grid grid-cols-2 gap-2 text-xs">
@@ -233,7 +358,7 @@ const ComponentAnswerMachineStatus = ({
                                     </div>
                                 )}
                             </div>
-                            
+
                             {/* Query Types Breakdown */}
                             {answerMachineQueryTypes && answerMachineQueryTypes.length > 0 && (
                                 <div className="mt-3 border-t border-blue-200 pt-3">
@@ -257,7 +382,7 @@ const ComponentAnswerMachineStatus = ({
                                             );
                                         })}
                                     </div>
-                                    
+
                                     {/* Per-Query-Type Token Breakdown */}
                                     {answerMachineQueryTypeTokens && Object.keys(answerMachineQueryTypeTokens).length > 0 && (
                                         <div className="mt-2 space-y-2">
@@ -274,7 +399,7 @@ const ComponentAnswerMachineStatus = ({
                                                     };
                                                     const avgTokens = tokens.count > 0 ? Math.round(tokens.totalTokens / tokens.count) : 0;
                                                     const maxSingleQueryTokens = tokens.maxSingleQueryTokens || tokens.totalTokens; // Max tokens from a single execution
-                                                    
+
                                                     return (
                                                         <div
                                                             key={type}
