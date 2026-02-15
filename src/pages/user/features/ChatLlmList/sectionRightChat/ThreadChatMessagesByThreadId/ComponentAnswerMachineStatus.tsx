@@ -368,7 +368,6 @@ const ComponentAnswerMachineStatus = ({
                                             const typeLabels: { [key: string]: string } = {
                                                 'question_generation': 'Question Gen',
                                                 'sub_question_answer': 'Sub-Answer',
-                                                'intermediate_answer': 'Intermediate',
                                                 'evaluation': 'Evaluation',
                                                 'final_answer': 'Final Answer',
                                             };
@@ -393,7 +392,6 @@ const ComponentAnswerMachineStatus = ({
                                                     const typeLabels: { [key: string]: string } = {
                                                         'question_generation': 'Question Generation',
                                                         'sub_question_answer': 'Sub-Question Answer',
-                                                        'intermediate_answer': 'Intermediate Answer',
                                                         'evaluation': 'Evaluation',
                                                         'final_answer': 'Final Answer',
                                                     };
