@@ -17,6 +17,8 @@ import { useAtomValue } from 'jotai';
 import { jotaiChatLlmFooterHeight } from '../../jotai/jotaiChatLlmThreadSetting.ts';
 import ComponentAnswerMachineStatus from './ComponentAnswerMachineStatus.tsx';
 
+const LIMIT_MESSAGES = 10;
+
 const CRightChatById = ({
     threadId,
     refreshRandomNumParent,
@@ -41,8 +43,8 @@ const CRightChatById = ({
     const [messages, setMessages] = useState<tsMessageItem[]>([]);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
     const [isAnswerMachineEnabled, setIsAnswerMachineEnabled] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
-    const [currentLimit, setCurrentLimit] = useState(20);
+    const [hasMore, setHasMore] = useState(false);
+    const [currentLimit, setCurrentLimit] = useState(LIMIT_MESSAGES);
     const [totalCount, setTotalCount] = useState(0);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -72,7 +74,7 @@ const CRightChatById = ({
 
     // Reset pagination state when thread changes
     useEffect(() => {
-        setCurrentLimit(20);
+        setCurrentLimit(LIMIT_MESSAGES);
         setTotalCount(0);
         setHasMore(true);
         useEffectOneTimeMessagesScrollDownRef.current = false;
@@ -122,7 +124,12 @@ const CRightChatById = ({
     }: {
         axiosCancelTokenSource: CancelTokenSource;
     }) => {
-        let mode = 'initial';
+        let mode = '' as '' | 'initial' | 'loadMore';
+
+        // Load initial messages
+        if (messages.length === 0) {
+            mode = 'initial';
+        }
 
         // load more messages if the user scrolls to the top of the messages container
         if (messagesContainerRef.current) {
@@ -227,7 +234,7 @@ const CRightChatById = ({
                     if (
                         messagesContainerRef.current.scrollTop <= 100
                     ) {
-                        const newLimit = Math.min(currentLimit + 20, totalCount);
+                        const newLimit = Math.min(currentLimit + LIMIT_MESSAGES, totalCount);
                         setCurrentLimit(newLimit);
                     }
                 }
@@ -287,7 +294,7 @@ const CRightChatById = ({
                         </div>
 
                         {/* Loading trigger container */}
-                        {hasMore && (
+                        {hasMore && messages.length > 0 && totalCount >= LIMIT_MESSAGES + 1 && (
                             <div
                                 ref={loadingTriggerRef}
                                 className="flex items-center justify-center py-8"
@@ -297,16 +304,15 @@ const CRightChatById = ({
                             </div>
                         )}
 
-                        {/* empty space 250px */}
-                        {loading === false && messages.length === 0 && (
-                            <div style={{ height: '1000px' }} />
-                        )}
-
                         {/* Loading more indicator */}
-                        {loadingMore && (
-                            <div className="flex justify-center items-center py-4">
-                                <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-gray-900"></div>
-                                <span className="ml-2 text-sm text-gray-600">Loading messages...</span>
+                        {messages.length > 0 && totalCount >= LIMIT_MESSAGES + 1 && (
+                            <div>
+                                {loadingMore && (
+                                    <div className="flex justify-center items-center py-4">
+                                        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-gray-900"></div>
+                                        <span className="ml-2 text-sm text-gray-600">Loading messages...</span>
+                                    </div>
+                                )}
                             </div>
                         )}
 
@@ -348,11 +354,6 @@ const CRightChatById = ({
                                 threadId={threadId}
                             />
                         </div>
-
-                        {/* empty space 250px */}
-                        {loading === true || messages.length === 0 && (
-                            <div style={{ height: '250px' }} />
-                        )}
 
                         <div id="messagesScrollDown" ref={messagesEndRef} />
 
