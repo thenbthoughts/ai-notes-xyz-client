@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
+import { Loader2 } from 'lucide-react';
 
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
 import ComponentNotesAdd from './ComponentChatMessageInput.tsx';
-import { DateTime } from 'luxon';
 
 import ComponentMessageItem from './ComponentMessageItem.tsx';
 
@@ -27,13 +27,13 @@ const CRightChatById = ({
 
     // useState
     const [
-        paginationDateLocalYearMonthStr,
-        setPaginationDateLocalYearMonthStr,
-    ] = useState('1999-07');
-    const [
         loading,
         setLoading,
     ] = useState(true);
+    const [
+        loadingMore,
+        setLoadingMore,
+    ] = useState(false);
 
     const chatLlmFooterHeight = useAtomValue(jotaiChatLlmFooterHeight);
 
@@ -41,15 +41,25 @@ const CRightChatById = ({
     const [messages, setMessages] = useState<tsMessageItem[]>([]);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
     const [isAnswerMachineEnabled, setIsAnswerMachineEnabled] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [currentLimit, setCurrentLimit] = useState(20);
+    const [totalCount, setTotalCount] = useState(0);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
+    const loadingTriggerRef = useRef<HTMLDivElement>(null);
 
     const useEffectOneTimeMessagesScrollDownRef = useRef<boolean>(false);
 
     useEffect(() => {
-        if(!useEffectOneTimeMessagesScrollDownRef.current) {
-            if(messages.length > 0) {
-                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (!useEffectOneTimeMessagesScrollDownRef.current) {
+            if (messages.length === 0) {
+                // Use setTimeout to ensure DOM is updated after state change
+                setTimeout(() => {
+                    if (messagesEndRef.current) {
+                        messagesEndRef.current.scrollIntoView({ block: 'end', inline: 'nearest' });
+                    }
+                }, 100);
                 useEffectOneTimeMessagesScrollDownRef.current = true;
             }
         }
@@ -59,27 +69,14 @@ const CRightChatById = ({
     }, [messages])
 
     // useEffect
-    useEffect(() => {
-        const indiaDateTime = DateTime
-            .now()
-            .setZone('Asia/Kolkata')
-            .toFormat('yyyy-MM')
-            .toString();
-        setPaginationDateLocalYearMonthStr(indiaDateTime);
-    }, [])
 
+    // Reset pagination state when thread changes
     useEffect(() => {
-        const axiosCancelTokenSource: CancelTokenSource = axios.CancelToken.source();
-        fetchNotes({
-            axiosCancelTokenSource,
-        });
-        return () => {
-            axiosCancelTokenSource.cancel('Operation canceled by the user.'); // Cancel the request if needed
-        };
-    }, [
-        refreshRandomNum,
-        paginationDateLocalYearMonthStr,
-    ])
+        setCurrentLimit(20);
+        setTotalCount(0);
+        setHasMore(true);
+        useEffectOneTimeMessagesScrollDownRef.current = false;
+    }, [threadId])
 
     useEffect(() => {
         setRefreshRandomNum(
@@ -95,8 +92,8 @@ const CRightChatById = ({
             try {
                 const responseThread = await axiosCustom.post(
                     '/api/chat-llm/threads-crud/threadsGet', {
-                        threadId: threadId,
-                    }
+                    threadId: threadId,
+                }
                 );
                 if (responseThread.data && responseThread.data.docs && responseThread.data.docs.length > 0) {
                     const threadInfo = responseThread.data.docs[0];
@@ -121,11 +118,27 @@ const CRightChatById = ({
     }
 
     const fetchNotes = async ({
-        axiosCancelTokenSource
+        axiosCancelTokenSource,
     }: {
-        axiosCancelTokenSource: CancelTokenSource
+        axiosCancelTokenSource: CancelTokenSource;
     }) => {
-        setLoading(true);
+        let mode = 'initial';
+
+        // load more messages if the user scrolls to the top of the messages container
+        if (messagesContainerRef.current) {
+            if (messagesContainerRef.current.scrollTop <= 100) {
+                if (messages.length >= 1) {
+                    mode = 'loadMore';
+                }
+            }
+        }
+
+        if (mode === 'initial') {
+            setLoading(true);
+        } if (mode === 'loadMore') {
+            setLoadingMore(true);
+        }
+
         try {
             const config = {
                 method: 'post',
@@ -134,31 +147,116 @@ const CRightChatById = ({
                     'Content-Type': 'application/json',
                 },
                 data: {
-                    paginationDateLocalYearMonthStr,
                     threadId: threadId,
+                    limit: currentLimit,
+                    testing: {
+                        mode: mode,
+                    }
                 },
                 cancelToken: axiosCancelTokenSource.token,
             } as AxiosRequestConfig;
 
             const response = await axiosCustom.request(config);
-            const notes = response.data.docs.map((doc: { _id: string; content: string; createdAt: string; type: string }) => ({
+            const resMessages = response.data.docs.map((doc: { _id: string; content: string; createdAt: string; type: string }) => ({
                 ...doc,
                 id: doc._id,
                 content: doc.content,
                 time: new Date(doc.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 type: doc.type,
             }));
-            setMessages(notes);
+
+            // Always replace messages (not prepend) since we're getting the full set
+            setMessages(resMessages);
+            setTotalCount(response.data.totalCount);
+
+            if (mode === 'initial') {
+                // go down to the bottom of the messages
+                setTimeout(() => {
+                    if (messagesEndRef.current) {
+                        messagesEndRef.current.scrollIntoView({ block: 'end', inline: 'nearest' });
+                    }
+                }, 100);
+            } else if (mode === 'loadMore') {
+                // scroll into first message of the new messages
+                setTimeout(() => {
+                    if (messages.length > 0) {
+                        const firstMessage = messages[0];
+                        const firstMessageElement = document.getElementById(`key-message-${firstMessage._id}`);
+                        console.log('firstMessageElement', firstMessageElement, `key-message-${firstMessage._id}`);
+                        if (firstMessageElement) {
+                            firstMessageElement.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+                        }
+                    }
+                }, 100);
+            }
+
+            // Check if we have more messages to load
+            setHasMore(currentLimit < response.data.totalCount);
         } catch (error) {
             console.log(error);
         } finally {
             setLoading(false);
+            setLoadingMore(false);
         }
     };
+
+    // Initial load of messages
+    useEffect(() => {
+        const axiosCancelTokenSource: CancelTokenSource = axios.CancelToken.source();
+        fetchNotes({
+            axiosCancelTokenSource,
+        });
+        return () => {
+            axiosCancelTokenSource.cancel('Operation canceled by the user.'); // Cancel the request if needed
+        };
+    }, [
+        refreshRandomNum,
+        threadId,
+        currentLimit,
+    ])
+
+    // Handle intersection observer for loading more messages
+    useEffect(() => {
+        let functionScroll = (e: Event) => {
+            console.log('functionScroll called', e);
+            if (loadingMore || loading) {
+                return;
+            }
+            if (messagesContainerRef.current) {
+                if (messagesContainerRef.current) {
+                    if (
+                        messagesContainerRef.current.scrollTop <= 100
+                    ) {
+                        const newLimit = Math.min(currentLimit + 20, totalCount);
+                        setCurrentLimit(newLimit);
+                    }
+                }
+            }
+        }
+
+        // add event listener to the messagesContainerRef 
+        if (messagesContainerRef) {
+            if (messagesContainerRef.current) {
+                messagesContainerRef.current.addEventListener('scrollend', functionScroll);
+            }
+        }
+
+        return () => {
+            if (messagesContainerRef.current) {
+                messagesContainerRef.current.removeEventListener('scrollend', functionScroll);
+            }
+        };
+    }, [
+        loadingMore,
+        loading,
+        currentLimit,
+        totalCount,
+    ]);
 
     return (
         <div>
             <div
+                ref={messagesContainerRef}
                 style={{
                     height: `${getCssHeightForMessages()}`,
                     overflowY: 'scroll',
@@ -188,18 +286,46 @@ const CRightChatById = ({
                             )}
                         </div>
 
+                        {/* Loading trigger container */}
+                        {hasMore && (
+                            <div
+                                ref={loadingTriggerRef}
+                                className="flex items-center justify-center py-8"
+                                style={{ height: '100px' }}
+                            >
+                                <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+                            </div>
+                        )}
+
+                        {/* empty space 250px */}
+                        {loading === false && messages.length === 0 && (
+                            <div style={{ height: '1000px' }} />
+                        )}
+
+                        {/* Loading more indicator */}
+                        {loadingMore && (
+                            <div className="flex justify-center items-center py-4">
+                                <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-gray-900"></div>
+                                <span className="ml-2 text-sm text-gray-600">Loading messages...</span>
+                            </div>
+                        )}
+
+
                         {/* section render messages */}
                         <div className="w-full min-w-0">
                             {messages.map((itemMessage) => {
                                 return (
-                                    <div key={`key-message-${itemMessage._id}`} className="w-full min-w-0">
+                                    <div
+                                        key={`key-message-${itemMessage._id}`}
+                                        className="w-full min-w-0"
+                                        id={`key-message-${itemMessage._id}`}
+                                    >
                                         <ComponentMessageItem
                                             itemMessage={itemMessage}
                                         />
                                     </div>
                                 )
                             })}
-                            
                         </div>
 
                         {/* Answer Machine Status Component */}
@@ -223,7 +349,12 @@ const CRightChatById = ({
                             />
                         </div>
 
-                        <div id="messagesScrollDown" />
+                        {/* empty space 250px */}
+                        {loading === true || messages.length === 0 && (
+                            <div style={{ height: '250px' }} />
+                        )}
+
+                        <div id="messagesScrollDown" ref={messagesEndRef} />
 
                     </div>
                 </div>
