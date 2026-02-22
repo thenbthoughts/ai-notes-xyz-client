@@ -30,6 +30,7 @@ import ComponentPinnedTask from './ComponentPinnedTask';
 import ComponentCurrentDateTime from './ComponentCurrentDateTime';
 import ComponentApiKeySet from './ComponentApiKeySet';
 import ComponentQuickActions from './ComponentQuickActions';
+import ComponentHomepageSummary from './ComponentHomepageSummary';
 
 const UserHomepage = () => {
     const authState = useAtomValue(stateJotaiAuthAtom);
@@ -116,6 +117,7 @@ const UserHomepage = () => {
                                     <ComponentQuickActions />
                                     <ComponentFromBrithdayToToday />
                                     <ComponentPinnedTask />
+                                    <ComponentHomepageSummary />
                                     <ComponentApiKeySet />
                                 </div>
                             </Fragment>
