@@ -74,6 +74,33 @@ const ComponentApiKeySet = () => {
             description: "Required for sending notifications and email communications",
             color: "red",
             required: true
+        },
+        {
+            name: "Replicate API",
+            key: "apiKeyReplicateValid",
+            valid: authState.apiKeyReplicateValid,
+            icon: LucideCloud,
+            description: "Optional for AI image and video generation with Replicate models",
+            color: "purple",
+            required: false
+        },
+        {
+            name: "RunPod API",
+            key: "apiKeyRunpodValid",
+            valid: authState.apiKeyRunpodValid,
+            icon: LucideCloud,
+            description: "Optional for GPU-accelerated AI inference and model hosting",
+            color: "indigo",
+            required: false
+        },
+        {
+            name: "LocalAI",
+            key: "apiKeyLocalaiValid",
+            valid: authState.apiKeyLocalaiValid,
+            icon: LucideBot,
+            description: "Optional for running AI models locally with LocalAI",
+            color: "emerald",
+            required: false
         }
     ];
 

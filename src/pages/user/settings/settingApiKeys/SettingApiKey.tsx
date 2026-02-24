@@ -29,6 +29,13 @@ const SettingApiKey = () => {
     const [apiKeyQdrantEndpoint, setApiKeyQdrantEndpoint] = useState("");
     const [apiKeyQdrantPassword, setApiKeyQdrantPassword] = useState("");
 
+    const [apiKeyReplicate, setApiKeyReplicate] = useState("");
+
+    const [apiKeyRunpod, setApiKeyRunpod] = useState("");
+
+    const [apiKeyLocalaiEndpoint, setApiKeyLocalaiEndpoint] = useState("");
+    const [apiKeyLocalai, setApiKeyLocalai] = useState("");
+
     const authState = useAtomValue(stateJotaiAuthAtom);
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
 
@@ -79,6 +86,33 @@ const SettingApiKey = () => {
     const [
         requestQdrant,
         setRequestQdrant,
+    ] = useState({
+        loading: false,
+        success: '',
+        error: '',
+    });
+
+    const [
+        requestReplicate,
+        setRequestReplicate,
+    ] = useState({
+        loading: false,
+        success: '',
+        error: '',
+    });
+
+    const [
+        requestRunpod,
+        setRequestRunpod,
+    ] = useState({
+        loading: false,
+        success: '',
+        error: '',
+    });
+
+    const [
+        requestLocalai,
+        setRequestLocalai,
     ] = useState({
         loading: false,
         success: '',
@@ -308,6 +342,115 @@ const SettingApiKey = () => {
                 errorStr = error?.response?.data?.error;
             }
             setRequestSmtp({ loading: false, success: '', error: `Error updating user. Please try again. ${errorStr}` });
+        } finally {
+            const randomNum = Math.floor(
+                Math.random() * 1_000_000
+            )
+            setAuthStateReload(randomNum)
+        }
+    };
+
+    const handleUpdateReplicate = async () => {
+        setRequestReplicate({ loading: true, success: '', error: '' });
+
+        try {
+            const response = await axiosCustom.post(
+                `/api/user/api-keys/updateUserApiReplicate`,
+                {
+                    apiKeyReplicate,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true,
+                }
+            );
+            setRequestReplicate({ loading: false, success: 'User updated successfully!', error: '' });
+            console.log("User updated:", response.data);
+        } catch (error: any) {
+            console.error("Error updating user:", error);
+
+            let errorStr = '';
+            if (typeof error?.response?.data?.error === 'string') {
+                console.log(error?.response?.data?.error);
+                errorStr = error?.response?.data?.error;
+            }
+
+            setRequestReplicate({ loading: false, success: '', error: `Error updating user. Please try again. ${errorStr}` });
+        } finally {
+            const randomNum = Math.floor(
+                Math.random() * 1_000_000
+            )
+            setAuthStateReload(randomNum)
+        }
+    };
+
+    const handleUpdateRunpod = async () => {
+        setRequestRunpod({ loading: true, success: '', error: '' });
+
+        try {
+            const response = await axiosCustom.post(
+                `/api/user/api-keys/updateUserApiRunpod`,
+                {
+                    apiKeyRunpod,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true,
+                }
+            );
+            setRequestRunpod({ loading: false, success: 'User updated successfully!', error: '' });
+            console.log("User updated:", response.data);
+        } catch (error: any) {
+            console.error("Error updating user:", error);
+
+            let errorStr = '';
+            if (typeof error?.response?.data?.error === 'string') {
+                console.log(error?.response?.data?.error);
+                errorStr = error?.response?.data?.error;
+            }
+
+            setRequestRunpod({ loading: false, success: '', error: `Error updating user. Please try again. ${errorStr}` });
+        } finally {
+            const randomNum = Math.floor(
+                Math.random() * 1_000_000
+            )
+            setAuthStateReload(randomNum)
+        }
+    };
+
+    const handleUpdateLocalai = async () => {
+        setRequestLocalai({ loading: true, success: '', error: '' });
+
+        try {
+            const response = await axiosCustom.post(
+                `/api/user/api-keys/updateUserApiLocalai`,
+                {
+                    apiKeyLocalaiEndpoint,
+                    apiKeyLocalai,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true,
+                }
+            );
+            setRequestLocalai({ loading: false, success: 'User updated successfully!', error: '' });
+            console.log("User updated:", response.data);
+        } catch (error: any) {
+            console.error("Error updating user:", error);
+
+            let errorStr = '';
+            if (typeof error?.response?.data?.error === 'string') {
+                console.log(error?.response?.data?.error);
+                errorStr = error?.response?.data?.error;
+            }
+
+            setRequestLocalai({ loading: false, success: '', error: `Error updating user. Please try again. ${errorStr}` });
         } finally {
             const randomNum = Math.floor(
                 Math.random() * 1_000_000
@@ -736,6 +879,150 @@ const SettingApiKey = () => {
                     </div>
                     <button
                         onClick={handleUpdateQdrant}
+                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                    >
+                        Verify and save
+                    </button>
+                </div>
+
+                {/* Replicate */}
+                <div className="mb-4">
+                    <label htmlFor="apiKeyReplicate" className="block text-gray-700 font-bold mb-2">
+                        Replicate Api Key
+                        {authState.apiKeyReplicateValid ? (
+                            <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
+                                Valid
+                            </span>
+                        ) : (
+                            <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
+                                Not set
+                            </span>
+                        )}
+                    </label>
+                    <input
+                        type="text"
+                        id="apiKeyReplicate"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        value={apiKeyReplicate}
+                        onChange={(e) => setApiKeyReplicate(e.target.value)}
+                    />
+                    <div className="mt-2">
+                        {requestReplicate.loading && (
+                            <p className="text-gray-500">Loading...</p>
+                        )}
+                        {!requestReplicate.loading && requestReplicate.success !== '' && (
+                            <p className="text-green-500">API Key verified and saved successfully!</p>
+                        )}
+                        {!requestReplicate.loading && requestReplicate.error !== '' && (
+                            <p className="text-red-500">Error verifying API Key. Please try again.</p>
+                        )}
+                    </div>
+                    <button
+                        onClick={handleUpdateReplicate}
+                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                    >
+                        Verify and save
+                    </button>
+                </div>
+
+                {/* RunPod */}
+                <div className="mb-4">
+                    <label htmlFor="apiKeyRunpod" className="block text-gray-700 font-bold mb-2">
+                        RunPod Api Key
+                        {authState.apiKeyRunpodValid ? (
+                            <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
+                                Valid
+                            </span>
+                        ) : (
+                            <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
+                                Not set
+                            </span>
+                        )}
+                    </label>
+                    <input
+                        type="text"
+                        id="apiKeyRunpod"
+                        className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        value={apiKeyRunpod}
+                        onChange={(e) => setApiKeyRunpod(e.target.value)}
+                    />
+                    <div className="mt-2">
+                        {requestRunpod.loading && (
+                            <p className="text-gray-500">Loading...</p>
+                        )}
+                        {!requestRunpod.loading && requestRunpod.success !== '' && (
+                            <p className="text-green-500">API Key verified and saved successfully!</p>
+                        )}
+                        {!requestRunpod.loading && requestRunpod.error !== '' && (
+                            <p className="text-red-500">Error verifying API Key. Please try again.</p>
+                        )}
+                    </div>
+                    <button
+                        onClick={handleUpdateRunpod}
+                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                    >
+                        Verify and save
+                    </button>
+                </div>
+
+                {/* LocalAI */}
+                <div className="mb-4">
+                    <div>
+                        <label htmlFor="apiKeyLocalai" className="block text-gray-700 font-bold mb-2">
+                            LocalAI Api Key (Optional)
+                            {authState.apiKeyLocalaiValid ? (
+                                <span className="inline-block bg-green-100 text-green-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
+                                    Valid
+                                </span>
+                            ) : (
+                                <span className="inline-block bg-red-100 text-red-600 py-1 px-3 rounded-sm text-sm font-semibold ml-3">
+                                    Not set
+                                </span>
+                            )}
+                        </label>
+                    </div>
+
+                    <div>
+                        <label htmlFor="apiKeyLocalaiEndpoint" className="block text-gray-700 font-bold mb-2">
+                            LocalAI Endpoint
+                        </label>
+                        <input
+                            type="text"
+                            id="apiKeyLocalaiEndpoint"
+                            placeholder="http://localhost:8080"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            value={apiKeyLocalaiEndpoint}
+                            onChange={(e) => setApiKeyLocalaiEndpoint(e.target.value)}
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="apiKeyLocalai" className="block text-gray-700 font-bold mb-2">
+                            LocalAI API Key (Optional)
+                        </label>
+                        <input
+                            type="text"
+                            id="apiKeyLocalai"
+                            placeholder="Leave empty if not required"
+                            className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            value={apiKeyLocalai}
+                            onChange={(e) => setApiKeyLocalai(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="mt-2">
+                        {requestLocalai.loading && (
+                            <p className="text-gray-500">Loading...</p>
+                        )}
+                        {!requestLocalai.loading && requestLocalai.success !== '' && (
+                            <p className="text-green-500">API Key verified and saved successfully!</p>
+                        )}
+                        {!requestLocalai.loading && requestLocalai.error !== '' && (
+                            <p className="text-red-500 bg-red-100 p-1 rounded">{requestLocalai.error}</p>
+                        )}
+                    </div>
+                    <button
+                        onClick={handleUpdateLocalai}
                         className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
                     >
                         Verify and save
