@@ -9,6 +9,9 @@ type AuthState = {
     apiKeyS3Valid: boolean;
     apiKeyOllamaValid: boolean;
     apiKeyQdrantValid: boolean;
+    apiKeyReplicateValid: boolean;
+    apiKeyRunpodValid: boolean;
+    apiKeyLocalaiValid: boolean;
     smtpValid: boolean;
 
     clientFrontendUrl: string;
@@ -23,6 +26,9 @@ const stateJotaiAuthAtom = atom<AuthState>({
     apiKeyS3Valid: false,
     apiKeyOllamaValid: false,
     apiKeyQdrantValid: false,
+    apiKeyReplicateValid: false,
+    apiKeyRunpodValid: false,
+    apiKeyLocalaiValid: false,
     smtpValid: false,
 
     clientFrontendUrl: '',

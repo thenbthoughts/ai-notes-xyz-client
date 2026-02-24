@@ -33,6 +33,9 @@ const RefreshToken = () => {
             apiKeyS3Valid: false,
             apiKeyOllamaValid: false,
             apiKeyQdrantValid: false,
+            apiKeyReplicateValid: false,
+            apiKeyRunpodValid: false,
+            apiKeyLocalaiValid: false,
             smtpValid: false,
             clientFrontendUrl: '',
         };
@@ -67,6 +70,15 @@ const RefreshToken = () => {
                 if (typeof userInfoFromApi?.apiKeyQdrantValid === 'boolean') {
                     tempData.apiKeyQdrantValid = userInfoFromApi?.apiKeyQdrantValid;
                 }
+                if (typeof userInfoFromApi?.apiKeyReplicateValid === 'boolean') {
+                    tempData.apiKeyReplicateValid = userInfoFromApi?.apiKeyReplicateValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyRunpodValid === 'boolean') {
+                    tempData.apiKeyRunpodValid = userInfoFromApi?.apiKeyRunpodValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyLocalaiValid === 'boolean') {
+                    tempData.apiKeyLocalaiValid = userInfoFromApi?.apiKeyLocalaiValid;
+                }
                 if (typeof userInfoFromApi?.smtpValid === 'boolean') {
                     tempData.smtpValid = userInfoFromApi?.smtpValid;
                 }
@@ -86,6 +98,9 @@ const RefreshToken = () => {
                 apiKeyS3Valid: false,
                 apiKeyOllamaValid: false,
                 apiKeyQdrantValid: false,
+                apiKeyReplicateValid: false,
+                apiKeyRunpodValid: false,
+                apiKeyLocalaiValid: false,
                 smtpValid: false,
                 clientFrontendUrl: '',
             });

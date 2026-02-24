@@ -40,6 +40,9 @@ export default function Component() {
                 apiKeyS3Valid: false,
                 apiKeyOllamaValid: false,
                 apiKeyQdrantValid: false,
+                apiKeyReplicateValid: false,
+                apiKeyRunpodValid: false,
+                apiKeyLocalaiValid: false,
                 smtpValid: false,
                 clientFrontendUrl: '',
             });
@@ -64,6 +67,9 @@ export default function Component() {
                 apiKeyS3Valid: false,
                 apiKeyOllamaValid: false,
                 apiKeyQdrantValid: false,
+                apiKeyReplicateValid: false,
+                apiKeyRunpodValid: false,
+                apiKeyLocalaiValid: false,
                 smtpValid: false,
                 clientFrontendUrl: '',
             });
