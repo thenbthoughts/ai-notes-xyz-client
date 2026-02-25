@@ -7,6 +7,7 @@ import envKeys from '../../config/envKeys';
 import ComponentTaskCommentListAudioInput from './ComponentTaskCommentListAudioInput';
 import { commentAddAudioToTextAxios } from './commentCommonAxiosUtils';
 import { uploadFeatureFile } from '../../utils/featureFileUpload';
+import SpeechToTextComponent from '../componentCommon/SpeechToTextComponent';
 
 interface TaskComment {
     _id: string;
@@ -359,7 +360,7 @@ const ComponentTaskCommentAdd = ({
 
     return (
         <div className="gap-2 mt-2">
-            <div className="flex mt-1">
+            <div className="mt-1">
                 <textarea
                     value={newComment}
                     onChange={(e) => setNewCommand(e.target.value)}
@@ -372,6 +373,17 @@ const ComponentTaskCommentAdd = ({
                     onDragOver={handleDragOver}
                     onPaste={handlePaste}
                 />
+
+                <span className='pr-2 py-1'>
+                    <SpeechToTextComponent
+                        onTranscriptionComplete={(text: string) => {
+                            if (text.trim() !== '') {
+                                setNewCommand((prev: string) => prev.trim() + '\n' + text.trim());
+                            }
+                        }}
+                        parentEntityId={entityId}
+                    />
+                </span>
             </div>
             <div className="flex justify-end mt-1">
                 <button
