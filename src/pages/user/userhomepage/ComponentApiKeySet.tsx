@@ -94,6 +94,15 @@ const ComponentApiKeySet = () => {
             required: false
         },
         {
+            name: "OpenAI API",
+            key: "apiKeyOpenaiValid",
+            valid: authState.apiKeyOpenaiValid,
+            icon: LucideCloud,
+            description: "Optional for accessing OpenAI models directly",
+            color: "blue",
+            required: false
+        },
+        {
             name: "LocalAI",
             key: "apiKeyLocalaiValid",
             valid: authState.apiKeyLocalaiValid,

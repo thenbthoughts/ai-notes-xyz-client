@@ -35,6 +35,7 @@ const RefreshToken = () => {
             apiKeyQdrantValid: false,
             apiKeyReplicateValid: false,
             apiKeyRunpodValid: false,
+            apiKeyOpenaiValid: false,
             apiKeyLocalaiValid: false,
             smtpValid: false,
             clientFrontendUrl: '',
@@ -76,6 +77,9 @@ const RefreshToken = () => {
                 if (typeof userInfoFromApi?.apiKeyRunpodValid === 'boolean') {
                     tempData.apiKeyRunpodValid = userInfoFromApi?.apiKeyRunpodValid;
                 }
+                if (typeof userInfoFromApi?.apiKeyOpenaiValid === 'boolean') {
+                    tempData.apiKeyOpenaiValid = userInfoFromApi?.apiKeyOpenaiValid;
+                }
                 if (typeof userInfoFromApi?.apiKeyLocalaiValid === 'boolean') {
                     tempData.apiKeyLocalaiValid = userInfoFromApi?.apiKeyLocalaiValid;
                 }
@@ -100,6 +104,7 @@ const RefreshToken = () => {
                 apiKeyQdrantValid: false,
                 apiKeyReplicateValid: false,
                 apiKeyRunpodValid: false,
+                apiKeyOpenaiValid: false,
                 apiKeyLocalaiValid: false,
                 smtpValid: false,
                 clientFrontendUrl: '',

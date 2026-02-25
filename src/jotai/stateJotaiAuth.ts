@@ -11,6 +11,7 @@ type AuthState = {
     apiKeyQdrantValid: boolean;
     apiKeyReplicateValid: boolean;
     apiKeyRunpodValid: boolean;
+    apiKeyOpenaiValid: boolean;
     apiKeyLocalaiValid: boolean;
     smtpValid: boolean;
 
@@ -28,6 +29,7 @@ const stateJotaiAuthAtom = atom<AuthState>({
     apiKeyQdrantValid: false,
     apiKeyReplicateValid: false,
     apiKeyRunpodValid: false,
+    apiKeyOpenaiValid: false,
     apiKeyLocalaiValid: false,
     smtpValid: false,
 
