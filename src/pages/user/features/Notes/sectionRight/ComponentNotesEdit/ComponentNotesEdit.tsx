@@ -13,6 +13,7 @@ import QuillEditorCustom1 from '../../../../../../components/quillJs/QuillEditor
 import CommentCommonComponent from '../../../../../../components/commentCommonComponent/CommentCommonComponent';
 import CommonComponentAiFaq from '../../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq';
 import CommonComponentAiKeywords from '../../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords';
+import SpeechToTextComponent from '../../../../../../components/componentCommon/SpeechToTextComponent';
 
 const ComponentNotesEditWorkspace = ({
     workspaceId,
@@ -275,6 +276,16 @@ const ComponentNotesEdit = ({
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     />
                     <div className="flex items-center mt-1">
+                        <span className='pr-2 py-1'>
+                            <SpeechToTextComponent
+                                onTranscriptionComplete={(text: string) => {
+                                    if (text.trim() !== '') {
+                                        setFormData({ ...formData, title: formData.title + ' ' + text })
+                                    }
+                                }}
+                                parentEntityId={notesObj._id}
+                            />
+                        </span>
                         {formData?.title.length >= 1 && formData.title.includes("Empty Note") && (
                             <button
                                 type="button"

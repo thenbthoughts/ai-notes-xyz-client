@@ -3,6 +3,7 @@ import { CheckSquare, Square, Trash2, Plus, Edit, Save, LucideMoreVertical } fro
 import axiosCustom from '../../../../../config/axiosCustom';
 import toast from 'react-hot-toast';
 import { AxiosError } from 'axios';
+import SpeechToTextComponent from '../../../../../components/componentCommon/SpeechToTextComponent';
 
 const createTodoCardFromSubtask = async ({
     subTaskTitle,
@@ -187,6 +188,16 @@ const ComponentSubTaskItem = ({
 
                 {/* Actions */}
                 <div className="">
+                    {showEditTitle && (
+                        <span className='px-2 py-1'>
+                            <SpeechToTextComponent
+                                onTranscriptionComplete={(text: string) => {
+                                    setFormData({ ...formData, title: formData.title + ' ' + text })
+                                }}
+                                parentEntityId={parentTaskId}
+                            />
+                        </span>
+                    )}
                     <button
                         onClick={() => updateSubCompleted({ taskCompletedStatus: !subtask.taskCompletedStatus })}
                         className="text-gray-500 hover:text-gray-700 mr-1 p-3"
@@ -322,7 +333,7 @@ const ComponentTaskSubList: React.FC<{
                         parentWorkspaceId={parentWorkspaceId}
                     />
                 ))}
-                <div className="flex gap-2 mt-2">
+                <div className="gap-2 mt-2">
                     <textarea
                         value={newSubtask}
                         placeholder="✨ Add a new subtask..."
@@ -330,16 +341,28 @@ const ComponentTaskSubList: React.FC<{
                         className="w-full p-2 border rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         rows={3}
                     />
-                    <button
-                        onClick={() => {
-                            onAddSubtask({
-                                argNewSubtask: newSubtask
-                            });
-                        }}
-                        className="px-3 py-2 bg-white text-blue-600 rounded-sm hover:bg-gray-100 transition duration-200 flex items-center"
-                    >
-                        <Plus size={16} />
-                    </button>
+                    <div className='flex items-center'>
+                        <button
+                            onClick={() => {
+                                onAddSubtask({
+                                    argNewSubtask: newSubtask
+                                });
+                            }}
+                            className="px-3 py-2 bg-white text-blue-600 rounded-sm border border-gray-300 hover:bg-gray-300 transition duration-200 flex items-center"
+                        >
+                            <Plus size={16} />
+                        </button>
+                        <span className='px-2 py-1'>
+                            <SpeechToTextComponent
+                                onTranscriptionComplete={(text: string) => {
+                                    if (text.trim() !== '') {
+                                        setNewSubtask((prev: string) => prev.trim() + ' ' + text.trim());
+                                    }
+                                }}
+                                parentEntityId={parentTaskId}
+                            />
+                        </span>
+                    </div>
                 </div>
             </div>
 

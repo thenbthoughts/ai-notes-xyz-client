@@ -12,6 +12,7 @@ import { reminderLabelToMsArr } from './taskEditCons';
 import CommentCommonComponent from '../../../../../components/commentCommonComponent/CommentCommonComponent';
 import CommonComponentAiFaq from '../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq';
 import CommonComponentAiKeywords from '../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords';
+import SpeechToTextComponent from '../../../../../components/componentCommon/SpeechToTextComponent';
 
 const TaskAddOrEdit: React.FC<{
     isTaskAddModalIsOpen: {
@@ -291,7 +292,7 @@ const TaskAddOrEdit: React.FC<{
                                         />
 
                                         {/* set current date */}
-                                        <div className='mt-1'>
+                                        <div className='mt-1 flex items-center'>
                                             <button
                                                 onClick={() => {
                                                     setTaskTitle(new Date().toISOString().split('T')[0])
@@ -313,6 +314,16 @@ const TaskAddOrEdit: React.FC<{
                                             >
                                                 Tomorrow
                                             </button>
+
+                                            {/* speech to text */}
+                                            <span className='px-2 py-1'>
+                                                <SpeechToTextComponent
+                                                    onTranscriptionComplete={(text: string) => {
+                                                        setTaskTitle((prev: string) => prev.trim() + ' ' + text.trim());
+                                                    }}
+                                                    parentEntityId={isTaskAddModalIsOpen.recordId}
+                                                />
+                                            </span>
                                         </div>
 
                                         {taskAiSuggestion.display && (
@@ -557,6 +568,15 @@ const TaskAddOrEdit: React.FC<{
                                             onChange={(e) => setTaskDescription(e.target.value)}
                                             rows={5}
                                         ></textarea>
+
+                                        <span className='px-2 py-1'>
+                                            <SpeechToTextComponent
+                                                onTranscriptionComplete={(text: string) => {
+                                                    setTaskDescription((prev: string) => prev.trim() + '\n' + text.trim());
+                                                }}
+                                                parentEntityId={isTaskAddModalIsOpen.recordId}
+                                            />
+                                        </span>
 
                                         {taskAiSuggestion.display && (
                                             <div className='mt-1'>
