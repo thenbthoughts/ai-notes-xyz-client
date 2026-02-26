@@ -15,6 +15,7 @@ import ComponentInfoVaultAddress from './ComponentInfoVaultAddress.tsx';
 import CommentCommonComponent from '../../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
 import CommonComponentAiKeywords from '../../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords.tsx';
 import CommonComponentAiFaq from '../../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq.tsx';
+import SpeechToTextComponent from '../../../../../../components/componentCommon/SpeechToTextComponent.tsx';
 
 const ComponentInfoVaultEdit = ({
     infoVaultObj
@@ -200,6 +201,16 @@ const ComponentInfoVaultEdit = ({
                         className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
+                    <span className="text-xs text-gray-500">
+                        <SpeechToTextComponent
+                            onTranscriptionComplete={(text: string) => {
+                                if (text.trim() !== '') {
+                                    setFormData({ ...formData, name: formData.name + ' ' + text })
+                                }
+                            }}
+                            parentEntityId={infoVaultObj._id}
+                        />
+                    </span>
                 </div>
 
                 {/* field -> nickname */}
