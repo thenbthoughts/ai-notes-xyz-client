@@ -81,6 +81,9 @@ const DriveWrapper = lazy(() => import("./pages/user/features/Drive/DriveWrapper
 const LlmKeywordList = lazy(() => import("./pages/user/features/AiContextHelper/LlmKeywords/LlmKeyword.tsx"));
 const LlmKeywordGraph = lazy(() => import("./pages/user/features/AiContextHelper/LlmKeywordGraph/LlmKeywordGraph.tsx"));
 
+// pages -> test
+const TestVoiceActivityDetection = lazy(() => import("./pages/test/testDev/TestVoiceActivityDetectionLibrary.tsx"));
+
 function App() {
   const Layout = () => {
     return (
@@ -397,6 +400,14 @@ function App() {
             <UnauthorizedRoute>
               <LlmKeywordGraph />
             </UnauthorizedRoute>
+          )
+        },
+        {
+          path: '/test/voice-activity-detection',
+          element: (
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+              <TestVoiceActivityDetection />
+            </Suspense>
           )
         }
       ]

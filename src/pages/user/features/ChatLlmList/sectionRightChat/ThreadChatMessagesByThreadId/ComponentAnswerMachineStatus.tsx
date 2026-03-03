@@ -40,8 +40,8 @@ const ComponentAnswerMachineStatus = ({
     const [isTokenUsageExpanded, setIsTokenUsageExpanded] = useState(true);
     const [expandedJobIds, setExpandedJobIds] = useState<Set<string>>(new Set());
 
-    const intervalRef = useRef<number | null>(null);
-    const countdownRef = useRef<number | null>(null);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const onCompleteRef = useRef(onComplete);
     const onStatusUpdateRef = useRef(onStatusUpdate);
     const threadIdRef = useRef(threadId);

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideRepeat, LucideSend, LucideSidebar, LucideVideo, LucideX } from 'lucide-react';
 import envKeys from '../../../../../../config/envKeys.tsx';
@@ -359,8 +360,8 @@ const ComponentChatMessageInput = ({
                 // get thread info
                 const responseThread = await axiosCustom.post(
                     '/api/chat-llm/threads-crud/threadsGet', {
-                        threadId: threadId,
-                    }
+                    threadId: threadId,
+                }
                 );
                 const threadInfo = responseThread.data.docs[0];
                 if (threadInfo.answerEngine === 'answerMachine') {
@@ -405,8 +406,8 @@ const ComponentChatMessageInput = ({
             // get thread info
             const responseThread = await axiosCustom.post(
                 '/api/chat-llm/threads-crud/threadsGet', {
-                    threadId: threadId,
-                }
+                threadId: threadId,
+            }
             );
             const threadInfo = responseThread.data.docs[0];
             if (threadInfo.answerEngine === 'answerMachine') {
@@ -436,115 +437,124 @@ const ComponentChatMessageInput = ({
     }
 
     return (
-        <div
-            ref={actionContainerRef}
-            style={{
-                paddingTop: '1px',
-            }}
-            className='px-2'
-        >
-            <ComponentFilesDisplay
-                files={files}
-                setFiles={setFiles}
-            />
-
-            <TextAndFileInput
-                value={newNote}
-                setValue={setNewNote}
-                files={files}
-                setFiles={setFiles}
-                threadId={threadId}
-            />
-
-            {/* action container - 50px */}
+        <>
             <div
-                className='flex'
+                ref={actionContainerRef}
+                style={{ paddingTop: '1px' }}
+                className='px-2'
             >
-                <div className={cssNoteAdvanceList.actionContainer}
-                    style={{
-                        width: screenWidth === screenList.lg ? '100%' : 'calc(100vw - 50px)'
-                    }}
-                >
-                    {/* send */}
-                    <button
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                        style={{ height: '40px' }}
-                        onClick={handleAddNote}
-                        disabled={isSubmitting}
+                <ComponentFilesDisplay
+                    files={files}
+                    setFiles={setFiles}
+                />
+
+                <TextAndFileInput
+                    value={newNote}
+                    setValue={setNewNote}
+                    files={files}
+                    setFiles={setFiles}
+                    threadId={threadId}
+                />
+
+                {/* action container */}
+                <div className='flex'>
+                    <div className={cssNoteAdvanceList.actionContainer}
+                        style={{
+                            width: screenWidth === screenList.lg ? '100%' : 'calc(100vw - 50px)'
+                        }}
                     >
-                        {isSubmitting ? (
-                            <LucideLoader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                            <LucideSend style={{ height: '20px' }} />
-                        )}
-                    </button>
-
-                    {/* file */}
-                    <ComponentUploadFile
-                        setFiles={setFiles}
-                        threadId={threadId}
-                    />
-
-                    {/* camera */}
-                    <ComponentUploadImage
-                        setFiles={setFiles}
-                        threadId={threadId}
-                    />
-
-                    {/* audio */}
-                    <ComponentRecordAudio
-                        setRefreshParentRandomNum={setRefreshParentRandomNum}
-                        threadId={threadId}
-                        setChatInputValue={setNewNote}
-                    />
-
-                    {isSubmitting === false && (
+                        {/* send */}
                         <button
                             className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
                             style={{ height: '40px' }}
-                            onClick={regenerateResponse}
+                            onClick={handleAddNote}
                             disabled={isSubmitting}
                         >
-                            <LucideRepeat style={{ height: '20px' }} />
+                            {isSubmitting ? (
+                                <LucideLoader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <LucideSend style={{ height: '20px' }} />
+                            )}
                         </button>
-                    )}
 
-                    {/* auto select context notes */}
-                    <button
-                        className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded-sm whitespace-nowrap"
-                        style={{ height: '40px' }}
-                        onClick={() => {
-                            handleAutoSelectContext({ threadId: threadId });
+                        {/* file */}
+                        <ComponentUploadFile
+                            setFiles={setFiles}
+                            threadId={threadId}
+                        />
+
+                        {/* camera */}
+                        <ComponentUploadImage
+                            setFiles={setFiles}
+                            threadId={threadId}
+                        />
+
+                        {/* audio */}
+                        <ComponentRecordAudio
+                            setRefreshParentRandomNum={setRefreshParentRandomNum}
+                            threadId={threadId}
+                            setChatInputValue={setNewNote}
+                        />
+
+                        {/* talk with ai */}
+                        <Link
+                            to={`?page=talk&id=${threadId}`}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded whitespace-nowrap inline-flex items-center gap-1"
+                            style={{ height: '40px', fontSize: '0.82rem' }}
+                            title="Talk with AI — voice conversation"
+                        >
+                            🎙️ Talk
+                        </Link>
+
+                        {isSubmitting === false && (
+                            <button
+                                className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
+                                style={{ height: '40px' }}
+                                onClick={regenerateResponse}
+                                disabled={isSubmitting}
+                            >
+                                <LucideRepeat style={{ height: '20px' }} />
+                            </button>
+                        )}
+
+                        {/* auto select context notes */}
+                        <button
+                            className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded-sm whitespace-nowrap"
+                            style={{ height: '40px' }}
+                            onClick={() => {
+                                handleAutoSelectContext({ threadId: threadId });
+                            }}
+                        >
+                            AI: Auto Context
+                        </button>
+                    </div>
+                    <div
+                        style={{
+                            display: screenWidth === screenList.sm ? 'inline-block' : 'none',
+                            width: screenWidth === screenList.lg ? '100%' : '50px',
                         }}
                     >
-                        AI: Auto Context
-                    </button>
-                </div>
-                <div
-                    style={{
-                        display: screenWidth === screenList.sm ? 'inline-block' : 'none',
-                        width: screenWidth === screenList.lg ? '100%' : '50px',
-                    }}
-                >
-                    <LucideSidebar
-                        style={{
-                            width: '100%',
-                            height: '50px',
-                            color: 'white',
-                            cursor: 'pointer',
-                            padding: '10px',
-                        }}
-                        onClick={() => {
-                            setHideRightSidebar((prevProps) => {
-                                return {
-                                    isOpen: !prevProps.isOpen,
-                                };
-                            });
-                        }}
-                    />
+                        <LucideSidebar
+                            style={{
+                                width: '100%',
+                                height: '50px',
+                                color: 'white',
+                                cursor: 'pointer',
+                                padding: '10px',
+                            }}
+                            onClick={() => {
+                                setHideRightSidebar((prevProps) => {
+                                    return {
+                                        isOpen: !prevProps.isOpen,
+                                    };
+                                });
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+
+        </>
     );
 };
 
