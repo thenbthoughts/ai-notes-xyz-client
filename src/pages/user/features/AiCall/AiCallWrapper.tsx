@@ -404,6 +404,69 @@ const AiCallNew = ({
         )
     }
 
+    const renderConversation = () => {
+        if (conversation.length === 0) {
+            return (
+                <div className="bg-white/80 backdrop-blur-sm rounded p-2 mt-2 border border-gray-200/50 shadow-sm">
+                    <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                        <p className="text-lg">No messages yet</p>
+                        <p className="text-sm mt-2">Speak to start the conversation</p>
+                    </div>
+                </div>
+            );
+        }
+        return (
+            <div className="bg-white/80 backdrop-blur-sm rounded p-2 mt-2 border border-gray-200/50 shadow-sm">
+                <div
+                    className="overflow-y-auto px-2"
+                    style={{
+                        height: '50vh',
+                        overflowY: 'auto'
+                    }}
+                >
+                    {conversation.map((turn) => {
+                        // Determine who is speaking based on isAi field
+                        const isUser = !turn.isAi;
+                        // Use _id as the unique key
+                        return (
+                            <div
+                                key={`message-item-${turn._id}`}
+                                id={`message-item-${turn._id}`}
+                                className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
+                            >
+                                <div
+                                    className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${isUser
+                                        ? 'bg-blue-500 text-white rounded-br-md'
+                                        : 'bg-gray-200 text-gray-800 rounded-bl-md'
+                                        }`}
+                                >
+                                    {/* Display content for user/AI */}
+                                    {turn.content}
+                                    {turn.createdAtUtc && (
+                                        <div className={`text-xs mt-1 opacity-70 ${isUser ? 'text-blue-100' : 'text-gray-500'
+                                            }`}>
+                                            {new Date(turn.createdAtUtc).toLocaleTimeString()}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                    {generatingAiResponse && (
+                        <div className="flex justify-start mt-2">
+                            <div className="bg-gray-200 text-gray-800 px-4 py-3 rounded-2xl rounded-bl-md">
+                                <div className="flex items-center space-x-2">
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-800"></div>
+                                    <span className="text-sm">AI is thinking...</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
     const renderMainContent = () => {
         return (
             <div className="px-2">
@@ -494,67 +557,6 @@ const AiCallNew = ({
             </div>
         );
     }
-
-    const renderConversation = () => {
-        if (conversation.length === 0) {
-            return (
-                <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                    <p className="text-lg">No messages yet</p>
-                    <p className="text-sm mt-2">Speak to start the conversation</p>
-                </div>
-            );
-        }
-        return (
-            <div className="bg-white/80 backdrop-blur-sm rounded p-2 mt-2 border border-gray-200/50 shadow-sm">
-                <div
-                    className="overflow-y-auto px-2"
-                    style={{
-                        height: '50vh',
-                        overflowY: 'auto'
-                    }}
-                >
-                    {conversation.map((turn) => {
-                        // Determine who is speaking based on isAi field
-                        const isUser = !turn.isAi;
-                        // Use _id as the unique key
-                        return (
-                            <div
-                                key={`message-item-${turn._id}`}
-                                id={`message-item-${turn._id}`}
-                                className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
-                            >
-                                <div
-                                    className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${isUser
-                                        ? 'bg-blue-500 text-white rounded-br-md'
-                                        : 'bg-gray-200 text-gray-800 rounded-bl-md'
-                                        }`}
-                                >
-                                    {/* Display content for user/AI */}
-                                    {turn.content}
-                                    {turn.createdAtUtc && (
-                                        <div className={`text-xs mt-1 opacity-70 ${isUser ? 'text-blue-100' : 'text-gray-500'
-                                            }`}>
-                                            {new Date(turn.createdAtUtc).toLocaleTimeString()}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        );
-                    })}
-                    {generatingAiResponse && (
-                        <div className="flex justify-start mt-2">
-                            <div className="bg-gray-200 text-gray-800 px-4 py-3 rounded-2xl rounded-bl-md">
-                                <div className="flex items-center space-x-2">
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-800"></div>
-                                    <span className="text-sm">AI is thinking...</span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-        );
-    };
 
 
     return (
