@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMicVAD } from "@ricky0123/vad-react";
-import { LucideBrain, LucideClock, LucideMic, LucideMicOff, LucidePhoneOff, LucideSettings, LucideSpeech, LucideTimer } from "lucide-react";
+import { LucideBrain, LucideClock, LucideMic, LucideMicOff, LucidePhoneOff, LucideSettings, LucideSpeech, LucideTimer, LucideVolume2 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import stateJotaiAuthAtom from "../../../../jotai/stateJotaiAuth";
@@ -9,6 +9,7 @@ import { uploadFeatureFile } from "../../../../utils/featureFileUpload";
 import envKeys from "../../../../config/envKeys";
 import axiosCustom from "../../../../config/axiosCustom";
 import { toast } from "react-hot-toast";
+import TtsControls, { TtsControlsRef, TtsStatus, TtsGenerating } from "./TtsControls";
 
 interface ConversationItem {
     _id: string;
@@ -58,11 +59,26 @@ const AiCallNew = ({
     const [status, setStatus] = useState<"idle" | "listening" | "speaking">("idle");
     const [isTranscripting, setIsTranscripting] = useState<boolean>(false);
 
+    // TTS state
+    const [isMuted, setIsMuted] = useState<boolean>(false);
+    const [ttsStatus, setTtsStatus] = useState<TtsStatus>("idle");
+    const [ttsGenerating, setTtsGenerating] = useState<TtsGenerating>("idle");
+    const ttsControlsRef = useRef<TtsControlsRef>(null);
+
+
     const [conversation, setConversation] = useState<ConversationItem[]>([]);
     const [generatingAiResponse, setGeneratingAiResponse] = useState<boolean>(false);
 
     const navigate = useNavigate();
     const onSpeechStart = () => {
+        // Stop TTS if currently playing when user starts speaking
+        if (ttsStatus === 'tts-speaking' && ttsControlsRef.current) {
+            ttsControlsRef.current.stopTts();
+        }
+        // Resume AudioContext for TTS (user gesture)
+        if (ttsControlsRef.current) {
+            ttsControlsRef.current.resumeAudioCtx();
+        }
         setStatus("speaking");
     };
 
@@ -112,6 +128,8 @@ const AiCallNew = ({
 
         if (nextMessage.trim().length >= 1 && sendingInSeconds <= 0) {
             let tempMessage = nextMessage.trim();
+            
+            // TODO should process the message
 
             setNextMessage(() => {
                 return "";
@@ -124,7 +142,6 @@ const AiCallNew = ({
     }, [
         nextMessage,
         sendingInSeconds,
-        timer,
     ]);
 
     // ----- functions -----
@@ -203,6 +220,16 @@ const AiCallNew = ({
             // Add all documents to conversation as turns
             if (docs.length > 0) {
                 setConversation(docs);
+
+                // Get the latest AI message for TTS
+                const latestMessage = docs[docs.length - 1];
+                const aiText = latestMessage?.content || latestMessage?.fileContentAi || '';
+
+                // Play TTS if there's AI text and not muted
+                if (aiText && !isMuted && ttsControlsRef.current) {
+                    let tempAiText = aiText.replace('AI: ', '');
+                    await ttsControlsRef.current.playTts(tempAiText);
+                }
             }
 
             // Scroll to the bottom of the conversation
@@ -237,7 +264,7 @@ const AiCallNew = ({
                     {/* Voice status */}
                     <div className="inline-block mr-3">
                         <LucideMic size={24} className="inline-block align-text-bottom mr-[3px] text-[#42a5f5]" />
-                        {status}
+                        {ttsStatus === 'tts-speaking' ? 'AI speaking' : status}
                     </div>
 
                     {/* Sending in seconds */}
@@ -264,7 +291,7 @@ const AiCallNew = ({
 
                     {/* Generating AI response */}
                     {generatingAiResponse && (
-                        <div className="inline-block">
+                        <div className="inline-block mr-3">
                             <LucideBrain
                                 size={24}
                                 className={`inline-block align-text-bottom mr-[3px] ${generatingAiResponse ? "text-[#42e49f]" : "text-[#aaa]"}`}
@@ -272,6 +299,29 @@ const AiCallNew = ({
                             Generating
                         </div>
                     )}
+
+                    {/* TTS Generating */}
+                    {ttsGenerating === 'tts-generating' && (
+                        <div className="inline-block mr-3">
+                            <LucideVolume2
+                                size={24}
+                                className="inline-block align-text-bottom mr-[3px] text-[#ff9800] animate-spin"
+                            />
+                            Generating
+                        </div>
+                    )}
+
+                    {/* TTS Speaking */}
+                    {ttsStatus === 'tts-speaking' && (
+                        <div className="inline-block">
+                            <LucideVolume2
+                                size={24}
+                                className="inline-block align-text-bottom mr-[3px] text-[#ff9800] animate-pulse"
+                            />
+                            Speaking
+                        </div>
+                    )}
+
                 </div>
 
                 {/* Improved Send Timing Controls */}
@@ -515,6 +565,17 @@ const AiCallNew = ({
                         )}
                     </button>
 
+                    {/* TTS Controls */}
+                    <TtsControls
+                        ref={ttsControlsRef}
+                        isMuted={isMuted}
+                        setIsMuted={setIsMuted}
+                        ttsStatus={ttsStatus}
+                        setTtsStatus={setTtsStatus}
+                        ttsGenerating={ttsGenerating}
+                        setTtsGenerating={setTtsGenerating}
+                    />
+
                     {/* Settings */}
                     <button
                         className={`bg-gray-500 shadow mr-2`}
@@ -535,6 +596,9 @@ const AiCallNew = ({
                     {/* End Call */}
                     <button
                         onClick={() => {
+                            if (ttsControlsRef.current) {
+                                ttsControlsRef.current.stopTts();
+                            }
                             vad.toggle();
                             navigate(`/user/chat?id=${threadId}`);
                         }}
