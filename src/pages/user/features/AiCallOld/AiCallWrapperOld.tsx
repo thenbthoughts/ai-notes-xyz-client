@@ -4,7 +4,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import stateJotaiAuthAtom from '../../../../jotai/stateJotaiAuth';
 import AiCall from './AiCall';
-import AiCallNew from './AiCallWrapper';
 
 const AiCallWrapperOld = () => {
     const location = useLocation();

@@ -16,7 +16,7 @@ const AiCallNew = ({
         setStatus("speaking");
     };
 
-    const onSpeechEnd = (audio: Float32Array) => {
+    const onSpeechEnd = (_audio: Float32Array) => {
         setStatus("listening");
     };
 

@@ -16,7 +16,7 @@ const TestVoiceActivityDetection = () => {
     const [lastSentText, setLastSentText] = useState("");
 
     const draftTextRef = useRef("");
-    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const timerRef = useRef<number | null>(null);
     const pipelineStateRef = useRef<PipelineState>("idle");
     const sendLockRef = useRef(false);
     const segmentRef = useRef(0);

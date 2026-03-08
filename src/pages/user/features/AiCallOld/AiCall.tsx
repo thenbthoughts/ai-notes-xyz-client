@@ -12,7 +12,7 @@
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
     LucideCamera, LucideCameraOff, LucideX,
     LucideMic, LucideMicOff, LucideSettings, LucidePhoneOff,
@@ -74,7 +74,6 @@ const AiCall = ({
     threadId: string;
 }) => {
     const navigate = useNavigate();
-    const location = useLocation();
 
     const [talkState, setTalkState] = useState<TalkState>('idle');
     const [conversation, setConversation] = useState<Turn[]>(() => {
@@ -92,7 +91,7 @@ const AiCall = ({
     const [volume, setVolume] = useState(0);
     const [isActive, setIsActive] = useState(false);
     const [silenceLeft, setSilenceLeft] = useState<number>(DEFAULT_DURATION_MS);
-    const [silenceDurationMs, setSilenceDurationMs] = useState(DEFAULT_DURATION_MS);
+    const [silenceDurationMs, setSilenceDurationMs] = useState<number>(DEFAULT_DURATION_MS);
     const [showSettings, setShowSettings] = useState(false);
     const [showChat, setShowChat] = useState(false);
     const [hasDetectedSpeech, setHasDetectedSpeech] = useState(false);
@@ -327,7 +326,7 @@ const AiCall = ({
         }
 
         const targetMs = Math.max(2_000, Math.min(300_000, Math.round(increaseSeconds) * 1000));
-        let next = SILENCE_DURATION_OPTIONS[0].ms;
+        let next: number = SILENCE_DURATION_OPTIONS[0].ms;
         let best = Math.abs(next - targetMs);
 
         for (let i = 1; i < SILENCE_DURATION_OPTIONS.length; i += 1) {
