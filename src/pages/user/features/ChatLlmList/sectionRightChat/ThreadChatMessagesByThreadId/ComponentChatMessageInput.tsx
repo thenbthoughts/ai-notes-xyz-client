@@ -496,14 +496,14 @@ const ComponentChatMessageInput = ({
                             setChatInputValue={setNewNote}
                         />
 
-                        {/* talk with ai */}
+                        {/* ai call */}
                         <Link
-                            to={`?page=talk&id=${threadId}`}
+                            to={`/user/ai-call?id=${threadId}`}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded whitespace-nowrap inline-flex items-center gap-1"
                             style={{ height: '40px', fontSize: '0.82rem' }}
-                            title="Talk with AI — voice conversation"
+                            title="AI Call — voice conversation"
                         >
-                            🎙️ Talk
+                            🎙️ Call
                         </Link>
 
                         {isSubmitting === false && (

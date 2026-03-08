@@ -40,6 +40,8 @@ const SettingAiFeatures = lazy(() => import("./pages/user/settings/settingAiFeat
 
 // pages -> ai
 const ChatLlmListWrapper = lazy(() => import('./pages/user/features/ChatLlmList/ChatLlmListWrapper.tsx'));
+const AiCallWrapper = lazy(() => import('./pages/user/features/AiCall/AiCallWrapper.tsx'));
+const AiCallWrapperOld = lazy(() => import('./pages/user/features/AiCallOld/AiCallWrapperOld.tsx'));
 const AiDeepResearchWrapper = lazy(() => import("./pages/user/features/AiDeepResearch/AiDeepResearchWrapper.tsx"));
 
 // pages -> notes
@@ -145,6 +147,22 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <ChatLlmListWrapper />
+            </UnauthorizedRoute>
+          )
+        },
+        {
+          path: '/user/ai-call',
+          element: (
+            <UnauthorizedRoute>
+              <AiCallWrapper />
+            </UnauthorizedRoute>
+          )
+        },
+        {
+          path: '/user/ai-call-old',
+          element: (
+            <UnauthorizedRoute>
+              <AiCallWrapperOld />
             </UnauthorizedRoute>
           )
         },

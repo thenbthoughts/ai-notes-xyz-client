@@ -1,5 +1,5 @@
 /**
- * TalkWithAi — Voice chat page with configurable timer and send now
+ * AiCall — Voice chat page with configurable timer and send now
  *
  * Features:
  * 1. Audio output: uses shared AudioContext (resumed on mic click = user gesture)
@@ -14,13 +14,15 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-    LucideCamera, LucideX, LucideLoader2,
-    LucideVolume2, LucideVolumeX, LucideMic, LucideMicOff,
+    LucideCamera, LucideCameraOff, LucideX,
+    LucideMic, LucideMicOff, LucideSettings, LucidePhoneOff,
+    LucideMessageSquare, LucideLoader2, LucideBrain, LucideFileAudio, LucideVolume2,
+    LucideCheck
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import axiosCustom from '../../../../../../config/axiosCustom';
-import envKeys from '../../../../../../config/envKeys';
-import { uploadFeatureFile } from '../../../../../../utils/featureFileUpload';
+import axiosCustom from '../../../../config/axiosCustom';
+import envKeys from '../../../../config/envKeys';
+import { uploadFeatureFile } from '../../../../utils/featureFileUpload';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -51,27 +53,22 @@ const ORB_SHADOW: Record<TalkState, string> = {
     speaking: 'rgba(16,185,129,0.5)',
 };
 
-const STATE_LABEL: Record<TalkState, string> = {
-    idle: 'Paused',
-    listening: 'Listening…',
-    processing: 'Transcribing…',
-    thinking: 'Thinking…',
-    speaking: 'Speaking…',
-};
-
 // using api for speech recognition instead of SpeechRecognition
 const SILENCE_DURATION_OPTIONS = [
+  { ms: 2_000, label: '2s' },
+  { ms: 5_000, label: '5s' },
   { ms: 10_000, label: '10s' },
-  { ms: 20_000, label: '20s' },
+  { ms: 15_000, label: '15s' },
   { ms: 30_000, label: '30s' },
   { ms: 60_000, label: '1m' },
   { ms: 120_000, label: '2m' },
+  { ms: 300_000, label: '5m' },
 ] as const;
-const DEFAULT_DURATION_MS = 20_000;
+const DEFAULT_DURATION_MS = 2_000;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-const TalkWithAi = ({
+const AiCall = ({
     threadId
 }: {
     threadId: string;
@@ -81,9 +78,8 @@ const TalkWithAi = ({
 
     const [talkState, setTalkState] = useState<TalkState>('idle');
     const [conversation, setConversation] = useState<Turn[]>(() => {
-        // Load conversation from localStorage on initialization
         try {
-            const saved = localStorage.getItem(`talkwithai-conversation-${threadId}`);
+            const saved = localStorage.getItem(`aicall-conversation-${threadId}`);
             return saved ? JSON.parse(saved) : [];
         } catch {
             return [];
@@ -93,11 +89,14 @@ const TalkWithAi = ({
     const [isMuted, setIsMuted] = useState(false);
     const [cameraEnabled, setCameraEnabled] = useState(false);
     const [capturedImageFile, setCapturedImageFile] = useState<File | null>(null);
-    const [capturedImageThumb, setCapturedImageThumb] = useState<string | null>(null);
     const [volume, setVolume] = useState(0);
     const [isActive, setIsActive] = useState(false);
     const [silenceLeft, setSilenceLeft] = useState<number>(DEFAULT_DURATION_MS);
     const [silenceDurationMs, setSilenceDurationMs] = useState(DEFAULT_DURATION_MS);
+    const [showSettings, setShowSettings] = useState(false);
+    const [showChat, setShowChat] = useState(false);
+    const [hasDetectedSpeech, setHasDetectedSpeech] = useState(false);
+    const [latestTranscriptText, setLatestTranscriptText] = useState('');
 
     const scrollRef = useRef<HTMLDivElement>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -106,6 +105,7 @@ const TalkWithAi = ({
     const stateRef = useRef<TalkState>('idle');
     const isActiveRef = useRef(false);
     const silenceDurationRef = useRef(DEFAULT_DURATION_MS);
+    const hasDetectedSpeechRef = useRef(false);
 
     // Audio (AudioContext primary + Audio element fallback)
     const audioCtxRef = useRef<AudioContext | null>(null);
@@ -124,7 +124,7 @@ const TalkWithAi = ({
     // Save conversation to localStorage
     useEffect(() => {
         try {
-            localStorage.setItem(`talkwithai-conversation-${threadId}`, JSON.stringify(conversation));
+            localStorage.setItem(`aicall-conversation-${threadId}`, JSON.stringify(conversation));
         } catch (error) {
             console.warn('Failed to save conversation to localStorage:', error);
         }
@@ -137,7 +137,7 @@ const TalkWithAi = ({
 
 
     // Auto-scroll
-    useEffect(() => { scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [conversation, interimText]);
+    useEffect(() => { scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [conversation, interimText, showChat]);
 
     // Cleanup on unmount
     useEffect(() => () => { cleanup(); }, []);
@@ -262,6 +262,7 @@ const TalkWithAi = ({
     // ── Pipeline ──────────────────────────────────────────────────────────────
 
     const runPipeline = useCallback(async (transcript: string) => {
+        setLatestTranscriptText(transcript);
         setTalkState('processing');
         setConversation(prev => [...prev, {
             role: 'user',
@@ -310,7 +311,6 @@ const TalkWithAi = ({
 
             onMessageAdded();
             setCapturedImageFile(null);
-            setCapturedImageThumb(null);
             setTalkState(isActiveRef.current ? 'listening' : 'idle');
             setSilenceLeft(DEFAULT_DURATION_MS);
         } catch (err) {
@@ -320,6 +320,57 @@ const TalkWithAi = ({
             setSilenceLeft(DEFAULT_DURATION_MS);
         }
     }, [threadId, capturedImageFile, isMuted, playTts]);
+
+    const pickClosestTimerMs = (increaseSeconds: number) => {
+        if (!Number.isFinite(increaseSeconds) || increaseSeconds <= 0) {
+            return null;
+        }
+
+        const targetMs = Math.max(2_000, Math.min(300_000, Math.round(increaseSeconds) * 1000));
+        let next = SILENCE_DURATION_OPTIONS[0].ms;
+        let best = Math.abs(next - targetMs);
+
+        for (let i = 1; i < SILENCE_DURATION_OPTIONS.length; i += 1) {
+            const candidate = SILENCE_DURATION_OPTIONS[i].ms;
+            const diff = Math.abs(candidate - targetMs);
+            if (diff < best) {
+                best = diff;
+                next = candidate;
+            }
+        }
+
+        return next;
+    };
+
+    const evaluateTranscription = useCallback(async (transcript: string) => {
+        const trimmedTranscript = transcript.trim();
+        setLatestTranscriptText(trimmedTranscript);
+        if (!trimmedTranscript) {
+            return {
+                shouldSend: false,
+                increaseTimerMs: null,
+            };
+        }
+
+        try {
+            const res = await axiosCustom.post('/api/chat-llm/ai-call/decide-send', { threadId, transcript: trimmedTranscript });
+            const payload = res?.data || {};
+            const shouldSend = typeof payload.shouldSend === 'boolean' ? payload.shouldSend : false;
+            const increaseTimer = Number(payload.increaseTimer);
+
+            const nextTimerMs = pickClosestTimerMs(increaseTimer);
+            return {
+                shouldSend,
+                increaseTimerMs: nextTimerMs,
+            };
+        } catch (error) {
+            console.error('Decision endpoint error:', error);
+            return {
+                shouldSend: false,
+                increaseTimerMs: null,
+            };
+        }
+    }, [threadId]);
 
     // ── MediaRecorder & Silence detection ─────────────────────────────────────
 
@@ -333,6 +384,8 @@ const TalkWithAi = ({
         setTalkState('listening');
         setInterimText('');
         setSilenceLeft(silenceDurationMs);
+        setHasDetectedSpeech(false);
+        hasDetectedSpeechRef.current = false;
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -358,6 +411,10 @@ const TalkWithAi = ({
                 setVolume(Math.min(avg / 100, 1));
 
                 if (avg > 25) { // Speech threshold raised significantly to avoid static noise resetting the timer
+                    if (!hasDetectedSpeechRef.current) {
+                        hasDetectedSpeechRef.current = true;
+                        setHasDetectedSpeech(true);
+                    }
                     lastSpeechTimeRef.current = Date.now();
                 }
 
@@ -395,7 +452,12 @@ const TalkWithAi = ({
                 stopVolumeAnalyser();
 
                 // If it's still marked as active, it means silence threshold was reached or user hit stop.
-                if (audioBlob.size > 0 && String(stateRef.current) !== 'processing' && String(stateRef.current) !== 'thinking') {
+                if (
+                    audioBlob.size > 0 &&
+                    hasDetectedSpeechRef.current &&
+                    String(stateRef.current) !== 'processing' &&
+                    String(stateRef.current) !== 'thinking'
+                ) {
                     setTalkState('processing');
                     setInterimText('Transcribing audio...');
                     try {
@@ -407,8 +469,25 @@ const TalkWithAi = ({
 
                         setInterimText('');
                         if (transcript.trim()) {
-                            runPipeline(transcript);
+                            setLatestTranscriptText(transcript.trim());
+                            const decision = await evaluateTranscription(transcript);
+                            if (decision.shouldSend) {
+                                runPipeline(transcript);
+                            } else {
+                                setTalkState('idle');
+                                setIsActive(false);
+                                isActiveRef.current = false;
+                                setSilenceLeft(DEFAULT_DURATION_MS);
+                                setHasDetectedSpeech(false);
+                                hasDetectedSpeechRef.current = false;
+                                setInterimText('No clear send intent detected. Speak a bit more to continue.');
+                                if (decision.increaseTimerMs !== null) {
+                                    setSilenceDurationMs(decision.increaseTimerMs);
+                                }
+                                return;
+                            }
                         } else {
+                            setLatestTranscriptText('');
                             // Empty transcript
                             setTalkState('idle');
                             setIsActive(false);
@@ -422,12 +501,18 @@ const TalkWithAi = ({
                         setIsActive(false);
                         isActiveRef.current = false;
                         setInterimText('');
+                setLatestTranscriptText('');
+                        setHasDetectedSpeech(false);
+                        hasDetectedSpeechRef.current = false;
                         setSilenceLeft(DEFAULT_DURATION_MS);
                     }
                 } else {
+                    setHasDetectedSpeech(false);
+                    hasDetectedSpeechRef.current = false;
                     setTalkState('idle');
                     setIsActive(false);
                     isActiveRef.current = false;
+            setLatestTranscriptText('');
                     setInterimText('');
                     setSilenceLeft(DEFAULT_DURATION_MS);
                 }
@@ -442,13 +527,21 @@ const TalkWithAi = ({
             setTalkState('idle');
             setSilenceLeft(DEFAULT_DURATION_MS);
         }
-    }, [stopTts, runPipeline, threadId]);
+    }, [stopTts, runPipeline, threadId, evaluateTranscription]);
 
     const sendNow = useCallback(() => {
+        if (!hasDetectedSpeechRef.current) {
+            setTalkState('idle');
+            setIsActive(false);
+            isActiveRef.current = false;
+            stopVolumeAnalyser();
+            setHasDetectedSpeech(false);
+            return;
+        }
         if (mediaRecorderRef.current?.state === 'recording') {
             mediaRecorderRef.current.stop(); // Triggers onstop → transcribe → pipeline
         }
-    }, []);
+    }, [stopVolumeAnalyser]);
 
     const selectDuration = useCallback((newDurationMs: number) => {
         setSilenceDurationMs(newDurationMs);
@@ -462,6 +555,8 @@ const TalkWithAi = ({
     const stopListening = useCallback(() => {
         setIsActive(false);
         isActiveRef.current = false;
+        setHasDetectedSpeech(false);
+        hasDetectedSpeechRef.current = false;
         setSilenceLeft(silenceDurationMs);
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
             mediaRecorderRef.current.stop(); // Triggers onstop which handles the rest
@@ -486,17 +581,6 @@ const TalkWithAi = ({
         return () => { camStreamRef.current?.getTracks().forEach(t => t.stop()); };
     }, [cameraEnabled]);
 
-    const snapCamera = () => {
-        if (!canvasRef.current || !videoRef.current) return;
-        const c = canvasRef.current; const v = videoRef.current;
-        c.width = v.videoWidth || 320; c.height = v.videoHeight || 240;
-        c.getContext('2d')?.drawImage(v, 0, 0, c.width, c.height);
-        const thumb = c.toDataURL('image/jpeg', 0.7);
-        setCapturedImageThumb(thumb);
-        c.toBlob(b => { if (b) setCapturedImageFile(new File([b], 'cam.jpg', { type: 'image/jpeg' })); }, 'image/jpeg', 0.7);
-        toast.success('Photo captured!');
-    };
-
     const cleanup = () => {
         stopListening(); stopVolumeAnalyser();
         camStreamRef.current?.getTracks().forEach(t => t.stop());
@@ -505,10 +589,11 @@ const TalkWithAi = ({
 
     const handleClose = () => {
         // Navigate back to chat view for the same thread
-        const searchParams = new URLSearchParams(location.search);
-        searchParams.set('page', 'chat');
-        if (threadId) searchParams.set('id', threadId);
-        navigate({ pathname: location.pathname, search: searchParams.toString() });
+        if (threadId) {
+            navigate(`/user/chat?id=${threadId}`);
+        } else {
+            navigate('/user/chat');
+        }
     };
 
     const onMessageAdded = () => {
@@ -519,7 +604,7 @@ const TalkWithAi = ({
         if (window.confirm('Are you sure you want to clear the conversation? This cannot be undone.')) {
             setConversation([]);
             try {
-                localStorage.removeItem(`talkwithai-conversation-${threadId}`);
+                localStorage.removeItem(`aicall-conversation-${threadId}`);
             } catch (error) {
                 console.warn('Failed to clear conversation from localStorage:', error);
             }
@@ -542,7 +627,7 @@ const TalkWithAi = ({
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `talkwithai-conversation-${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `aicall-conversation-${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -614,332 +699,349 @@ const TalkWithAi = ({
     const orbColor = ORB_COLOR[talkState];
     const orbShadow = ORB_SHADOW[talkState];
 
+    const STEPS = [
+        { id: 'listening', label: 'Listening', icon: LucideMic },
+        { id: 'processing', label: 'Audio to Text', icon: LucideFileAudio },
+        { id: 'thinking', label: 'LLM', icon: LucideBrain },
+        { id: 'speaking', label: 'TTS', icon: LucideVolume2 },
+    ];
+
+    const getStepStatus = (stepId: string) => {
+        if (talkState === 'idle') return 'waiting';
+        
+        // Define order
+        const order = ['listening', 'processing', 'thinking', 'speaking'];
+        const currentIndex = order.indexOf(talkState);
+        const stepIndex = order.indexOf(stepId);
+
+        if (currentIndex === stepIndex) return 'active';
+        if (currentIndex > stepIndex) return 'completed';
+        return 'waiting';
+    };
+
+    const selectedAutoSendLabel = SILENCE_DURATION_OPTIONS.find((option) => option.ms === silenceDurationMs)?.label || `${silenceDurationMs / 1000}s`;
+
     return (
-        <div className="px-2 sm:px-4 py-2 sm:py-4">
-            <div className="max-w-4xl mx-auto">
-                {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                        {/* Status orb */}
-                        <div className="relative">
+        <div style={{ height: `calc(100vh - 60px)` }} className="bg-black text-white flex flex-col font-sans">
+            {/* 1. Video Background / Main View */}
+            <div className="flex-1 overflow-hidden">
+                {cameraEnabled ? (
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        className="w-full h-full object-cover"
+                    />
+                ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900">
+                        {/* Background ambience */}
+                        <div className="bg-gradient-to-b from-gray-800 to-black opacity-50" />
+                        
+                        {/* AI Orb Visualization */}
+                            <div className="z-10 flex flex-col items-center">
                             <div
-                                className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full transition-all duration-500 ${
+                                className={`w-32 h-32 sm:w-48 sm:h-48 rounded-full transition-all duration-500 blur-sm ${
                                     talkState === 'listening' ? 'animate-pulse' : ''
                                 }`}
                                 style={{
                                     background: orbColor,
                                     transform: `scale(${orbScale})`,
-                                    boxShadow: `0 0 16px 6px ${orbShadow}`,
+                                    boxShadow: `0 0 60px 20px ${orbShadow}`,
                                 }}
                             />
-                            {talkState === 'listening' && (
-                                <div className="absolute inset-0 rounded-full border-2 border-blue-400 animate-ping opacity-30" />
-                            )}
-                            {volume > 0.1 && talkState === 'listening' && (
-                                <div
-                                    className="absolute inset-0 rounded-full bg-blue-400 opacity-20 animate-pulse"
-                                    style={{
-                                        transform: `scale(${1 + volume * 0.5})`,
-                                        animationDuration: '0.3s'
-                                    }}
-                                />
-                            )}
+                            <div 
+                                className="rounded-full mix-blend-overlay opacity-50"
+                                style={{ background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), transparent)' }}
+                            />
                         </div>
-                        <div className="min-w-0 flex-1">
-                            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">🎙️ Talk with AI</h1>
-                            <p className="text-sm text-gray-500">{STATE_LABEL[talkState]}</p>
-                            <div className="text-xs text-gray-400 mt-1 hidden sm:block">
-                                Space: start/stop • Esc: close • Ctrl+S: send now • Ctrl+C: camera • Ctrl+M: mute
+                        
+                        {/* Pipeline Steps Visualization */}
+                        <div className="mt-12 z-10 w-full max-w-lg px-6">
+                            <div className="flex items-center justify-between">
+                                {/* Connecting Line */}
+                                <div className="h-0.5 bg-white/10 -z-10" />
+                                
+                                {STEPS.map((step) => {
+                                    const status = getStepStatus(step.id);
+                                    const isActiveStep = status === 'active';
+                                    const isCompleted = status === 'completed';
+                                    
+                                    return (
+                                        <div key={step.id} className="flex flex-col items-center gap-2">
+                                            <div 
+                                                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                                    isActiveStep 
+                                                        ? 'bg-blue-500 text-white scale-110 shadow-lg shadow-blue-500/50' 
+                                                        : isCompleted 
+                                                            ? 'bg-green-500 text-white' 
+                                                            : 'bg-gray-800 text-gray-500 border border-white/10'
+                                                }`}
+                                            >
+                                                {isCompleted ? <LucideCheck size={18} /> : <step.icon size={18} className={isActiveStep ? 'animate-pulse' : ''} />}
+                                            </div>
+                                            <span className={`text-[10px] font-medium tracking-wide uppercase transition-colors ${
+                                                isActiveStep ? 'text-blue-400' : isCompleted ? 'text-green-400' : 'text-gray-600'
+                                            }`}>
+                                                {step.label}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
+
+                        <div className="mt-8 text-center z-10 px-4">
+                            <p className="text-sm text-white/50">
+                                {isActive ? 'Listening...' : 'Tap mic to start'}
+                            </p>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+             {/* Silence Timer Progress (Top) */}
+             {isActive && (
+                <div className="h-1 bg-white/10 z-30">
+                    <div 
+                        className="h-full bg-blue-500 transition-all duration-300 ease-linear"
+                        style={{ width: `${((silenceDurationMs - silenceLeft) / silenceDurationMs) * 100}%` }}
+                    />
+                </div>
+            )}
+
+            {/* 2. Top Bar */}
+            <div className="p-4 sm:p-6 bg-gradient-to-b from-black/65 via-black/35 to-transparent z-20">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <span className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-[0.14em] border ${
+                            isActive
+                                ? 'bg-red-500/15 text-red-200 border-red-300/40 animate-pulse'
+                                : 'bg-white/10 text-white/90 border-white/20'
+                        }`}>
+                            {isActive ? 'LIVE' : 'READY'}
+                        </span>
+                        <span className="px-3 py-1.5 rounded-full bg-white/10 text-white/85 border border-white/15 text-xs font-medium tracking-wide">
+                            Auto send
+                            <span className="mx-2 text-white/60">•</span>
+                            <span className="font-semibold text-white/95">{selectedAutoSendLabel}</span>
+                            {isActive && (
+                                <span className="text-white/60 ml-2">({Math.ceil(silenceLeft / 1000)}s remaining)</span>
+                            )}
+                        </span>
                     </div>
 
-                    {/* Controls */}
-                    <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-                        <button
-                            onClick={clearConversation}
-                            disabled={conversation.length === 0}
-                            className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            title="Clear conversation"
+                    <div className="flex gap-2.5">
+                        <button 
+                            onClick={() => setShowChat(!showChat)}
+                            className={`p-3 rounded-full backdrop-blur-md transition-all ${
+                                showChat ? 'bg-white text-black' : 'bg-black/40 text-white hover:bg-black/60 border border-white/10'
+                            }`}
                         >
-                            🗑️
+                            <LucideMessageSquare size={20} />
                         </button>
-                        <button
-                            onClick={exportConversation}
-                            disabled={conversation.length === 0}
-                            className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            title="Export conversation"
-                        >
-                            📤
-                        </button>
-                        <div className="w-px h-6 bg-gray-300 mx-1" />
-                        <button
-                            onClick={() => { setIsMuted(v => !v); if (!isMuted) stopTts(); }}
-                            className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
-                            title={isMuted ? 'Unmute' : 'Mute'}
-                        >
-                            {isMuted ? <LucideVolumeX size={20} /> : <LucideVolume2 size={20} />}
-                        </button>
-                        <button
-                            onClick={() => setCameraEnabled(v => !v)}
-                            className={`p-2 rounded-lg transition-colors ${cameraEnabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 hover:bg-gray-200'}`}
-                            title="Camera"
-                        >
-                            <LucideCamera size={20} />
-                        </button>
-                        <button
+                        <button 
                             onClick={handleClose}
-                            className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
-                            title="Close"
+                            className="p-3 rounded-full bg-black/40 text-white hover:bg-red-500/80 hover:text-white border border-white/10 backdrop-blur-md transition-all"
                         >
                             <LucideX size={20} />
                         </button>
                     </div>
                 </div>
+            </div>
 
-                {/* Camera section */}
-                <canvas ref={canvasRef} className="hidden" />
-                {cameraEnabled && (
-                    <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 rounded-lg border">
-                        <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
-                            <div className="flex-1 relative bg-black rounded-lg overflow-hidden max-h-32 sm:max-h-48 w-full">
-                                <video
-                                    ref={videoRef}
-                                    autoPlay
-                                    playsInline
-                                    muted
-                                    className="w-full h-full object-cover"
-                                />
-                                {capturedImageThumb && (
-                                    <img
-                                        src={capturedImageThumb}
-                                        alt="snap"
-                                        className="absolute inset-0 w-full h-full object-cover opacity-65"
-                                    />
-                                )}
-                            </div>
-                            <div className="flex gap-2 w-full sm:w-auto sm:flex-col">
+            <div className="px-4 pb-4 pt-2 sm:px-6">
+                <div className="flex gap-2 flex-wrap">
+                    {SILENCE_DURATION_OPTIONS.map(({ ms, label }) => (
+                        <button
+                            key={ms}
+                            onClick={() => selectDuration(ms)}
+                            className={`px-3 py-2 text-xs sm:text-sm font-medium rounded-full border transition-all duration-200 ${
+                                silenceDurationMs === ms
+                                    ? 'bg-white text-black border-white shadow-md shadow-white/20'
+                                    : 'bg-white/10 text-white/85 border-white/20 hover:bg-white/20 hover:border-white/30'
+                            }`}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* 3. Transcript Overlay (Subtitles style) */}
+            {interimText && (
+                <div className="px-6 text-center z-20 pointer-events-none">
+                    <span className="inline-block px-4 py-2 rounded-xl bg-black/60 backdrop-blur-md text-white/90 text-lg font-medium shadow-lg">
+                        {interimText}
+                    </span>
+                </div>
+            )}
+
+            {latestTranscriptText && (
+                <div className="px-4 sm:px-6 py-2 z-20">
+                    <div className="inline-block rounded-2xl border border-white/20 bg-white/5 px-4 py-2">
+                        <div className="text-[11px] text-white/60">Latest text</div>
+                        <div className="text-[13px] text-white/95 break-words">
+                            {latestTranscriptText}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 4. Settings Modal */}
+            {showSettings && (
+                <div className="bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="bg-gray-900 text-white rounded-3xl p-6 w-full max-w-sm border border-white/10 shadow-2xl">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-semibold">Settings</h3>
+                            <button onClick={() => setShowSettings(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                                <LucideX size={20} />
+                            </button>
+                        </div>
+                        
+                        <div className="space-y-6">
+                            <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
                                 <button
-                                    onClick={snapCamera}
-                                    className="flex-1 sm:flex-none px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                                    onClick={exportConversation}
+                                    className="w-full py-3 px-4 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-between transition-colors"
                                 >
-                                    📸 Snap
+                                    <span>Export Conversation</span>
+                                    <span className="text-gray-400">JSON</span>
                                 </button>
-                                {capturedImageThumb && (
-                                    <button
-                                        onClick={() => { setCapturedImageFile(null); setCapturedImageThumb(null); }}
-                                        className="flex-1 sm:flex-none px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
-                                    >
-                                        ✕ Clear
-                                    </button>
-                                )}
+                                <button
+                                    onClick={clearConversation}
+                                    className="w-full py-3 px-4 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-xl flex items-center justify-between transition-colors"
+                                >
+                                    <span>Clear History</span>
+                                    <LucideX size={16} />
+                                </button>
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
+            )}
 
-                {/* Conversation */}
-                <div className="mb-4 sm:mb-6">
-                    <div className="bg-white border rounded-xl shadow-sm p-3 sm:p-4 min-h-80 sm:min-h-96 max-h-80 sm:max-h-96 overflow-y-auto">
-                        {conversation.length === 0 && (
-                            <div className="text-center text-gray-400 py-12">
-                                <div className="text-4xl mb-4">🎙️</div>
-                                <div className="text-lg font-medium mb-2">
-                                    {isActive ? 'Listening...' : 'Start a conversation'}
-                                </div>
-                                <div className="text-sm">
-                                    {isActive ? 'Say something to begin' : 'Press the microphone button below'}
-                                </div>
+            {/* 5. Chat Drawer */}
+            {showChat && (
+                <div className="mx-4 sm:mx-auto sm:max-w-md bg-black/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 z-30 flex flex-col shadow-2xl animate-in slide-in-from-bottom-10 duration-300">
+                    <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/20">
+                        {conversation.length === 0 ? (
+                            <div className="h-full flex flex-col items-center justify-center text-white/30">
+                                <LucideMessageSquare size={48} className="mb-4 opacity-50" />
+                                <p>No messages yet</p>
                             </div>
+                        ) : (
+                            conversation.map((turn) => (
+                                <div key={turn.id} className={`flex flex-col ${turn.role === 'user' ? 'items-end' : 'items-start'}`}>
+                                    <div className={`px-4 py-3 rounded-2xl max-w-[85%] text-sm leading-relaxed ${
+                                        turn.role === 'user' 
+                                            ? 'bg-blue-600 text-white rounded-br-none' 
+                                            : 'bg-white/10 text-gray-100 rounded-bl-none'
+                                    }`}>
+                                        {turn.text}
+                                    </div>
+                                    <span className="text-[10px] text-white/30 mt-1 px-1">
+                                        {new Date(turn.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                </div>
+                            ))
                         )}
-                        <div className="space-y-6">
-                            {conversation.map((turn) => (
-                                <div key={turn.id} className={`flex items-start gap-3 ${turn.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    {turn.role === 'ai' && (
-                                        <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                                            AI
-                                        </div>
-                                    )}
-                                    <div className={`flex flex-col ${turn.role === 'user' ? 'items-end' : 'items-start'} max-w-xs lg:max-w-md`}>
-                                        <div
-                                            className={`px-4 py-3 rounded-2xl shadow-sm ${
-                                                turn.role === 'user'
-                                                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-br-md'
-                                                    : 'bg-gray-100 text-gray-800 rounded-bl-md border border-gray-200'
-                                            }`}
-                                        >
-                                            <div className="text-sm leading-relaxed whitespace-pre-wrap">{turn.text}</div>
-                                        </div>
-                                        <div className={`text-xs text-gray-500 mt-1 px-2 ${turn.role === 'user' ? 'text-right' : 'text-left'}`}>
-                                            {new Date(turn.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </div>
-                                    </div>
-                                    {turn.role === 'user' && (
-                                        <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                                            You
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                            {interimText && (
-                                <div className="flex items-start gap-3 justify-end">
-                                    <div className="flex flex-col items-end max-w-xs lg:max-w-md">
-                                        <div className="px-4 py-3 rounded-2xl bg-blue-100 text-blue-800 italic rounded-br-md border border-blue-200 shadow-sm">
-                                            <div className="text-sm leading-relaxed">{interimText}</div>
-                                            <div className="flex items-center gap-1 mt-1">
-                                                <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse"></div>
-                                                <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                                                <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                                        You
-                                    </div>
-                                </div>
-                            )}
-                        </div>
                         <div ref={scrollRef} />
                     </div>
                 </div>
+            )}
 
-                {/* Timer controls */}
-                <div className="mb-4 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3">
-                        <div className="flex items-center gap-2">
-                            <div className="text-sm font-semibold text-gray-700">Auto-send timer</div>
-                            <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                isActive
-                                    ? 'bg-green-100 text-green-700'
-                                    : 'bg-gray-100 text-gray-600'
-                            }`}>
-                                {isActive ? 'Active' : 'Ready'}
-                            </div>
-                        </div>
-                        <div className="text-sm font-medium text-gray-600">
-                            {isActive
-                                ? `${Math.ceil(silenceLeft / 1000)}s remaining`
-                                : `${silenceDurationMs / 1000}s delay`
-                            }
-                        </div>
-                    </div>
+            {/* 6. Bottom Controls Bar */}
+            <div className="p-5 pb-7 bg-black/95 z-40 shrink-0 border-t border-white/10">
+                <div className="flex items-center justify-center gap-3 sm:gap-5">
+                    {/* Camera Toggle */}
+                    <button
+                        onClick={() => setCameraEnabled(!cameraEnabled)}
+                        disabled={isProcessing}
+                        className={`p-3.5 rounded-full transition-all duration-300 ${
+                            cameraEnabled 
+                                ? 'bg-white text-black shadow-lg shadow-white/20' 
+                                : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-md'
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        title="Toggle Camera"
+                    >
+                        {cameraEnabled ? <LucideCamera size={24} /> : <LucideCameraOff size={24} />}
+                    </button>
 
-                    {/* Progress bar */}
-                    <div className="mb-3">
-                        <div className="w-full bg-gray-200 rounded-full h-2 sm:h-2.5">
-                            <div
-                                className={`h-2 sm:h-2.5 rounded-full transition-all duration-300 ${
-                                    isActive ? 'bg-gradient-to-r from-green-400 to-green-500' : 'bg-blue-400'
-                                }`}
-                                style={{
-                                    width: isActive
-                                        ? `${((silenceDurationMs - silenceLeft) / silenceDurationMs) * 100}%`
-                                        : '0%'
-                                }}
-                            />
-                        </div>
-                    </div>
+                    {/* Settings (Requested: SETTING) */}
+                    <button
+                        onClick={() => setShowSettings(true)}
+                        disabled={isProcessing}
+                        className="p-4 rounded-full bg-white/10 text-white hover:bg-white/20 backdrop-blur-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Settings"
+                    >
+                        <LucideSettings size={24} />
+                    </button>
 
-                    {/* Duration buttons */}
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <span className="text-xs text-gray-500 sm:mr-2">Duration:</span>
-                        <div className="flex gap-1 overflow-x-auto">
-                            {SILENCE_DURATION_OPTIONS.map(({ ms, label }) => (
-                                <button
-                                    key={ms}
-                                    onClick={() => selectDuration(ms)}
-                                    disabled={isProcessing}
-                                    className={`px-2 sm:px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
-                                        silenceDurationMs === ms
-                                            ? 'bg-blue-500 text-white shadow-md transform scale-105'
-                                            : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'
-                                    } disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none`}
-                                >
-                                    {label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                    <button
+                        onClick={() => setIsMuted((prev) => !prev)}
+                        disabled={isProcessing}
+                        className={`p-3.5 rounded-full transition-all duration-300 ${
+                            isMuted
+                                ? 'bg-white/20 text-white/90 border border-white/30'
+                                : 'bg-white/10 text-white/70 hover:bg-white/20 backdrop-blur-md'
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        title={isMuted ? 'Unmute' : 'Mute'}
+                    >
+                        <LucideVolume2 size={20} />
+                    </button>
 
-                    {/* Helper text */}
-                    <div className="mt-2 text-xs text-gray-500">
-                        {isActive
-                            ? 'Recording will auto-send when silence is detected for the selected duration'
-                            : 'Choose how long to wait for silence before auto-sending your message'
-                        }
-                    </div>
+                    <button
+                        onClick={sendNow}
+                        disabled={!isActive || isProcessing || !hasDetectedSpeech}
+                        className={`px-4 py-3 rounded-full border border-white/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
+                            hasDetectedSpeech ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-white/5 text-white/60'
+                        }`}
+                        title="Send now"
+                    >
+                        Send now
+                    </button>
+
+                    {/* Mic Toggle (Requested: AUDIO) */}
+                    <button
+                        onClick={() => { if (isActive) stopListening(); else startListening(); }}
+                        disabled={isProcessing}
+                        className={`p-5 rounded-full transition-all duration-300 transform border ${
+                            isActive 
+                            ? 'bg-blue-500 text-white shadow-xl shadow-blue-500/40 scale-110 border-blue-400/50' 
+                            : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-md border-white/20'
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        title="Toggle Microphone"
+                    >
+                        {isProcessing ? (
+                            <LucideLoader2 size={28} className="animate-spin" />
+                        ) : isActive ? (
+                            <LucideMic size={28} className="animate-pulse" />
+                        ) : (
+                            <LucideMicOff size={28} />
+                        )}
+                    </button>
+
+                    {/* End Call */}
+                    <button
+                        onClick={handleClose}
+                        className="p-3.5 rounded-full bg-red-500/85 text-white hover:bg-red-600/95 backdrop-blur-md transition-all duration-300 shadow-lg shadow-red-900/40"
+                        title="End Call"
+                    >
+                        <LucidePhoneOff size={22} />
+                    </button>
                 </div>
 
-                {/* Controls */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-                    <div className="flex items-center gap-2 sm:gap-3 order-2 sm:order-1">
-                        {talkState === 'speaking' && (
-                            <button
-                                onClick={stopTts}
-                                className="px-3 sm:px-4 py-2 bg-red-100 text-red-700 border border-red-300 rounded-lg hover:bg-red-200 transition-colors text-sm sm:text-base"
-                            >
-                                ✋ Interrupt
-                            </button>
-                        )}
-                        {isActive && talkState === 'listening' && (
-                            <button
-                                onClick={sendNow}
-                                disabled={isProcessing}
-                                className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium text-sm sm:text-base"
-                                title="Send immediately (Ctrl+S)"
-                            >
-                                Send now
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Mic button */}
-                    <div className="relative order-1 sm:order-2">
-                        <button
-                            onClick={() => { if (isActive) stopListening(); else startListening(); }}
-                            disabled={isProcessing}
-                            className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 transition-all duration-300 transform ${
-                                isActive
-                                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 border-blue-400 shadow-2xl scale-110 hover:scale-115'
-                                    : 'bg-gradient-to-br from-gray-200 to-gray-300 border-gray-400 hover:from-gray-300 hover:to-gray-400 shadow-lg hover:shadow-xl'
-                            } disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center group`}
-                            title={isActive ? 'Stop recording (Space)' : 'Start recording (Space)'}
-                            style={{
-                                boxShadow: isActive
-                                    ? `0 0 30px 8px ${orbShadow}, inset 0 2px 4px rgba(0,0,0,0.1)`
-                                    : '0 4px 12px rgba(0,0,0,0.15), inset 0 1px 2px rgba(255,255,255,0.8)',
-                            }}
-                        >
-                            {isProcessing ? (
-                                <LucideLoader2 size={24} className="animate-spin text-white drop-shadow-sm" />
-                            ) : isActive ? (
-                                <LucideMic size={24} className="text-white drop-shadow-sm animate-pulse" />
-                            ) : (
-                                <LucideMicOff size={24} className="text-gray-600 drop-shadow-sm group-hover:text-gray-700" />
-                            )}
-                        </button>
-
-                        {/* Recording indicator */}
-                        {isActive && (
-                            <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-6 sm:h-6 bg-red-500 rounded-full flex items-center justify-center animate-pulse">
-                                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full" />
-                            </div>
-                        )}
-
-                        {/* Ripple effect when recording */}
-                        {isActive && talkState === 'listening' && (
-                            <div className="absolute inset-0 rounded-full border-4 border-blue-300 animate-ping opacity-20" />
-                        )}
-                    </div>
-
-                    <div className="text-xs sm:text-sm text-gray-500 text-center max-w-32 order-3">
-                        {isActive ? 'Auto-detects speech' : 'Press to start'}
-                    </div>
+                <div className="mt-3 text-[11px] text-white/50 text-center tracking-wide">
+                    <span className={isActive ? 'text-white/80' : ''}>
+                        {isActive ? 'Tap mic or hold Send now to submit' : 'Tap mic to start'}
+                    </span>
                 </div>
             </div>
+            
+            <canvas ref={canvasRef} className="hidden" />
         </div>
     );
 };
 
-
-export default TalkWithAi;
+export default AiCall;
