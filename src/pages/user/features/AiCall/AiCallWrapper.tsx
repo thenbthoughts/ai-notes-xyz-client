@@ -10,6 +10,7 @@ import envKeys from "../../../../config/envKeys";
 import axiosCustom from "../../../../config/axiosCustom";
 import { toast } from "react-hot-toast";
 import TtsControls, { TtsControlsRef, TtsStatus, TtsGenerating } from "./TtsControls";
+import { waitForMillis } from "../../../../utils/waitForMillis";
 
 interface ConversationItem {
     _id: string;
@@ -42,8 +43,39 @@ interface ConversationItem {
     __v: number;
 }
 
+const getDecisionFromContent = async ({
+    transcript,
+    threadId,
+}: {
+    transcript: string;
+    threadId: string;
+}) => {
+    let returnObj = {
+        shouldSend: true,
+        increaseTimer: 0,
+    }
 
+    try {
+        const res = await axiosCustom.post<{ shouldSend?: boolean; increaseTimer?: number }>(
+            '/api/chat-llm/ai-call/decide-send',
+            { transcript: transcript.trim(), threadId }
+        );
+        const payload = res?.data ?? {};
+        const shouldSend = typeof payload.shouldSend === 'boolean' ? payload.shouldSend : false;
+        const increaseTimer = typeof payload.increaseTimer === 'number' ? payload.increaseTimer : 0;
 
+        if (typeof shouldSend === 'boolean') {
+            returnObj.shouldSend = shouldSend;
+        }
+        if (typeof increaseTimer === 'number') {
+            returnObj.increaseTimer = increaseTimer;
+        }
+        return returnObj;
+    } catch (error) {
+        console.error('Decision endpoint error:', error);
+        return returnObj;
+    }
+}
 
 const AiCallNew = ({
     threadId,
@@ -175,9 +207,35 @@ const AiCallNew = ({
             const transcript = res.data?.data?.contentAudioToText ?? '';
 
             if (transcript.trim().length > 0) {
-                setNextMessage((prev) => {
-                    return `${prev}\n${transcript.trim()}`;
+                const decision = await getDecisionFromContent({
+                    transcript: transcript.trim(),
+                    threadId,
                 });
+                console.log('decision', decision);
+
+                if (decision.shouldSend) {
+                    setNextMessage((prev) => {
+                        return `${prev}\n${transcript.trim()}`;
+                    });
+
+                    await waitForMillis(500);
+
+                    setSendingInSeconds(0);
+                } else {
+                    if (decision.increaseTimer > 0) {
+                        console.log('increaseTimer', decision.increaseTimer);
+                        setSendingInSeconds((prev) => {
+                            console.log('prev 30 seconds', prev);
+                            return prev + decision.increaseTimer;
+                        });
+
+                        await waitForMillis(1000);
+
+                        setNextMessage((prev) => {
+                            return `${prev}\n${transcript.trim()}`;
+                        });
+                    }
+                }                
             }
         } catch (error) {
             console.error('STT error:', error);
