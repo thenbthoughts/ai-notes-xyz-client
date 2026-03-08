@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useMicVAD } from "@ricky0123/vad-react";
 import { LucideBrain, LucideClock, LucideMic, LucideMicOff, LucidePhoneOff, LucideSettings, LucideSpeech, LucideTimer, LucideVolume2 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -235,7 +235,7 @@ const AiCallNew = ({
                             return `${prev}\n${transcript.trim()}`;
                         });
                     }
-                }                
+                }
             }
         } catch (error) {
             console.error('STT error:', error);
@@ -747,8 +747,163 @@ const AiCallWrapper = () => {
         return null;
     }
 
+    const areApiKeysValid = () => {
+        let isValidStt = false;
+        let isValidLlm = false;
+        let isValidTts = false;
+
+        // STT: Requires OpenAI (Whisper), Groq, or LocalAI
+        if (authState.apiKeyGroqValid || authState.apiKeyOpenaiValid || authState.apiKeyLocalaiValid) {
+            isValidStt = true;
+        }
+
+        // LLM: Requires Groq, Openrouter, S3, Ollama, Qdrant, Replicate, Runpod, or LocalAI
+        if (
+            authState.apiKeyGroqValid ||
+            authState.apiKeyOpenrouterValid ||
+            authState.apiKeyOllamaValid
+            // TODO need to add for custom openai compatible model
+        ) {
+            isValidLlm = true;
+        }
+
+        // TTS: Requires OpenAI or LocalAI
+        if (authState.apiKeyOpenaiValid || authState.apiKeyLocalaiValid) {
+            isValidTts = true;
+        }
+
+        return {
+            stt: isValidStt,
+            llm: isValidLlm,
+            tts: isValidTts,
+            all: isValidStt && isValidLlm && isValidTts,
+        };
+    };
+
+    const areApiKeysValidResult = areApiKeysValid();
+
+    const renderConfigureApiKeys = () => {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-900 via-indigo-900 to-black">
+                <div className="p-3 w-full max-w-sm rounded border border-blue-100 bg-white/90 backdrop-blur flex flex-col items-center shadow animate-fade-in">
+                    <div className="flex items-center gap-1 mb-2">
+                        <span className="inline-block w-2 h-2 rounded bg-blue-500 animate-pulse" />
+                        <h2 className="text-base font-bold text-blue-900">AI Call Setup Needed</h2>
+                    </div>
+                    <p className="text-xs text-blue-800 mb-3 text-center">
+                        You need to configure these missing API keys for AI Calling:
+                    </p>
+
+                    <div className="space-y-2 w-full mb-3">
+                        {/* Speech-to-Text (STT) */}
+                        {!areApiKeysValidResult.stt && (
+                            <div className="flex items-center justify-between bg-blue-50 border-l-2 border-blue-300 px-2 py-1 rounded-sm">
+                                <div className="flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded border bg-red-300 border-red-300 animate-pulse"></span>
+                                    <span className="font-medium text-blue-900 text-xs">
+                                        STT
+                                    </span>
+                                </div>
+                                <div className="flex flex-col items-end">
+                                    <button
+                                        onClick={() => navigate(`/user/setting/api-key?focus=stt`)}
+                                        className="text-[10px] font-medium px-2 py-0.5 rounded-sm bg-blue-600 text-white hover:bg-blue-700"
+                                    >
+                                        Configure
+                                    </button>
+                                    <div className="text-[10px] text-blue-900/80 mt-0.5 text-right">
+                                        {authState.apiKeyGroqValid ? null : <span>Groq,&nbsp;</span>}
+                                        {authState.apiKeyOpenaiValid ? null : <span>OpenAI,&nbsp;</span>}
+                                        {authState.apiKeyLocalaiValid ? null : <span>LocalAI</span>}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {/* LLM */}
+                        {!areApiKeysValidResult.llm && (
+                            <div className="flex items-center justify-between bg-indigo-50 border-l-2 border-indigo-300 px-2 py-1 rounded-sm">
+                                <div className="flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded border bg-red-300 border-red-300 animate-pulse"></span>
+                                    <span className="font-medium text-indigo-900 text-xs">
+                                        LLM
+                                    </span>
+                                </div>
+                                <div className="flex flex-col items-end">
+                                    <button
+                                        onClick={() => navigate(`/user/setting/api-key?focus=llm`)}
+                                        className="text-[10px] font-medium px-2 py-0.5 rounded-sm bg-indigo-600 text-white hover:bg-indigo-700"
+                                    >
+                                        Configure
+                                    </button>
+                                    <div className="text-[10px] text-indigo-900/80 mt-0.5 text-right">
+                                        {authState.apiKeyGroqValid ? null : <span>Groq,&nbsp;</span>}
+                                        {authState.apiKeyOpenrouterValid ? null : <span>OpenRouter,&nbsp;</span>}
+                                        {authState.apiKeyOllamaValid ? null : <span>Ollama,&nbsp;</span>}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {/* Text-to-Speech (TTS) */}
+                        {!areApiKeysValidResult.tts && (
+                            <div className="flex items-center justify-between bg-purple-50 border-l-2 border-purple-300 px-2 py-1 rounded-sm">
+                                <div className="flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded border bg-red-300 border-red-300 animate-pulse"></span>
+                                    <span className="font-medium text-purple-900 text-xs">
+                                        TTS
+                                    </span>
+                                </div>
+                                <div className="flex flex-col items-end">
+                                    <button
+                                        onClick={() => navigate(`/user/setting/api-key?focus=tts`)}
+                                        className="text-[10px] font-medium px-2 py-0.5 rounded-sm bg-purple-700 text-white hover:bg-purple-800"
+                                    >
+                                        Configure
+                                    </button>
+                                    <div className="text-[10px] text-purple-900/80 mt-0.5 text-right">
+                                        {authState.apiKeyOpenaiValid ? null : <span>OpenAI,&nbsp;</span>}
+                                        {authState.apiKeyLocalaiValid ? null : <span>LocalAI</span>}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {(areApiKeysValidResult.stt || areApiKeysValidResult.llm || areApiKeysValidResult.tts) ? null : (
+                            <div className="text-[11px] text-gray-700 text-center py-1">No valid API keys found.</div>
+                        )}
+                    </div>
+
+                    <div className="flex gap-2 justify-center mt-1 w-full">
+                        <button
+                            onClick={() => navigate(`/user/chat?id=${threadId}`)}
+                            className="px-2 py-1 rounded bg-gray-100 text-gray-800 hover:bg-gray-200 text-xs"
+                        >
+                            ← Back
+                        </button>
+                        <button
+                            onClick={() => navigate(`/user/setting/api-key`)}
+                            className="px-2 py-1 rounded bg-blue-700 text-white hover:bg-blue-800 text-xs font-semibold"
+                        >
+                            Configure All
+                        </button>
+                    </div>
+                    <div className="mt-3 text-[10px] text-gray-500 text-center">
+                        Need help? See docs for setup tips.<br />
+                        <b>Missing keys are shown above.</b>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     return (
-        <AiCallNew threadId={threadId} />
+        <Fragment>
+            {areApiKeysValidResult.all ? (
+                <AiCallNew threadId={threadId} />
+            ) : (
+                <Fragment>
+                    {renderConfigureApiKeys()}
+                </Fragment>
+            )}
+        </Fragment>
     );
 };
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideRepeat, LucideSend, LucideSidebar, LucideVideo, LucideX } from 'lucide-react';
 import envKeys from '../../../../../../config/envKeys.tsx';
@@ -246,6 +246,23 @@ const ComponentFilesDisplay = ({
     );
 }
 
+const SYSTEM_PROMPT_AI_CALL = `
+You are a friendly and helpful AI voice assistant.
+
+Context:
+- User input comes from speech-to-text and may include minor transcription errors.
+- Your response will be converted to speech (text-to-speech).
+
+Response style:
+- Reply in short, natural, spoken sentences.
+- Do not use markdown, bullet points, or special formatting.
+- Keep responses concise and easy to understand when heard aloud.
+- If user intent is unclear, ask one short clarification question.
+
+Safety:
+- Do not invent facts; if unsure, say so briefly.
+`.trim();
+
 const ComponentChatMessageInput = ({
     setRefreshParentRandomNum,
     threadId,
@@ -261,7 +278,7 @@ const ComponentChatMessageInput = ({
     const [newNote, setNewNote] = useState('');
     const [files, setFiles] = useState<string[]>([]);
     const [timer, setTimer] = useState(0);
-
+    const navigate = useNavigate();
     useEffect(() => {
         if (actionContainerRef.current) {
             setChatLlmFooterHeight(actionContainerRef.current.clientHeight);
@@ -436,6 +453,21 @@ const ComponentChatMessageInput = ({
         }
     }
 
+    const handleAiCall = async () => {
+        try {
+            await axiosCustom.post("/api/chat-llm/threads-crud/threadsEditById", {
+                threadId: threadId,
+                systemPrompt: SYSTEM_PROMPT_AI_CALL,
+                answerEngine: "conciseAnswer",
+            });
+
+            navigate(`/user/ai-call?id=${threadId}`);
+        } catch (error) {
+            console.error(error);
+            toast.error('Error starting AI Call. Please try again.');
+        }
+    };
+
     return (
         <>
             <div
@@ -497,14 +529,14 @@ const ComponentChatMessageInput = ({
                         />
 
                         {/* ai call */}
-                        <Link
-                            to={`/user/ai-call?id=${threadId}`}
+                        <button
+                            onClick={handleAiCall}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded whitespace-nowrap inline-flex items-center gap-1"
                             style={{ height: '40px', fontSize: '0.82rem' }}
                             title="AI Call — voice conversation"
                         >
                             🎙️ Call
-                        </Link>
+                        </button>
 
                         {isSubmitting === false && (
                             <button
