@@ -128,7 +128,7 @@ const AiCallNew = ({
 
         if (nextMessage.trim().length >= 1 && sendingInSeconds <= 0) {
             let tempMessage = nextMessage.trim();
-            
+
             // TODO should process the message
 
             setNextMessage(() => {
@@ -520,6 +520,11 @@ const AiCallNew = ({
     const renderMainContent = () => {
         return (
             <div className="px-2">
+                {/* Header */}
+                <div className="bg-white/80 backdrop-blur-sm rounded p-2 border border-gray-200/50 shadow-sm">
+                    <p className="text-blue-500 text-lg font-bold">AI Call: AI Call is a tool that allows you to have a conversation with AI.</p>
+                </div>
+
                 {renderStats()}
                 {renderConversation()}
             </div>
@@ -625,14 +630,6 @@ const AiCallNew = ({
 
     return (
         <div style={{ height: `calc(100vh - 60px)` }}>
-            {/* Header */}
-            <div className="px-2">
-                <div className="bg-white/80 backdrop-blur-sm rounded p-2 border border-gray-200/50 shadow-sm">
-                    <p className="text-lg font-bold">AI Call</p>
-                    <p className="text-sm text-gray-500">AI Call is a tool that allows you to have a conversation with AI.</p>
-                </div>
-            </div>
-
             {/* Main Content */}
             <div
                 style={{
