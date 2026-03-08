@@ -40,6 +40,8 @@ const SettingAiFeatures = lazy(() => import("./pages/user/settings/settingAiFeat
 
 // pages -> ai
 const ChatLlmListWrapper = lazy(() => import('./pages/user/features/ChatLlmList/ChatLlmListWrapper.tsx'));
+const AiCallWrapper = lazy(() => import('./pages/user/features/AiCall/AiCallWrapper.tsx'));
+const AiCallWrapperOld = lazy(() => import('./pages/user/features/AiCallOld/AiCallWrapperOld.tsx'));
 const AiDeepResearchWrapper = lazy(() => import("./pages/user/features/AiDeepResearch/AiDeepResearchWrapper.tsx"));
 
 // pages -> notes
@@ -80,6 +82,9 @@ const DriveWrapper = lazy(() => import("./pages/user/features/Drive/DriveWrapper
 // pages -> ai context helper
 const LlmKeywordList = lazy(() => import("./pages/user/features/AiContextHelper/LlmKeywords/LlmKeyword.tsx"));
 const LlmKeywordGraph = lazy(() => import("./pages/user/features/AiContextHelper/LlmKeywordGraph/LlmKeywordGraph.tsx"));
+
+// pages -> test
+const TestVoiceActivityDetection = lazy(() => import("./pages/test/testDev/TestVoiceActivityDetectionLibrary.tsx"));
 
 function App() {
   const Layout = () => {
@@ -142,6 +147,22 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <ChatLlmListWrapper />
+            </UnauthorizedRoute>
+          )
+        },
+        {
+          path: '/user/ai-call',
+          element: (
+            <UnauthorizedRoute>
+              <AiCallWrapper />
+            </UnauthorizedRoute>
+          )
+        },
+        {
+          path: '/user/ai-call-old',
+          element: (
+            <UnauthorizedRoute>
+              <AiCallWrapperOld />
             </UnauthorizedRoute>
           )
         },
@@ -397,6 +418,14 @@ function App() {
             <UnauthorizedRoute>
               <LlmKeywordGraph />
             </UnauthorizedRoute>
+          )
+        },
+        {
+          path: '/test/voice-activity-detection',
+          element: (
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+              <TestVoiceActivityDetection />
+            </Suspense>
           )
         }
       ]

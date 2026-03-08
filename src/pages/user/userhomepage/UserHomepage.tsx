@@ -15,7 +15,8 @@ import {
     LucideRefreshCcw,
     LucideLightbulb,
     LucideSearch,
-    LucideCalendar
+    LucideCalendar,
+    LucideMic
 } from 'lucide-react'; // Importing lucide icons
 import { useAtomValue } from 'jotai';
 import { Fragment, useEffect, useState } from 'react';
@@ -371,6 +372,12 @@ const UserHomepage = () => {
                                 </div>
                                 <div>Git</div>
                             </a>
+                            <Link to="/test/voice-activity-detection" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
+                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <LucideMic size={32} />
+                                </div>
+                                <div>Voice Activity Detection</div>
+                            </Link>
                         </div>
                     </div>
                 </div>

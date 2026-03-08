@@ -13,6 +13,7 @@ const ComponentRightWrapper = ({
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
+        
         let tempThreadId = '';
         const chatId = queryParams.get('id') || '';
         if (chatId) {
@@ -26,11 +27,13 @@ const ComponentRightWrapper = ({
             {threadId === '' ? (
                 <ComponentThreadAdd />
             ) : (
-                <CRightChatById
-                    key={threadId}
-                    threadId={threadId}
-                    refreshRandomNumParent={refreshRandomNumParent}
-                />
+                <div>
+                    <CRightChatById
+                        key={threadId}
+                        threadId={threadId}
+                        refreshRandomNumParent={refreshRandomNumParent}
+                    />
+                </div>
             )}
         </div>
     );

@@ -12,6 +12,7 @@ import ComponentLifeEventsEditCategorySub from './ComponentLifeEventsEditCategor
 import CommentCommonComponent from '../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
 import CommonComponentAiKeywords from '../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords.tsx';
 import CommonComponentAiFaq from '../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq.tsx';
+import SpeechToTextComponent from '../../../../../components/componentCommon/SpeechToTextComponent.tsx';
 
 const ComponentLifeEventsEdit = ({
     lifeEventObj
@@ -193,6 +194,16 @@ const ComponentLifeEventsEdit = ({
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     />
                     {formError.title.length >= 1 && <p className="text-red-500 text-sm">{formError.title}</p>}
+                    <div className="mt-2">
+                        <SpeechToTextComponent
+                            onTranscriptionComplete={(text: string) => {
+                                if (text.trim() !== '') {
+                                    setFormData({ ...formData, title: formData.title + ' ' + text })
+                                }
+                            }}
+                            parentEntityId={lifeEventObj._id}
+                        />
+                    </div>
                 </div>
 
                 {/* field -> description */}
@@ -204,6 +215,16 @@ const ComponentLifeEventsEdit = ({
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         rows={10}
                     />
+                    <div className="mt-2">
+                        <SpeechToTextComponent
+                            onTranscriptionComplete={(text: string) => {
+                                if (text.trim() !== '') {
+                                    setFormData({ ...formData, description: formData.description + ' ' + text })
+                                }
+                            }}
+                            parentEntityId={lifeEventObj._id}
+                        />
+                    </div>
                 </div>
 
                 {/* category */}

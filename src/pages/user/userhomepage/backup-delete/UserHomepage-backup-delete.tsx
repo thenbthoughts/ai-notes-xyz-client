@@ -113,7 +113,7 @@ const UserHomepageBackupDelete = () => {
     });
     const [cardAnimations, setCardAnimations] = useState<{[key: string]: boolean}>({});
     const [showCardPreview, setShowCardPreview] = useState<string | null>(null);
-    const hoverTimeoutRef = useRef<number | null>(null);
+    const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     
     // List view states
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');

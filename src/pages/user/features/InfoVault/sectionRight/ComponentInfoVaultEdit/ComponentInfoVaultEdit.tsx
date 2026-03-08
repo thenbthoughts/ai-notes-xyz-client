@@ -15,6 +15,7 @@ import ComponentInfoVaultAddress from './ComponentInfoVaultAddress.tsx';
 import CommentCommonComponent from '../../../../../../components/commentCommonComponent/CommentCommonComponent.tsx';
 import CommonComponentAiKeywords from '../../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords.tsx';
 import CommonComponentAiFaq from '../../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq.tsx';
+import SpeechToTextComponent from '../../../../../../components/componentCommon/SpeechToTextComponent.tsx';
 
 const ComponentInfoVaultEdit = ({
     infoVaultObj
@@ -177,6 +178,16 @@ const ComponentInfoVaultEdit = ({
                             onChange={(e) => setFormData({ ...formData, infoVaultSubType: e.target.value })}
                             placeholder="e.g., Friend, Colleague, Restaurant, Conference, Invoice, Software, Car, Photo..."
                         />
+                        <div className="mt-2">
+                            <SpeechToTextComponent
+                                onTranscriptionComplete={(text: string) => {
+                                    if (text.trim() !== '') {
+                                        setFormData({ ...formData, infoVaultSubType: formData.infoVaultSubType + ' ' + text })
+                                    }
+                                }}
+                                parentEntityId={infoVaultObj._id}
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -200,6 +211,16 @@ const ComponentInfoVaultEdit = ({
                         className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
+                    <span className="text-xs text-gray-500">
+                        <SpeechToTextComponent
+                            onTranscriptionComplete={(text: string) => {
+                                if (text.trim() !== '') {
+                                    setFormData({ ...formData, name: formData.name + ' ' + text })
+                                }
+                            }}
+                            parentEntityId={infoVaultObj._id}
+                        />
+                    </span>
                 </div>
 
                 {/* field -> nickname */}
@@ -211,6 +232,16 @@ const ComponentInfoVaultEdit = ({
                         className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
                     />
+                    <div className="mt-2">
+                        <SpeechToTextComponent
+                            onTranscriptionComplete={(text: string) => {
+                                if (text.trim() !== '') {
+                                    setFormData({ ...formData, nickname: formData.nickname + ' ' + text })
+                                }
+                            }}
+                            parentEntityId={infoVaultObj._id}
+                        />
+                    </div>
                 </div>
 
                 {/* field -> photo URL */}
@@ -234,6 +265,16 @@ const ComponentInfoVaultEdit = ({
                         className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                     />
+                    <div className="mt-2">
+                        <SpeechToTextComponent
+                            onTranscriptionComplete={(text: string) => {
+                                if (text.trim() !== '') {
+                                    setFormData({ ...formData, company: formData.company + ' ' + text })
+                                }
+                            }}
+                            parentEntityId={infoVaultObj._id}
+                        />
+                    </div>
                 </div>
 
                 {/* field -> job title */}
@@ -245,6 +286,16 @@ const ComponentInfoVaultEdit = ({
                         className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
                     />
+                    <div className="mt-2">
+                        <SpeechToTextComponent
+                            onTranscriptionComplete={(text: string) => {
+                                if (text.trim() !== '') {
+                                    setFormData({ ...formData, jobTitle: formData.jobTitle + ' ' + text })
+                                }
+                            }}
+                            parentEntityId={infoVaultObj._id}
+                        />
+                    </div>
                 </div>
 
                 {/* field -> department */}
@@ -256,6 +307,16 @@ const ComponentInfoVaultEdit = ({
                         className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
                         onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                     />
+                    <div className="mt-2">
+                        <SpeechToTextComponent
+                            onTranscriptionComplete={(text: string) => {
+                                if (text.trim() !== '') {
+                                    setFormData({ ...formData, department: formData.department + ' ' + text })
+                                }
+                            }}
+                            parentEntityId={infoVaultObj._id}
+                        />
+                    </div>
                 </div>
 
                 {/* field -> description */}
@@ -267,6 +328,16 @@ const ComponentInfoVaultEdit = ({
                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                         rows={10}
                     />
+                    <div className="mt-2">
+                        <SpeechToTextComponent
+                            onTranscriptionComplete={(text: string) => {
+                                if (text.trim() !== '') {
+                                    setFormData({ ...formData, notes: formData.notes + ' ' + text })
+                                }
+                            }}
+                            parentEntityId={infoVaultObj._id}
+                        />
+                    </div>
                 </div>
 
                 <div>
@@ -367,6 +438,16 @@ const ComponentInfoVaultEdit = ({
                         >
                             <LucidePlus className="w-4 h-4" />
                         </button>
+                    </div>
+                    <div className="mt-2">
+                        <SpeechToTextComponent
+                            onTranscriptionComplete={(text: string) => {
+                                if (text.trim() !== '') {
+                                    setFormData({ ...formData, tagsInput: formData.tagsInput + ' ' + text })
+                                }
+                            }}
+                            parentEntityId={infoVaultObj._id}
+                        />
                     </div>
                 </div>
 
