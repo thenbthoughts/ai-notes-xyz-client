@@ -313,6 +313,27 @@ const AiCallNew = ({
             <div>
                 {/* Stats */}
                 <div className="bg-white/80 backdrop-blur-sm rounded p-2 mt-2 border border-gray-200/50 shadow-sm">
+                    {/* Header */}
+                    <div
+                        className="inline-block mr-3 bg-blue-500 rounded-md px-2 text-white flex"
+                        style={{
+                            height: '24px',
+                        }}
+                    >
+                        <div
+                            className="flex items-center justify-center"
+                            style={{
+                                height: '24px',
+                            }}
+                        >
+                            <LucideBrain
+                                size={16}
+                                className="inline-block align-text-bottom mr-[3px] text-white inline-block"
+                            />
+                            <span className="text-xs inline-block">AI Call</span>
+                        </div>
+                    </div>
+
                     {/* Timer */}
                     <div className="inline-block mr-3">
                         <LucideClock size={24} className="inline-block align-text-bottom mr-[3px] text-[#42a5f5]" />
@@ -578,11 +599,6 @@ const AiCallNew = ({
     const renderMainContent = () => {
         return (
             <div className="px-2">
-                {/* Header */}
-                <div className="bg-white/80 backdrop-blur-sm rounded p-2 border border-gray-200/50 shadow-sm">
-                    <p className="text-blue-500 text-lg font-bold">AI Call: AI Call is a tool that allows you to have a conversation with AI.</p>
-                </div>
-
                 {renderStats()}
                 {renderConversation()}
             </div>
@@ -597,7 +613,7 @@ const AiCallNew = ({
                 }}
             >
                 <div
-                    className="text-center"
+                    className="flex items-center justify-center"
                 >
 
                     {/* Toggle Microphone */}
