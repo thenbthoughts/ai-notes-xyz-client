@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMicVAD } from "@ricky0123/vad-react";
-import { LucideMic, LucideMicOff, LucidePhoneOff, LucideSettings } from "lucide-react";
+import { LucideBrain, LucideClock, LucideMic, LucideMicOff, LucidePhoneOff, LucideSettings, LucideSpeech, LucideTimer } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import stateJotaiAuthAtom from "../../../../jotai/stateJotaiAuth";
@@ -42,6 +42,8 @@ interface ConversationItem {
 }
 
 
+
+
 const AiCallNew = ({
     threadId,
 }: {
@@ -54,6 +56,7 @@ const AiCallNew = ({
     const [sendingInSeconds, setSendingInSeconds] = useState<number>(5);
 
     const [status, setStatus] = useState<"idle" | "listening" | "speaking">("idle");
+    const [isTranscripting, setIsTranscripting] = useState<boolean>(false);
 
     const [conversation, setConversation] = useState<ConversationItem[]>([]);
     const [generatingAiResponse, setGeneratingAiResponse] = useState<boolean>(false);
@@ -76,7 +79,7 @@ const AiCallNew = ({
         onSpeechEnd,
         redemptionMs: 1500,
         minSpeechMs: 100,
-        positiveSpeechThreshold: 0.75,
+        positiveSpeechThreshold: 0.90,
         baseAssetPath: "/vad/",
         onnxWASMBasePath: "/vad/",
     });
@@ -130,6 +133,8 @@ const AiCallNew = ({
     }: {
         audio: Float32Array;
     }) => {
+        setIsTranscripting(true);
+
         try {
             // Convert Float32Array to WAV blob
             const wavBlob = float32ToWavBlob(audio);
@@ -160,6 +165,8 @@ const AiCallNew = ({
         } catch (error) {
             console.error('STT error:', error);
             toast.error('Failed to transcribe audio');
+        } finally {
+            setIsTranscripting(false);
         }
     };
 
@@ -198,6 +205,12 @@ const AiCallNew = ({
                 setConversation(docs);
             }
 
+            // Scroll to the bottom of the conversation
+            const messageItem = document.getElementById(`message-item-${docs[docs.length - 1]._id}`);
+            if (messageItem) {
+                messageItem.scrollIntoView({ behavior: 'smooth' });
+            }
+
             // Reset the timer after sending
             setSendingInSeconds(5);
 
@@ -210,47 +223,191 @@ const AiCallNew = ({
         }
     };
 
-    // ----- render functions -----
-    const renderTextNextMessage = () => {
-        return (
-            <div
-                className="text-sm"
-            >
-                {nextMessage.length > 0 ? (
-                    <p>Next message: {nextMessage}</p>
-                ) : (
-                    <p>Speak to start the conversation</p>
-                )}
-            </div>
-        );
-    }
-
-    const renderWillSendStatus = () => {
+    const renderStats = () => {
         return (
             <div>
-                <p>Will send...</p>
+                {/* Stats */}
+                <div className="bg-white/80 backdrop-blur-sm rounded p-2 mt-2 border border-gray-200/50 shadow-sm">
+                    {/* Timer */}
+                    <div className="inline-block mr-3">
+                        <LucideClock size={24} className="inline-block align-text-bottom mr-[3px] text-[#42a5f5]" />
+                        Timer: {timer}s
+                    </div>
+
+                    {/* Voice status */}
+                    <div className="inline-block mr-3">
+                        <LucideMic size={24} className="inline-block align-text-bottom mr-[3px] text-[#42a5f5]" />
+                        {status}
+                    </div>
+
+                    {/* Sending in seconds */}
+                    {sendingInSeconds > 0 && (
+                        <div className="inline-block mr-3">
+                            <LucideTimer
+                                size={24}
+                                className="inline-block align-text-bottom mr-[3px] text-[#42a5f5]"
+                            />
+                            Sending in: {sendingInSeconds}s
+                        </div>
+                    )}
+
+                    {/* Transcripting */}
+                    {isTranscripting && (
+                        <div className="inline-block mr-3">
+                            <LucideSpeech
+                                size={24}
+                                className={`inline-block align-text-bottom mr-[3px] ${isTranscripting ? "text-[#ffc107]" : "text-[#aaa]"}`}
+                            />
+                            Transcripting
+                        </div>
+                    )}
+
+                    {/* Generating AI response */}
+                    {generatingAiResponse && (
+                        <div className="inline-block">
+                            <LucideBrain
+                                size={24}
+                                className={`inline-block align-text-bottom mr-[3px] ${generatingAiResponse ? "text-[#42e49f]" : "text-[#aaa]"}`}
+                            />
+                            Generating
+                        </div>
+                    )}
+                </div>
+
+                {/* Improved Send Timing Controls */}
+                <div className="bg-white/80 backdrop-blur-sm rounded p-2 mt-2 border border-gray-200/50 shadow-sm">
+                    {/* Header with countdown */}
+                    <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-1">
+                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                            <span className="text-xs font-medium text-gray-700">Next message in</span>
+                        </div>
+                        <div className="text-base font-bold text-blue-600 bg-blue-50 px-2 py-[2px] rounded">
+                            {sendingInSeconds}s
+                        </div>
+                    </div>
+
+                    {/* Progress bar */}
+                    {sendingInSeconds <= 30 && (
+                        <div className="w-full bg-gray-200 rounded-full h-1 mb-2 overflow-hidden">
+                            <div
+                                className="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-full transition-all duration-1000 ease-out"
+                                style={{ width: `${Math.max(0, (sendingInSeconds / 30) * 100)}%` }}
+                            ></div>
+                        </div>
+                    )}
+
+                    {/* Action buttons */}
+                    <div className="flex flex-wrap gap-1">
+                        {/* Send Now */}
+                        {sendingInSeconds >= 1 && (
+                            <button
+                                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium px-2 py-1.5 rounded-md shadow hover:shadow-md text-xs flex items-center gap-1 transition-all duration-150"
+                                onClick={() => setSendingInSeconds(0)}
+                                style={{ minWidth: 0 }}
+                            >
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg>
+                                Send
+                            </button>
+                        )}
+
+                        {/* Quick extensions */}
+                        <div className="flex flex-wrap gap-0.5">
+                            <button
+                                className={`px-2 py-1 rounded font-medium text-xs transition-all duration-150 ${sendingInSeconds === 10
+                                    ? 'bg-blue-500 text-white shadow'
+                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:shadow-sm'
+                                    }`}
+                                onClick={() => setSendingInSeconds(10)}
+                            >
+                                +10s
+                            </button>
+                            <button
+                                className={`px-2 py-1 rounded font-medium text-xs transition-all duration-150 ${sendingInSeconds === 20
+                                    ? 'bg-blue-500 text-white shadow'
+                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:shadow-sm'
+                                    }`}
+                                onClick={() => setSendingInSeconds(20)}
+                            >
+                                +20s
+                            </button>
+                            <button
+                                className={`px-2 py-1 rounded font-medium text-xs transition-all duration-150 ${sendingInSeconds === 30
+                                    ? 'bg-blue-500 text-white shadow'
+                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:shadow-sm'
+                                    }`}
+                                onClick={() => setSendingInSeconds(30)}
+                            >
+                                +30s
+                            </button>
+                        </div>
+
+                        {/* Longer extensions */}
+                        <div className="flex flex-wrap gap-0.5">
+                            <button
+                                className={`px-2 py-1 rounded font-medium text-xs transition-all duration-150 ${sendingInSeconds === 45
+                                    ? 'bg-blue-500 text-white shadow'
+                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:shadow-sm'
+                                    }`}
+                                onClick={() => setSendingInSeconds(45)}
+                            >
+                                +45s
+                            </button>
+                            <button
+                                className={`px-2 py-1 rounded font-medium text-xs transition-all duration-150 ${sendingInSeconds === 60
+                                    ? 'bg-blue-500 text-white shadow'
+                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:shadow-sm'
+                                    }`}
+                                onClick={() => setSendingInSeconds(60)}
+                            >
+                                +1m
+                            </button>
+                        </div>
+
+                        {/* Long extensions */}
+                        <div className="flex flex-wrap gap-0.5">
+                            <button
+                                className={`px-2 py-1 rounded font-medium text-xs transition-all duration-150 ${sendingInSeconds === 120
+                                    ? 'bg-blue-500 text-white shadow'
+                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:shadow-sm'
+                                    }`}
+                                onClick={() => setSendingInSeconds(120)}
+                            >
+                                +2m
+                            </button>
+                            <button
+                                className={`px-2 py-1 rounded font-medium text-xs transition-all duration-150 ${sendingInSeconds === 300
+                                    ? 'bg-blue-500 text-white shadow'
+                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:shadow-sm'
+                                    }`}
+                                onClick={() => setSendingInSeconds(300)}
+                            >
+                                +5m
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* TTS Preview */}
+                {nextMessage.trim().length > 0 && (
+                    <div className="mt-6 flex items-center gap-3 px-3 py-2 rounded bg-gradient-to-r from-blue-100 via-blue-50 to-white shadow">
+                        <LucideSpeech className="text-blue-400" size={24} />
+                        <div className="flex-1 overflow-x-auto scrollbar-thin">
+                            <span className="font-medium text-blue-900">Voice Preview:</span>
+                            <span className="ml-2 text-blue-700">{nextMessage.trim()}</span>
+                        </div>
+                    </div>
+                )}
             </div>
-        );
+        )
     }
 
     const renderMainContent = () => {
         return (
-            <div>
-                <div className="status-badge">
-                    <span className={`dot ${vad.listening ? "active" : ""}`} />
-                    {status}
-                </div>
-                <div>
-                    <p>Timer: {timer} seconds</p>
-                </div>
-                <div>
-                    <p>Sending in: {sendingInSeconds} seconds</p>
-                </div>
-                <div>
-                    <p>Generating AI response: {generatingAiResponse ? "Yes" : "No"}</p>
-                </div>
-                {renderTextNextMessage()}
-                {renderWillSendStatus()}
+            <div className="px-2">
+                {renderStats()}
                 {renderConversation()}
             </div>
         );
@@ -348,52 +505,53 @@ const AiCallNew = ({
             );
         }
         return (
-            <div className="px-2">
-            <div
-                className="overflow-y-auto px-2"
-                style={{
-                    height: '60vh',
-                    overflowY: 'auto'
-                }}
-            >
-                {conversation.map((turn) => {
-                    // Determine who is speaking based on isAi field
-                    const isUser = !turn.isAi;
-                    // Use _id as the unique key
-                    return (
-                        <div
-                            key={turn._id}
-                            className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
-                        >
+            <div className="bg-white/80 backdrop-blur-sm rounded p-2 mt-2 border border-gray-200/50 shadow-sm">
+                <div
+                    className="overflow-y-auto px-2"
+                    style={{
+                        height: '50vh',
+                        overflowY: 'auto'
+                    }}
+                >
+                    {conversation.map((turn) => {
+                        // Determine who is speaking based on isAi field
+                        const isUser = !turn.isAi;
+                        // Use _id as the unique key
+                        return (
                             <div
-                                className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${isUser
-                                    ? 'bg-blue-500 text-white rounded-br-md'
-                                    : 'bg-gray-200 text-gray-800 rounded-bl-md'
-                                    }`}
+                                key={`message-item-${turn._id}`}
+                                id={`message-item-${turn._id}`}
+                                className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
                             >
-                                {/* Display content for user/AI */}
-                                {turn.content}
-                                {turn.createdAtUtc && (
-                                    <div className={`text-xs mt-1 opacity-70 ${isUser ? 'text-blue-100' : 'text-gray-500'
-                                        }`}>
-                                        {new Date(turn.createdAtUtc).toLocaleTimeString()}
-                                    </div>
-                                )}
+                                <div
+                                    className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${isUser
+                                        ? 'bg-blue-500 text-white rounded-br-md'
+                                        : 'bg-gray-200 text-gray-800 rounded-bl-md'
+                                        }`}
+                                >
+                                    {/* Display content for user/AI */}
+                                    {turn.content}
+                                    {turn.createdAtUtc && (
+                                        <div className={`text-xs mt-1 opacity-70 ${isUser ? 'text-blue-100' : 'text-gray-500'
+                                            }`}>
+                                            {new Date(turn.createdAtUtc).toLocaleTimeString()}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                    {generatingAiResponse && (
+                        <div className="flex justify-start mt-2">
+                            <div className="bg-gray-200 text-gray-800 px-4 py-3 rounded-2xl rounded-bl-md">
+                                <div className="flex items-center space-x-2">
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-800"></div>
+                                    <span className="text-sm">AI is thinking...</span>
+                                </div>
                             </div>
                         </div>
-                    );
-                })}
-                {generatingAiResponse && (
-                    <div className="flex justify-start">
-                        <div className="bg-gray-200 text-gray-800 px-4 py-3 rounded-2xl rounded-bl-md">
-                            <div className="flex items-center space-x-2">
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-800"></div>
-                                <span className="text-sm">AI is thinking...</span>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
             </div>
         );
     };
@@ -401,6 +559,14 @@ const AiCallNew = ({
 
     return (
         <div style={{ height: `calc(100vh - 60px)` }}>
+            {/* Header */}
+            <div className="px-2">
+                <div className="bg-white/80 backdrop-blur-sm rounded p-2 border border-gray-200/50 shadow-sm">
+                    <p className="text-lg font-bold">AI Call</p>
+                    <p className="text-sm text-gray-500">AI Call is a tool that allows you to have a conversation with AI.</p>
+                </div>
+            </div>
+
             {/* Main Content */}
             <div
                 style={{
