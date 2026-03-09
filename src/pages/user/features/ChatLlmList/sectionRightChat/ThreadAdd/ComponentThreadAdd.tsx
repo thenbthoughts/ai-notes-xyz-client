@@ -433,6 +433,35 @@ const ComponentThreadAdd = () => {
 
     const [isAddThreadLoading, setIsAddThreadLoading] = useState(false);
 
+    // Fetch and auto-select last used model on component mount
+    useEffect(() => {
+        const fetchLastUsedModel = async () => {
+            try {
+                const response = await axiosCustom.get('/api/chat-llm/threads-crud/lastUsedLlmModel');
+
+                if (response.data.model) {
+                    const { aiModelProvider, aiModelName, aiModelOpenAiCompatibleConfigId } = response.data.model;
+
+                    // Set the provider first
+                    setAiModelProvider(aiModelProvider as "openrouter" | "groq" | "ollama" | "openai-compatible");
+
+                    // Set the model name
+                    setAiModelName(aiModelName);
+
+                    // Set the OpenAI compatible config ID if it exists
+                    if (aiModelOpenAiCompatibleConfigId) {
+                        setAiModelOpenAiCompatibleConfigId(aiModelOpenAiCompatibleConfigId);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching last used model:', error);
+                // Don't show error to user, just continue with default model
+            }
+        };
+
+        fetchLastUsedModel();
+    }, []);
+
     const addNewThread = async () => {
         if (answerMachineMinNumberOfIterations > answerMachineMaxNumberOfIterations) {
             toast.error('Minimum iterations cannot be greater than maximum iterations');

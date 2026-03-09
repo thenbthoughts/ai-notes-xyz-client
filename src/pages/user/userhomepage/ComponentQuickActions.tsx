@@ -38,6 +38,23 @@ const QuickActionsComponent = () => {
     const addNewThread = async () => {
         setIsAddThreadLoading(true);
         try {
+            // Fetch last used model
+            let aiModelProvider: "openrouter" | "groq" | "ollama" | "openai-compatible" = "openrouter";
+            let aiModelName = "openrouter/auto";
+            let aiModelOpenAiCompatibleConfigId: string | null = null;
+
+            try {
+                const lastUsedResponse = await axiosCustom.get('/api/chat-llm/threads-crud/lastUsedLlmModel');
+                if (lastUsedResponse.data.model) {
+                    aiModelProvider = lastUsedResponse.data.model.aiModelProvider;
+                    aiModelName = lastUsedResponse.data.model.aiModelName;
+                    aiModelOpenAiCompatibleConfigId = lastUsedResponse.data.model.aiModelOpenAiCompatibleConfigId || null;
+                }
+            } catch (error) {
+                console.error('Error fetching last used model:', error);
+                // Continue with default model
+            }
+
             const result = await axiosCustom.post(
                 '/api/chat-llm/threads-crud/threadsAdd',
                 {
@@ -45,8 +62,9 @@ const QuickActionsComponent = () => {
                     isAutoAiContextSelectEnabled: false,
 
                     // selected model
-                    aiModelProvider: 'openrouter',
-                    aiModelName: 'openrouter/auto',
+                    aiModelProvider: aiModelProvider,
+                    aiModelName: aiModelName,
+                    aiModelOpenAiCompatibleConfigId: aiModelOpenAiCompatibleConfigId,
                 }
             );
 
