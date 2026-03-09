@@ -410,9 +410,9 @@ const ComponentThreadAdd = () => {
     const navigate = useNavigate();
     const setJotaiChatThreadRefreshRandomNum = useSetAtom(jotaiChatThreadRefreshRandomNum);
     const [formData, setFormData] = useState({
-        isPersonalContextEnabled: true,
+        isPersonalContextEnabled: false,
         isAutoAiContextSelectEnabled: false,
-        isMemoryEnabled: true,
+        isMemoryEnabled: false,
 
         // answer type
         answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine',
