@@ -122,9 +122,9 @@ const SettingApiKey = () => {
                     {selectedOption === 'smtp' && <SmtpSettings />}
                     {selectedOption === 'clientUrl' && <ClientFrontendUrl />}
                     {selectedOption === null && (
-                        <div className="text-center py-8 text-gray-500">
+                        <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 my-6">
                             <div className="text-4xl mb-4">🔧</div>
-                            <p>Select an option from above to configure it</p>
+                            <p className="text-gray-600 font-medium">Select an option from above to configure it</p>
                         </div>
                     )}
                 </div>
