@@ -177,6 +177,60 @@ const SelectAiModelOllama = ({
     )
 }
 
+const SelectAiModelLocalai = ({
+    aiModelName,
+    setAiModelName,
+}: {
+    aiModelName: string;
+    setAiModelName: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+    const [modelArr, setModelArr] = useState([] as any[]);
+    const [isLoadingModel, setIsLoadingModel] = useState(true);
+
+    useEffect(() => {
+        const fetchModelData = async () => {
+            try {
+                setIsLoadingModel(true);
+                const response = await axiosCustom.get('/api/dynamic-data/model-localai/modelLocalaiGet');
+
+                if (response.data.docs && response.data.docs.length > 0) {
+                    setModelArr(response.data.docs);
+                }
+            } catch (error) {
+                console.error('Error fetching LocalAI model data:', error);
+                // Keep default model if API fails
+            } finally {
+                setIsLoadingModel(false);
+            }
+        };
+        fetchModelData();
+    }, []);
+
+    return (
+        <div className="mb-1 lg:mb-2">
+            <h3 className="text-sm font-medium text-gray-700 mb-1 lg:mb-2">Model</h3>
+            <Select<{ value: string; label: string }>
+                value={aiModelName ? { value: aiModelName, label: modelArr.find(model => model.modelName === aiModelName)?.modelLabel || "" } : undefined}
+                onChange={(selectedOption: { value: string; label: string } | null) => {
+                    if (selectedOption) {
+                        setAiModelName(selectedOption.value);
+                    }
+                }}
+                options={
+                    modelArr.map((model: any) => ({
+                        value: model.modelName,
+                        label: model.modelLabel
+                    }))
+                }
+
+                placeholder="Select a model..."
+                isLoading={isLoadingModel}
+                isSearchable={true}
+            />
+        </div>
+    )
+}
+
 const SelectAiModelOpenaiCompatible = ({
     aiModelName,
     setAiModelName,
@@ -291,7 +345,7 @@ const ThreadSetting = ({
         error: '',
     });
 
-    const [aiModelProvider, setAiModelProvider] = useState(threadSetting.aiModelProvider || "openrouter" as "openrouter" | "groq" | "ollama" | "openai-compatible");
+    const [aiModelProvider, setAiModelProvider] = useState(threadSetting.aiModelProvider || "openrouter" as "openrouter" | "groq" | "ollama" | "localai" | "openai-compatible");
     const [aiModelName, setAiModelName] = useState(threadSetting.aiModelName || "openrouter/auto");
     const [aiModelOpenAiCompatibleConfigId, setAiModelOpenAiCompatibleConfigId] = useState<string | null>(
         threadSetting.aiModelOpenAiCompatibleConfigId || null
@@ -442,12 +496,13 @@ const ThreadSetting = ({
                                     { label: 'OpenRouter', value: 'openrouter' },
                                     { label: 'GROQ', value: 'groq' },
                                     { label: 'Ollama', value: 'ollama' },
+                                    { label: 'LocalAI', value: 'localai' },
                                     { label: 'OpenAI Compatible', value: 'openai-compatible' }
                                 ].map((provider) => (
                                     <button
                                         key={provider.value}
                                         onClick={() => {
-                                            setAiModelProvider(provider.value as "openrouter" | "groq" | "ollama" | "openai-compatible");
+                                            setAiModelProvider(provider.value as "openrouter" | "groq" | "ollama" | "localai" | "openai-compatible");
                                             if (provider.value !== 'openai-compatible') {
                                                 setAiModelOpenAiCompatibleConfigId(null);
                                             }
@@ -487,6 +542,14 @@ const ThreadSetting = ({
                         {/* field -> select model -> ollama */}
                         {aiModelProvider === 'ollama' && (
                             <SelectAiModelOllama
+                                aiModelName={aiModelName}
+                                setAiModelName={setAiModelName}
+                            />
+                        )}
+
+                        {/* field -> select model -> localai */}
+                        {aiModelProvider === 'localai' && (
+                            <SelectAiModelLocalai
                                 aiModelName={aiModelName}
                                 setAiModelName={setAiModelName}
                             />
