@@ -3,6 +3,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
 import axiosCustom from "../../../../config/axiosCustom";
+import { useApiKeyClear } from "./utils/useApiKeyClear";
 
 const GroqApiKey = () => {
     const [apiKeyGroq, setApiKeyGroq] = useState("");
@@ -15,6 +16,8 @@ const GroqApiKey = () => {
 
     const authState = useAtomValue(stateJotaiAuthAtom);
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
+
+    const { clearRequest, handleClearApiKey } = useApiKeyClear();
 
     const handleUpdateGroq = async () => {
         setRequestGroq({ loading: true, success: '', error: '' });
@@ -74,22 +77,35 @@ const GroqApiKey = () => {
                 onChange={(e) => setApiKeyGroq(e.target.value)}
             />
             <div className="mt-2">
-                {requestGroq.loading && (
+                {(requestGroq.loading || clearRequest.loading) && (
                     <p className="text-gray-500">Loading...</p>
                 )}
-                {!requestGroq.loading && requestGroq.success !== '' && (
+                {!requestGroq.loading && !clearRequest.loading && requestGroq.success !== '' && (
                     <p className="text-green-500">API Key verified and saved successfully!</p>
                 )}
-                {!requestGroq.loading && requestGroq.error !== '' && (
-                    <p className="text-red-500">Error verifying API Key. Please try again.</p>
+                {!requestGroq.loading && !clearRequest.loading && clearRequest.success !== '' && (
+                    <p className="text-green-500">API Key cleared successfully!</p>
+                )}
+                {!requestGroq.loading && !clearRequest.loading && (requestGroq.error !== '' || clearRequest.error !== '') && (
+                    <p className="text-red-500">Error. Please try again.</p>
                 )}
             </div>
-            <button
-                onClick={handleUpdateGroq}
-                className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
-            >
-                Verify and save
-            </button>
+            <div className="mt-4 flex gap-2">
+                <button
+                    onClick={handleUpdateGroq}
+                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                    disabled={requestGroq.loading || clearRequest.loading}
+                >
+                    Verify and save
+                </button>
+                <button
+                    onClick={() => handleClearApiKey('groq')}
+                    className="bg-red-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-red-600 transition-colors duration-200"
+                    disabled={requestGroq.loading || clearRequest.loading}
+                >
+                    Clear
+                </button>
+            </div>
         </div>
     );
 };

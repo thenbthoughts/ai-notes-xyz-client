@@ -3,6 +3,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
 import axiosCustom from "../../../../config/axiosCustom";
+import { useApiKeyClear } from "./utils/useApiKeyClear";
 
 const OllamaApiKey = () => {
     const [apiKeyOllamaEndpoint, setApiKeyOllamaEndpoint] = useState("");
@@ -15,6 +16,8 @@ const OllamaApiKey = () => {
 
     const authState = useAtomValue(stateJotaiAuthAtom);
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
+
+    const { clearRequest, handleClearApiKey } = useApiKeyClear();
 
     const handleUpdateOllama = async () => {
         setRequestOllama({ loading: true, success: '', error: '' });
@@ -81,23 +84,36 @@ const OllamaApiKey = () => {
                 />
             </div>
 
-            <div className="mt-2">
-                {requestOllama.loading && (
-                    <p className="text-gray-500">Loading...</p>
-                )}
-                {!requestOllama.loading && requestOllama.success !== '' && (
-                    <p className="text-green-500">API Key verified and saved successfully!</p>
-                )}
-                {!requestOllama.loading && requestOllama.error !== '' && (
-                    <p className="text-red-500 bg-red-100 p-1 rounded">{requestOllama.error}</p>
-                )}
-            </div>
-            <button
-                onClick={handleUpdateOllama}
-                className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
-            >
-                Verify and save
-            </button>
+                    <div className="mt-2">
+                        {(requestOllama.loading || clearRequest.loading) && (
+                            <p className="text-gray-500">Loading...</p>
+                        )}
+                        {!requestOllama.loading && !clearRequest.loading && requestOllama.success !== '' && (
+                            <p className="text-green-500">API Key verified and saved successfully!</p>
+                        )}
+                        {!requestOllama.loading && !clearRequest.loading && clearRequest.success !== '' && (
+                            <p className="text-green-500">API Key cleared successfully!</p>
+                        )}
+                        {!requestOllama.loading && !clearRequest.loading && (requestOllama.error !== '' || clearRequest.error !== '') && (
+                            <p className="text-red-500 bg-red-100 p-1 rounded">{requestOllama.error || clearRequest.error}</p>
+                        )}
+                    </div>
+                    <div className="mt-4 flex gap-2">
+                        <button
+                            onClick={handleUpdateOllama}
+                            className="bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                            disabled={requestOllama.loading || clearRequest.loading}
+                        >
+                            Verify and save
+                        </button>
+                        <button
+                            onClick={() => handleClearApiKey('ollama')}
+                            className="bg-red-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-red-600 transition-colors duration-200"
+                            disabled={requestOllama.loading || clearRequest.loading}
+                        >
+                            Clear
+                        </button>
+                    </div>
         </div>
     );
 };

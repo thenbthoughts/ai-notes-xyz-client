@@ -3,6 +3,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
 import axiosCustom from "../../../../config/axiosCustom";
+import { useApiKeyClear } from "./utils/useApiKeyClear";
 
 const OpenaiApiKey = () => {
     const [apiKeyOpenai, setApiKeyOpenai] = useState("");
@@ -15,6 +16,8 @@ const OpenaiApiKey = () => {
 
     const authState = useAtomValue(stateJotaiAuthAtom);
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
+
+    const { clearRequest, handleClearApiKey } = useApiKeyClear();
 
     const handleUpdateOpenai = async () => {
         setRequestOpenai({ loading: true, success: '', error: '' });
@@ -74,22 +77,35 @@ const OpenaiApiKey = () => {
                 onChange={(e) => setApiKeyOpenai(e.target.value)}
             />
             <div className="mt-2">
-                {requestOpenai.loading && (
+                {(requestOpenai.loading || clearRequest.loading) && (
                     <p className="text-gray-500">Loading...</p>
                 )}
-                {!requestOpenai.loading && requestOpenai.success !== '' && (
+                {!requestOpenai.loading && !clearRequest.loading && requestOpenai.success !== '' && (
                     <p className="text-green-500">API Key verified and saved successfully!</p>
                 )}
-                {!requestOpenai.loading && requestOpenai.error !== '' && (
-                    <p className="text-red-500">Error verifying API Key. Please try again.</p>
+                {!requestOpenai.loading && !clearRequest.loading && clearRequest.success !== '' && (
+                    <p className="text-green-500">API Key cleared successfully!</p>
+                )}
+                {!requestOpenai.loading && !clearRequest.loading && (requestOpenai.error !== '' || clearRequest.error !== '') && (
+                    <p className="text-red-500">Error. Please try again.</p>
                 )}
             </div>
-            <button
-                onClick={handleUpdateOpenai}
-                className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
-            >
-                Verify and save
-            </button>
+            <div className="mt-4 flex gap-2">
+                <button
+                    onClick={handleUpdateOpenai}
+                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                    disabled={requestOpenai.loading || clearRequest.loading}
+                >
+                    Verify and save
+                </button>
+                <button
+                    onClick={() => handleClearApiKey('openai')}
+                    className="bg-red-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-red-600 transition-colors duration-200"
+                    disabled={requestOpenai.loading || clearRequest.loading}
+                >
+                    Clear
+                </button>
+            </div>
         </div>
     );
 };

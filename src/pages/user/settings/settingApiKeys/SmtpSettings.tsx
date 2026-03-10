@@ -3,6 +3,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
 import axiosCustom from "../../../../config/axiosCustom";
+import { useApiKeyClear } from "./utils/useApiKeyClear";
 
 const SmtpSettings = () => {
     const [smtpHost, setSmtpHost] = useState("");
@@ -20,6 +21,8 @@ const SmtpSettings = () => {
 
     const authState = useAtomValue(stateJotaiAuthAtom);
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
+
+    const { clearRequest, handleClearApiKey } = useApiKeyClear();
 
     const handleUpdateSmtp = async () => {
         setRequestSmtp({ loading: true, success: '', error: '' });
@@ -158,23 +161,36 @@ const SmtpSettings = () => {
                 />
             </div>
 
-            <div className="mt-2">
-                {requestSmtp.loading && (
-                    <p className="text-gray-500">Loading...</p>
-                )}
-                {!requestSmtp.loading && requestSmtp.success !== '' && (
-                    <p className="text-green-500">SMTP settings verified and saved successfully!</p>
-                )}
-                {!requestSmtp.loading && requestSmtp.error !== '' && (
-                    <p className="text-red-500 bg-red-100 p-1 rounded">{requestSmtp.error}</p>
-                )}
-            </div>
-            <button
-                onClick={handleUpdateSmtp}
-                className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
-            >
-                Verify and save
-            </button>
+                    <div className="mt-2">
+                        {(requestSmtp.loading || clearRequest.loading) && (
+                            <p className="text-gray-500">Loading...</p>
+                        )}
+                        {!requestSmtp.loading && !clearRequest.loading && requestSmtp.success !== '' && (
+                            <p className="text-green-500">SMTP settings verified and saved successfully!</p>
+                        )}
+                        {!requestSmtp.loading && !clearRequest.loading && clearRequest.success !== '' && (
+                            <p className="text-green-500">SMTP settings cleared successfully!</p>
+                        )}
+                        {!requestSmtp.loading && !clearRequest.loading && (requestSmtp.error !== '' || clearRequest.error !== '') && (
+                            <p className="text-red-500 bg-red-100 p-1 rounded">{requestSmtp.error || clearRequest.error}</p>
+                        )}
+                    </div>
+                    <div className="mt-4 flex gap-2">
+                        <button
+                            onClick={handleUpdateSmtp}
+                            className="bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                            disabled={requestSmtp.loading || clearRequest.loading}
+                        >
+                            Verify and save
+                        </button>
+                        <button
+                            onClick={() => handleClearApiKey('smtp')}
+                            className="bg-red-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-red-600 transition-colors duration-200"
+                            disabled={requestSmtp.loading || clearRequest.loading}
+                        >
+                            Clear
+                        </button>
+                    </div>
         </div>
     );
 };

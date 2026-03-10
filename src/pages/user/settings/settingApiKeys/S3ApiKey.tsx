@@ -3,6 +3,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
 import axiosCustom from "../../../../config/axiosCustom";
+import { useApiKeyClear } from "./utils/useApiKeyClear";
 
 const S3ApiKey = () => {
     const [apiKeyS3AccessKeyId, setApiKeyS3AccessKeyId] = useState("");
@@ -19,6 +20,8 @@ const S3ApiKey = () => {
 
     const authState = useAtomValue(stateJotaiAuthAtom);
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
+
+    const { clearRequest, handleClearApiKey } = useApiKeyClear();
 
     const handleUpdateS3 = async () => {
         setRequestS3({ loading: true, success: '', error: '' });
@@ -138,23 +141,36 @@ const S3ApiKey = () => {
                 />
             </div>
 
-            <div className="mt-2">
-                {requestS3.loading && (
-                    <p className="text-gray-500">Loading...</p>
-                )}
-                {!requestS3.loading && requestS3.success !== '' && (
-                    <p className="text-green-500">API Key verified and saved successfully!</p>
-                )}
-                {!requestS3.loading && requestS3.error !== '' && (
-                    <p className="text-red-500 bg-red-100 p-1 rounded">{requestS3.error}</p>
-                )}
-            </div>
-            <button
-                onClick={handleUpdateS3}
-                className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
-            >
-                Verify and save
-            </button>
+                    <div className="mt-2">
+                        {(requestS3.loading || clearRequest.loading) && (
+                            <p className="text-gray-500">Loading...</p>
+                        )}
+                        {!requestS3.loading && !clearRequest.loading && requestS3.success !== '' && (
+                            <p className="text-green-500">API Key verified and saved successfully!</p>
+                        )}
+                        {!requestS3.loading && !clearRequest.loading && clearRequest.success !== '' && (
+                            <p className="text-green-500">API Key cleared successfully!</p>
+                        )}
+                        {!requestS3.loading && !clearRequest.loading && (requestS3.error !== '' || clearRequest.error !== '') && (
+                            <p className="text-red-500 bg-red-100 p-1 rounded">{requestS3.error || clearRequest.error}</p>
+                        )}
+                    </div>
+                    <div className="mt-4 flex gap-2">
+                        <button
+                            onClick={handleUpdateS3}
+                            className="bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                            disabled={requestS3.loading || clearRequest.loading}
+                        >
+                            Verify and save
+                        </button>
+                        <button
+                            onClick={() => handleClearApiKey('s3')}
+                            className="bg-red-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-red-600 transition-colors duration-200"
+                            disabled={requestS3.loading || clearRequest.loading}
+                        >
+                            Clear
+                        </button>
+                    </div>
         </div>
     );
 };

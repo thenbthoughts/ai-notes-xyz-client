@@ -3,6 +3,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
 import axiosCustom from "../../../../config/axiosCustom";
+import { useApiKeyClear } from "./utils/useApiKeyClear";
 
 const ReplicateApiKey = () => {
     const [apiKeyReplicate, setApiKeyReplicate] = useState("");
@@ -15,6 +16,8 @@ const ReplicateApiKey = () => {
 
     const authState = useAtomValue(stateJotaiAuthAtom);
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
+
+    const { clearRequest, handleClearApiKey } = useApiKeyClear();
 
     const handleUpdateReplicate = async () => {
         setRequestReplicate({ loading: true, success: '', error: '' });
@@ -74,22 +77,35 @@ const ReplicateApiKey = () => {
                 onChange={(e) => setApiKeyReplicate(e.target.value)}
             />
             <div className="mt-2">
-                {requestReplicate.loading && (
+                {(requestReplicate.loading || clearRequest.loading) && (
                     <p className="text-gray-500">Loading...</p>
                 )}
-                {!requestReplicate.loading && requestReplicate.success !== '' && (
+                {!requestReplicate.loading && !clearRequest.loading && requestReplicate.success !== '' && (
                     <p className="text-green-500">API Key verified and saved successfully!</p>
                 )}
-                {!requestReplicate.loading && requestReplicate.error !== '' && (
-                    <p className="text-red-500">Error verifying API Key. Please try again.</p>
+                {!requestReplicate.loading && !clearRequest.loading && clearRequest.success !== '' && (
+                    <p className="text-green-500">API Key cleared successfully!</p>
+                )}
+                {!requestReplicate.loading && !clearRequest.loading && (requestReplicate.error !== '' || clearRequest.error !== '') && (
+                    <p className="text-red-500">Error. Please try again.</p>
                 )}
             </div>
-            <button
-                onClick={handleUpdateReplicate}
-                className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
-            >
-                Verify and save
-            </button>
+            <div className="mt-4 flex gap-2">
+                <button
+                    onClick={handleUpdateReplicate}
+                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                    disabled={requestReplicate.loading || clearRequest.loading}
+                >
+                    Verify and save
+                </button>
+                <button
+                    onClick={() => handleClearApiKey('replicate')}
+                    className="bg-red-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-red-600 transition-colors duration-200"
+                    disabled={requestReplicate.loading || clearRequest.loading}
+                >
+                    Clear
+                </button>
+            </div>
         </div>
     );
 };

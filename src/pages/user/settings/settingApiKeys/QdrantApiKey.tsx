@@ -3,6 +3,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
 import axiosCustom from "../../../../config/axiosCustom";
+import { useApiKeyClear } from "./utils/useApiKeyClear";
 
 const QdrantApiKey = () => {
     const [apiKeyQdrantEndpoint, setApiKeyQdrantEndpoint] = useState("");
@@ -16,6 +17,8 @@ const QdrantApiKey = () => {
 
     const authState = useAtomValue(stateJotaiAuthAtom);
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
+
+    const { clearRequest, handleClearApiKey } = useApiKeyClear();
 
     const handleUpdateQdrant = async () => {
         setRequestQdrant({ loading: true, success: '', error: '' });
@@ -96,23 +99,36 @@ const QdrantApiKey = () => {
                 />
             </div>
 
-            <div className="mt-2">
-                {requestQdrant.loading && (
-                    <p className="text-gray-500">Loading...</p>
-                )}
-                {!requestQdrant.loading && requestQdrant.success !== '' && (
-                    <p className="text-green-500">API Key verified and saved successfully!</p>
-                )}
-                {!requestQdrant.loading && requestQdrant.error !== '' && (
-                    <p className="text-red-500 bg-red-100 p-1 rounded">{requestQdrant.error}</p>
-                )}
-            </div>
-            <button
-                onClick={handleUpdateQdrant}
-                className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
-            >
-                Verify and save
-            </button>
+                    <div className="mt-2">
+                        {(requestQdrant.loading || clearRequest.loading) && (
+                            <p className="text-gray-500">Loading...</p>
+                        )}
+                        {!requestQdrant.loading && !clearRequest.loading && requestQdrant.success !== '' && (
+                            <p className="text-green-500">API Key verified and saved successfully!</p>
+                        )}
+                        {!requestQdrant.loading && !clearRequest.loading && clearRequest.success !== '' && (
+                            <p className="text-green-500">API Key cleared successfully!</p>
+                        )}
+                        {!requestQdrant.loading && !clearRequest.loading && (requestQdrant.error !== '' || clearRequest.error !== '') && (
+                            <p className="text-red-500 bg-red-100 p-1 rounded">{requestQdrant.error || clearRequest.error}</p>
+                        )}
+                    </div>
+                    <div className="mt-4 flex gap-2">
+                        <button
+                            onClick={handleUpdateQdrant}
+                            className="bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                            disabled={requestQdrant.loading || clearRequest.loading}
+                        >
+                            Verify and save
+                        </button>
+                        <button
+                            onClick={() => handleClearApiKey('qdrant')}
+                            className="bg-red-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-red-600 transition-colors duration-200"
+                            disabled={requestQdrant.loading || clearRequest.loading}
+                        >
+                            Clear
+                        </button>
+                    </div>
         </div>
     );
 };

@@ -3,6 +3,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
 import axiosCustom from "../../../../config/axiosCustom";
+import { useApiKeyClear } from "./utils/useApiKeyClear";
 
 const RunpodApiKey = () => {
     const [apiKeyRunpod, setApiKeyRunpod] = useState("");
@@ -15,6 +16,8 @@ const RunpodApiKey = () => {
 
     const authState = useAtomValue(stateJotaiAuthAtom);
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
+
+    const { clearRequest, handleClearApiKey } = useApiKeyClear();
 
     const handleUpdateRunpod = async () => {
         setRequestRunpod({ loading: true, success: '', error: '' });
@@ -74,22 +77,35 @@ const RunpodApiKey = () => {
                 onChange={(e) => setApiKeyRunpod(e.target.value)}
             />
             <div className="mt-2">
-                {requestRunpod.loading && (
+                {(requestRunpod.loading || clearRequest.loading) && (
                     <p className="text-gray-500">Loading...</p>
                 )}
-                {!requestRunpod.loading && requestRunpod.success !== '' && (
+                {!requestRunpod.loading && !clearRequest.loading && requestRunpod.success !== '' && (
                     <p className="text-green-500">API Key verified and saved successfully!</p>
                 )}
-                {!requestRunpod.loading && requestRunpod.error !== '' && (
-                    <p className="text-red-500">Error verifying API Key. Please try again.</p>
+                {!requestRunpod.loading && !clearRequest.loading && clearRequest.success !== '' && (
+                    <p className="text-green-500">API Key cleared successfully!</p>
+                )}
+                {!requestRunpod.loading && !clearRequest.loading && (requestRunpod.error !== '' || clearRequest.error !== '') && (
+                    <p className="text-red-500">Error. Please try again.</p>
                 )}
             </div>
-            <button
-                onClick={handleUpdateRunpod}
-                className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
-            >
-                Verify and save
-            </button>
+            <div className="mt-4 flex gap-2">
+                <button
+                    onClick={handleUpdateRunpod}
+                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                    disabled={requestRunpod.loading || clearRequest.loading}
+                >
+                    Verify and save
+                </button>
+                <button
+                    onClick={() => handleClearApiKey('runpod')}
+                    className="bg-red-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-red-600 transition-colors duration-200"
+                    disabled={requestRunpod.loading || clearRequest.loading}
+                >
+                    Clear
+                </button>
+            </div>
         </div>
     );
 };

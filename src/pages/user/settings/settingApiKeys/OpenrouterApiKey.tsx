@@ -3,6 +3,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
 import axiosCustom from "../../../../config/axiosCustom";
+import { useApiKeyClear } from "./utils/useApiKeyClear";
 
 const OpenrouterApiKey = () => {
     const [apiKeyOpenrouter, setApiKeyOpenrouter] = useState("");
@@ -15,6 +16,8 @@ const OpenrouterApiKey = () => {
 
     const authState = useAtomValue(stateJotaiAuthAtom);
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
+
+    const { clearRequest, handleClearApiKey } = useApiKeyClear();
 
     const handleUpdateOpenrouter = async () => {
         setRequestOpenrouter({ loading: true, success: '', error: '' });
@@ -74,22 +77,35 @@ const OpenrouterApiKey = () => {
                 onChange={(e) => setApiKeyOpenrouter(e.target.value)}
             />
             <div className="mt-2">
-                {requestOpenrouter.loading && (
+                {(requestOpenrouter.loading || clearRequest.loading) && (
                     <p className="text-gray-500">Loading...</p>
                 )}
-                {!requestOpenrouter.loading && requestOpenrouter.success !== '' && (
+                {!requestOpenrouter.loading && !clearRequest.loading && requestOpenrouter.success !== '' && (
                     <p className="text-green-500">API Key verified and saved successfully!</p>
                 )}
-                {!requestOpenrouter.loading && requestOpenrouter.error !== '' && (
-                    <p className="text-red-500">Error verifying API Key. Please try again.</p>
+                {!requestOpenrouter.loading && !clearRequest.loading && clearRequest.success !== '' && (
+                    <p className="text-green-500">API Key cleared successfully!</p>
+                )}
+                {!requestOpenrouter.loading && !clearRequest.loading && (requestOpenrouter.error !== '' || clearRequest.error !== '') && (
+                    <p className="text-red-500">Error. Please try again.</p>
                 )}
             </div>
-            <button
-                onClick={handleUpdateOpenrouter}
-                className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
-            >
-                Verify and save
-            </button>
+            <div className="mt-4 flex gap-2">
+                <button
+                    onClick={handleUpdateOpenrouter}
+                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-600 transition-colors duration-200"
+                    disabled={requestOpenrouter.loading || clearRequest.loading}
+                >
+                    Verify and save
+                </button>
+                <button
+                    onClick={() => handleClearApiKey('openrouter')}
+                    className="bg-red-500 text-white font-bold py-2 px-4 rounded-sm hover:bg-red-600 transition-colors duration-200"
+                    disabled={requestOpenrouter.loading || clearRequest.loading}
+                >
+                    Clear
+                </button>
+            </div>
         </div>
     );
 };
