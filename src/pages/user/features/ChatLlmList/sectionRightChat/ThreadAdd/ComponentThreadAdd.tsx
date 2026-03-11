@@ -241,6 +241,68 @@ const SelectAiModelOllama = ({
     );
 };
 
+const SelectAiModelLocalai = ({
+    aiModelName,
+    setAiModelName,
+}: {
+    aiModelName: string;
+    setAiModelName: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+    const [localaiModels, setLocalaiModels] = useState<
+        Array<{ _id: string; modelName: string; modelLabel: string }>
+    >([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>("");
+
+    useEffect(() => {
+        const fetchLocalaiModels = async () => {
+            setLoading(true);
+            setError("");
+            try {
+                const res = await axiosCustom.get("/api/dynamic-data/model-localai/modelLocalaiGet");
+                setLocalaiModels(res.data.docs || []);
+            } catch (err) {
+                setError("Failed to fetch models");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchLocalaiModels();
+    }, []);
+
+    useEffect(() => {
+        // Set default to first model if not set
+        if (localaiModels.length > 0 && !aiModelName) {
+            setAiModelName(localaiModels[0].modelName);
+        }
+    }, [localaiModels, aiModelName, setAiModelName]);
+
+    return (
+        <div className="mb-2">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">LocalAI Model</h3>
+            {loading ? (
+                <div className="text-gray-500 text-sm">Loading models...</div>
+            ) : error ? (
+                <div className="text-red-600 text-sm">{error}</div>
+            ) : localaiModels.length === 0 ? (
+                <div className="text-sm text-gray-500">No LocalAI models found. Go to LocalAI settings to add models.</div>
+            ) : (
+                <select
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    value={aiModelName}
+                    onChange={e => setAiModelName(e.target.value)}
+                >
+                    {localaiModels.map(model => (
+                        <option key={model._id} value={model.modelName}>
+                            {model.modelLabel || model.modelName}
+                        </option>
+                    ))}
+                </select>
+            )}
+        </div>
+    );
+};
+
 const SelectAiModelOpenaiCompatible = ({
     aiModelName,
     setAiModelName,
@@ -343,7 +405,7 @@ const LastUsedLlmModel = ({
 }: {
     aiModelName: string;
     setAiModelName: React.Dispatch<React.SetStateAction<string>>;
-    setAiModelProvider: React.Dispatch<React.SetStateAction<"openrouter" | "groq" | "ollama" | "openai-compatible">>;
+    setAiModelProvider: React.Dispatch<React.SetStateAction<"openrouter" | "groq" | "ollama" | "localai" | "openai-compatible">>;
 }) => {
     const [topLlmModels, setTopLlmModels] = useState<Array<{ aiModelProvider: string, aiModelName: string }>>([]);
 
@@ -363,8 +425,8 @@ const LastUsedLlmModel = ({
     }, []);
 
     const handleModelSelect = (model: { aiModelProvider: string, aiModelName: string }) => {
-        if (model.aiModelProvider === 'openrouter' || model.aiModelProvider === 'groq' || model.aiModelProvider === 'ollama' || model.aiModelProvider === 'openai-compatible') {
-            setAiModelProvider(model.aiModelProvider as "openrouter" | "groq" | "ollama" | "openai-compatible");
+        if (model.aiModelProvider === 'openrouter' || model.aiModelProvider === 'groq' || model.aiModelProvider === 'ollama' || model.aiModelProvider === 'localai' || model.aiModelProvider === 'openai-compatible') {
+            setAiModelProvider(model.aiModelProvider as "openrouter" | "groq" | "ollama" | "localai" | "openai-compatible");
         }
         setAiModelName(model.aiModelName);
     };
@@ -425,7 +487,7 @@ const ComponentThreadAdd = () => {
     const [minIterationsInput, setMinIterationsInput] = useState<string>('3');
     const [maxIterationsInput, setMaxIterationsInput] = useState<string>('7');
 
-    const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq" | "ollama" | "openai-compatible");
+    const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq" | "ollama" | "localai" | "openai-compatible");
     const [aiModelName, setAiModelName] = useState("openrouter/auto");
     const [aiModelOpenAiCompatibleConfigId, setAiModelOpenAiCompatibleConfigId] = useState<string | null>(null);
 
@@ -443,7 +505,7 @@ const ComponentThreadAdd = () => {
                     const { aiModelProvider, aiModelName, aiModelOpenAiCompatibleConfigId } = response.data.model;
 
                     // Set the provider first
-                    setAiModelProvider(aiModelProvider as "openrouter" | "groq" | "ollama" | "openai-compatible");
+                    setAiModelProvider(aiModelProvider as "openrouter" | "groq" | "ollama" | "localai" | "openai-compatible");
 
                     // Set the model name
                     setAiModelName(aiModelName);
@@ -557,12 +619,13 @@ const ComponentThreadAdd = () => {
                                 { label: 'OpenRouter', value: 'openrouter' },
                                 { label: 'GROQ', value: 'groq' },
                                 { label: 'Ollama', value: 'ollama' },
+                                { label: 'LocalAI', value: 'localai' },
                                 { label: 'OpenAI Compatible', value: 'openai-compatible' }
                             ].map((provider) => (
                                 <button
                                     key={provider.value}
                                     onClick={() => {
-                                        setAiModelProvider(provider.value as "openrouter" | "groq" | "ollama" | "openai-compatible");
+                                        setAiModelProvider(provider.value as "openrouter" | "groq" | "ollama" | "localai" | "openai-compatible");
                                         setAiModelName('');
                                         setAiModelOpenAiCompatibleConfigId(null);
                                         setSelectRandomModel(Math.floor(Math.random() * 1000000));
@@ -618,6 +681,25 @@ const ComponentThreadAdd = () => {
                                     to="/user/setting/ollama-models"
                                     className="text-blue-500 hover:text-blue-700"
                                 >Ollama Settings</Link>.
+                            </div>
+                        </div>
+                    )}
+
+                    {/* field -> select model -> localai */}
+                    {aiModelProvider === 'localai' && (
+                        <div>
+                            <SelectAiModelLocalai
+                                aiModelName={aiModelName}
+                                setAiModelName={setAiModelName}
+                                key={'select-model-localai'}
+                            />
+
+                            <div className="text-sm text-gray-500 mt-2">
+                                Manage your LocalAI models in the{' '}
+                                <Link
+                                    to="/user/setting/localai-models"
+                                    className="text-blue-500 hover:text-blue-700"
+                                >LocalAI Settings</Link>.
                             </div>
                         </div>
                     )}

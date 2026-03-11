@@ -33,6 +33,7 @@ const SettingS3Buckets = lazy(() => import("./pages/user/settings/settingS3Bucke
 const LoginHistory = lazy(() => import("./pages/user/settings/loginHistory/loginHistory.tsx"));
 const SettingChangePassword = lazy(() => import("./pages/user/settings/changePassword/SettingChangePassword.tsx"));
 const SettingOllamaModels = lazy(() => import("./pages/user/settings/ollamaModelList/ollamaModelList.tsx"));
+const SettingLocalaiModels = lazy(() => import("./pages/user/settings/localaiModelList/localaiModelList.tsx"));
 const NotificationWrapper = lazy(() => import("./pages/user/settings/notification/NotificationWrapper.tsx"));
 const OpenaiCompatibleModel = lazy(() => import("./pages/user/settings/openaiCompatibleModel/OpenaiCompatibleModel.tsx"));
 const SettingMemory = lazy(() => import("./pages/user/settings/settingMemory/SettingMemory.tsx"));
@@ -329,6 +330,14 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <SettingOllamaModels />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
+          path: "/user/setting/localai-models",
+          element: (
+            <UnauthorizedRoute>
+              <SettingLocalaiModels />
             </UnauthorizedRoute>
           ),
         },
