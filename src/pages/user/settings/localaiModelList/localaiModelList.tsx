@@ -5,15 +5,32 @@ import SettingHeader from '../SettingHeader';
 import stateJotaiAuthAtom from '../../../../jotai/stateJotaiAuth';
 import { useAtomValue } from 'jotai';
 
+type LocalaiModelType = '' | 'llm' | 'stt' | 'tts' | 'embedding' | 'image-generation';
+
+const MODEL_TYPE_OPTIONS: { value: LocalaiModelType; label: string }[] = [
+    { value: '', label: '(Not specified)' },
+    { value: 'llm', label: 'LLM' },
+    { value: 'stt', label: 'STT (Speech-to-Text)' },
+    { value: 'tts', label: 'TTS (Text-to-Speech)' },
+    { value: 'embedding', label: 'Embedding' },
+    { value: 'image-generation', label: 'Image Generation' },
+];
+
 interface LocalaiModel {
     _id: string;
     username: string;
     modelLabel: string;
     modelName: string;
+    modelType: LocalaiModelType;
     isInputModalityText: 'true' | 'false' | 'pending';
     isInputModalityImage: 'true' | 'false' | 'pending';
     isInputModalityAudio: 'true' | 'false' | 'pending';
     isInputModalityVideo: 'true' | 'false' | 'pending';
+    isOutputModalityText: 'true' | 'false' | 'pending';
+    isOutputModalityImage: 'true' | 'false' | 'pending';
+    isOutputModalityAudio: 'true' | 'false' | 'pending';
+    isOutputModalityVideo: 'true' | 'false' | 'pending';
+    isOutputModalityEmbedding: 'true' | 'false' | 'pending';
     raw: any;
 };
 
@@ -75,6 +92,10 @@ const LocalaiModelList: React.FC = () => {
         setExpandedModels(newExpanded);
     };
 
+    const normalizeModalityValue = (value: 'true' | 'false' | 'pending' | undefined): 'true' | 'false' => {
+        return value === 'true' ? 'true' : 'false';
+    };
+
     const formatDate = (dateString: string): string => {
         return new Date(dateString).toLocaleString();
     };
@@ -113,6 +134,53 @@ const LocalaiModelList: React.FC = () => {
             await fetchModels();
         } catch (err: any) {
             setError(err.response?.data?.message || 'Failed to refresh models');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const updateModelType = async (_id: string, modelType: LocalaiModelType) => {
+        try {
+            setLoading(true);
+            await axiosCustom.patch('/api/dynamic-data/model-localai/modelLocalaiUpdate', {
+                _id,
+                modelType,
+            });
+            setError('');
+            await fetchModels();
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Failed to update model type');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const updateModality = async (
+        _id: string,
+        field:
+            | 'isInputModalityText'
+            | 'isInputModalityImage'
+            | 'isInputModalityAudio'
+            | 'isInputModalityVideo'
+            | 'isOutputModalityText'
+            | 'isOutputModalityImage'
+            | 'isOutputModalityAudio'
+            | 'isOutputModalityVideo'
+            | 'isOutputModalityEmbedding',
+        value: 'true' | 'false' | 'pending',
+    ) => {
+        try {
+            setLoading(true);
+            await axiosCustom.patch('/api/dynamic-data/model-localai/modelLocalaiUpdate', {
+                _id,
+                [field]: value,
+            });
+            setError('');
+            await fetchModels();
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Failed to update modality');
             console.error(err);
         } finally {
             setLoading(false);
@@ -175,6 +243,8 @@ const LocalaiModelList: React.FC = () => {
                             {models.map((model) => {
                                 const isExpanded = expandedModels.has(model._id);
                                 const rawData = model.raw || {};
+                                const modelTypeLabel = MODEL_TYPE_OPTIONS.find((o) => o.value === (model.modelType || ''))?.label || '(Not specified)';
+                                const modelTypeTagClass = model.modelType ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-600';
 
                                 return (
                                     <li
@@ -183,8 +253,11 @@ const LocalaiModelList: React.FC = () => {
                                     >
                                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 sm:p-3 gap-1 sm:gap-0">
                                             <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-1 mb-0.5">
+                                                <div className="flex items-center gap-1 mb-0.5 flex-wrap">
                                                     <span className="font-medium text-gray-900 break-all">{model.modelLabel}</span>
+                                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${modelTypeTagClass}`}>
+                                                        {modelTypeLabel}
+                                                    </span>
                                                     <button
                                                         onClick={() => toggleExpanded(model._id)}
                                                         className="text-gray-500 hover:text-gray-700 p-0.5 rounded-md hover:bg-gray-100 transition-colors"
@@ -238,35 +311,140 @@ const LocalaiModelList: React.FC = () => {
                                                     {/* Input Modalities */}
                                                     <div className="col-span-1 sm:col-span-2">
                                                         <span className="font-medium text-gray-700">Input Modalities:</span>
-                                                        <div className="flex flex-wrap gap-1 mt-1">
-                                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                                                model.isInputModalityText === 'true' ? 'bg-green-100 text-green-800' :
-                                                                model.isInputModalityText === 'false' ? 'bg-red-100 text-red-800' :
-                                                                'bg-yellow-100 text-yellow-800'
-                                                            }`}>
-                                                                Text {model.isInputModalityText === 'pending' ? '(pending)' : ''}
-                                                            </span>
-                                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                                                model.isInputModalityImage === 'true' ? 'bg-green-100 text-green-800' :
-                                                                model.isInputModalityImage === 'false' ? 'bg-red-100 text-red-800' :
-                                                                'bg-yellow-100 text-yellow-800'
-                                                            }`}>
-                                                                Image {model.isInputModalityImage === 'pending' ? '(pending)' : ''}
-                                                            </span>
-                                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                                                model.isInputModalityAudio === 'true' ? 'bg-green-100 text-green-800' :
-                                                                model.isInputModalityAudio === 'false' ? 'bg-red-100 text-red-800' :
-                                                                'bg-yellow-100 text-yellow-800'
-                                                            }`}>
-                                                                Audio {model.isInputModalityAudio === 'pending' ? '(pending)' : ''}
-                                                            </span>
-                                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                                                model.isInputModalityVideo === 'true' ? 'bg-green-100 text-green-800' :
-                                                                model.isInputModalityVideo === 'false' ? 'bg-red-100 text-red-800' :
-                                                                'bg-yellow-100 text-yellow-800'
-                                                            }`}>
-                                                                Video {model.isInputModalityVideo === 'pending' ? '(pending)' : ''}
-                                                            </span>
+                                                        <div className="flex flex-col gap-1 mt-1">
+                                                            <div className="flex items-center gap-2 flex-wrap">
+                                                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${normalizeModalityValue(model.isInputModalityText) === 'true' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                                    Text {normalizeModalityValue(model.isInputModalityText) === 'true' ? 'True' : 'False'}
+                                                                </span>
+                                                                <select
+                                                                    value={normalizeModalityValue(model.isInputModalityText)}
+                                                                    onChange={(e) => updateModality(model._id, 'isInputModalityText', e.target.value as any)}
+                                                                    disabled={loading}
+                                                                    className="text-xs border border-gray-300 rounded-md px-1.5 py-0.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                                                >
+                                                                    <option value="true">True</option>
+                                                                    <option value="false">False</option>
+                                                                </select>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 flex-wrap">
+                                                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${normalizeModalityValue(model.isInputModalityImage) === 'true' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                                    Image {normalizeModalityValue(model.isInputModalityImage) === 'true' ? 'True' : 'False'}
+                                                                </span>
+                                                                <select
+                                                                    value={normalizeModalityValue(model.isInputModalityImage)}
+                                                                    onChange={(e) => updateModality(model._id, 'isInputModalityImage', e.target.value as any)}
+                                                                    disabled={loading}
+                                                                    className="text-xs border border-gray-300 rounded-md px-1.5 py-0.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                                                >
+                                                                    <option value="true">True</option>
+                                                                    <option value="false">False</option>
+                                                                </select>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 flex-wrap">
+                                                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${normalizeModalityValue(model.isInputModalityAudio) === 'true' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                                    Audio {normalizeModalityValue(model.isInputModalityAudio) === 'true' ? 'True' : 'False'}
+                                                                </span>
+                                                                <select
+                                                                    value={normalizeModalityValue(model.isInputModalityAudio)}
+                                                                    onChange={(e) => updateModality(model._id, 'isInputModalityAudio', e.target.value as any)}
+                                                                    disabled={loading}
+                                                                    className="text-xs border border-gray-300 rounded-md px-1.5 py-0.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                                                >
+                                                                    <option value="true">True</option>
+                                                                    <option value="false">False</option>
+                                                                </select>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 flex-wrap">
+                                                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${normalizeModalityValue(model.isInputModalityVideo) === 'true' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                                    Video {normalizeModalityValue(model.isInputModalityVideo) === 'true' ? 'True' : 'False'}
+                                                                </span>
+                                                                <select
+                                                                    value={normalizeModalityValue(model.isInputModalityVideo)}
+                                                                    onChange={(e) => updateModality(model._id, 'isInputModalityVideo', e.target.value as any)}
+                                                                    disabled={loading}
+                                                                    className="text-xs border border-gray-300 rounded-md px-1.5 py-0.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                                                >
+                                                                    <option value="true">True</option>
+                                                                    <option value="false">False</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Output Modalities */}
+                                                    <div className="col-span-1 sm:col-span-2">
+                                                        <span className="font-medium text-gray-700">Output Modalities:</span>
+                                                        <div className="flex flex-col gap-1 mt-1">
+                                                            <div className="flex items-center gap-2 flex-wrap">
+                                                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${normalizeModalityValue(model.isOutputModalityText) === 'true' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                                    Text {normalizeModalityValue(model.isOutputModalityText) === 'true' ? 'True' : 'False'}
+                                                                </span>
+                                                                <select
+                                                                    value={normalizeModalityValue(model.isOutputModalityText)}
+                                                                    onChange={(e) => updateModality(model._id, 'isOutputModalityText', e.target.value as any)}
+                                                                    disabled={loading}
+                                                                    className="text-xs border border-gray-300 rounded-md px-1.5 py-0.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                                                >
+                                                                    <option value="true">True</option>
+                                                                    <option value="false">False</option>
+                                                                </select>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 flex-wrap">
+                                                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${normalizeModalityValue(model.isOutputModalityImage) === 'true' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                                    Image {normalizeModalityValue(model.isOutputModalityImage) === 'true' ? 'True' : 'False'}
+                                                                </span>
+                                                                <select
+                                                                    value={normalizeModalityValue(model.isOutputModalityImage)}
+                                                                    onChange={(e) => updateModality(model._id, 'isOutputModalityImage', e.target.value as any)}
+                                                                    disabled={loading}
+                                                                    className="text-xs border border-gray-300 rounded-md px-1.5 py-0.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                                                >
+                                                                    <option value="true">True</option>
+                                                                    <option value="false">False</option>
+                                                                </select>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 flex-wrap">
+                                                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${normalizeModalityValue(model.isOutputModalityAudio) === 'true' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                                    Audio {normalizeModalityValue(model.isOutputModalityAudio) === 'true' ? 'True' : 'False'}
+                                                                </span>
+                                                                <select
+                                                                    value={normalizeModalityValue(model.isOutputModalityAudio)}
+                                                                    onChange={(e) => updateModality(model._id, 'isOutputModalityAudio', e.target.value as any)}
+                                                                    disabled={loading}
+                                                                    className="text-xs border border-gray-300 rounded-md px-1.5 py-0.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                                                >
+                                                                    <option value="true">True</option>
+                                                                    <option value="false">False</option>
+                                                                </select>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 flex-wrap">
+                                                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${normalizeModalityValue(model.isOutputModalityVideo) === 'true' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                                    Video {normalizeModalityValue(model.isOutputModalityVideo) === 'true' ? 'True' : 'False'}
+                                                                </span>
+                                                                <select
+                                                                    value={normalizeModalityValue(model.isOutputModalityVideo)}
+                                                                    onChange={(e) => updateModality(model._id, 'isOutputModalityVideo', e.target.value as any)}
+                                                                    disabled={loading}
+                                                                    className="text-xs border border-gray-300 rounded-md px-1.5 py-0.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                                                >
+                                                                    <option value="true">True</option>
+                                                                    <option value="false">False</option>
+                                                                </select>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 flex-wrap">
+                                                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${normalizeModalityValue(model.isOutputModalityEmbedding) === 'true' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                                    Embedding {normalizeModalityValue(model.isOutputModalityEmbedding) === 'true' ? 'True' : 'False'}
+                                                                </span>
+                                                                <select
+                                                                    value={normalizeModalityValue(model.isOutputModalityEmbedding)}
+                                                                    onChange={(e) => updateModality(model._id, 'isOutputModalityEmbedding', e.target.value as any)}
+                                                                    disabled={loading}
+                                                                    className="text-xs border border-gray-300 rounded-md px-1.5 py-0.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                                                >
+                                                                    <option value="true">True</option>
+                                                                    <option value="false">False</option>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                     </div>
 
@@ -276,6 +454,23 @@ const LocalaiModelList: React.FC = () => {
                                                             <div className="text-gray-600 font-mono text-xs break-all">{rawData.id}</div>
                                                         </div>
                                                     )}
+                                                    <div className="col-span-1 sm:col-span-2">
+                                                        <span className="font-medium text-gray-700">Model Type:</span>
+                                                        <div className="mt-1">
+                                                            <select
+                                                                value={model.modelType || ''}
+                                                                onChange={(e) => updateModelType(model._id, e.target.value as LocalaiModelType)}
+                                                                disabled={loading}
+                                                                className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                                            >
+                                                                {MODEL_TYPE_OPTIONS.map((opt) => (
+                                                                    <option key={opt.value || 'empty'} value={opt.value}>
+                                                                        {opt.label}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         )}
