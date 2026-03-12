@@ -77,6 +77,13 @@ const getDecisionFromContent = async ({
     }
 }
 
+interface ThreadSettings {
+    sttModelProvider: string;
+    sttModelName: string;
+    ttsModelProvider: string;
+    ttsModelName: string;
+}
+
 const AiCallNew = ({
     threadId,
 }: {
@@ -90,6 +97,37 @@ const AiCallNew = ({
 
     const [status, setStatus] = useState<"idle" | "listening" | "speaking">("idle");
     const [isTranscripting, setIsTranscripting] = useState<boolean>(false);
+
+    const [threadSettings, setThreadSettings] = useState<ThreadSettings>({
+        sttModelProvider: '',
+        sttModelName: '',
+        ttsModelProvider: '',
+        ttsModelName: '',
+    });
+
+    useEffect(() => {
+        const fetchThread = async () => {
+            try {
+                const res = await axiosCustom.post<{ docs?: Array<{ sttModelProvider?: string; sttModelName?: string; ttsModelProvider?: string; ttsModelName?: string }> }>(
+                    '/api/chat-llm/threads-crud/threadsGet',
+                    { threadId }
+                );
+                const docs = res.data?.docs ?? [];
+                if (docs.length > 0) {
+                    const t = docs[0];
+                    setThreadSettings({
+                        sttModelProvider: t.sttModelProvider ?? '',
+                        sttModelName: t.sttModelName ?? '',
+                        ttsModelProvider: t.ttsModelProvider ?? '',
+                        ttsModelName: t.ttsModelName ?? '',
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to fetch thread settings for AiCall:', err);
+            }
+        };
+        fetchThread();
+    }, [threadId]);
 
     // TTS state
     const [isMuted, setIsMuted] = useState<boolean>(false);
@@ -198,9 +236,10 @@ const AiCallNew = ({
                 apiUrl: envKeys.API_URL,
             });
 
-            // Call STT API
+            // Call STT API (threadId passes thread's sttModelProvider/sttModelName)
             const res = await axiosCustom.post('/api/llm/crud/audioToText', {
-                fileUrl: audioUrl
+                fileUrl: audioUrl,
+                threadId,
             });
 
             // Extract transcript from response
@@ -653,6 +692,8 @@ const AiCallNew = ({
                         setTtsStatus={setTtsStatus}
                         ttsGenerating={ttsGenerating}
                         setTtsGenerating={setTtsGenerating}
+                        ttsModelProvider={threadSettings.ttsModelProvider}
+                        ttsModelName={threadSettings.ttsModelName}
                     />
 
                     {/* Settings */}
@@ -761,14 +802,15 @@ const AiCallWrapper = () => {
         if (
             authState.apiKeyGroqValid ||
             authState.apiKeyOpenrouterValid ||
-            authState.apiKeyOllamaValid
+            authState.apiKeyOllamaValid ||
+            authState.apiKeyLocalaiValid
             // TODO need to add for custom openai compatible model
         ) {
             isValidLlm = true;
         }
 
-        // TTS: Requires OpenAI or LocalAI
-        if (authState.apiKeyOpenaiValid || authState.apiKeyLocalaiValid) {
+        // TTS: Requires OpenAI, Groq, or LocalAI
+        if (authState.apiKeyOpenaiValid || authState.apiKeyGroqValid || authState.apiKeyLocalaiValid) {
             isValidTts = true;
         }
 
@@ -861,6 +903,7 @@ const AiCallWrapper = () => {
                                     </button>
                                     <div className="text-[10px] text-purple-900/80 mt-0.5 text-right">
                                         {authState.apiKeyOpenaiValid ? null : <span>OpenAI,&nbsp;</span>}
+                                        {authState.apiKeyGroqValid ? null : <span>Groq,&nbsp;</span>}
                                         {authState.apiKeyLocalaiValid ? null : <span>LocalAI</span>}
                                     </div>
                                 </div>

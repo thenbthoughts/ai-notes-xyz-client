@@ -2,6 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import toast from "react-hot-toast";
 import { MessageCircle, Settings, ExternalLink, LucideInfo } from "lucide-react";
+import SelectSttModel from "../ThreadSetting/SelectSttModel";
+import SelectTtsModel from "../ThreadSetting/SelectTtsModel";
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import { tsSchemaAiModelListGroq } from "../../../../../../types/pages/settings/dataModelGroq";
@@ -491,6 +493,14 @@ const ComponentThreadAdd = () => {
     const [aiModelName, setAiModelName] = useState("openrouter/auto");
     const [aiModelOpenAiCompatibleConfigId, setAiModelOpenAiCompatibleConfigId] = useState<string | null>(null);
 
+    // STT (Speech-to-Text)
+    const [sttModelName, setSttModelName] = useState('');
+    const [sttModelProvider, setSttModelProvider] = useState('');
+
+    // TTS (Text-to-Speech)
+    const [ttsModelName, setTtsModelName] = useState('');
+    const [ttsModelProvider, setTtsModelProvider] = useState('');
+
     const [selectRandomModel, setSelectRandomModel] = useState(0);
 
     const [isAddThreadLoading, setIsAddThreadLoading] = useState(false);
@@ -550,6 +560,14 @@ const ComponentThreadAdd = () => {
                     aiModelProvider: aiModelProvider,
                     aiModelName: aiModelName,
                     aiModelOpenAiCompatibleConfigId: aiModelOpenAiCompatibleConfigId,
+
+                    // STT (Speech-to-Text)
+                    sttModelName: sttModelName,
+                    sttModelProvider: sttModelProvider,
+
+                    // TTS (Text-to-Speech)
+                    ttsModelName: ttsModelName,
+                    ttsModelProvider: ttsModelProvider,
                 }
             );
 
@@ -731,6 +749,22 @@ const ComponentThreadAdd = () => {
                         setAiModelProvider={setAiModelProvider}
                         setAiModelName={setAiModelName}
                         key={'select-model-last-used-llm'}
+                    />
+
+                    {/* field -> sttModelProvider */}
+                    <SelectSttModel
+                        sttModelProvider={sttModelProvider}
+                        setSttModelProvider={setSttModelProvider}
+                        sttModelName={sttModelName}
+                        setSttModelName={setSttModelName}
+                    />
+
+                    {/* field -> ttsModelProvider */}
+                    <SelectTtsModel
+                        ttsModelProvider={ttsModelProvider}
+                        setTtsModelProvider={setTtsModelProvider}
+                        ttsModelName={ttsModelName}
+                        setTtsModelName={setTtsModelName}
                     />
 
                     {/* field -> buttons */}

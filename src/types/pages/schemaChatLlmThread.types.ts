@@ -14,6 +14,14 @@ export interface IChatLlmThread {
     aiModelProvider: string,
     aiModelOpenAiCompatibleConfigId?: string | null,
 
+    // STT (Speech-to-Text)
+    sttModelName: string;
+    sttModelProvider: string;
+
+    // TTS (Text-to-Speech)
+    ttsModelName: string;
+    ttsModelProvider: string;
+
     // model info
     aiSummary: string;
     aiTasks: object[];

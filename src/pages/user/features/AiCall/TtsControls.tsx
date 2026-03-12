@@ -14,6 +14,8 @@ interface TtsControlsProps {
     ttsGenerating: TtsGenerating;
     setTtsGenerating: (status: TtsGenerating) => void;
     onStopTts?: () => void;
+    ttsModelProvider?: string;
+    ttsModelName?: string;
 }
 
 export interface TtsControlsRef {
@@ -29,7 +31,9 @@ const TtsControls = forwardRef<TtsControlsRef, TtsControlsProps>(({
     setTtsStatus,
     ttsGenerating,
     setTtsGenerating,
-    onStopTts
+    onStopTts,
+    ttsModelProvider,
+    ttsModelName,
 }, ref) => {
     // Audio refs for TTS
     const audioCtxRef = useRef<AudioContext | null>(null);
@@ -92,9 +96,12 @@ const TtsControls = forwardRef<TtsControlsRef, TtsControlsProps>(({
             // Fetch audio via axiosCustom (handles auth cookies)
             let res;
             try {
+                const body: { text: string; ttsModelProvider?: string; ttsModelName?: string } = { text: safeText };
+                if (ttsModelProvider?.trim()) body.ttsModelProvider = ttsModelProvider.trim();
+                if (ttsModelName?.trim()) body.ttsModelName = ttsModelName.trim();
                 res = await axiosCustom.post(
                     '/api/chat-llm/tts/speak',
-                    { text: safeText },
+                    body,
                     { responseType: 'arraybuffer' }
                 );
             } catch (apiErr: any) {

@@ -7,6 +7,8 @@ import Tooltip from '@rc-component/tooltip';
 
 import ThreadSettingContextSearch from "./ThreadSettingContextSearch";
 import SelectApiKey from "./SelectApiKey";
+import SelectSttModel from "./SelectSttModel";
+import SelectTtsModel from "./SelectTtsModel";
 
 const ThreadSetting = ({
     closeModal,
@@ -39,6 +41,14 @@ const ThreadSetting = ({
     const [aiModelOpenAiCompatibleConfigId, setAiModelOpenAiCompatibleConfigId] = useState<string | null>(
         threadSetting.aiModelOpenAiCompatibleConfigId || null
     );
+
+    // STT (Speech-to-Text)
+    const [sttModelName, setSttModelName] = useState(threadSetting.sttModelName || '');
+    const [sttModelProvider, setSttModelProvider] = useState(threadSetting.sttModelProvider || '');
+
+    // TTS (Text-to-Speech)
+    const [ttsModelName, setTtsModelName] = useState(threadSetting.ttsModelName || '');
+    const [ttsModelProvider, setTtsModelProvider] = useState(threadSetting.ttsModelProvider || '');
     const [temperature, setTemperature] = useState<number>(threadSetting.chatLlmTemperature || 1);
     const [maxTokens, setMaxTokens] = useState<number>(threadSetting.chatLlmMaxTokens || 4096);
     const [chatMemoryLimit, setChatMemoryLimit] = useState<number>(threadSetting.chatMemoryLimit || 0);
@@ -81,6 +91,14 @@ const ThreadSetting = ({
                     aiModelProvider: aiModelProvider,
                     aiModelName: aiModelName,
                     aiModelOpenAiCompatibleConfigId: aiModelOpenAiCompatibleConfigId,
+
+                    // STT (Speech-to-Text)
+                    sttModelName: sttModelName,
+                    sttModelProvider: sttModelProvider,
+
+                    // TTS (Text-to-Speech)
+                    ttsModelName: ttsModelName,
+                    ttsModelProvider: ttsModelProvider,
 
                     // memory settings
                     isMemoryEnabled: formData.isMemoryEnabled,
@@ -185,6 +203,22 @@ const ThreadSetting = ({
                             setAiModelName={setAiModelName}
                             aiModelOpenAiCompatibleConfigId={aiModelOpenAiCompatibleConfigId}
                             setAiModelOpenAiCompatibleConfigId={setAiModelOpenAiCompatibleConfigId}
+                        />
+
+                        {/* field -> sttModelProvider */}
+                        <SelectSttModel
+                            sttModelProvider={sttModelProvider}
+                            setSttModelProvider={setSttModelProvider}
+                            sttModelName={sttModelName}
+                            setSttModelName={setSttModelName}
+                        />
+
+                        {/* field -> ttsModelProvider */}
+                        <SelectTtsModel
+                            ttsModelProvider={ttsModelProvider}
+                            setTtsModelProvider={setTtsModelProvider}
+                            ttsModelName={ttsModelName}
+                            setTtsModelName={setTtsModelName}
                         />
 
                         {/* field -> model parameters */}
