@@ -18,13 +18,17 @@ const ComponentAiGeneratedQuestionList = ({
 }) => {
 
     const [tab, setTab] = useState<'generate' | 'info'>('generate');
-    const [threadInfo, setThreadInfo] = useState<IChatLlmThread>({
+    const defaultThreadInfo: IChatLlmThread = {
         _id: '',
         threadTitle: '',
         isPersonalContextEnabled: false,
         isAutoAiContextSelectEnabled: false,
         aiModelName: '',
         aiModelProvider: '',
+        sttModelName: '',
+        sttModelProvider: '',
+        ttsModelName: '',
+        ttsModelProvider: '',
         aiSummary: '',
         aiTasks: [],
         tagsAi: [],
@@ -35,7 +39,9 @@ const ComponentAiGeneratedQuestionList = ({
         updatedAtUtc: new Date(),
         updatedAtIpAddress: '',
         updatedAtUserAgent: '',
-    });
+    };
+
+    const [threadInfo, setThreadInfo] = useState<IChatLlmThread>(defaultThreadInfo);
 
     const [questions, setQuestions] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -87,13 +93,17 @@ const ComponentAiGeneratedQuestionList = ({
 
     const fetchThreadInfoAndDownload = async () => {
         try {
-            let threadInfo = {
+            let threadInfo: IChatLlmThread = {
                 _id: '',
                 threadTitle: '',
                 isPersonalContextEnabled: false,
                 isAutoAiContextSelectEnabled: false,
                 aiModelName: '',
                 aiModelProvider: '',
+                sttModelName: '',
+                sttModelProvider: '',
+                ttsModelName: '',
+                ttsModelProvider: '',
                 aiSummary: '',
                 aiTasks: [],
                 tagsAi: [],
@@ -104,7 +114,7 @@ const ComponentAiGeneratedQuestionList = ({
                 updatedAtUtc: new Date(),
                 updatedAtIpAddress: '',
                 updatedAtUserAgent: '',
-            } as IChatLlmThread;
+            };
 
             const response = await axiosCustom.post('/api/chat-llm/threads-crud/threadsGet', {
                 threadId,
