@@ -796,7 +796,17 @@ const AiCallWrapper = () => {
                         withCredentials: true,
                     }
                 );
-                setOpenaiCompatibleConfigs(response.data.docs ?? []);
+                let tempOpenaiCompatibleConfigs = [] as any[];
+                if (response.data.docs && response.data.docs.length > 0) {
+                    tempOpenaiCompatibleConfigs = response.data.docs.filter(
+                        (model: any) => {
+                            return model.isInputModalityText === 'true' &&
+                                model.isOutputModalityText === 'true'
+                        }
+                    );
+                }
+                // Filter and set only configs that support both input modality text and output modality text
+                setOpenaiCompatibleConfigs(tempOpenaiCompatibleConfigs);
             } catch (error) {
                 console.error('Error fetching OpenAI compatible configs:', error);
             }
