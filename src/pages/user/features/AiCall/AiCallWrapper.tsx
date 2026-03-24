@@ -767,6 +767,7 @@ const AiCallWrapper = () => {
     const authState = useAtomValue(stateJotaiAuthAtom);
 
     const [threadId, setThreadId] = useState('');
+    const [openaiCompatibleConfigs, setOpenaiCompatibleConfigs] = useState<Array<{ _id: string }>>([]);
 
     useEffect(() => {
         if (authState.isLoggedIn === 'false') {
@@ -784,6 +785,35 @@ const AiCallWrapper = () => {
         }
     }, [location.search, navigate]);
 
+    useEffect(() => {
+        const fetchOpenaiCompatibleConfigs = async () => {
+            try {
+                const response = await axiosCustom.post<{ docs?: Array<{ _id: string }> }>(
+                    `/api/user/openai-compatible-model/crud/openaiCompatibleModelGet`,
+                    {},
+                    {
+                        headers: { 'Content-Type': 'application/json' },
+                        withCredentials: true,
+                    }
+                );
+                let tempOpenaiCompatibleConfigs = [] as any[];
+                if (response.data.docs && response.data.docs.length > 0) {
+                    tempOpenaiCompatibleConfigs = response.data.docs.filter(
+                        (model: any) => {
+                            return model.isInputModalityText === 'true' &&
+                                model.isOutputModalityText === 'true'
+                        }
+                    );
+                }
+                // Filter and set only configs that support both input modality text and output modality text
+                setOpenaiCompatibleConfigs(tempOpenaiCompatibleConfigs);
+            } catch (error) {
+                console.error('Error fetching OpenAI compatible configs:', error);
+            }
+        };
+        fetchOpenaiCompatibleConfigs();
+    }, []);
+
     if (!threadId) {
         return null;
     }
@@ -798,13 +828,13 @@ const AiCallWrapper = () => {
             isValidStt = true;
         }
 
-        // LLM: Requires Groq, Openrouter, S3, Ollama, Qdrant, Replicate, Runpod, or LocalAI
+        // LLM: Groq, OpenRouter, Ollama, LocalAI, or at least one saved OpenAI-compatible endpoint
         if (
             authState.apiKeyGroqValid ||
             authState.apiKeyOpenrouterValid ||
             authState.apiKeyOllamaValid ||
-            authState.apiKeyLocalaiValid
-            // TODO need to add for custom openai compatible model
+            authState.apiKeyLocalaiValid ||
+            openaiCompatibleConfigs.length > 0
         ) {
             isValidLlm = true;
         }
@@ -881,6 +911,7 @@ const AiCallWrapper = () => {
                                         {authState.apiKeyGroqValid ? null : <span>Groq,&nbsp;</span>}
                                         {authState.apiKeyOpenrouterValid ? null : <span>OpenRouter,&nbsp;</span>}
                                         {authState.apiKeyOllamaValid ? null : <span>Ollama,&nbsp;</span>}
+                                        {openaiCompatibleConfigs.length > 0 ? null : <span>OpenAI-compatible</span>}
                                     </div>
                                 </div>
                             </div>
