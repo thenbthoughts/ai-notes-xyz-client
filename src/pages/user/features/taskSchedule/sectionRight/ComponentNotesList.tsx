@@ -1,5 +1,6 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment, useRef } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
+import { useAtomValue, useSetAtom } from 'jotai';
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { ITaskSchedule } from '../../../../../types/pages/tsTaskSchedule.ts';
 import ComponentNotesItem from './ComponentNotesItem.tsx';
@@ -8,6 +9,15 @@ import { LucideEye, LucidePlusCircle, PlusCircle } from 'lucide-react';
 import { taskScheduleAddAxios } from '../utils/taskScheduleListAxios.ts';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+
+import {
+    jotaiTaskScheduleFilterIsActive,
+    jotaiTaskScheduleFilterShouldSendEmail,
+    jotaiTaskScheduleFilterTaskType,
+    jotaiTaskScheduleListRefresh,  
+    jotaiTaskScheduleSearchDescription,
+    jotaiTaskScheduleSearchTitle,
+} from '../stateJotai/taskScheduleStateJotai.ts';
 
 const perPage = 20;
 
@@ -346,57 +356,97 @@ const ComponentNotesList = () => {
     const [totalCount, setTotalCount] = useState(0 as number);
     const [list, setList] = useState([] as ITaskSchedule[]);
     const [page, setPage] = useState(1);
-    const [refreshRandomNum, setRefreshRandomNum] = useState(0);
+
+    const taskType = useAtomValue(jotaiTaskScheduleFilterTaskType);
+    const isActive = useAtomValue(jotaiTaskScheduleFilterIsActive);
+    const shouldSendEmail = useAtomValue(jotaiTaskScheduleFilterShouldSendEmail);
+    const searchTitle = useAtomValue(jotaiTaskScheduleSearchTitle);
+    const searchDescription = useAtomValue(jotaiTaskScheduleSearchDescription);
+    const listRefresh = useAtomValue(jotaiTaskScheduleListRefresh);
+    const setTaskScheduleListRefresh = useSetAtom(jotaiTaskScheduleListRefresh);
+
+    const filterKey = JSON.stringify({
+        taskType,
+        isActive,
+        shouldSendEmail,
+        searchTitle,
+        searchDescription,
+    });
+    const prevFilterKeyRef = useRef(filterKey);
 
     useEffect(() => {
         const axiosCancelTokenSource: CancelTokenSource = axios.CancelToken.source();
-        fetchList({ axiosCancelTokenSource });
+        const filterChanged = prevFilterKeyRef.current !== filterKey;
+        prevFilterKeyRef.current = filterKey;
+        const pageToRequest = filterChanged ? 1 : page;
+        if (filterChanged && page !== 1) {
+            setPage(1);
+        }
+
+        const data: Record<string, unknown> = {
+            page: pageToRequest,
+            perPage,
+        };
+        if (taskType.trim() !== '') {
+            data.taskType = taskType;
+        }
+        if (isActive !== '') {
+            data.isActive = isActive;
+        }
+        if (shouldSendEmail !== '') {
+            data.shouldSendEmail = shouldSendEmail;
+        }
+        const titleTrim = searchTitle.trim();
+        if (titleTrim !== '') {
+            data.title = titleTrim;
+        }
+        const descTrim = searchDescription.trim();
+        if (descTrim !== '') {
+            data.description = descTrim;
+        }
+
+        const fetchList = async () => {
+            try {
+                const config = {
+                    method: 'post',
+                    url: `/api/task-schedule/crud/taskScheduleGet`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    data,
+                    cancelToken: axiosCancelTokenSource.token,
+                } as AxiosRequestConfig;
+
+                const response = await axiosCustom.request(config);
+                let tempArr = [];
+                if (Array.isArray(response.data.docs)) {
+                    tempArr = response.data.docs;
+                }
+                setList(tempArr);
+
+                let tempTotalCount = 0;
+                if (typeof response.data.count === 'number') {
+                    tempTotalCount = response.data.count;
+                }
+                setTotalCount(tempTotalCount);
+            } catch (error) {
+                if (!axios.isCancel(error)) {
+                    console.error(error);
+                }
+            }
+        };
+
+        fetchList();
         return () => {
             axiosCancelTokenSource.cancel('Operation canceled by the user.');
         };
-    }, [refreshRandomNum]);
-
-    useEffect(() => {
-        setPage(1);
-        setRefreshRandomNum(Math.random());
-    }, [page]);
-
-    const fetchList = async ({ axiosCancelTokenSource }: { axiosCancelTokenSource: CancelTokenSource }) => {
-        try {
-            const config = {
-                method: 'post',
-                url: `/api/task-schedule/crud/taskScheduleGet`,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                data: {
-                    page: page,
-                    perPage: perPage,
-                },
-                cancelToken: axiosCancelTokenSource.token,
-            } as AxiosRequestConfig;
-
-            const response = await axiosCustom.request(config);
-            let tempArr = [];
-            if (Array.isArray(response.data.docs)) {
-                tempArr = response.data.docs;
-            }
-            setList(tempArr);
-
-            let tempTotalCount = 0;
-            if (typeof response.data.count === 'number') {
-                tempTotalCount = response.data.count;
-            }
-            setTotalCount(tempTotalCount);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    }, [page, filterKey, listRefresh]);
 
     const taskScheduleAddAxiosLocal = async () => {
         try {
             const result = await taskScheduleAddAxios();
             if (result.success !== '') {
+                setTaskScheduleListRefresh((n: number) => n + 1);
                 navigate(`/user/task-schedule?action=edit&id=${result.recordId}`);
             }
         } catch (error) {
@@ -448,14 +498,14 @@ const ComponentNotesList = () => {
                         breakLabel="..."
                         nextLabel="next >"
                         onPageChange={(e) => {
-                            setPage(e.selected);
+                            setPage(e.selected + 1);
                         }}
                         marginPagesDisplayed={1}
                         pageRangeDisplayed={3}
-                        pageCount={Math.ceil(totalCount / perPage)}
+                        pageCount={Math.max(1, Math.ceil(totalCount / perPage))}
                         previousLabel="< previous"
                         renderOnZeroPageCount={null}
-                        forcePage={page}
+                        forcePage={page - 1}
                         containerClassName="flex flex-wrap justify-center items-center gap-1 sm:space-x-1"
                         pageClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
                         previousClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
