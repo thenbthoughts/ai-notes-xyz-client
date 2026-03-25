@@ -35,7 +35,7 @@ const ScheduleActionWrapper = () => {
         setStateDisplayChatHistory,
     ] = useAtom(jotaiNotesModalOpenStatus);
 
-    const setListRefresh = useSetAtom(jotaiTaskScheduleListRefresh);
+    const setTaskScheduleListRefresh = useSetAtom(jotaiTaskScheduleListRefresh);
 
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
@@ -162,7 +162,7 @@ const ScheduleActionWrapper = () => {
                         className='p-1 cursor-pointer'
                         onClick={() => {
                             toast.success('Refreshing...');
-                            setListRefresh((n: number) => n + 1);
+                            setTaskScheduleListRefresh((n: number) => n + 1);
                             setRefreshRandomNum(
                                 Math.floor(
                                     Math.random() * 1_000_000

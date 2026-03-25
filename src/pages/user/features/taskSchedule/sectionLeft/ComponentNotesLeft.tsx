@@ -1,13 +1,16 @@
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     jotaiTaskScheduleFilterIsActive,
     jotaiTaskScheduleFilterShouldSendEmail,
     jotaiTaskScheduleFilterTaskType,
+    jotaiTaskScheduleListRefresh,
     jotaiTaskScheduleSearchDescription,
     jotaiTaskScheduleSearchTitle,
     TaskScheduleTaskTypeFilter,
 } from '../stateJotai/taskScheduleStateJotai.ts';
+import { taskScheduleTaskTypeCountsAxios } from '../utils/taskScheduleTaskTypeCountsAxios.ts';
 
 const TASK_TYPE_OPTIONS: { value: TaskScheduleTaskTypeFilter; label: string }[] = [
     { value: '', label: 'All types' },
@@ -25,6 +28,36 @@ const ComponentNotesLeft = () => {
     const [shouldSendEmail, setShouldSendEmail] = useAtom(jotaiTaskScheduleFilterShouldSendEmail);
     const [searchTitle, setSearchTitle] = useAtom(jotaiTaskScheduleSearchTitle);
     const [searchDescription, setSearchDescription] = useAtom(jotaiTaskScheduleSearchDescription);
+    const listRefresh = useAtomValue(jotaiTaskScheduleListRefresh);
+
+    const [typeTotal, setTypeTotal] = useState(0);
+    const [countByTaskType, setCountByTaskType] = useState<Record<string, number>>({});
+
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            const result = await taskScheduleTaskTypeCountsAxios();
+            if (cancelled || !result) {
+                return;
+            }
+            const next: Record<string, number> = {};
+            for (const row of result.byTaskType) {
+                next[row.taskType] = row.count;
+            }
+            setTypeTotal(result.total);
+            setCountByTaskType(next);
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [listRefresh]);
+
+    const labelForTaskTypeOption = useMemo(() => {
+        return (value: TaskScheduleTaskTypeFilter, baseLabel: string) => {
+            const n = value === '' ? typeTotal : (countByTaskType[value] ?? 0);
+            return `${baseLabel} (${n})`;
+        };
+    }, [typeTotal, countByTaskType]);
 
     return (
         <div className="py-6 px-2">
@@ -42,7 +75,7 @@ const ComponentNotesLeft = () => {
                 >
                     {TASK_TYPE_OPTIONS.map((opt) => (
                         <option key={opt.value || 'all'} value={opt.value}>
-                            {opt.label}
+                            {labelForTaskTypeOption(opt.value, opt.label)}
                         </option>
                     ))}
                 </select>

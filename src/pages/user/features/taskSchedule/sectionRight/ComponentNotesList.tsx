@@ -1,6 +1,6 @@
-import { useState, useEffect, Fragment, useMemo, useRef } from 'react';
+import { useState, useEffect, Fragment, useRef } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { ITaskSchedule } from '../../../../../types/pages/tsTaskSchedule.ts';
 import ComponentNotesItem from './ComponentNotesItem.tsx';
@@ -363,18 +363,15 @@ const ComponentNotesList = () => {
     const searchTitle = useAtomValue(jotaiTaskScheduleSearchTitle);
     const searchDescription = useAtomValue(jotaiTaskScheduleSearchDescription);
     const listRefresh = useAtomValue(jotaiTaskScheduleListRefresh);
+    const setTaskScheduleListRefresh = useSetAtom(jotaiTaskScheduleListRefresh);
 
-    const filterKey = useMemo(
-        () =>
-            JSON.stringify({
-                taskType,
-                isActive,
-                shouldSendEmail,
-                searchTitle,
-                searchDescription,
-            }),
-        [taskType, isActive, shouldSendEmail, searchTitle, searchDescription],
-    );
+    const filterKey = JSON.stringify({
+        taskType,
+        isActive,
+        shouldSendEmail,
+        searchTitle,
+        searchDescription,
+    });
     const prevFilterKeyRef = useRef(filterKey);
 
     useEffect(() => {
@@ -449,6 +446,7 @@ const ComponentNotesList = () => {
         try {
             const result = await taskScheduleAddAxios();
             if (result.success !== '') {
+                setTaskScheduleListRefresh((n: number) => n + 1);
                 navigate(`/user/task-schedule?action=edit&id=${result.recordId}`);
             }
         } catch (error) {
