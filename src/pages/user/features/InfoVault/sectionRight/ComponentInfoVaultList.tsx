@@ -8,7 +8,13 @@ import { LucidePlus } from 'lucide-react';
 import { infoVaultAddAxios } from '../utils/infoVaultListAxios.ts';
 import { useNavigate } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
-import { jotaiStateInfoVaultIsStar, jotaiStateInfoVaultSearch } from '../stateJotai/infoVaultStateJotai.ts';
+import {
+    jotaiStateInfoVaultArchivedFilter,
+    jotaiStateInfoVaultIsStar,
+    jotaiStateInfoVaultRelationshipFilter,
+    jotaiStateInfoVaultSearch,
+    jotaiStateInfoVaultTypeFilter,
+} from '../stateJotai/infoVaultStateJotai.ts';
 
 const perPage = 20;
 
@@ -20,6 +26,9 @@ const ComponentInfoVaultList = () => {
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
     const searchTerm = useAtomValue(jotaiStateInfoVaultSearch);
     const isFavorite = useAtomValue(jotaiStateInfoVaultIsStar);
+    const infoVaultTypeFilter = useAtomValue(jotaiStateInfoVaultTypeFilter);
+    const relationshipTypeFilter = useAtomValue(jotaiStateInfoVaultRelationshipFilter);
+    const isArchivedFilter = useAtomValue(jotaiStateInfoVaultArchivedFilter);
 
     useEffect(() => {
         const axiosCancelTokenSource: CancelTokenSource = axios.CancelToken.source();
@@ -32,7 +41,7 @@ const ComponentInfoVaultList = () => {
     useEffect(() => {
         setPage(1);
         setRefreshRandomNum(Math.random());
-    }, [searchTerm, isFavorite]);
+    }, [searchTerm, isFavorite, infoVaultTypeFilter, relationshipTypeFilter, isArchivedFilter]);
 
     const fetchList = async ({ axiosCancelTokenSource }: { axiosCancelTokenSource: CancelTokenSource }) => {
         try {
@@ -47,6 +56,9 @@ const ComponentInfoVaultList = () => {
                     perPage: perPage,
                     search: searchTerm,
                     isFavorite: isFavorite,
+                    ...(infoVaultTypeFilter ? { infoVaultType: infoVaultTypeFilter } : {}),
+                    ...(relationshipTypeFilter ? { relationshipType: relationshipTypeFilter } : {}),
+                    ...(isArchivedFilter ? { isArchived: isArchivedFilter } : {}),
                 },
                 cancelToken: axiosCancelTokenSource.token,
             } as AxiosRequestConfig;

@@ -4,13 +4,32 @@ import { useNavigate } from 'react-router-dom';
 
 import { infoVaultAddAxios } from '../utils/infoVaultListAxios.ts';
 
-import { jotaiStateInfoVaultIsStar, jotaiStateInfoVaultSearch } from '../stateJotai/infoVaultStateJotai.ts';
+import {
+    jotaiStateInfoVaultArchivedFilter,
+    jotaiStateInfoVaultIsStar,
+    jotaiStateInfoVaultRelationshipFilter,
+    jotaiStateInfoVaultSearch,
+    jotaiStateInfoVaultTypeFilter,
+} from '../stateJotai/infoVaultStateJotai.ts';
 import { useAtom } from 'jotai';
+import { INFO_VAULT_TYPE_OPTIONS } from '../infoVaultTypeOptions.ts';
+
+const RELATIONSHIP_FILTER_OPTIONS = [
+    { label: 'All', value: '' as const },
+    { label: 'Myself', value: 'myself' as const },
+    { label: 'Personal', value: 'personal' as const },
+    { label: 'Professional', value: 'professional' as const },
+    { label: 'Family', value: 'family' as const },
+    { label: 'Other', value: 'other' as const },
+];
 
 const ComponentInfoVaultLeftWrapper = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useAtom(jotaiStateInfoVaultSearch);
     const [isStar, setIsStar] = useAtom(jotaiStateInfoVaultIsStar);
+    const [typeFilter, setTypeFilter] = useAtom(jotaiStateInfoVaultTypeFilter);
+    const [relationshipFilter, setRelationshipFilter] = useAtom(jotaiStateInfoVaultRelationshipFilter);
+    const [archivedFilter, setArchivedFilter] = useAtom(jotaiStateInfoVaultArchivedFilter);
 
     const infoVaultAddAxiosLocal = async () => {
         try {
@@ -26,7 +45,17 @@ const ComponentInfoVaultLeftWrapper = () => {
     const clearFilters = () => {
         setSearchTerm('');
         setIsStar('');
+        setTypeFilter('');
+        setRelationshipFilter('');
+        setArchivedFilter('');
     };
+
+    const pillClass = (active: boolean) =>
+        `rounded-sm border px-2 py-0.5 text-[11px] font-medium transition-colors ${
+            active
+                ? 'border-indigo-600 bg-indigo-600 text-white'
+                : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300'
+        }`;
 
     return (
         <div className="px-2 py-3 text-zinc-900">
@@ -68,27 +97,84 @@ const ComponentInfoVaultLeftWrapper = () => {
                 />
             </div>
 
-            <div className="rounded-sm border border-zinc-200 bg-zinc-50/80 px-2 py-2">
-                <div className="mb-1.5 text-[11px] font-medium text-zinc-600">Starred</div>
-                <div className="flex flex-wrap gap-1">
-                    {[
-                        { label: 'All', value: '' as const },
-                        { label: 'Yes', value: 'true' as const },
-                        { label: 'No', value: 'false' as const },
-                    ].map((opt) => (
+            <div className="mb-2 space-y-2">
+                <div className="rounded-sm border border-zinc-200 bg-zinc-50/80 px-2 py-2">
+                    <div className="mb-1.5 text-[11px] font-medium text-zinc-600">Type</div>
+                    <div className="flex flex-wrap gap-1">
                         <button
-                            key={opt.label}
                             type="button"
-                            onClick={() => setIsStar(opt.value)}
-                            className={`rounded-sm border px-2 py-0.5 text-[11px] font-medium transition-colors ${
-                                isStar === opt.value
-                                    ? 'border-indigo-600 bg-indigo-600 text-white'
-                                    : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300'
-                            }`}
+                            onClick={() => setTypeFilter('')}
+                            className={pillClass(typeFilter === '')}
                         >
-                            {opt.label}
+                            All
                         </button>
-                    ))}
+                        {INFO_VAULT_TYPE_OPTIONS.map((opt) => (
+                            <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => setTypeFilter(opt.value)}
+                                className={pillClass(typeFilter === opt.value)}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="rounded-sm border border-zinc-200 bg-zinc-50/80 px-2 py-2">
+                    <div className="mb-1.5 text-[11px] font-medium text-zinc-600">Relationship</div>
+                    <div className="flex flex-wrap gap-1">
+                        {RELATIONSHIP_FILTER_OPTIONS.map((opt) => (
+                            <button
+                                key={opt.label}
+                                type="button"
+                                onClick={() => setRelationshipFilter(opt.value)}
+                                className={pillClass(relationshipFilter === opt.value)}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="rounded-sm border border-zinc-200 bg-zinc-50/80 px-2 py-2">
+                    <div className="mb-1.5 text-[11px] font-medium text-zinc-600">Archived</div>
+                    <div className="flex flex-wrap gap-1">
+                        {[
+                            { label: 'All', value: '' as const },
+                            { label: 'Yes', value: 'true' as const },
+                            { label: 'No', value: 'false' as const },
+                        ].map((opt) => (
+                            <button
+                                key={opt.label}
+                                type="button"
+                                onClick={() => setArchivedFilter(opt.value)}
+                                className={pillClass(archivedFilter === opt.value)}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="rounded-sm border border-zinc-200 bg-zinc-50/80 px-2 py-2">
+                    <div className="mb-1.5 text-[11px] font-medium text-zinc-600">Starred</div>
+                    <div className="flex flex-wrap gap-1">
+                        {[
+                            { label: 'All', value: '' as const },
+                            { label: 'Yes', value: 'true' as const },
+                            { label: 'No', value: 'false' as const },
+                        ].map((opt) => (
+                            <button
+                                key={opt.label}
+                                type="button"
+                                onClick={() => setIsStar(opt.value)}
+                                className={pillClass(isStar === opt.value)}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

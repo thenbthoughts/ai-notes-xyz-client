@@ -16,6 +16,7 @@ import CommentCommonComponent from '../../../../../../components/commentCommonCo
 import CommonComponentAiKeywords from '../../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords.tsx';
 import CommonComponentAiFaq from '../../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq.tsx';
 import SpeechToTextComponent from '../../../../../../components/componentCommon/SpeechToTextComponent.tsx';
+import { INFO_VAULT_TYPE_OPTIONS } from '../../infoVaultTypeOptions.ts';
 
 const ComponentInfoVaultEdit = ({
     infoVaultObj
@@ -140,17 +141,7 @@ const ComponentInfoVaultEdit = ({
                 <div>
                     <label className="mb-2 block text-xs font-medium text-zinc-700">Type *</label>
                     <div className="space-y-2">
-                        {[
-                            { value: "myself", label: "Myself" },
-                            { value: "contact", label: "Contact" },
-                            { value: "place", label: "Place" },
-                            { value: "event", label: "Event" },
-                            { value: "document", label: "Document" },
-                            { value: "product", label: "Product" },
-                            { value: "asset", label: "Asset" },
-                            { value: "media", label: "Media" },
-                            { value: "other", label: "Other" }
-                        ].map((option) => (
+                        {INFO_VAULT_TYPE_OPTIONS.map((option) => (
                             <label key={option.value} className="px-2 font-semibold">
                                 <input
                                     type="radio"
