@@ -4,7 +4,7 @@ import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { IInfoVault } from '../../../../../types/pages/tsInfoVault.ts';
 import ComponentInfoVaultItem from './ComponentInfoVaultItem.tsx';
 import ReactPaginate from 'react-paginate';
-import { LucidePlus } from 'lucide-react';
+import { LucideLayoutGrid, LucideList, LucidePlus } from 'lucide-react';
 import { infoVaultAddAxios } from '../utils/infoVaultListAxios.ts';
 import { useNavigate } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
@@ -16,7 +16,9 @@ import {
     jotaiStateInfoVaultTypeFilter,
 } from '../stateJotai/infoVaultStateJotai.ts';
 
-const perPage = 20;
+const perPage = 12;
+
+type InfoVaultListViewMode = 'list' | 'grid';
 
 const ComponentInfoVaultList = () => {
     const navigate = useNavigate();
@@ -24,6 +26,7 @@ const ComponentInfoVaultList = () => {
     const [list, setList] = useState([] as IInfoVault[]);
     const [page, setPage] = useState(1);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
+    const [viewMode, setViewMode] = useState<InfoVaultListViewMode>('grid');
     const searchTerm = useAtomValue(jotaiStateInfoVaultSearch);
     const isFavorite = useAtomValue(jotaiStateInfoVaultIsStar);
     const infoVaultTypeFilter = useAtomValue(jotaiStateInfoVaultTypeFilter);
@@ -116,9 +119,50 @@ const ComponentInfoVaultList = () => {
                         <span className="text-xs font-medium text-amber-700">No results</span>
                     )}
                 </div>
+
+                <div
+                    className="inline-flex rounded-sm border border-zinc-200 p-0.5"
+                    role="group"
+                    aria-label="List or grid layout"
+                >
+                    <button
+                        type="button"
+                        onClick={() => setViewMode('list')}
+                        aria-pressed={viewMode === 'list'}
+                        title="List"
+                        className={`inline-flex items-center justify-center rounded-sm p-1.5 ${
+                            viewMode === 'list'
+                                ? 'bg-indigo-600 text-white'
+                                : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
+                        }`}
+                    >
+                        <LucideList className="h-3.5 w-3.5" strokeWidth={2} />
+                        <span className="sr-only">List</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setViewMode('grid')}
+                        aria-pressed={viewMode === 'grid'}
+                        title="Grid"
+                        className={`inline-flex items-center justify-center rounded-sm p-1.5 ${
+                            viewMode === 'grid'
+                                ? 'bg-indigo-600 text-white'
+                                : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
+                        }`}
+                    >
+                        <LucideLayoutGrid className="h-3.5 w-3.5" strokeWidth={2} />
+                        <span className="sr-only">Grid</span>
+                    </button>
+                </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div
+                className={
+                    viewMode === 'grid'
+                        ? 'grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3'
+                        : 'flex flex-col gap-1.5'
+                }
+            >
                 {list.map((infoVaultObj) => (
                     <ComponentInfoVaultItem key={infoVaultObj._id} infoVaultObj={infoVaultObj} />
                 ))}
