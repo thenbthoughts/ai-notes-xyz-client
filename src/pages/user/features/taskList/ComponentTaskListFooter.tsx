@@ -13,10 +13,10 @@ const ComponentTaskListFooter: React.FC<{
     }>>;
 }> = ({ setIsTaskAddModalIsOpen }) => {
     const btn =
-        'flex flex-col items-center gap-0.5 rounded-none px-3 py-1 text-[9px] font-semibold uppercase tracking-wide text-zinc-300 hover:bg-zinc-800 hover:text-white';
+        'flex flex-col items-center gap-0 rounded-md px-2 py-0.5 text-[8px] font-semibold uppercase tracking-wide text-zinc-400 transition-colors hover:bg-zinc-800/80 hover:text-white';
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-40 flex h-[52px] items-center justify-center gap-1 border-t border-zinc-700 bg-zinc-900 shadow-[0_-4px_24px_rgba(0,0,0,0.12)]">
+        <div className="fixed bottom-0 left-0 right-0 z-40 flex h-11 items-center justify-center gap-px border-t border-zinc-800/90 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 py-1 shadow-[0_-4px_24px_-8px_rgba(0,0,0,0.35)]">
             <button
                 type="button"
                 className={btn}
@@ -28,7 +28,7 @@ const ComponentTaskListFooter: React.FC<{
                     });
                 }}
             >
-                <LucidePlusCircle className="h-5 w-5 text-emerald-400" strokeWidth={1.75} />
+                <LucidePlusCircle className="h-4 w-4 text-teal-400" strokeWidth={2} />
                 Add
             </button>
             <button
@@ -42,7 +42,7 @@ const ComponentTaskListFooter: React.FC<{
                     }
                 }}
             >
-                <LucideSearch className="h-5 w-5 text-zinc-200" strokeWidth={1.75} />
+                <LucideSearch className="h-4 w-4 text-zinc-200" strokeWidth={2} />
                 Search
             </button>
             <button
@@ -55,7 +55,7 @@ const ComponentTaskListFooter: React.FC<{
                     }
                 }}
             >
-                <LucideFilter className="h-5 w-5 text-zinc-200" strokeWidth={1.75} />
+                <LucideFilter className="h-4 w-4 text-zinc-200" strokeWidth={2} />
                 Filter
             </button>
             <button
@@ -68,7 +68,7 @@ const ComponentTaskListFooter: React.FC<{
                     }
                 }}
             >
-                <LucideList className="h-5 w-5 text-zinc-200" strokeWidth={1.75} />
+                <LucideList className="h-4 w-4 text-zinc-200" strokeWidth={2} />
                 Board
             </button>
         </div>

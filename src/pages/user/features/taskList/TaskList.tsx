@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { DebounceInput } from 'react-debounce-input';
-import { ChevronDown, ChevronRight, LucideSearch, LucideX } from 'lucide-react';
+import {
+    Archive,
+    ChevronDown,
+    ChevronRight,
+    Flag,
+    LayoutList,
+    ListFilter,
+    LucideSearch,
+    LucideX,
+    ListTodo,
+} from 'lucide-react';
 
 import axiosCustom from '../../../../config/axiosCustom';
 import TaskAiTools from './TaskAiTools';
@@ -19,7 +29,7 @@ import { atomWithStorage } from 'jotai/utils';
 const expandedSectionsAtom = atomWithStorage(`taskList-expanded`, [] as string[]);
 
 const selectClass =
-    'w-full rounded-none border border-zinc-300 bg-white py-1.5 px-2 text-[11px] text-zinc-800 focus:border-emerald-600 focus:outline-none';
+    'w-full rounded-lg border border-zinc-200/80 bg-white/80 py-1 px-2 text-[11px] leading-tight text-zinc-900 shadow-sm backdrop-blur-sm focus:border-teal-500/40 focus:outline-none focus:ring-1 focus:ring-teal-500/20';
 
 const TaskList: React.FC = () => {
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
@@ -131,22 +141,22 @@ const TaskList: React.FC = () => {
     const renderLeft = () => {
         return (
             <div
-                className="rounded-none border border-zinc-300 bg-white p-3 shadow-[3px_3px_0_0_rgb(228_228_231)]"
+                className="border-r border-zinc-200/80 bg-gradient-to-b from-zinc-50/95 to-white lg:rounded-l-2xl lg:border lg:border-r-0 lg:border-zinc-200/60"
                 id="task-filter"
             >
-                <header className="mb-3 flex items-center gap-2 border-b border-zinc-200 pb-2">
-                    <span className="h-6 w-1 shrink-0 bg-emerald-600" aria-hidden />
-                    <div>
-                        <h2 className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500">
-                            Workspace & filters
-                        </h2>
+                <div className="h-full overflow-y-auto bg-white/40 px-2 py-2 backdrop-blur-[2px] lg:max-h-[calc(100vh-60px-4rem)]">
+                <header className="mb-2 flex items-center gap-1.5">
+                    <LayoutList className="h-3.5 w-3.5 shrink-0 text-zinc-400" strokeWidth={2} aria-hidden />
+                    <div className="min-w-0">
+                        <h2 className="text-xs font-semibold leading-tight text-zinc-900">Workspace & filters</h2>
+                        <p className="text-[10px] leading-tight text-zinc-500">Lists · filters</p>
                     </div>
                 </header>
 
                 <ComponentTaskWorkspace />
 
                 {workspaceId.length === 24 && (
-                    <div className="mt-3 border-t border-zinc-200 pt-3">
+                    <div className="mt-2 border-t border-zinc-100/80 pt-2">
                         <ComponentTaskStatusListNames
                             workspaceId={workspaceId}
                             setTaskStatusList={setTaskStatusList}
@@ -154,18 +164,22 @@ const TaskList: React.FC = () => {
                     </div>
                 )}
 
-                <section className="mt-3 space-y-2 border-t border-zinc-200 pt-3" aria-label="Task filters">
-                    <h3 className="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">
+                <section className="mt-2 space-y-2 border-t border-zinc-100/80 pt-2" aria-label="Task filters">
+                    <h3 className="flex items-center gap-1 text-[11px] font-semibold text-zinc-800">
+                        <ListFilter className="h-3 w-3 text-zinc-400" strokeWidth={2} aria-hidden />
                         List filters
                     </h3>
 
                     <div className="relative">
-                        <LucideSearch className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" strokeWidth={2} />
+                        <LucideSearch
+                            className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400"
+                            strokeWidth={2}
+                        />
                         <DebounceInput
                             debounceTimeout={500}
                             type="search"
                             placeholder="Search tasks…"
-                            className="w-full rounded-none border border-zinc-300 bg-zinc-50 py-1.5 pl-8 pr-7 text-[11px] text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-600 focus:bg-white focus:outline-none"
+                            className="w-full rounded-lg border border-zinc-200/80 bg-white/80 py-1 pl-7 pr-7 text-[11px] text-zinc-900 shadow-sm placeholder:text-zinc-400 backdrop-blur-sm focus:border-teal-500/40 focus:outline-none focus:ring-1 focus:ring-teal-500/20"
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                             id="task-search"
@@ -174,17 +188,18 @@ const TaskList: React.FC = () => {
                         {searchInput.length > 0 && (
                             <button
                                 type="button"
-                                className="absolute right-1 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-zinc-500 hover:bg-zinc-200 hover:text-zinc-800"
+                                className="absolute right-1 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-800"
                                 onClick={() => setSearchInput('')}
                                 aria-label="Clear search"
                             >
-                                <LucideX className="h-3.5 w-3.5" strokeWidth={2} />
+                                <LucideX className="h-3 w-3" strokeWidth={2} />
                             </button>
                         )}
                     </div>
 
                     <div>
-                        <label className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                        <label className="mb-0.5 flex items-center gap-1 text-[10px] font-medium text-zinc-600">
+                            <Flag className="h-3 w-3 text-zinc-400" strokeWidth={2} aria-hidden />
                             Priority
                         </label>
                         <select value={priority} onChange={(e) => setPriority(e.target.value)} className={selectClass}>
@@ -198,7 +213,8 @@ const TaskList: React.FC = () => {
                     </div>
 
                     <div>
-                        <label className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                        <label className="mb-0.5 flex items-center gap-1 text-[10px] font-medium text-zinc-600">
+                            <Archive className="h-3 w-3 text-zinc-400" strokeWidth={2} aria-hidden />
                             Archive
                         </label>
                         <select value={isArchived} onChange={(e) => setIsArchived(e.target.value)} className={selectClass}>
@@ -209,7 +225,8 @@ const TaskList: React.FC = () => {
                     </div>
 
                     <div>
-                        <label className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                        <label className="mb-0.5 flex items-center gap-1 text-[10px] font-medium text-zinc-600">
+                            <ListTodo className="h-3 w-3 text-zinc-400" strokeWidth={2} aria-hidden />
                             Completion
                         </label>
                         <select value={isCompleted} onChange={(e) => setIsCompleted(e.target.value)} className={selectClass}>
@@ -221,7 +238,7 @@ const TaskList: React.FC = () => {
                 </section>
 
                 {workspaceId.length === 24 && (
-                    <div className="mt-3 border-t border-zinc-200 pt-3">
+                    <div className="mt-2 border-t border-zinc-100/80 pt-2">
                         <ComponentTaskListLabels
                             workspaceId={workspaceId}
                             selectedLabels={selectedLabels}
@@ -229,21 +246,26 @@ const TaskList: React.FC = () => {
                         />
                     </div>
                 )}
+                </div>
             </div>
         );
     };
 
     const renderRight = () => {
         return (
-            <div id="task-list" className="min-h-[200px]">
+            <div
+                id="task-list"
+                className="mt-3 min-h-[200px] overflow-hidden rounded-xl border border-zinc-200/60 bg-white/40 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.6)] backdrop-blur-[2px] lg:mt-0 lg:rounded-none lg:rounded-r-2xl lg:border-l-0 lg:border-t lg:border-b lg:border-r"
+            >
+                <div className="p-2">
                 {loading && (
-                    <div className="flex justify-center py-8">
-                        <p className="font-mono text-[11px] uppercase tracking-widest text-zinc-500">Loading tasks…</p>
+                    <div className="flex justify-center py-6">
+                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-200 border-t-teal-600" />
                     </div>
                 )}
 
                 {!loading && workspaceId.length === 24 && (
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                         {taskStatusList.map((itemTaskStatus) => {
                             const tempTaskList = tasks.filter((filterTask) => itemTaskStatus._id === filterTask.taskStatusId);
 
@@ -267,13 +289,13 @@ const TaskList: React.FC = () => {
                             return (
                                 <section
                                     key={itemTaskStatus._id}
-                                    className="rounded-none border border-zinc-300 bg-zinc-50/80 shadow-[2px_2px_0_0_rgb(212_212_216)]"
+                                    className="overflow-hidden rounded-xl border border-zinc-200/80 bg-white/90 shadow-sm transition-shadow hover:shadow-md"
                                 >
-                                    <div className="flex items-center justify-between gap-2 border-b border-zinc-200 bg-white px-3 py-2">
-                                        <h2 className="min-w-0 text-sm font-semibold text-zinc-900">
+                                    <div className="flex items-center justify-between gap-2 border-b border-zinc-100/80 bg-zinc-50/50 px-3 py-2.5">
+                                        <h2 className="min-w-0 text-sm font-semibold tracking-tight text-zinc-900">
                                             <span className="truncate">{itemTaskStatus.statusTitle}</span>
                                             {tempTaskList.length > 0 && (
-                                                <span className="ml-1.5 font-mono text-xs font-normal text-zinc-500">
+                                                <span className="ml-1.5 rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-600">
                                                     {tempTaskList.length}
                                                 </span>
                                             )}
@@ -281,7 +303,7 @@ const TaskList: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={toggleExpanded}
-                                            className="shrink-0 rounded-none border border-zinc-200 bg-zinc-50 p-1 text-zinc-600 hover:bg-zinc-100"
+                                            className="shrink-0 rounded-lg border border-zinc-200/80 bg-white/80 p-1.5 text-zinc-600 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50"
                                             aria-expanded={isExpanded}
                                             title={isExpanded ? 'Show tasks' : 'Hide tasks'}
                                         >
@@ -293,9 +315,9 @@ const TaskList: React.FC = () => {
                                         </button>
                                     </div>
                                     {isExpanded === false && (
-                                        <div className="p-3">
+                                        <div className="p-3 pt-2">
                                             {tempTaskList.length === 0 && (
-                                                <p className="py-4 text-center text-[11px] text-zinc-500">No tasks in this list.</p>
+                                                <p className="py-6 text-center text-[11px] text-zinc-500">No tasks in this list.</p>
                                             )}
                                             <ul className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
                                                 {tempTaskList.map((task) => (
@@ -316,29 +338,30 @@ const TaskList: React.FC = () => {
                         })}
                     </div>
                 )}
+                </div>
             </div>
         );
     };
 
     return (
-        <div className="min-h-[90vh] bg-[#f4f4f5] pb-24 pt-4">
-            <div className="container m-auto max-w-[1600px] px-3">
-                <header className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-zinc-200 pb-3">
-                    <div className="flex items-center gap-2">
-                        <span className="hidden h-8 w-1 bg-emerald-600 sm:block" aria-hidden />
+        <div className="min-h-0 w-full bg-gradient-to-br from-zinc-100 via-slate-50 to-zinc-100 pb-20 pt-2">
+            <div className="container m-auto max-w-[1600px] px-2">
+                <header className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                        <LayoutList className="h-4 w-4 text-teal-600/80" strokeWidth={2} aria-hidden />
                         <div>
-                            <h1 className="text-lg font-bold tracking-tight text-zinc-900 sm:text-xl">
+                            <h1 className="text-base font-semibold leading-tight tracking-tight text-zinc-900 sm:text-[17px]">
                                 Tasks
                             </h1>
-                            <p className="text-[11px] text-zinc-500">Workspace lists, filters, and board</p>
+                            <p className="text-[10px] leading-tight text-zinc-500">Workspace · board</p>
                         </div>
                     </div>
                 </header>
 
                 <TaskAiTools setRefreshParentRandomNum={setRefreshRandomNum} />
 
-                <div className="flex flex-col gap-4 lg:flex-row">
-                    <div className="w-full shrink-0 lg:w-[300px] xl:w-[320px]">
+                <div className="flex flex-col gap-0 lg:flex-row lg:items-stretch">
+                    <div className="w-full shrink-0 lg:w-[min(26%,320px)] lg:min-w-[240px]">
                         {renderLeft()}
                     </div>
                     <div className="min-w-0 flex-1">{renderRight()}</div>

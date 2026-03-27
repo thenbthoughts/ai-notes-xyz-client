@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import axiosCustom from '../../../../../config/axiosCustom';
-import { LucideMoveDown, LucideMoveUp, LucidePlus, LucideRefreshCcw, LucideTrash2 } from 'lucide-react';
+import { Kanban, LucideMoveDown, LucideMoveUp, LucidePlus, LucideRefreshCcw, LucideTrash2 } from 'lucide-react';
 
 const componentTaskStatusListNames = ({
     workspaceId,
@@ -126,24 +126,25 @@ const componentTaskStatusListNames = ({
 
     return (
         <div>
-            <div className="mb-2 flex items-center justify-between gap-2">
-                <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">
+            <div className="mb-1 flex items-center justify-between gap-1.5">
+                <h2 className="flex items-center gap-1 text-[11px] font-semibold text-zinc-800">
+                    <Kanban className="h-3 w-3 text-zinc-400" strokeWidth={2} aria-hidden />
                     Status lists
                 </h2>
                 <button
                     type="button"
                     onClick={() => fetchGroupList()}
-                    className="rounded-none border border-zinc-300 bg-zinc-100 p-1 text-zinc-700 hover:bg-white"
+                    className="rounded-md border border-zinc-200/80 bg-white/80 p-1 text-zinc-600 shadow-sm transition-colors hover:border-zinc-300 hover:bg-white"
                     title="Refresh lists"
                 >
-                    <LucideRefreshCcw size={14} strokeWidth={2} />
+                    <LucideRefreshCcw className="h-3 w-3" strokeWidth={2} />
                 </button>
             </div>
-            <div className="mb-2 flex max-h-48 flex-col gap-0.5 overflow-y-auto">
+            <div className="mb-1.5 flex max-h-36 flex-col gap-px overflow-y-auto">
                 {listArr.map((list) => (
                     <div
                         key={list._id}
-                        className="flex items-center justify-between gap-1 rounded-none border border-zinc-200 bg-zinc-50 px-1.5 py-1 text-[11px] hover:bg-white"
+                        className="flex items-center justify-between gap-1 rounded-md border border-zinc-200/80 bg-white/70 px-1.5 py-1 text-[11px] leading-tight text-zinc-800 shadow-sm backdrop-blur-sm transition-colors hover:border-zinc-300 hover:bg-white/90"
                     >
                         <span className="min-w-0 truncate font-medium text-zinc-800">{list.statusTitle}</span>
                         <div className="flex shrink-0 items-center">
@@ -154,28 +155,28 @@ const componentTaskStatusListNames = ({
                                         onClick={() =>
                                             revalidatePositionById({ id: list._id, upOrDown: 'up', taskWorkspaceId: workspaceId })
                                         }
-                                        className="p-0.5 text-zinc-500 hover:text-zinc-900"
+                                        className="rounded-md p-0.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
                                         aria-label="Move up"
                                     >
-                                        <LucideMoveUp size={14} strokeWidth={2} />
+                                        <LucideMoveUp className="h-3 w-3" strokeWidth={2} />
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() =>
                                             revalidatePositionById({ id: list._id, upOrDown: 'down', taskWorkspaceId: workspaceId })
                                         }
-                                        className="p-0.5 text-zinc-500 hover:text-zinc-900"
+                                        className="rounded-md p-0.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
                                         aria-label="Move down"
                                     >
-                                        <LucideMoveDown size={14} strokeWidth={2} />
+                                        <LucideMoveDown className="h-3 w-3" strokeWidth={2} />
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => deleteGroup(list._id)}
-                                        className="p-0.5 text-red-600 hover:bg-red-50"
+                                        className="rounded-md p-0.5 text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600"
                                         aria-label="Delete list"
                                     >
-                                        <LucideTrash2 size={14} strokeWidth={2} />
+                                        <LucideTrash2 className="h-3 w-3" strokeWidth={2} />
                                     </button>
                                 </Fragment>
                             )}
@@ -187,7 +188,7 @@ const componentTaskStatusListNames = ({
                 <input
                     type="text"
                     placeholder="New list…"
-                    className="min-w-0 flex-1 rounded-none border border-zinc-300 bg-white py-1.5 px-2 text-[11px] focus:border-emerald-600 focus:outline-none"
+                    className="min-w-0 flex-1 rounded-lg border border-zinc-200/80 bg-white/80 py-1 px-2 text-[11px] text-zinc-900 shadow-sm backdrop-blur-sm focus:border-teal-500/40 focus:outline-none focus:ring-1 focus:ring-teal-500/20"
                     value={newListName}
                     onChange={(e) => setNewListName(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && addGroup()}
@@ -195,10 +196,10 @@ const componentTaskStatusListNames = ({
                 <button
                     type="button"
                     onClick={addGroup}
-                    className="shrink-0 rounded-none border border-emerald-700 bg-emerald-600 px-2 py-1.5 text-white hover:bg-emerald-500"
+                    className="shrink-0 rounded-lg bg-gradient-to-r from-teal-600 to-emerald-600 px-2 py-1 text-white shadow-sm shadow-teal-900/10 transition hover:from-teal-500 hover:to-emerald-500"
                     aria-label="Add list"
                 >
-                    <LucidePlus size={16} strokeWidth={2} />
+                    <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
                 </button>
             </div>
         </div>

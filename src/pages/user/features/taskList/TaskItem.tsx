@@ -113,20 +113,21 @@ const TaskItem = ({
         }
     }
 
-    const chip = 'inline-flex items-center gap-0.5 rounded-none border px-1.5 py-0 text-[10px] font-medium';
+    const chip =
+        'inline-flex items-center gap-0.5 rounded border px-1 py-px text-[9px] font-medium leading-tight';
 
     return (
         <div
             className={
-                (isUpdatedNow ? 'ring-2 ring-emerald-500 ring-offset-1 ' : '') +
-                'group h-full rounded-none border border-zinc-300 bg-white p-2.5 shadow-[2px_2px_0_0_rgb(228_228_231)] transition-shadow hover:shadow-[3px_3px_0_0_rgb(212_212_216)]'
+                (isUpdatedNow ? 'ring-1 ring-teal-500/35 ring-offset-1 ring-offset-white/80 ' : '') +
+                'group h-full overflow-hidden rounded-lg border border-zinc-200/80 bg-white/90 p-2 shadow-sm transition-shadow hover:border-zinc-300 hover:shadow-md'
             }
         >
-            <div className="flex items-start justify-between gap-2">
-                <h3 className="min-w-0 text-sm font-semibold leading-snug text-zinc-900">{task.title}</h3>
+            <div className="flex items-start justify-between gap-1">
+                <h3 className="min-w-0 text-xs font-semibold leading-snug text-zinc-900">{task.title}</h3>
             </div>
 
-            <div className="mt-2 flex flex-wrap gap-1">
+            <div className="mt-1 flex flex-wrap gap-0.5">
                 {task.labels && task.labels.length > 0 &&
                     task.labels.map((label) => (
                         <span key={label} className={chip + ' border-zinc-200 bg-zinc-50 text-zinc-700'}>
@@ -135,7 +136,7 @@ const TaskItem = ({
                     ))}
 
                 {task.isCompleted && (
-                    <span className={chip + ' border-emerald-300 bg-emerald-50 text-emerald-900'}>Done</span>
+                    <span className={chip + ' border-teal-200/80 bg-teal-50 text-teal-900'}>Done</span>
                 )}
                 {task.isArchived && (
                     <span className={chip + ' border-zinc-400 bg-zinc-200 text-zinc-800'}>Archived</span>
@@ -155,18 +156,18 @@ const TaskItem = ({
                                 : ' border-zinc-200 bg-zinc-50 text-zinc-700')
                         }
                     >
-                        <LucideClock className="h-3 w-3 shrink-0" strokeWidth={2} />
+                        <LucideClock className="h-2.5 w-2.5 shrink-0" strokeWidth={2} />
                         {dueDate.toLocaleDateString()}{' '}
                         <span className="hidden sm:inline">{dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     </span>
                 )}
             </div>
 
-            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            <div className="mt-1.5 flex flex-wrap items-center gap-1">
                 <select
                     value={task.taskStatusId}
                     onChange={(e) => axiosChangeTaskList(e.target.value)}
-                    className="min-w-0 max-w-full flex-1 rounded-none border border-zinc-300 bg-white py-1 pl-1.5 pr-6 text-[11px] text-zinc-800 focus:border-emerald-600 focus:outline-none sm:max-w-[140px]"
+                    className="min-w-0 max-w-full flex-1 rounded-md border border-zinc-200/80 bg-white/80 py-0.5 pl-1 pr-5 text-[11px] leading-tight text-zinc-900 shadow-sm focus:border-teal-500/40 focus:outline-none focus:ring-1 focus:ring-teal-500/20 sm:max-w-[132px]"
                 >
                     {taskStatusList.map((taskStatus) => (
                         <option key={taskStatus._id} value={taskStatus._id}>
@@ -174,41 +175,44 @@ const TaskItem = ({
                         </option>
                     ))}
                 </select>
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-px">
                     <button
                         type="button"
                         onClick={() => axiosDeleteTask(task._id)}
-                        className="rounded-none border border-transparent p-1 text-red-600 hover:bg-red-50"
+                        className="rounded-md border border-transparent p-1 text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600"
                         aria-label="Delete task"
                     >
-                        <LucideTrash2 size={15} strokeWidth={2} />
+                        <LucideTrash2 className="h-3.5 w-3.5" strokeWidth={2} />
                     </button>
                     <button
                         type="button"
                         onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
-                        className="rounded-none border border-transparent p-1 text-emerald-700 hover:bg-emerald-50"
+                        className="rounded-md border border-transparent p-1 text-zinc-500 transition-colors hover:bg-teal-50 hover:text-teal-700"
                         aria-label="Edit task"
                     >
-                        <LucideEdit3 size={15} strokeWidth={2} />
+                        <LucideEdit3 className="h-3.5 w-3.5" strokeWidth={2} />
                     </button>
                     <button
                         type="button"
                         onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
-                        className="rounded-none border border-transparent p-1 text-zinc-600 hover:bg-zinc-100"
+                        className="rounded-md border border-transparent p-1 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-800"
                         aria-label="View task details"
                     >
-                        <LucideInfo size={15} strokeWidth={2} />
+                        <LucideInfo className="h-3.5 w-3.5" strokeWidth={2} />
                     </button>
                     <button
                         type="button"
                         onClick={() => axiosChangeTaskPin({ isTaskPinned: !task.isTaskPinned })}
                         className={
-                            (task.isTaskPinned ? 'border-amber-300 bg-amber-50 text-amber-800 ' : 'border-transparent text-zinc-500 hover:bg-zinc-100 ') +
-                            'rounded-none border p-1'
+                            (task.isTaskPinned ? 'border-amber-200/80 bg-amber-50 text-amber-700 ' : 'border-transparent text-zinc-500 hover:bg-zinc-100 ') +
+                            'rounded-md border p-1 transition-colors'
                         }
                         aria-label="Pin task"
                     >
-                        <LucidePin size={15} strokeWidth={2} className={task.isTaskPinned ? 'fill-amber-400' : ''} />
+                        <LucidePin
+                            className={`h-3.5 w-3.5 ${task.isTaskPinned ? 'fill-amber-400' : ''}`}
+                            strokeWidth={2}
+                        />
                     </button>
                 </div>
             </div>
@@ -216,9 +220,9 @@ const TaskItem = ({
             <button
                 type="button"
                 onClick={() => taskChatWithAi(task._id)}
-                className="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-none border border-violet-300 bg-violet-50 py-1 text-[10px] font-semibold uppercase tracking-wide text-violet-900 hover:bg-violet-100"
+                className="mt-1.5 inline-flex w-full items-center justify-center gap-1 rounded-md border border-violet-200/80 bg-violet-50/90 py-1 text-[10px] font-semibold text-violet-900 shadow-sm transition-colors hover:border-violet-300 hover:bg-violet-100"
             >
-                <LucideMessageCircle className="h-3.5 w-3.5" strokeWidth={2} />
+                <LucideMessageCircle className="h-3 w-3" strokeWidth={2} />
                 AI chat
             </button>
         </div>
