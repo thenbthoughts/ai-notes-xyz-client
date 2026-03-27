@@ -12,9 +12,27 @@ import {
     LucideChevronUp,
     LucideSettings,
 } from 'lucide-react';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
-import stateJotaiAuthAtom from "../../../jotai/stateJotaiAuth";
+import stateJotaiAuthAtom from '../../../jotai/stateJotaiAuth';
+
+const panel =
+    'rounded-lg border border-zinc-200/90 bg-white p-2.5 shadow-sm transition hover:shadow';
+const panelHeader = 'mb-1.5 flex items-center justify-between gap-1.5';
+const panelTitle = 'flex items-center gap-1.5 text-xs font-semibold text-zinc-800';
+const panelIconBtn =
+    'rounded-md border border-zinc-200 bg-white p-1 text-zinc-600 shadow-sm transition hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-40';
+const mutedText = 'text-[11px] leading-snug text-zinc-500';
+
+const iconTone: Record<string, string> = {
+    orange: 'text-orange-400',
+    blue: 'text-sky-400',
+    green: 'text-emerald-400',
+    purple: 'text-violet-400',
+    indigo: 'text-indigo-400',
+    red: 'text-rose-400',
+    emerald: 'text-teal-400',
+};
 
 const ComponentApiKeySet = () => {
     const authState = useAtomValue(stateJotaiAuthAtom);
@@ -22,178 +40,190 @@ const ComponentApiKeySet = () => {
 
     const apiKeyStatus = [
         {
-            name: "Groq API",
-            key: "apiKeyGroqValid",
+            name: 'Groq API',
+            key: 'apiKeyGroqValid',
             valid: authState.apiKeyGroqValid,
             icon: LucideBot,
-            description: "Required for AI language model processing and chat completions",
-            color: "orange",
-            required: true
+            description: 'AI language model processing and chat completions',
+            color: 'orange',
+            required: true,
         },
         {
-            name: "OpenRouter API",
-            key: "apiKeyOpenrouterValid",
+            name: 'OpenRouter API',
+            key: 'apiKeyOpenrouterValid',
             valid: authState.apiKeyOpenrouterValid,
             icon: LucideCloud,
-            description: "Required for accessing multiple AI models through unified API",
-            color: "blue",
-            required: true
+            description: 'Multiple AI models through one API',
+            color: 'blue',
+            required: true,
         },
         {
-            name: "S3 Storage",
-            key: "apiKeyS3Valid",
+            name: 'S3 Storage',
+            key: 'apiKeyS3Valid',
             valid: authState.apiKeyS3Valid,
             icon: LucideDatabase,
-            description: "Required for file storage and document management",
-            color: "green",
-            required: true
+            description: 'File storage and documents',
+            color: 'green',
+            required: true,
         },
         {
-            name: "Ollama API",
-            key: "apiKeyOllamaValid",
+            name: 'Ollama API',
+            key: 'apiKeyOllamaValid',
             valid: authState.apiKeyOllamaValid,
             icon: LucideBot,
-            description: "Optional for local AI model inference and processing",
-            color: "purple",
-            required: false
+            description: 'Local AI inference (optional)',
+            color: 'purple',
+            required: false,
         },
         {
-            name: "Qdrant Vector DB",
-            key: "apiKeyQdrantValid",
+            name: 'Qdrant Vector DB',
+            key: 'apiKeyQdrantValid',
             valid: authState.apiKeyQdrantValid,
             icon: LucideDatabase,
-            description: "Optional for vector search and semantic similarity operations",
-            color: "indigo",
-            required: false
+            description: 'Vector search (optional)',
+            color: 'indigo',
+            required: false,
         },
         {
-            name: "SMTP Email",
-            key: "smtpValid",
+            name: 'SMTP Email',
+            key: 'smtpValid',
             valid: authState.smtpValid,
             icon: LucideMail,
-            description: "Required for sending notifications and email communications",
-            color: "red",
-            required: true
+            description: 'Notifications and email',
+            color: 'red',
+            required: true,
         },
         {
-            name: "Replicate API",
-            key: "apiKeyReplicateValid",
+            name: 'Replicate API',
+            key: 'apiKeyReplicateValid',
             valid: authState.apiKeyReplicateValid,
             icon: LucideCloud,
-            description: "Optional for AI image and video generation with Replicate models",
-            color: "purple",
-            required: false
+            description: 'Image / video models (optional)',
+            color: 'purple',
+            required: false,
         },
         {
-            name: "RunPod API",
-            key: "apiKeyRunpodValid",
+            name: 'RunPod API',
+            key: 'apiKeyRunpodValid',
             valid: authState.apiKeyRunpodValid,
             icon: LucideCloud,
-            description: "Optional for GPU-accelerated AI inference and model hosting",
-            color: "indigo",
-            required: false
+            description: 'GPU inference (optional)',
+            color: 'indigo',
+            required: false,
         },
         {
-            name: "OpenAI API",
-            key: "apiKeyOpenaiValid",
+            name: 'OpenAI API',
+            key: 'apiKeyOpenaiValid',
             valid: authState.apiKeyOpenaiValid,
             icon: LucideCloud,
-            description: "Optional for accessing OpenAI models directly",
-            color: "blue",
-            required: false
+            description: 'OpenAI models (optional)',
+            color: 'blue',
+            required: false,
         },
         {
-            name: "LocalAI",
-            key: "apiKeyLocalaiValid",
+            name: 'LocalAI',
+            key: 'apiKeyLocalaiValid',
             valid: authState.apiKeyLocalaiValid,
             icon: LucideBot,
-            description: "Optional for running AI models locally with LocalAI",
-            color: "emerald",
-            required: false
-        }
+            description: 'Local models via LocalAI (optional)',
+            color: 'emerald',
+            required: false,
+        },
     ];
 
-    const completedCount = apiKeyStatus.filter(api => api.valid).length;
+    const completedCount = apiKeyStatus.filter((api) => api.valid).length;
     const totalCount = apiKeyStatus.length;
 
     return (
-        <div className='my-2'>
-            <div className="text-left p-2 border border-blue-400 rounded-sm shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300">
-                <div className="flex items-center justify-between mb-1">
-                    <h2 className="text-base font-bold text-blue-800">
-                        <Link to="/user/setting/api-key">
-                            <LucideKey size={16} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
-                            API Configuration
-                        </Link>
-                    </h2>
-                    <button
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        className="p-1 border border-blue-400 rounded-sm bg-blue-100 hover:bg-blue-200 transition duration-200"
-                        title={isExpanded ? "Collapse" : "Expand"}
-                    >
-                        {isExpanded ? (
-                            <LucideChevronUp size={12} className="text-blue-600" />
-                        ) : (
-                            <LucideChevronDown size={12} className="text-blue-600" />
-                        )}
-                    </button>
-                </div>
+        <div className={`${panel} my-0.5 border-l-[3px] border-l-cyan-500`}>
+            <div className={panelHeader}>
+                <h2 className={panelTitle}>
+                    <Link to="/user/setting/api-key" className="flex items-center gap-1.5 hover:text-teal-700">
+                        <LucideKey className="h-3.5 w-3.5 text-teal-600" strokeWidth={2} />
+                        API configuration
+                    </Link>
+                </h2>
+                <button
+                    type="button"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className={panelIconBtn}
+                    title={isExpanded ? 'Collapse' : 'Expand'}
+                >
+                    {isExpanded ? (
+                        <LucideChevronUp className="h-3.5 w-3.5" strokeWidth={2} />
+                    ) : (
+                        <LucideChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
+                    )}
+                </button>
+            </div>
 
-                <div className="mb-1">
-                    <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-blue-700">Required APIs</span>
-                        <span className="text-xs font-bold text-blue-800">{completedCount} / {totalCount}</span>
-                    </div>
-                    <div className="w-full bg-blue-200 rounded-sm h-1">
-                        <div
-                            className="bg-blue-600 h-1 rounded-sm transition-all duration-300"
-                            style={{ width: `${(completedCount / totalCount) * 100}%` }}
-                        ></div>
-                    </div>
+            <div className="mb-2">
+                <div className="mb-0.5 flex items-center justify-between">
+                    <span className="text-[10px] font-medium uppercase tracking-wide text-zinc-500">
+                        Configured
+                    </span>
+                    <span className="text-[10px] font-bold text-teal-700">
+                        {completedCount} / {totalCount}
+                    </span>
                 </div>
+                <div className="h-1 w-full overflow-hidden rounded-full bg-zinc-200">
+                    <div
+                        className="h-full rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 transition-all duration-500"
+                        style={{ width: `${(completedCount / totalCount) * 100}%` }}
+                    />
+                </div>
+            </div>
 
-                {isExpanded && (
-                    <div>
-                        <div className="space-y-1 mb-1">
-                            {apiKeyStatus.map((api) => {
-                                const ApiIcon = api.icon;
-                                return (
-                                    <div key={api.key} className="flex flex-col gap-1 p-1 bg-white bg-opacity-50 rounded-sm border border-blue-200">
-                                        <div className="flex items-center gap-1">
-                                            <ApiIcon size={12} className={`text-${api.color}-600 flex-shrink-0`} />
-                                            <div className="min-w-0 flex-1">
-                                                <div className="flex items-center gap-1">
-                                                    <span className="text-xs font-semibold text-blue-800">{api.name}</span>
-                                                    {!api.required && (
-                                                        <span className="text-xs text-gray-500 bg-gray-100 px-1 rounded">Opt</span>
-                                                    )}
-                                                    {api.valid ? (
-                                                        <LucideCheck size={10} className="text-green-600 flex-shrink-0" />
-                                                    ) : (
-                                                        <LucideX size={10} className="text-red-600 flex-shrink-0" />
-                                                    )}
-                                                </div>
+            {isExpanded && (
+                <div>
+                    <div className="mb-2 space-y-1">
+                        {apiKeyStatus.map((api) => {
+                            const ApiIcon = api.icon;
+                            const tone = iconTone[api.color] ?? 'text-zinc-500';
+                            return (
+                                <div
+                                    key={api.key}
+                                    className="rounded-md border border-zinc-200 bg-zinc-50/80 p-2"
+                                >
+                                    <div className="flex items-start gap-1.5">
+                                        <ApiIcon className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${tone}`} strokeWidth={2} />
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex flex-wrap items-center gap-1">
+                                                <span className="text-[11px] font-semibold text-zinc-900">
+                                                    {api.name}
+                                                </span>
+                                                {!api.required && (
+                                                    <span className="rounded bg-zinc-200/80 px-1 py-0 text-[9px] font-medium uppercase tracking-wide text-zinc-600">
+                                                        Opt
+                                                    </span>
+                                                )}
+                                                {api.valid ? (
+                                                    <LucideCheck className="h-3 w-3 text-emerald-600" strokeWidth={2} />
+                                                ) : (
+                                                    <LucideX className="h-3 w-3 text-rose-500" strokeWidth={2} />
+                                                )}
                                             </div>
-                                        </div>
-                                        <div className="text-xs text-gray-600 ml-4">
-                                            {api.description}
+                                            <p className={`${mutedText} mt-0.5`}>{api.description}</p>
                                         </div>
                                     </div>
-                                );
-                            })}
-                        </div>
-                        <div className="mt-2 pt-2 border-t border-blue-200">
-                            <button
-                                onClick={() => window.location.href = '/user/setting/api-key'}
-                                className="w-full bg-blue-500 text-white text-xs font-medium py-1.5 px-2 rounded-sm hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center gap-1"
-                            >
-                                <LucideSettings size={12} />
-                                Configure API Keys
-                            </button>
-                        </div>
+                                </div>
+                            );
+                        })}
                     </div>
-                )}
-            </div>
+                    <div className="border-t border-zinc-200 pt-2">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                window.location.href = '/user/setting/api-key';
+                            }}
+                            className="flex w-full items-center justify-center gap-1.5 rounded-md bg-teal-600 py-2 text-[11px] font-semibold text-white shadow-sm transition hover:bg-teal-700"
+                        >
+                            <LucideSettings className="h-3.5 w-3.5" strokeWidth={2} />
+                            Configure API keys
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

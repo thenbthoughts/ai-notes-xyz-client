@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import type { LucideIcon } from 'lucide-react';
 import {
     LucideInfo,
     LucideList,
@@ -16,14 +17,13 @@ import {
     LucideLightbulb,
     LucideSearch,
     LucideCalendar,
-    LucideMic
-} from 'lucide-react'; // Importing lucide icons
+    LucideMic,
+} from 'lucide-react';
 import { useAtomValue } from 'jotai';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, type ReactNode } from 'react';
 import axiosCustom from '../../../config/axiosCustom';
 
-import useResponsiveScreen from '../../../hooks/useResponsiveScreen';
-import stateJotaiAuthAtom from '../../../jotai/stateJotaiAuth'; // Adjust the import path as necessary
+import stateJotaiAuthAtom from '../../../jotai/stateJotaiAuth';
 import iconGit from './iconGit.svg';
 
 import ComponentFromBrithdayToToday from './ComponentFromBrithdayToToday';
@@ -33,9 +33,72 @@ import ComponentApiKeySet from './ComponentApiKeySet';
 import ComponentQuickActions from './ComponentQuickActions';
 import ComponentHomepageSummary from './ComponentHomepageSummary';
 
+const homePageRoot =
+    'min-h-[calc(100vh-60px)] bg-zinc-50 bg-[radial-gradient(ellipse_100%_55%_at_50%_-8%,rgba(6,182,212,0.07),transparent_52%)] px-2 pb-4 pt-2 sm:px-3';
+const homePageInner = 'mx-auto w-full max-w-6xl';
+const homeHeroTitle = 'text-xl font-bold tracking-tight text-zinc-900 sm:text-2xl';
+const homeHeroHint = 'mt-0.5 text-xs text-zinc-500';
+const homeLayoutRow = 'mt-3 flex flex-col gap-3 lg:flex-row lg:items-start';
+const homeColLeft = 'w-full shrink-0 space-y-2 lg:max-w-sm lg:pr-1';
+const homeColRight = 'min-w-0 flex-1';
+const homeNavGrid = 'grid grid-cols-2 gap-2 sm:grid-cols-3';
+const guestCtaCard =
+    'mb-1.5 flex w-full items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-left shadow-sm transition hover:border-teal-300 hover:bg-teal-50/50';
+const navTileBase =
+    'group flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-200/90 bg-white p-2 text-center shadow-sm transition hover:border-teal-300/80 hover:shadow';
+const navTileDanger =
+    'group flex flex-col items-center justify-center gap-1 rounded-lg border border-rose-200 bg-rose-50/40 p-2 text-center shadow-sm transition hover:border-rose-300 hover:bg-rose-50';
+const navTileLabel =
+    'max-w-full truncate px-0.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-600 group-hover:text-zinc-900 sm:text-xs';
+const navTileIconWrap =
+    'flex h-8 w-8 items-center justify-center rounded-md bg-zinc-100 text-teal-600 ring-1 ring-zinc-200/80 transition group-hover:bg-teal-50 group-hover:text-teal-700 sm:h-9 sm:w-9';
+
+function NavTile({
+    to,
+    href,
+    label,
+    icon: Icon,
+    variant = 'default',
+    children,
+}: {
+    to?: string;
+    href?: string;
+    label: string;
+    icon: LucideIcon;
+    variant?: 'default' | 'danger';
+    children?: ReactNode;
+}) {
+    const shell = variant === 'danger' ? navTileDanger : navTileBase;
+    const body = (
+        <>
+            <span className={navTileIconWrap}>
+                <Icon className="h-[18px] w-[18px] sm:h-5 sm:w-5" strokeWidth={2} />
+            </span>
+            <span className={navTileLabel}>{label}</span>
+            {children}
+        </>
+    );
+    if (href) {
+        return (
+            <a
+                href={href}
+                className={shell}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {body}
+            </a>
+        );
+    }
+    return (
+        <Link to={to!} className={shell}>
+            {body}
+        </Link>
+    );
+}
+
 const UserHomepage = () => {
     const authState = useAtomValue(stateJotaiAuthAtom);
-    const screenSize = useResponsiveScreen();
 
     const [name, setName] = useState('');
 
@@ -45,9 +108,9 @@ const UserHomepage = () => {
     });
 
     useEffect(() => {
-        fetchUser();
-        fetchStats();
-    }, [])
+        void fetchUser();
+        void fetchStats();
+    }, []);
 
     const fetchUser = async () => {
         try {
@@ -56,7 +119,7 @@ const UserHomepage = () => {
                 {},
                 {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     withCredentials: true,
                 }
@@ -65,10 +128,10 @@ const UserHomepage = () => {
             if (typeof fetchedName === 'string') {
                 setName(fetchedName);
             } else {
-                console.error("Fetched name is not a string:", fetchedName);
+                console.error('Fetched name is not a string:', fetchedName);
             }
         } catch (error) {
-            console.error("Error fetching user:", error);
+            console.error('Error fetching user:', error);
         }
     };
 
@@ -76,9 +139,8 @@ const UserHomepage = () => {
         try {
             const response = await axiosCustom.get('/api/dashboard/crud/get-dashboard-stats');
             const data = response.data.docs;
-            console.log("Dashboard stats:", data);
 
-            let tempDashboardStats = {
+            const tempDashboardStats = {
                 taskCompletedCount: 0,
                 totalCount: 0,
             };
@@ -92,298 +154,173 @@ const UserHomepage = () => {
 
             setDashboardStats(tempDashboardStats);
         } catch (error) {
-            console.error("Error fetching stats:", error);
+            console.error('Error fetching stats:', error);
         }
-    }
+    };
+
+    const taskPct =
+        dashboardStats.totalCount > 0
+            ? Math.round((dashboardStats.taskCompletedCount / dashboardStats.totalCount) * 100)
+            : 0;
 
     return (
-        <div>
-            <div style={{ maxWidth: '1000px', margin: '0 auto', paddingTop: '20px', paddingBottom: '20px' }}>
-                <div style={{ paddingLeft: '20px', paddingRight: '20px' }}>
-                    <h1 className="text-2xl font-bold text-white mb-2">Hello {name}</h1>
-                </div>
-                <div style={{ display: 'flex' }} className={`${screenSize === 'sm' ? 'flex-col' : 'flex-row'}`}>
-                    {/* left */}
-                    <div
-                        style={{
-                            width: `${screenSize === 'sm' ? '100%' : '40%'}`,
-                            paddingLeft: `${screenSize === 'sm' ? '10px' : '20px'}`,
-                            paddingRight: `${screenSize === 'sm' ? '10px' : '20px'}`,
-                        }}
-                    >
+        <div className={homePageRoot}>
+            <div className={homePageInner}>
+                <header className="text-center lg:text-left">
+                    <h1 className={homeHeroTitle}>
+                        {authState.isLoggedIn === 'true'
+                            ? `Hello, ${name || 'there'}`
+                            : 'AI Notes XYZ'}
+                    </h1>
+                    <p className={homeHeroHint}>
+                        {authState.isLoggedIn === 'true'
+                            ? 'Your dashboard — jump in anywhere.'
+                            : 'Sign in to sync notes, tasks, and chat.'}
+                    </p>
+                </header>
+
+                <div className={homeLayoutRow}>
+                    <aside className={homeColLeft}>
                         {authState.isLoggedIn === 'true' && (
                             <Fragment>
-                                <div className="pb-2">
-                                    <ComponentCurrentDateTime />
-                                    <ComponentQuickActions />
-                                    <ComponentFromBrithdayToToday />
-                                    <ComponentPinnedTask />
-                                    <ComponentHomepageSummary />
-                                    <ComponentApiKeySet />
-                                </div>
+                                <ComponentCurrentDateTime />
+                                <ComponentQuickActions />
+                                <ComponentFromBrithdayToToday />
+                                <ComponentPinnedTask />
+                                <ComponentHomepageSummary />
+                                <ComponentApiKeySet />
                             </Fragment>
                         )}
                         {authState.isLoggedIn === 'false' && (
                             <Fragment>
-                                <div className="pb-2">
-                                    {/* Refresh button */}
-                                    <button
-                                        className="text-left p-3 border border-blue-400 rounded-sm shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300 w-full"
-                                        onClick={() => window.location.reload()}
-                                    >
-                                        <div className="flex justify-between items-center ">
-                                            <h2 className="text-lg font-bold text-blue-800 cursor-pointer">
-                                                <LucideRefreshCcw size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
-                                                Refresh
-                                            </h2>
-                                        </div>
-                                    </button>
-
-                                    {/* login */}
-                                    <Link to="/login">
-                                        <div
-                                            className="text-left p-3 border border-blue-400 rounded-sm shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300"
-                                        >
-                                            <div className="flex justify-between items-center ">
-                                                <h2 className="text-lg font-bold text-blue-800 cursor-pointer">
-                                                    <LucideLogIn size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
-                                                    Login
-                                                </h2>
-                                            </div>
-                                        </div>
-                                    </Link>
-
-                                    {/* register */}
-                                    <Link to="/register">
-                                        <div
-                                            className="text-left p-3 border border-blue-400 rounded-sm shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-2 hover:bg-blue-200 transition duration-300"
-                                        >
-                                            <div className="flex justify-between items-center ">
-                                                <h2 className="text-lg font-bold text-blue-800 cursor-pointer">
-                                                    <LucideUserPlus size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
-                                                    Register
-                                                </h2>
-                                            </div>
-                                        </div>
-                                    </Link>
-
-                                    <ComponentCurrentDateTime />
-                                </div>
+                                <button
+                                    type="button"
+                                    className={guestCtaCard}
+                                    onClick={() => window.location.reload()}
+                                >
+                                    <span className="flex items-center gap-2 text-xs font-semibold text-zinc-800">
+                                        <LucideRefreshCcw className="h-4 w-4 shrink-0 text-teal-600" strokeWidth={2} />
+                                        Refresh
+                                    </span>
+                                </button>
+                                <Link to="/login" className={guestCtaCard}>
+                                    <span className="flex items-center gap-2 text-xs font-semibold text-zinc-800">
+                                        <LucideLogIn className="h-4 w-4 shrink-0 text-teal-600" strokeWidth={2} />
+                                        Login
+                                    </span>
+                                </Link>
+                                <Link to="/register" className={guestCtaCard}>
+                                    <span className="flex items-center gap-2 text-xs font-semibold text-zinc-800">
+                                        <LucideUserPlus className="h-4 w-4 shrink-0 text-teal-600" strokeWidth={2} />
+                                        Register
+                                    </span>
+                                </Link>
+                                <ComponentCurrentDateTime />
                             </Fragment>
                         )}
-                    </div>
-                    {/* right */}
-                    <div
-                        style={{
-                            width: `${screenSize === 'sm' ? '100%' : '60%'}`,
-                            paddingLeft: `${screenSize === 'sm' ? '10px' : '20px'}`,
-                            paddingRight: `${screenSize === 'sm' ? '10px' : '20px'}`,
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(3, 1fr)',
-                                gap: '20px',
-                                textAlign: 'center',
-                            }}
-                        >
+                    </aside>
+
+                    <section className={homeColRight}>
+                        <div className={homeNavGrid}>
                             {authState.isLoggedIn === 'pending' && (
-                                <Link to="/" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                        <LucideLoader size={32} />
-                                    </div>
-                                    <div>Loading...</div>
+                                <Link to="/" className={navTileBase}>
+                                    <span className={navTileIconWrap}>
+                                        <LucideLoader className="h-5 w-5 animate-spin text-teal-600" strokeWidth={2} />
+                                    </span>
+                                    <span className={navTileLabel}>Loading…</span>
                                 </Link>
                             )}
+
                             {authState.isLoggedIn === 'true' && (
-                                <>
-                                    <Link to="/user/chat" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideMessageSquare size={32} />
-                                        </div>
-                                        <div>Chat</div>
-                                    </Link>
-                                    <Link to="/user/search" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideSearch size={32} />
-                                        </div>
-                                        <div>Search</div>
-                                    </Link>
-                                    <Link to="/user/timeline" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideCalendar size={32} />
-                                        </div>
-                                        <div>Timeline</div>
-                                    </Link>
-                                    <Link to="/user/suggestions" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideLightbulb size={32} />
-                                        </div>
-                                        <div>Suggestions</div>
-                                    </Link>
-                                    <Link
-                                        to="/user/task"
-                                        className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'
-                                    >
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideList size={32} />
-                                        </div>
-                                        <div>Task</div>
-                                        {dashboardStats.taskCompletedCount > 0 && dashboardStats.totalCount > 0 && (
-                                            <Fragment>
-
-                                                <div>
-                                                    {dashboardStats.taskCompletedCount} / {dashboardStats.totalCount}
-                                                    {Math.round((dashboardStats.taskCompletedCount / dashboardStats.totalCount) * 100) >= 1 && (
-                                                        <span className='text-green-600 font-bold'>
-                                                            {' '}
-                                                            ({Math.round((dashboardStats.taskCompletedCount / dashboardStats.totalCount) * 100)}%)
-                                                        </span>
-                                                    )}
-                                                </div>
-
-                                                {/* cool up progress bar */}
-                                                <div
-                                                    style={{
-                                                        height: '8px',
-                                                        backgroundColor: '#f5f3f0',
-                                                        width: '100%',
-                                                        marginTop: '8px',
-                                                        borderRadius: '10px',
-                                                        overflow: 'hidden',
-                                                        boxShadow: 'inset 0 2px 4px rgba(139,117,85,0.1)',
-                                                    }}
-                                                >
-                                                    <div
-                                                        style={{
-                                                            height: '8px',
-                                                            background: 'linear-gradient(90deg, #d4a574 0%, #c49660 50%, #b8864d 100%)',
-                                                            width: `${Math.round((dashboardStats.taskCompletedCount / dashboardStats.totalCount) * 100)}%`,
-                                                            borderRadius: '10px',
-                                                            transition: 'width 0.6s ease-in-out',
-                                                            boxShadow: '0 2px 8px rgba(212, 165, 116, 0.3)',
-                                                            position: 'relative',
-                                                        }}
-                                                    >
+                                <Fragment>
+                                    <NavTile to="/user/chat" label="Chat" icon={LucideMessageSquare} />
+                                    <NavTile to="/user/search" label="Search" icon={LucideSearch} />
+                                    <NavTile to="/user/timeline" label="Timeline" icon={LucideCalendar} />
+                                    <NavTile
+                                        to="/user/suggestions"
+                                        label="Suggestions"
+                                        icon={LucideLightbulb}
+                                    />
+                                    <Link to="/user/task" className={navTileBase}>
+                                        <span className={navTileIconWrap}>
+                                            <LucideList className="h-[18px] w-[18px] sm:h-5 sm:w-5" strokeWidth={2} />
+                                        </span>
+                                        <span className={navTileLabel}>Tasks</span>
+                                        {dashboardStats.taskCompletedCount > 0 &&
+                                            dashboardStats.totalCount > 0 && (
+                                                <div className="w-full space-y-1">
+                                                    <div className="text-[10px] font-medium text-zinc-500">
+                                                        {dashboardStats.taskCompletedCount} /{' '}
+                                                        {dashboardStats.totalCount}
+                                                        {taskPct >= 1 && (
+                                                            <span className="ml-1 text-emerald-600">
+                                                                ({taskPct}%)
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-200">
                                                         <div
-                                                            style={{
-                                                                position: 'absolute',
-                                                                top: '0',
-                                                                left: '0',
-                                                                right: '0',
-                                                                bottom: '0',
-                                                                background: 'linear-gradient(90deg, transparent 0%, rgba(255,248,240,0.4) 50%, transparent 100%)',
-                                                                animation: 'shimmer 2s infinite',
-                                                            }}
+                                                            className="h-full rounded-full bg-gradient-to-r from-amber-400 to-teal-500 transition-all duration-500"
+                                                            style={{ width: `${taskPct}%` }}
                                                         />
                                                     </div>
                                                 </div>
-                                            </Fragment>
-                                        )}
+                                            )}
                                     </Link>
-                                    <Link to="/user/notes" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideFileText size={32} />
-                                        </div>
-                                        <div>Notes</div>
-                                    </Link>
-                                    <Link to="/user/life-events" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideCalendar1 size={32} />
-                                        </div>
-                                        <div>Life Events</div>
-                                    </Link>
-                                    <Link to="/user/info-vault" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideInfo size={32} />
-                                        </div>
-                                        <div>Info Vault</div>
-                                    </Link>
-                                    <Link to="/user/maps" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideMap size={32} />
-                                        </div>
-                                        <div>Maps</div>
-                                    </Link>
-                                    <Link to="/user/calender" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideCalendar1 size={32} />
-                                        </div>
-                                        <div>Calendar</div>
-                                    </Link>
-                                    <Link to="/user/task-schedule" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideClock size={32} />
-                                        </div>
-                                        <div>Schedule</div>
-                                    </Link>
-                                    <Link to="/user/setting" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideSettings size={32} />
-                                        </div>
-                                        <div>Settings</div>
-                                    </Link>
-                                    <Link to="/logout" className='block p-3 border bg-red-400 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideLogOut size={32} />
-                                        </div>
-                                        <div>Logout</div>
-                                    </Link>
-                                </>
+                                    <NavTile to="/user/notes" label="Notes" icon={LucideFileText} />
+                                    <NavTile
+                                        to="/user/life-events"
+                                        label="Life events"
+                                        icon={LucideCalendar1}
+                                    />
+                                    <NavTile to="/user/info-vault" label="Info vault" icon={LucideInfo} />
+                                    <NavTile to="/user/maps" label="Maps" icon={LucideMap} />
+                                    <NavTile to="/user/calender" label="Calendar" icon={LucideCalendar1} />
+                                    <NavTile to="/user/task-schedule" label="Schedule" icon={LucideClock} />
+                                    <NavTile to="/user/setting" label="Settings" icon={LucideSettings} />
+                                    <NavTile
+                                        to="/logout"
+                                        label="Logout"
+                                        icon={LucideLogOut}
+                                        variant="danger"
+                                    />
+                                </Fragment>
                             )}
 
                             {authState.isLoggedIn === 'false' && (
-                                <>
-                                    <Link to="/login" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideLogIn size={32} />
-                                        </div>
-                                        <div>Login</div>
-                                    </Link>
-                                    <Link to="/register" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <LucideUserPlus size={32} />
-                                        </div>
-                                        <div>Register</div>
-                                    </Link>
-                                </>
+                                <Fragment>
+                                    <NavTile to="/login" label="Login" icon={LucideLogIn} />
+                                    <NavTile to="/register" label="Register" icon={LucideUserPlus} />
+                                </Fragment>
                             )}
-                            <Link to="/about" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                    <LucideInfo size={32} />
-                                </div>
-                                <div>About</div>
-                            </Link>
+
+                            <NavTile to="/about" label="About" icon={LucideInfo} />
                             <a
                                 href="https://ai-notes.xyz/docs/selfhost/selfhost-docker-build"
-                                className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'
+                                className={navTileBase}
+                                target="_blank"
+                                rel="noopener noreferrer"
                             >
-                                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                    {/* <LucideGitBranch size={32} /> */}
+                                <span className={navTileIconWrap}>
                                     <img
                                         src={iconGit}
-                                        style={{
-                                            width: '32px',
-                                            height: '32px',
-                                            objectFit: 'contain',
-                                        }}
+                                        alt=""
+                                        className="h-6 w-6 object-contain opacity-90 sm:h-7 sm:w-7"
                                     />
-                                </div>
-                                <div>Git</div>
+                                </span>
+                                <span className={navTileLabel}>Git</span>
                             </a>
-                            <Link to="/test/voice-activity-detection" className='block p-3 border bg-cyan-100 rounded-sm hover:shadow-md'>
-                                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                    <LucideMic size={32} />
-                                </div>
-                                <div>Voice Activity Detection</div>
-                            </Link>
+                            <NavTile
+                                to="/test/voice-activity-detection"
+                                label="Voice activity"
+                                icon={LucideMic}
+                            />
                         </div>
-                    </div>
+                    </section>
                 </div>
             </div>
         </div>
-    )
+    );
 };
 
 export default UserHomepage;

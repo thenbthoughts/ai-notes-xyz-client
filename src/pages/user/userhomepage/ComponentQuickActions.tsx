@@ -1,4 +1,15 @@
-import { LucideZap, LucideChevronUp, LucideChevronDown, LucideFileText, LucideListTodo, LucidePlus, LucideBookOpen, LucideHeart, LucideCalendar, LucideStar } from 'lucide-react';
+import {
+    LucideZap,
+    LucideChevronUp,
+    LucideChevronDown,
+    LucideFileText,
+    LucideListTodo,
+    LucidePlus,
+    LucideBookOpen,
+    LucideHeart,
+    LucideCalendar,
+    LucideStar,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
@@ -8,6 +19,14 @@ import { lifeEventAddAxios } from '../features/LifeEventsList/utils/lifeEventsLi
 import toast from 'react-hot-toast';
 import axiosCustom from '../../../config/axiosCustom';
 
+const panel =
+    'rounded-lg border border-zinc-200/90 bg-white p-2.5 shadow-sm transition hover:shadow';
+const panelHeader = 'mb-1.5 flex items-center justify-between gap-1.5';
+const panelTitle = 'flex items-center gap-1.5 text-xs font-semibold text-zinc-800';
+const panelIconBtn =
+    'rounded-md border border-zinc-200 bg-white p-1 text-zinc-600 shadow-sm transition hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-40';
+const chipAction =
+    'inline-flex items-center gap-1 rounded-md border border-zinc-200 bg-white px-2 py-1 text-[11px] font-medium text-zinc-700 shadow-sm transition hover:border-teal-300 hover:bg-teal-50/70 disabled:opacity-50';
 
 const QuickActionsComponent = () => {
     const [isActionsExpanded, setIsActionsExpanded] = useState(true);
@@ -19,28 +38,27 @@ const QuickActionsComponent = () => {
         const result = await notesQuickDailyNotesAddAxios();
         if (result.success.length > 0) {
             toast.success('Quick Daily Notes added successfully');
-            navigate(`/user/notes?action=edit&id=${result.recordId}&workspace=${result.workspaceId}`)
+            navigate(`/user/notes?action=edit&id=${result.recordId}&workspace=${result.workspaceId}`);
         } else {
             toast.error(result.error);
         }
-    }
+    };
 
     const notesQuickTaskAddAxiosLocal = async () => {
         const result = await notesQuickTaskAddAxios();
         if (result.success.length > 0) {
             toast.success('Quick Task added successfully');
-            navigate(`/user/task?workspace=${result.workspaceId}&edit-task-id=${result.recordId}`)
+            navigate(`/user/task?workspace=${result.workspaceId}&edit-task-id=${result.recordId}`);
         } else {
             toast.error(result.error);
         }
-    }
+    };
 
     const addNewThread = async () => {
         setIsAddThreadLoading(true);
         try {
-            // Fetch last used model
-            let aiModelProvider: "openrouter" | "groq" | "ollama" | "openai-compatible" = "openrouter";
-            let aiModelName = "openrouter/auto";
+            let aiModelProvider: 'openrouter' | 'groq' | 'ollama' | 'openai-compatible' = 'openrouter';
+            let aiModelName = 'openrouter/auto';
             let aiModelOpenAiCompatibleConfigId: string | null = null;
 
             try {
@@ -48,32 +66,24 @@ const QuickActionsComponent = () => {
                 if (lastUsedResponse.data.model) {
                     aiModelProvider = lastUsedResponse.data.model.aiModelProvider;
                     aiModelName = lastUsedResponse.data.model.aiModelName;
-                    aiModelOpenAiCompatibleConfigId = lastUsedResponse.data.model.aiModelOpenAiCompatibleConfigId || null;
+                    aiModelOpenAiCompatibleConfigId =
+                        lastUsedResponse.data.model.aiModelOpenAiCompatibleConfigId || null;
                 }
             } catch (error) {
                 console.error('Error fetching last used model:', error);
-                // Continue with default model
             }
 
-            const result = await axiosCustom.post(
-                '/api/chat-llm/threads-crud/threadsAdd',
-                {
-                    isPersonalContextEnabled: false,
-                    isAutoAiContextSelectEnabled: false,
-
-                    // selected model
-                    aiModelProvider: aiModelProvider,
-                    aiModelName: aiModelName,
-                    aiModelOpenAiCompatibleConfigId: aiModelOpenAiCompatibleConfigId,
-                }
-            );
+            const result = await axiosCustom.post('/api/chat-llm/threads-crud/threadsAdd', {
+                isPersonalContextEnabled: false,
+                isAutoAiContextSelectEnabled: false,
+                aiModelProvider: aiModelProvider,
+                aiModelName: aiModelName,
+                aiModelOpenAiCompatibleConfigId: aiModelOpenAiCompatibleConfigId,
+            });
 
             const tempThreadId = result?.data?.thread?._id;
-            if (tempThreadId) {
-                if (typeof tempThreadId === 'string') {
-                    const redirectUrl = `/user/chat?id=${tempThreadId}`;
-                    navigate(redirectUrl);
-                }
+            if (tempThreadId && typeof tempThreadId === 'string') {
+                navigate(`/user/chat?id=${tempThreadId}`);
             }
 
             toast.success('New thread added successfully!');
@@ -86,7 +96,6 @@ const QuickActionsComponent = () => {
 
     const addTaskLocal = async () => {
         try {
-            // Get or create Daily Task workspace
             let taskWorkspaceId = '';
             const workspaceResult = await axiosCustom.post('/api/task-workspace/crud/taskWorkspaceGet');
             if (workspaceResult.data.docs && workspaceResult.data.docs.length > 0) {
@@ -115,10 +124,9 @@ const QuickActionsComponent = () => {
                 return;
             }
 
-            // Create new task with date-time title
             const now = new Date();
-            const dateStr = now.toLocaleDateString('en-CA'); // YYYY-MM-DD format in local timezone
-            const timeStr = now.toLocaleTimeString('en-GB', { hour12: false }); // HH:MM:SS format in local timezone
+            const dateStr = now.toLocaleDateString('en-CA');
+            const timeStr = now.toLocaleTimeString('en-GB', { hour12: false });
             const dateTimeStr = `${dateStr} ${timeStr}`;
             const taskTitle = `Task - ${dateTimeStr}`;
 
@@ -127,7 +135,7 @@ const QuickActionsComponent = () => {
                 title: taskTitle,
                 description: '',
                 completed: false,
-                list: 'To Do'
+                list: 'To Do',
             });
 
             const doc = taskResult.data.doc || taskResult.data;
@@ -141,11 +149,10 @@ const QuickActionsComponent = () => {
             console.error(error);
             toast.error('An error occurred while adding the task. Please try again.');
         }
-    }
+    };
 
     const addNotesLocal = async () => {
         try {
-            // Get or create Quick Daily Notes workspace
             let notesWorkspaceId = '';
             const workspaceResult = await axiosCustom.post('/api/notes-workspace/crud/notesWorkspaceGet');
             if (workspaceResult.data.docs && workspaceResult.data.docs.length > 0) {
@@ -174,16 +181,15 @@ const QuickActionsComponent = () => {
                 return;
             }
 
-            // Create new notes with date-time title
             const now = new Date();
-            const dateStr = now.toLocaleDateString('en-CA'); // YYYY-MM-DD format in local timezone
-            const timeStr = now.toLocaleTimeString('en-GB', { hour12: false }); // HH:MM:SS format in local timezone
+            const dateStr = now.toLocaleDateString('en-CA');
+            const timeStr = now.toLocaleTimeString('en-GB', { hour12: false });
             const dateTimeStr = `${dateStr} ${timeStr}`;
             const notesTitle = `Notes - ${dateTimeStr}`;
 
             const notesResult = await axiosCustom.post('/api/notes/crud/notesAdd', {
                 notesWorkspaceId: notesWorkspaceId,
-                title: notesTitle
+                title: notesTitle,
             });
 
             const doc = notesResult.data.doc;
@@ -197,58 +203,55 @@ const QuickActionsComponent = () => {
             console.error(error);
             toast.error('An error occurred while adding the notes. Please try again.');
         }
-    }
+    };
 
     const addInfoVaultLocal = async () => {
         const result = await infoVaultAddAxios();
         if (result.success && typeof result.success === 'string' && result.success.length > 0) {
             toast.success('Info Vault added successfully');
-            navigate(`/user/info-vault?action=edit&id=${result.recordId}`)
+            navigate(`/user/info-vault?action=edit&id=${result.recordId}`);
         } else {
             toast.error(result.error);
         }
-    }
+    };
 
     const addLifeEventLocal = async () => {
         const result = await lifeEventAddAxios();
         if (result.success && typeof result.success === 'string' && result.success.length > 0) {
             toast.success('Life Event added successfully');
-            navigate(`/user/life-events?action=edit&id=${result.recordId}`)
+            navigate(`/user/life-events?action=edit&id=${result.recordId}`);
         } else {
             toast.error(result.error);
         }
-    }
+    };
 
     const addAboutTodayLocal = async () => {
         try {
-            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+            const today = new Date().toISOString().split('T')[0];
             const title = `Today's Events on ${today}`;
 
-            // First check if life event with this title already exists
             const getResult = await axiosCustom.post('/api/life-events/crud/lifeEventsGet', {
                 titleExact: title,
                 page: 1,
-                perPage: 1
+                perPage: 1,
             });
 
             if (getResult.data.docs && getResult.data.docs.length > 0) {
-                // Life event already exists, navigate to edit it
                 const existingEvent = getResult.data.docs[0];
                 toast.success('Found existing About Today entry');
                 navigate(`/user/life-events?action=edit&id=${existingEvent._id}`);
                 return;
             }
 
-            // Life event doesn't exist, create new one
             const result = await axiosCustom.post('/api/life-events/crud/lifeEventsAdd', {
                 title: title,
-                description: 'About Today'
+                description: 'About Today',
             });
 
             const doc = result.data.doc;
             if (typeof doc._id === 'string' && doc._id.length === 24) {
                 toast.success('About Today added successfully');
-                navigate(`/user/life-events?action=edit&id=${doc._id}`)
+                navigate(`/user/life-events?action=edit&id=${doc._id}`);
             } else {
                 toast.error('An error occurred while adding About Today. Please try again.');
             }
@@ -256,104 +259,76 @@ const QuickActionsComponent = () => {
             console.error(error);
             toast.error('An error occurred while adding About Today. Please try again.');
         }
-    }
+    };
 
     return (
-        <div className="text-left p-2 border border-amber-400 rounded-sm shadow-md bg-gradient-to-r from-amber-100 to-amber-300 mb-1 hover:bg-amber-200 transition duration-300">
-            <div className="flex justify-between items-center mb-2">
-                <h2 className="text-sm font-bold text-amber-800">
-                    <LucideZap size={16} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
-                    Quick Actions
+        <div className={`${panel} border-l-4 border-l-amber-400/70`}>
+            <div className={panelHeader}>
+                <h2 className={panelTitle}>
+                    <LucideZap className="h-3.5 w-3.5 text-amber-600" strokeWidth={2} />
+                    Quick actions
                 </h2>
                 <button
+                    type="button"
                     onClick={() => setIsActionsExpanded(!isActionsExpanded)}
-                    className="p-0.5 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
-                    title="Toggle Expand"
+                    className={panelIconBtn}
+                    title="Toggle"
                 >
-                    {isActionsExpanded ?
-                        <LucideChevronUp size={14} className="text-amber-600" /> :
-                        <LucideChevronDown size={14} className="text-amber-600" />
-                    }
+                    {isActionsExpanded ? (
+                        <LucideChevronUp className="h-3.5 w-3.5" strokeWidth={2} />
+                    ) : (
+                        <LucideChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
+                    )}
                 </button>
             </div>
 
             {isActionsExpanded && (
-                <div className="space-y-1">
-                    <div className="flex gap-1.5 flex-wrap">
-                        <button
-                            onClick={() => {
-                                addNewThread();
-                            }}
-                            disabled={isAddThreadLoading}
-                            className="flex items-center px-2.5 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
-                        >
-                            <LucidePlus size={12} className="mr-0.5" />
-                            AI Chat
-                        </button>
-                        <button
-                            onClick={() => {
-                                notesQuickDailyNotesAddAxiosLocal();
-                            }}
-                            className="flex items-center px-2.5 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
-                        >
-                            <LucideFileText size={12} className="mr-0.5" />
-                            Quick Daily Notes
-                        </button>
-                        <button
-                            onClick={() => {
-                                notesQuickTaskAddAxiosLocal();
-                            }}
-                            className="flex items-center px-2.5 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
-                        >
-                            <LucideListTodo size={12} className="mr-0.5" />
-                            Quick Daily Task
-                        </button>
-                        <button
-                            onClick={() => {
-                                addNotesLocal();
-                            }}
-                            className="flex items-center px-2.5 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
-                        >
-                            <LucideFileText size={12} className="mr-0.5" />
-                            Add Notes
-                        </button>
-                        <button
-                            onClick={() => {
-                                addTaskLocal();
-                            }}
-                            className="flex items-center px-2.5 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
-                        >
-                            <LucideStar size={12} className="mr-0.5" />
-                            Add Task
-                        </button>
-                        <button
-                            onClick={() => {
-                                addInfoVaultLocal();
-                            }}
-                            className="flex items-center px-2.5 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
-                        >
-                            <LucideBookOpen size={12} className="mr-0.5" />
-                            Add Info Vault
-                        </button>
-                        <button
-                            onClick={() => {
-                                addLifeEventLocal();
-                            }}
-                            className="flex items-center px-2.5 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
-                        >
-                            <LucideHeart size={12} className="mr-0.5" />
-                            Add Life Event
-                        </button>
-                        <button
-                            onClick={() => {
-                                addAboutTodayLocal();
-                            }}
-                            className="flex items-center px-2.5 py-1 bg-white bg-opacity-70 rounded-sm text-xs font-medium text-amber-700 hover:bg-opacity-90 transition duration-200 transform hover:scale-105"
-                        >
-                            <LucideCalendar size={12} className="mr-0.5" />
-                            Add About Today
-                        </button>
-                    </div>
+                <div className="flex flex-wrap gap-1.5">
+                    <button
+                        type="button"
+                        onClick={() => addNewThread()}
+                        disabled={isAddThreadLoading}
+                        className={chipAction}
+                    >
+                        <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
+                        AI chat
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => notesQuickDailyNotesAddAxiosLocal()}
+                        className={chipAction}
+                    >
+                        <LucideFileText className="h-3.5 w-3.5" strokeWidth={2} />
+                        Quick daily notes
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => notesQuickTaskAddAxiosLocal()}
+                        className={chipAction}
+                    >
+                        <LucideListTodo className="h-3.5 w-3.5" strokeWidth={2} />
+                        Quick daily task
+                    </button>
+                    <button type="button" onClick={() => addNotesLocal()} className={chipAction}>
+                        <LucideFileText className="h-3.5 w-3.5" strokeWidth={2} />
+                        Add notes
+                    </button>
+                    <button type="button" onClick={() => addTaskLocal()} className={chipAction}>
+                        <LucideStar className="h-3.5 w-3.5" strokeWidth={2} />
+                        Add task
+                    </button>
+                    <button type="button" onClick={() => addInfoVaultLocal()} className={chipAction}>
+                        <LucideBookOpen className="h-3.5 w-3.5" strokeWidth={2} />
+                        Info vault
+                    </button>
+                    <button type="button" onClick={() => addLifeEventLocal()} className={chipAction}>
+                        <LucideHeart className="h-3.5 w-3.5" strokeWidth={2} />
+                        Life event
+                    </button>
+                    <button type="button" onClick={() => addAboutTodayLocal()} className={chipAction}>
+                        <LucideCalendar className="h-3.5 w-3.5" strokeWidth={2} />
+                        About today
+                    </button>
                 </div>
             )}
         </div>

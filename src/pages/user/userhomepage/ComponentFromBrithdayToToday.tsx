@@ -1,8 +1,13 @@
-import { useState, useEffect, Fragment } from "react";
-import { DateTime } from "luxon";
+import { useState, useEffect, Fragment } from 'react';
+import { DateTime } from 'luxon';
 import { LucideCake, LucideClock, LucideQuote } from 'lucide-react';
-import axiosCustom from "../../../config/axiosCustom";
-import { Link } from "react-router-dom";
+import axiosCustom from '../../../config/axiosCustom';
+import { Link } from 'react-router-dom';
+
+const panel =
+    'rounded-lg border border-zinc-200/90 bg-white p-2.5 shadow-sm transition hover:shadow';
+const panelTitle = 'flex items-center gap-1.5 text-xs font-semibold text-zinc-800';
+const mutedText = 'text-[11px] leading-snug text-zinc-500';
 
 const ComponentFromBrithdayToToday = () => {
     const [birthday, setBirthday] = useState('0000-00-00');
@@ -16,39 +21,38 @@ const ComponentFromBrithdayToToday = () => {
 
     useEffect(() => {
         const calculateAgeAndTimeRemaining = () => {
-            if(birthday === '0000-00-00') {
+            if (birthday === '0000-00-00') {
                 return;
             }
-            
+
             const birthDate = DateTime.fromISO(birthday);
-            const now = DateTime.local(); // Use local time
+            const now = DateTime.local();
             const { years, months } = now.diff(birthDate, ['years', 'months']).toObject();
             setAge({ years: years || 0 });
 
-            // Calculate total months, days, hours, and seconds from birth
             setTotalMonths(Math.floor((years || 0) * 12 + (months || 0)));
             setTotalDays(Math.floor(now.diff(birthDate, 'days').days));
             setTotalHours(Math.floor(now.diff(birthDate, 'hours').hours));
             setTotalSeconds(Math.floor(now.diff(birthDate, 'seconds').seconds));
 
-            // Calculate next birthday
             const nextBirthdayDate = birthDate.plus({ years: Math.floor(years || 0) + 1 });
             setNextBirthday(nextBirthdayDate.toLocaleString(DateTime.DATE_MED));
 
-            // Calculate time remaining until next birthday
             const timeDiff = nextBirthdayDate.diff(now, ['days', 'hours', 'minutes', 'seconds']).toObject();
-            setTimeRemaining(`${Math.floor(timeDiff.days || 0)}d, ${Math.floor(timeDiff.hours || 0)}h, ${Math.floor(timeDiff.minutes || 0)}m, ${Math.floor(timeDiff.seconds || 0)}s`);
+            setTimeRemaining(
+                `${Math.floor(timeDiff.days || 0)}d, ${Math.floor(timeDiff.hours || 0)}h, ${Math.floor(timeDiff.minutes || 0)}m, ${Math.floor(timeDiff.seconds || 0)}s`
+            );
         };
 
         calculateAgeAndTimeRemaining();
-        const interval = setInterval(calculateAgeAndTimeRemaining, 1000); // Update every second
+        const interval = setInterval(calculateAgeAndTimeRemaining, 1000);
 
-        return () => clearInterval(interval); // Cleanup on unmount
+        return () => clearInterval(interval);
     }, [birthday]);
 
     useEffect(() => {
-        fetchUser();
-    }, [])
+        void fetchUser();
+    }, []);
 
     const fetchUser = async () => {
         try {
@@ -57,7 +61,7 @@ const ComponentFromBrithdayToToday = () => {
                 {},
                 {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     withCredentials: true,
                 }
@@ -66,59 +70,63 @@ const ComponentFromBrithdayToToday = () => {
             if (DateTime.fromISO(fetchedBirthday).isValid) {
                 setBirthday(fetchedBirthday);
             } else {
-                console.error("Invalid date format for birthday:", fetchedBirthday);
+                console.error('Invalid date format for birthday:', fetchedBirthday);
             }
         } catch (error) {
-            console.error("Error fetching user:", error);
+            console.error('Error fetching user:', error);
         }
     };
 
     return (
-        <div>
-            {/* Birthday set */}
+        <div className="space-y-2">
             {birthday !== '0000-00-00' && (
                 <Fragment>
-                    <div className="text-left p-2 border border-blue-400 rounded-sm shadow-md bg-gradient-to-r from-blue-100 to-blue-300 mb-1 hover:bg-blue-200 transition duration-300">
-                        <div className="grid grid-cols-1 gap-1">
-                            <p className="text-sm font-semibold text-blue-700">
-                                <LucideClock size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
-                                Your Age: {Math.floor(age.years)} <span className="text-gray-600">Yrs</span>
-                                <p className="text-xs font-medium text-blue-600">
-                                    ({totalMonths.toLocaleString()} months, {totalDays.toLocaleString()} days, {totalHours.toLocaleString()} hours, {totalSeconds.toLocaleString()} seconds)
-                                </p>
-                            </p>
-                        </div>
+                    <div className={`${panel} border-l-[3px] border-l-sky-400`}>
+                        <p className={`${panelTitle} mb-1`}>
+                            <LucideClock className="h-3.5 w-3.5 text-sky-600" strokeWidth={2} />
+                            Your age
+                        </p>
+                        <p className="text-base font-semibold text-zinc-900">
+                            {Math.floor(age.years)}{' '}
+                            <span className="text-xs font-normal text-zinc-500">years</span>
+                        </p>
+                        <p className={`${mutedText} mt-0.5`}>
+                            {totalMonths.toLocaleString()} mo · {totalDays.toLocaleString()} d ·{' '}
+                            {totalHours.toLocaleString()} h · {totalSeconds.toLocaleString()} s
+                        </p>
                     </div>
-                    <div className="text-left p-2 border border-green-400 rounded-sm shadow-md bg-gradient-to-r from-green-100 to-green-300 mb-1 hover:bg-green-200 transition duration-300">
-                        <h2 className="text-lg font-bold mb-0 text-green-800">
-                            <LucideCake size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
-                            Next Birthday
+                    <div className={`${panel} border-l-[3px] border-l-emerald-500`}>
+                        <h2 className={`${panelTitle} mb-1`}>
+                            <LucideCake className="h-3.5 w-3.5 text-emerald-600" strokeWidth={2} />
+                            Next birthday
                         </h2>
-                        <p className="text-sm font-semibold text-green-700">{nextBirthday} | {timeRemaining}</p>
+                        <p className="text-xs font-medium text-zinc-700">
+                            {nextBirthday}
+                            <span className="text-zinc-400"> · </span>
+                            {timeRemaining}
+                        </p>
                     </div>
                 </Fragment>
             )}
 
-            {/* New Section for Achievements */}
-            <div className="text-left p-2 border border-yellow-400 rounded-sm shadow-md bg-gradient-to-r from-yellow-100 to-yellow-300 mb-2 hover:bg-yellow-200 transition duration-300">
-                <h2 className="text-lg font-bold mb-0 text-yellow-800">
-                    <LucideQuote size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
+            <div className={`${panel} border-l-[3px] border-l-amber-400`}>
+                <h2 className={`${panelTitle} mb-1`}>
+                    <LucideQuote className="h-3.5 w-3.5 text-amber-600" strokeWidth={2} />
                     Quote
                 </h2>
-                <p className="text-sm font-semibold text-yellow-700">
-                    "Set a goal.
-                    Break it into tiny steps.
-                    Work on them one by one.
-                    And don't forget—life's meant to be enjoyed too!"
-                    {/* Purchase, Experience, Learn, Earn, Enjoy, Dream, Achieve, Health, Help, Sometime Stop, Sometime Start, Sometime Continue. */}
+                <p className="text-xs leading-relaxed text-zinc-600">
+                    &ldquo;Set a goal. Break it into tiny steps. Work on them one by one. And don&apos;t
+                    forget—life&apos;s meant to be enjoyed too!&rdquo;
                 </p>
             </div>
 
-            {/* Birthday not set yet */}
             {birthday === '0000-00-00' && (
-                <Link to="/user/setting" className="text-left p-2 border border-red-400 rounded-sm shadow-md bg-gradient-to-r from-red-100 to-red-300 hover:bg-red-200 transition duration-300 block">
-                    <p className="text-sm font-semibold text-red-700">
-                        No birthday set yet. Click here to set your birthday.
+                <Link
+                    to="/user/setting"
+                    className={`${panel} block border-l-[3px] border-l-rose-400 transition hover:bg-rose-50/50`}
+                >
+                    <p className="text-xs font-medium text-rose-800">
+                        No birthday set yet. Open settings to add your date of birth.
                     </p>
                 </Link>
             )}

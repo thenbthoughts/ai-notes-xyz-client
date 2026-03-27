@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import stateJotaiNavigationDrawer from '../jotai/stateJotaiNavigationDrawer';
 import stateJotaiAuth from '../jotai/stateJotaiAuth';
 import { Fragment } from 'react/jsx-runtime';
+import { LucideX } from 'lucide-react';
+
+const navLinkClass =
+    'block rounded-md px-2 py-1.5 text-xs font-medium text-zinc-800 transition hover:bg-zinc-100 hover:text-teal-700';
 
 const NavigationDrawer = () => {
     const [stateNavigationDrawer, setStateNavigationDrawer] = useAtom(stateJotaiNavigationDrawer);
@@ -14,17 +18,18 @@ const NavigationDrawer = () => {
 
     return (
         <div
-            className={
-                `fixed top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-600 shadow-2xl 
-                transition-transform transform ${stateNavigationDrawer ? 'translate-x-0' : '-translate-x-full'}`
-            }
-            style={{ width: '300px', paddingTop: '60px', zIndex: 1000 }}
+            className={`fixed left-0 top-0 h-full w-[min(280px,92vw)] border-r border-zinc-200 bg-white shadow-lg transition-transform duration-300 ease-out ${
+                stateNavigationDrawer ? 'translate-x-0' : '-translate-x-full'
+            }`}
+            style={{ paddingTop: '60px', zIndex: 1000 }}
         >
             <button
+                type="button"
                 onClick={() => setStateNavigationDrawer(false)}
-                className="absolute top-4 right-4 text-white hover:text-yellow-300"
+                className="absolute right-2 top-[68px] rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800"
+                aria-label="Close menu"
             >
-                ✖
+                <LucideX className="h-4 w-4" strokeWidth={2} />
             </button>
             <nav>
                 <div
@@ -32,67 +37,118 @@ const NavigationDrawer = () => {
                         maxHeight: 'calc(100vh - 60px)',
                         overflowY: 'auto',
                     }}
+                    className="px-2 pb-4 pt-1"
                 >
-                    <ul className="space-y-2">
-                        <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                            <Link to="/" className="text-white block p-2" onClick={handleLinkClick}>🏠 Home</Link>
+                    <ul className="space-y-0.5">
+                        <li>
+                            <Link to="/" className={navLinkClass} onClick={handleLinkClick}>
+                                Home
+                            </Link>
                         </li>
-                        <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                            <Link to="/about" className="text-white block p-2" onClick={handleLinkClick}>ℹ️ About</Link>
+                        <li>
+                            <Link to="/about" className={navLinkClass} onClick={handleLinkClick}>
+                                About
+                            </Link>
                         </li>
                         {authState.isLoggedIn === 'true' && (
                             <Fragment>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/chat" className="text-white block p-2" onClick={handleLinkClick}>📝 Chat</Link>
+                                <li>
+                                    <Link to="/user/chat" className={navLinkClass} onClick={handleLinkClick}>
+                                        Chat
+                                    </Link>
                                 </li>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/search" className="text-white block p-2" onClick={handleLinkClick}>📝 Search</Link>
+                                <li>
+                                    <Link to="/user/search" className={navLinkClass} onClick={handleLinkClick}>
+                                        Search
+                                    </Link>
                                 </li>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/suggestions" className="text-white block p-2" onClick={handleLinkClick}>📝 Suggestions</Link>
+                                <li>
+                                    <Link
+                                        to="/user/suggestions"
+                                        className={navLinkClass}
+                                        onClick={handleLinkClick}
+                                    >
+                                        Suggestions
+                                    </Link>
                                 </li>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/notes" className="text-white block p-2" onClick={handleLinkClick}>📝 Notes</Link>
+                                <li>
+                                    <Link to="/user/notes" className={navLinkClass} onClick={handleLinkClick}>
+                                        Notes
+                                    </Link>
                                 </li>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/life-events" className="text-white block p-2" onClick={handleLinkClick}>📝 Life Events</Link>
+                                <li>
+                                    <Link
+                                        to="/user/life-events"
+                                        className={navLinkClass}
+                                        onClick={handleLinkClick}
+                                    >
+                                        Life events
+                                    </Link>
                                 </li>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/task" className="text-white block p-2" onClick={handleLinkClick}>📝 Task</Link>
+                                <li>
+                                    <Link to="/user/task" className={navLinkClass} onClick={handleLinkClick}>
+                                        Tasks
+                                    </Link>
                                 </li>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/maps" className="text-white block p-2" onClick={handleLinkClick}>📝 Maps</Link>
+                                <li>
+                                    <Link to="/user/maps" className={navLinkClass} onClick={handleLinkClick}>
+                                        Maps
+                                    </Link>
                                 </li>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/calender" className="text-white block p-2" onClick={handleLinkClick}>📝 Calendar</Link>
+                                <li>
+                                    <Link to="/user/calender" className={navLinkClass} onClick={handleLinkClick}>
+                                        Calendar
+                                    </Link>
                                 </li>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/task-schedule" className="text-white block p-2" onClick={handleLinkClick}>📝 Schedule</Link>
+                                <li>
+                                    <Link
+                                        to="/user/task-schedule"
+                                        className={navLinkClass}
+                                        onClick={handleLinkClick}
+                                    >
+                                        Schedule
+                                    </Link>
                                 </li>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/timeline" className="text-white block p-2" onClick={handleLinkClick}>⏱️ Timeline</Link>
+                                <li>
+                                    <Link to="/user/timeline" className={navLinkClass} onClick={handleLinkClick}>
+                                        Timeline
+                                    </Link>
                                 </li>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/info-vault" className="text-white block p-2" onClick={handleLinkClick}>📝 Info Vault</Link>
+                                <li>
+                                    <Link to="/user/info-vault" className={navLinkClass} onClick={handleLinkClick}>
+                                        Info vault
+                                    </Link>
                                 </li>
-                                <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                    <Link to="/user/drive" className="text-white block p-2" onClick={handleLinkClick}>📁 Drive</Link>
+                                <li>
+                                    <Link to="/user/drive" className={navLinkClass} onClick={handleLinkClick}>
+                                        Drive
+                                    </Link>
                                 </li>
                             </Fragment>
                         )}
                         {authState.isLoggedIn === 'true' && (
-                            <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                <Link to="/user/setting" className="text-white block p-2" onClick={handleLinkClick}>⚙️ Settings</Link>
+                            <li>
+                                <Link to="/user/setting" className={navLinkClass} onClick={handleLinkClick}>
+                                    Settings
+                                </Link>
                             </li>
                         )}
                         {(authState.isLoggedIn === 'false' || authState.isLoggedIn === 'pending') && (
-                            <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                <Link to="/login" className="text-white block p-2" onClick={handleLinkClick}>🔑 Login</Link>
+                            <li>
+                                <Link to="/login" className={navLinkClass} onClick={handleLinkClick}>
+                                    Login
+                                </Link>
                             </li>
                         )}
-                        {(authState.isLoggedIn === 'true') && (
-                            <li className="hover:bg-purple-700 rounded-sm mx-2 my-2">
-                                <Link to="/logout" className="text-white block p-2" onClick={handleLinkClick}>🚪 Logout</Link>
+                        {authState.isLoggedIn === 'true' && (
+                            <li>
+                                <Link
+                                    to="/logout"
+                                    className={`${navLinkClass} font-semibold text-rose-600 hover:bg-rose-50 hover:text-rose-700`}
+                                    onClick={handleLinkClick}
+                                >
+                                    Logout
+                                </Link>
                             </li>
                         )}
                     </ul>
@@ -100,6 +156,6 @@ const NavigationDrawer = () => {
             </nav>
         </div>
     );
-}
+};
 
 export default NavigationDrawer;
