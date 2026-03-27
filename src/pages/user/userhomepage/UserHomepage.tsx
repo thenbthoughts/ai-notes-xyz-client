@@ -32,26 +32,6 @@ import ComponentApiKeySet from './ComponentApiKeySet';
 import ComponentQuickActions from './ComponentQuickActions';
 import ComponentHomepageSummary from './ComponentHomepageSummary';
 
-const homePageRoot =
-    'min-h-[calc(100vh-60px)] bg-zinc-50 bg-[radial-gradient(ellipse_100%_55%_at_50%_-8%,rgba(6,182,212,0.07),transparent_52%)] px-2 pb-4 pt-2 sm:px-3';
-const homePageInner = 'mx-auto w-full max-w-6xl';
-const homeHeroTitle = 'text-xl font-bold tracking-tight text-zinc-900 sm:text-2xl';
-const homeHeroHint = 'mt-0.5 text-xs text-zinc-500';
-const homeLayoutRow = 'mt-3 flex flex-col gap-3 lg:flex-row lg:items-start';
-const homeColLeft = 'w-full shrink-0 space-y-2 lg:max-w-sm lg:pr-1';
-const homeColRight = 'min-w-0 flex-1';
-const homeNavGrid = 'grid grid-cols-2 gap-2 sm:grid-cols-3';
-const guestCtaCard =
-    'mb-1.5 flex w-full items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-left shadow-sm transition hover:border-teal-300 hover:bg-teal-50/50';
-const navTileBase =
-    'group flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-200/90 bg-white p-2 text-center shadow-sm transition hover:border-teal-300/80 hover:shadow';
-const navTileDanger =
-    'group flex flex-col items-center justify-center gap-1 rounded-lg border border-rose-200 bg-rose-50/40 p-2 text-center shadow-sm transition hover:border-rose-300 hover:bg-rose-50';
-const navTileLabel =
-    'max-w-full truncate px-0.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-600 group-hover:text-zinc-900 sm:text-xs';
-const navTileIconWrap =
-    'flex h-8 w-8 items-center justify-center rounded-md bg-zinc-100 text-teal-600 ring-1 ring-zinc-200/80 transition group-hover:bg-teal-50 group-hover:text-teal-700 sm:h-9 sm:w-9';
-
 function NavTile({
     to,
     href,
@@ -67,13 +47,14 @@ function NavTile({
     variant?: 'default' | 'danger';
     children?: ReactNode;
 }) {
-    const shell = variant === 'danger' ? navTileDanger : navTileBase;
     const body = (
         <>
-            <span className={navTileIconWrap}>
+            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-100 text-teal-600 ring-1 ring-zinc-200/80 transition group-hover:bg-teal-50 group-hover:text-teal-700 sm:h-9 sm:w-9">
                 <Icon className="h-[18px] w-[18px] sm:h-5 sm:w-5" strokeWidth={2} />
             </span>
-            <span className={navTileLabel}>{label}</span>
+            <span className="max-w-full truncate px-0.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-600 group-hover:text-zinc-900 sm:text-xs">
+                {label}
+            </span>
             {children}
         </>
     );
@@ -81,7 +62,11 @@ function NavTile({
         return (
             <a
                 href={href}
-                className={shell}
+                className={
+                    variant === 'danger'
+                        ? 'group flex flex-col items-center justify-center gap-1 rounded-lg border border-rose-200 bg-rose-50/40 p-2 text-center shadow-sm transition hover:border-rose-300 hover:bg-rose-50'
+                        : 'group flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-200/90 bg-white p-2 text-center shadow-sm transition hover:border-teal-300/80 hover:shadow'
+                }
                 target="_blank"
                 rel="noopener noreferrer"
             >
@@ -90,7 +75,14 @@ function NavTile({
         );
     }
     return (
-        <Link to={to!} className={shell}>
+        <Link
+            to={to!}
+            className={
+                variant === 'danger'
+                    ? 'group flex flex-col items-center justify-center gap-1 rounded-lg border border-rose-200 bg-rose-50/40 p-2 text-center shadow-sm transition hover:border-rose-300 hover:bg-rose-50'
+                    : 'group flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-200/90 bg-white p-2 text-center shadow-sm transition hover:border-teal-300/80 hover:shadow'
+            }
+        >
             {body}
         </Link>
     );
@@ -163,23 +155,23 @@ const UserHomepage = () => {
             : 0;
 
     return (
-        <div className={homePageRoot}>
-            <div className={homePageInner}>
+        <div className="min-h-[calc(100vh-60px)] bg-zinc-50 bg-[radial-gradient(ellipse_100%_55%_at_50%_-8%,rgba(6,182,212,0.07),transparent_52%)] px-2 pb-4 pt-2 sm:px-3">
+            <div className="mx-auto w-full max-w-6xl">
                 <header className="text-center lg:text-left">
-                    <h1 className={homeHeroTitle}>
+                    <h1 className="text-xl font-bold tracking-tight text-zinc-900 sm:text-2xl">
                         {authState.isLoggedIn === 'true'
                             ? `Hello, ${name || 'there'}`
                             : 'AI Notes XYZ'}
                     </h1>
-                    <p className={homeHeroHint}>
+                    <p className="mt-0.5 text-xs text-zinc-500">
                         {authState.isLoggedIn === 'true'
                             ? 'Your dashboard — jump in anywhere.'
                             : 'Sign in to sync notes, tasks, and chat.'}
                     </p>
                 </header>
 
-                <div className={homeLayoutRow}>
-                    <aside className={homeColLeft}>
+                <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-start">
+                    <aside className="w-full shrink-0 space-y-2 lg:max-w-sm lg:pr-1">
                         {authState.isLoggedIn === 'true' && (
                             <Fragment>
                                 <ComponentCurrentDateTime />
@@ -194,7 +186,7 @@ const UserHomepage = () => {
                             <Fragment>
                                 <button
                                     type="button"
-                                    className={guestCtaCard}
+                                    className="mb-1.5 flex w-full items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-left shadow-sm transition hover:border-teal-300 hover:bg-teal-50/50"
                                     onClick={() => window.location.reload()}
                                 >
                                     <span className="flex items-center gap-2 text-xs font-semibold text-zinc-800">
@@ -202,13 +194,19 @@ const UserHomepage = () => {
                                         Refresh
                                     </span>
                                 </button>
-                                <Link to="/login" className={guestCtaCard}>
+                                <Link
+                                    to="/login"
+                                    className="mb-1.5 flex w-full items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-left shadow-sm transition hover:border-teal-300 hover:bg-teal-50/50"
+                                >
                                     <span className="flex items-center gap-2 text-xs font-semibold text-zinc-800">
                                         <LucideLogIn className="h-4 w-4 shrink-0 text-teal-600" strokeWidth={2} />
                                         Login
                                     </span>
                                 </Link>
-                                <Link to="/register" className={guestCtaCard}>
+                                <Link
+                                    to="/register"
+                                    className="mb-1.5 flex w-full items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-left shadow-sm transition hover:border-teal-300 hover:bg-teal-50/50"
+                                >
                                     <span className="flex items-center gap-2 text-xs font-semibold text-zinc-800">
                                         <LucideUserPlus className="h-4 w-4 shrink-0 text-teal-600" strokeWidth={2} />
                                         Register
@@ -219,14 +217,19 @@ const UserHomepage = () => {
                         )}
                     </aside>
 
-                    <section className={homeColRight}>
-                        <div className={homeNavGrid}>
+                    <section className="min-w-0 flex-1">
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                             {authState.isLoggedIn === 'pending' && (
-                                <Link to="/" className={navTileBase}>
-                                    <span className={navTileIconWrap}>
+                                <Link
+                                    to="/"
+                                    className="group flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-200/90 bg-white p-2 text-center shadow-sm transition hover:border-teal-300/80 hover:shadow"
+                                >
+                                    <span className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-100 text-teal-600 ring-1 ring-zinc-200/80 transition group-hover:bg-teal-50 group-hover:text-teal-700 sm:h-9 sm:w-9">
                                         <LucideLoader className="h-5 w-5 animate-spin text-teal-600" strokeWidth={2} />
                                     </span>
-                                    <span className={navTileLabel}>Loading…</span>
+                                    <span className="max-w-full truncate px-0.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-600 group-hover:text-zinc-900 sm:text-xs">
+                                        Loading…
+                                    </span>
                                 </Link>
                             )}
 
@@ -240,11 +243,16 @@ const UserHomepage = () => {
                                         label="Suggestions"
                                         icon={LucideLightbulb}
                                     />
-                                    <Link to="/user/task" className={navTileBase}>
-                                        <span className={navTileIconWrap}>
+                                    <Link
+                                        to="/user/task"
+                                        className="group flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-200/90 bg-white p-2 text-center shadow-sm transition hover:border-teal-300/80 hover:shadow"
+                                    >
+                                        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-100 text-teal-600 ring-1 ring-zinc-200/80 transition group-hover:bg-teal-50 group-hover:text-teal-700 sm:h-9 sm:w-9">
                                             <LucideList className="h-[18px] w-[18px] sm:h-5 sm:w-5" strokeWidth={2} />
                                         </span>
-                                        <span className={navTileLabel}>Tasks</span>
+                                        <span className="max-w-full truncate px-0.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-600 group-hover:text-zinc-900 sm:text-xs">
+                                            Tasks
+                                        </span>
                                         {dashboardStats.taskCompletedCount > 0 &&
                                             dashboardStats.totalCount > 0 && (
                                                 <div className="w-full space-y-1">
@@ -296,18 +304,20 @@ const UserHomepage = () => {
                             <NavTile to="/about" label="About" icon={LucideInfo} />
                             <a
                                 href="https://ai-notes.xyz/docs/selfhost/selfhost-docker-build"
-                                className={navTileBase}
+                                className="group flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-200/90 bg-white p-2 text-center shadow-sm transition hover:border-teal-300/80 hover:shadow"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <span className={navTileIconWrap}>
+                                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-100 text-teal-600 ring-1 ring-zinc-200/80 transition group-hover:bg-teal-50 group-hover:text-teal-700 sm:h-9 sm:w-9">
                                     <img
                                         src={iconGit}
                                         alt=""
                                         className="h-6 w-6 object-contain opacity-90 sm:h-7 sm:w-7"
                                     />
                                 </span>
-                                <span className={navTileLabel}>Git</span>
+                                <span className="max-w-full truncate px-0.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-600 group-hover:text-zinc-900 sm:text-xs">
+                                    Git
+                                </span>
                             </a>
                         </div>
                     </section>
