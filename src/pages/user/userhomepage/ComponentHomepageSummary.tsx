@@ -11,11 +11,11 @@ import {
 import axiosCustom from '../../../config/axiosCustom';
 
 const panel =
-    'rounded-lg border border-zinc-200/90 bg-white p-2.5 shadow-sm transition hover:shadow';
-const panelTitle = 'flex items-center gap-1.5 text-xs font-semibold text-zinc-800';
+    'rounded-2xl border-2 border-sky-200/80 bg-white/90 p-2.5 shadow-md shadow-sky-200/25 backdrop-blur-sm transition hover:shadow-lg hover:shadow-sky-200/40';
+const panelTitle = 'flex items-center gap-1.5 text-xs font-bold text-sky-900';
 const panelIconBtn =
-    'rounded-md border border-zinc-200 bg-white p-1 text-zinc-600 shadow-sm transition hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-40';
-const mutedText = 'text-[11px] leading-snug text-zinc-500';
+    'rounded-xl border-2 border-sky-200/70 bg-sky-50/80 p-1 text-sky-700 shadow-sm transition hover:border-sky-300 hover:bg-sky-100 hover:text-sky-900 disabled:opacity-40';
+const mutedText = 'text-[11px] leading-snug font-medium text-sky-700/75';
 
 interface HomepageSummary {
     _id: string;
@@ -94,7 +94,7 @@ const ComponentHomepageSummary = () => {
             >
                 <LucideChevronLeft className="h-3.5 w-3.5" strokeWidth={2} />
             </button>
-            <span className="rounded-md border border-sky-200 bg-sky-50 px-1.5 py-0.5 text-[10px] font-semibold text-sky-900">
+            <span className="rounded-lg border-2 border-sky-200 bg-sky-50 px-1.5 py-0.5 text-[10px] font-bold text-sky-900">
                 {summaryArr.length > 0 ? `${currentSummaryIndex + 1} / ${summaryArr.length}` : '0 / 0'}
             </span>
             <button
@@ -134,7 +134,7 @@ const ComponentHomepageSummary = () => {
                     <p className={mutedText}>
                         {new Date(summaryArr[currentSummaryIndex].generatedAtUtc).toLocaleString()}
                     </p>
-                    <div className="mt-1 max-h-[120px] overflow-y-auto whitespace-pre-wrap text-xs leading-relaxed text-zinc-700">
+                    <div className="mt-1 max-h-[120px] overflow-y-auto whitespace-pre-wrap text-xs font-medium leading-relaxed text-sky-900/90">
                         {summaryArr[currentSummaryIndex].summary}
                     </div>
                 </div>

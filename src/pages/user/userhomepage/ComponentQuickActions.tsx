@@ -20,13 +20,13 @@ import toast from 'react-hot-toast';
 import axiosCustom from '../../../config/axiosCustom';
 
 const panel =
-    'rounded-lg border border-zinc-200/90 bg-white p-2.5 shadow-sm transition hover:shadow';
+    'rounded-2xl border-2 border-sky-200/80 bg-white/90 p-2.5 shadow-md shadow-sky-200/25 backdrop-blur-sm transition hover:shadow-lg hover:shadow-sky-200/40';
 const panelHeader = 'mb-1.5 flex items-center justify-between gap-1.5';
-const panelTitle = 'flex items-center gap-1.5 text-xs font-semibold text-zinc-800';
+const panelTitle = 'flex items-center gap-1.5 text-xs font-bold text-sky-900';
 const panelIconBtn =
-    'rounded-md border border-zinc-200 bg-white p-1 text-zinc-600 shadow-sm transition hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-40';
+    'rounded-xl border-2 border-sky-200/70 bg-sky-50/80 p-1 text-sky-700 shadow-sm transition hover:border-sky-300 hover:bg-sky-100 hover:text-sky-900 disabled:opacity-40';
 const chipAction =
-    'inline-flex items-center gap-1 rounded-md border border-zinc-200 bg-white px-2 py-1 text-[11px] font-medium text-zinc-700 shadow-sm transition hover:border-teal-300 hover:bg-teal-50/70 disabled:opacity-50';
+    'inline-flex items-center gap-1 rounded-xl border-2 border-sky-200/70 bg-white/95 px-2 py-1 text-[11px] font-semibold text-sky-800 shadow-sm transition hover:-translate-y-px hover:border-cyan-300 hover:bg-gradient-to-r hover:from-sky-50 hover:to-cyan-50 disabled:opacity-50';
 
 const QuickActionsComponent = () => {
     const [isActionsExpanded, setIsActionsExpanded] = useState(true);
@@ -262,10 +262,10 @@ const QuickActionsComponent = () => {
     };
 
     return (
-        <div className={`${panel} border-l-4 border-l-amber-400/70`}>
+        <div className={`${panel} border-l-4 border-l-cyan-400`}>
             <div className={panelHeader}>
                 <h2 className={panelTitle}>
-                    <LucideZap className="h-3.5 w-3.5 text-amber-600" strokeWidth={2} />
+                    <LucideZap className="h-3.5 w-3.5 text-cyan-500" strokeWidth={2} />
                     Quick actions
                 </h2>
                 <button

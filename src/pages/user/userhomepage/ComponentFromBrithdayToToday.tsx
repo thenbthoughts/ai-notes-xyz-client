@@ -5,9 +5,9 @@ import axiosCustom from '../../../config/axiosCustom';
 import { Link } from 'react-router-dom';
 
 const panel =
-    'rounded-lg border border-zinc-200/90 bg-white p-2.5 shadow-sm transition hover:shadow';
-const panelTitle = 'flex items-center gap-1.5 text-xs font-semibold text-zinc-800';
-const mutedText = 'text-[11px] leading-snug text-zinc-500';
+    'rounded-2xl border-2 border-sky-200/80 bg-white/90 p-2.5 shadow-md shadow-sky-200/25 backdrop-blur-sm transition hover:shadow-lg hover:shadow-sky-200/40';
+const panelTitle = 'flex items-center gap-1.5 text-xs font-bold text-sky-900';
+const mutedText = 'text-[11px] leading-snug font-medium text-sky-700/75';
 
 const ComponentFromBrithdayToToday = () => {
     const [birthday, setBirthday] = useState('0000-00-00');
@@ -81,40 +81,40 @@ const ComponentFromBrithdayToToday = () => {
         <div className="space-y-2">
             {birthday !== '0000-00-00' && (
                 <Fragment>
-                    <div className={`${panel} border-l-[3px] border-l-sky-400`}>
+                    <div className={`${panel} border-l-4 border-l-sky-400`}>
                         <p className={`${panelTitle} mb-1`}>
                             <LucideClock className="h-3.5 w-3.5 text-sky-600" strokeWidth={2} />
                             Your age
                         </p>
-                        <p className="text-base font-semibold text-zinc-900">
+                        <p className="text-base font-extrabold text-sky-950">
                             {Math.floor(age.years)}{' '}
-                            <span className="text-xs font-normal text-zinc-500">years</span>
+                            <span className="text-xs font-semibold text-sky-600/80">years</span>
                         </p>
                         <p className={`${mutedText} mt-0.5`}>
                             {totalMonths.toLocaleString()} mo · {totalDays.toLocaleString()} d ·{' '}
                             {totalHours.toLocaleString()} h · {totalSeconds.toLocaleString()} s
                         </p>
                     </div>
-                    <div className={`${panel} border-l-[3px] border-l-emerald-500`}>
+                    <div className={`${panel} border-l-4 border-l-cyan-400`}>
                         <h2 className={`${panelTitle} mb-1`}>
-                            <LucideCake className="h-3.5 w-3.5 text-emerald-600" strokeWidth={2} />
+                            <LucideCake className="h-3.5 w-3.5 text-cyan-600" strokeWidth={2} />
                             Next birthday
                         </h2>
-                        <p className="text-xs font-medium text-zinc-700">
+                        <p className="text-xs font-semibold text-sky-800">
                             {nextBirthday}
-                            <span className="text-zinc-400"> · </span>
+                            <span className="text-sky-400"> · </span>
                             {timeRemaining}
                         </p>
                     </div>
                 </Fragment>
             )}
 
-            <div className={`${panel} border-l-[3px] border-l-amber-400`}>
+            <div className={`${panel} border-l-4 border-l-blue-400`}>
                 <h2 className={`${panelTitle} mb-1`}>
-                    <LucideQuote className="h-3.5 w-3.5 text-amber-600" strokeWidth={2} />
+                    <LucideQuote className="h-3.5 w-3.5 text-blue-500" strokeWidth={2} />
                     Quote
                 </h2>
-                <p className="text-xs leading-relaxed text-zinc-600">
+                <p className="text-xs font-medium leading-relaxed text-sky-800/90">
                     &ldquo;Set a goal. Break it into tiny steps. Work on them one by one. And don&apos;t
                     forget—life&apos;s meant to be enjoyed too!&rdquo;
                 </p>
@@ -123,9 +123,9 @@ const ComponentFromBrithdayToToday = () => {
             {birthday === '0000-00-00' && (
                 <Link
                     to="/user/setting"
-                    className={`${panel} block border-l-[3px] border-l-rose-400 transition hover:bg-rose-50/50`}
+                    className={`${panel} block border-l-4 border-l-rose-400 transition hover:bg-rose-50/40`}
                 >
-                    <p className="text-xs font-medium text-rose-800">
+                    <p className="text-xs font-semibold text-rose-800">
                         No birthday set yet. Open settings to add your date of birth.
                     </p>
                 </Link>

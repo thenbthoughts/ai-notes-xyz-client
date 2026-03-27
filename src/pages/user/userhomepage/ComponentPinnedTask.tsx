@@ -15,11 +15,11 @@ import axiosCustom from '../../../config/axiosCustom';
 import { tsPageTask } from '../../../types/pages/tsPageTaskList';
 
 const panel =
-    'rounded-lg border border-zinc-200/90 bg-white p-2.5 shadow-sm transition hover:shadow';
-const panelTitle = 'flex items-center gap-1.5 text-xs font-semibold text-zinc-800';
+    'rounded-2xl border-2 border-sky-200/80 bg-white/90 p-2.5 shadow-md shadow-sky-200/25 backdrop-blur-sm transition hover:shadow-lg hover:shadow-sky-200/40';
+const panelTitle = 'flex items-center gap-1.5 text-xs font-bold text-sky-900';
 const panelIconBtn =
-    'rounded-md border border-zinc-200 bg-white p-1 text-zinc-600 shadow-sm transition hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-40';
-const mutedText = 'text-[11px] leading-snug text-zinc-500';
+    'rounded-xl border-2 border-sky-200/70 bg-sky-50/80 p-1 text-sky-700 shadow-sm transition hover:border-sky-300 hover:bg-sky-100 hover:text-sky-900 disabled:opacity-40';
+const mutedText = 'text-[11px] leading-snug font-medium text-sky-700/75';
 
 const ComponentPinnedTask = () => {
     const [taskArr, setTaskArr] = useState([] as tsPageTask[]);
@@ -44,10 +44,10 @@ const ComponentPinnedTask = () => {
     }
 
     return (
-        <div className={`${panel} border-l-[3px] border-l-violet-500`}>
+        <div className={`${panel} border-l-4 border-l-indigo-400`}>
             <h2 className={`${panelTitle} mb-1.5`}>
-                <Link to="/user/task" className="flex items-center gap-1.5 hover:text-violet-700">
-                    <LucideList className="h-3.5 w-3.5 text-violet-600" strokeWidth={2} />
+                <Link to="/user/task" className="flex items-center gap-1.5 hover:text-indigo-700">
+                    <LucideList className="h-3.5 w-3.5 text-indigo-600" strokeWidth={2} />
                     Pinned tasks
                 </Link>
             </h2>
@@ -57,7 +57,7 @@ const ComponentPinnedTask = () => {
                     title="Add task"
                     to="/user/task?add-task-dialog=yes"
                 >
-                    <LucidePlus className="h-3.5 w-3.5 text-violet-600" strokeWidth={2} />
+                    <LucidePlus className="h-3.5 w-3.5 text-indigo-600" strokeWidth={2} />
                 </Link>
                 <button
                     type="button"
@@ -68,7 +68,7 @@ const ComponentPinnedTask = () => {
                 >
                     <LucideChevronLeft className="h-3.5 w-3.5" strokeWidth={2} />
                 </button>
-                <span className="rounded-md border border-violet-200 bg-violet-50 px-1.5 py-0.5 text-[10px] font-semibold text-violet-800">
+                <span className="rounded-lg border-2 border-indigo-200 bg-indigo-50 px-1.5 py-0.5 text-[10px] font-bold text-indigo-800">
                     {currentTaskIndex + 1} / {taskArr.length}
                 </span>
                 <button
@@ -82,9 +82,9 @@ const ComponentPinnedTask = () => {
                 </button>
             </div>
             <div>
-                <p className="mb-1 flex items-start gap-1.5 text-xs font-semibold text-zinc-900">
+                <p className="mb-1 flex items-start gap-1.5 text-xs font-bold text-sky-950">
                     {taskArr[currentTaskIndex]?.isTaskPinned && (
-                        <LucidePin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-violet-500" strokeWidth={2} />
+                        <LucidePin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-indigo-500" strokeWidth={2} />
                     )}
                     {taskArr[currentTaskIndex]?.title}
                 </p>
@@ -100,14 +100,14 @@ const ComponentPinnedTask = () => {
                             key={subTask._id}
                             className={`flex items-center gap-1.5 text-[11px] ${
                                 subTask.taskCompletedStatus
-                                    ? 'text-zinc-400 line-through'
-                                    : 'text-zinc-700'
+                                    ? 'text-sky-400 line-through'
+                                    : 'text-sky-800'
                             }`}
                         >
                             {subTask.taskCompletedStatus ? (
-                                <LucideSquareCheck className="h-3.5 w-3.5 shrink-0 text-violet-500" strokeWidth={2} />
+                                <LucideSquareCheck className="h-3.5 w-3.5 shrink-0 text-indigo-500" strokeWidth={2} />
                             ) : (
-                                <LucideSquare className="h-3.5 w-3.5 shrink-0 text-zinc-400" strokeWidth={2} />
+                                <LucideSquare className="h-3.5 w-3.5 shrink-0 text-sky-300" strokeWidth={2} />
                             )}
                             {subTask.title}
                         </li>
@@ -116,7 +116,7 @@ const ComponentPinnedTask = () => {
                 <div className="mt-2">
                     <Link
                         to={`/user/task?workspace=${taskArr[currentTaskIndex]?.taskWorkspaceId}&edit-task-id=${taskArr[currentTaskIndex]?._id}`}
-                        className="inline-flex items-center gap-1 rounded-md border border-violet-200 bg-violet-50 px-2 py-1 text-[10px] font-medium text-violet-800 transition hover:bg-violet-100"
+                        className="inline-flex items-center gap-1 rounded-xl border-2 border-indigo-200 bg-indigo-50 px-2 py-1 text-[10px] font-bold text-indigo-800 transition hover:bg-indigo-100"
                     >
                         <LucideEdit className="h-3 w-3" strokeWidth={2} />
                         Edit
