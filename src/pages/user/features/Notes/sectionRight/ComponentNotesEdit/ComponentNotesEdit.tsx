@@ -2,7 +2,18 @@ import { useState, useEffect } from 'react';
 import { AxiosRequestConfig } from 'axios';
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
 import { Link, useNavigate } from 'react-router-dom';
-import { LucideArrowLeft, LucideCopy, LucideMessageSquare, LucidePlus, LucideSave, LucideSettings, LucideTrash, LucideX } from 'lucide-react';
+import {
+    LucideArrowLeft,
+    LucideBot,
+    LucideCopy,
+    LucideMessageSquare,
+    LucidePlus,
+    LucideSave,
+    LucideSparkles,
+    LucideStar,
+    LucideTrash2,
+    LucideX,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSetAtom } from 'jotai';
 import htmlToMarkdown from '@wcj/html-to-markdown';
@@ -14,81 +25,10 @@ import CommentCommonComponent from '../../../../../../components/commentCommonCo
 import CommonComponentAiFaq from '../../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq';
 import CommonComponentAiKeywords from '../../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords';
 import SpeechToTextComponent from '../../../../../../components/componentCommon/SpeechToTextComponent';
+import { NotesWorkspacePicker } from '../../sectionLeft/NotesWorkspacePicker.tsx';
 
-const ComponentNotesEditWorkspace = ({
-    workspaceId,
-    setWorkspaceId,
-}: {
-    workspaceId: string;
-    setWorkspaceId: (workspaceId: string) => void;
-}) => {
-    interface NotesWorkspaceItem {
-        _id: string;
-        title: string;
-    }
-    const [workspaces, setWorkspaces] = useState<NotesWorkspaceItem[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-
-    useEffect(() => {
-        const fetchWorkspaces = async () => {
-            try {
-                const result = await axiosCustom.post<{
-                    docs: NotesWorkspaceItem[]
-                }>('/api/notes-workspace/crud/notesWorkspaceGet');
-                setWorkspaces(result.data.docs);
-            } catch (err) {
-                toast.error('Failed to load workspaces');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchWorkspaces();
-    }, []);
-
-    return (
-        <div>
-            {loading && (
-                <select
-                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
-                    value=""
-                    onChange={() => { }}
-                >
-                    <option value="000000000000000000000000">Loading...</option>
-                </select>
-            )}
-            {!loading && (
-                <div className="mb-4">
-                    <label className="block text-sm font-medium pb-2">
-                        Workspace
-                        <Link
-                            to={'/user/notes-workspace'}
-                            className="ml-2 p-0 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300 inline-block text-sm"
-                        >
-                            <LucideSettings className="inline-block m-1"
-                                size={'20px'}
-                            />
-                        </Link>
-                    </label>
-                    <select
-                        className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        value={workspaceId}
-                        onChange={(e) => {
-                            // Handle workspace selection
-                            setWorkspaceId(e.target.value);
-                        }}
-                    >
-                        {workspaces.map((workspace) => (
-                            <option key={workspace._id} value={workspace._id}>
-                                {workspace.title}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-            )}
-        </div>
-    );
-};
+const panelTitle =
+    'text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500';
 
 const ComponentNotesEdit = ({
     notesObj
@@ -102,7 +42,7 @@ const ComponentNotesEdit = ({
         loading: false,
         success: '',
         error: '',
-    })
+    });
 
     const [formData, setFormData] = useState({
         title: notesObj.title,
@@ -112,7 +52,7 @@ const ComponentNotesEdit = ({
         aiTags: notesObj.aiTags,
         aiSummary: notesObj.aiSummary,
         aiSuggestions: notesObj.aiSuggestions,
-        tagsInput: '', // Temporary field for tag input
+        tagsInput: '',
         notesWorkspaceId: notesObj.notesWorkspaceId,
     } as {
         title: string;
@@ -122,7 +62,7 @@ const ComponentNotesEdit = ({
         aiTags: string[];
         aiSummary: string;
         aiSuggestions: string;
-        tagsInput: string; // Temporary field for tag input
+        tagsInput: string;
         notesWorkspaceId: string;
     });
 
@@ -154,14 +94,14 @@ const ComponentNotesEdit = ({
             setWorkspaceRefresh(prev => prev + 1);
         } catch (error) {
             console.error(error);
-            toast.error('An error occurred while trying to edit the note. Please try again later.')
+            toast.error('An error occurred while trying to edit the note. Please try again later.');
             setRequestEdit({
                 loading: false,
                 success: '',
                 error: 'An error occurred while trying to edit the note. Please try again later.',
             });
         }
-    }
+    };
 
     const deleteRecord = async () => {
         try {
@@ -185,11 +125,11 @@ const ComponentNotesEdit = ({
 
             setWorkspaceRefresh(prev => prev + 1);
             toast.success('Note deleted successfully!');
-            navigate(`/user/notes?workspace=${notesObj.notesWorkspaceId}`);
+            navigate(`/user/notes?workspace=${formData.notesWorkspaceId}`);
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const openAiChatWithNote = async () => {
         try {
@@ -198,15 +138,13 @@ const ComponentNotesEdit = ({
                 {
                     isPersonalContextEnabled: false,
                     isAutoAiContextSelectEnabled: false,
-
-                    // selected model
                     aiModelProvider: 'openrouter',
                     aiModelName: 'openrouter/auto',
                 }
             );
 
             const tempThreadId = resultThread?.data?.thread?._id;
-           
+
             const markdownContent = await htmlToMarkdown({
                 html: formData.description,
             });
@@ -220,321 +158,294 @@ const ComponentNotesEdit = ({
                 imagePathsArr: []
             });
 
-            // redirect
-            const redirectUrl = `/user/chat?id=${tempThreadId}`;
-            navigate(redirectUrl);
+            navigate(`/user/chat?id=${tempThreadId}`);
         } catch (error) {
             console.error(error);
             toast.error('Error chatting with AI. Please try again.');
         }
-    }
+    };
 
-    const renderButtonAction = () => {
-        return (
-            <div className="flex gap-2 pt-3 pb-5">
-                <button
-                    type="button"
-                    className="px-4 py-2 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 text-white rounded-sm hover:from-purple-600 hover:via-blue-600 hover:to-cyan-600 disabled:opacity-50 flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                    onClick={openAiChatWithNote}
+    const shortId = notesObj._id.slice(-6);
+
+    return (
+        <div className="flex min-h-[calc(100vh-60px)] flex-col bg-[#f6f6f4] text-zinc-900">
+            {/* Command bar */}
+            <header className="sticky top-0 z-30 flex flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-[#fdfdfc]/95 px-3 py-2 backdrop-blur-md">
+                <Link
+                    to={`/user/notes?workspace=${formData.notesWorkspaceId}`}
+                    className="inline-flex h-9 items-center gap-1.5 rounded-none border border-zinc-300 bg-white px-2.5 text-xs font-medium text-zinc-800 shadow-[2px_2px_0_0_rgb(24_24_27)] hover:bg-zinc-50 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
                 >
-                    <LucideMessageSquare className="w-4 h-4" />
-                    Open AI Chat with Note
-                </button>
-            </div>
-        )
-    }
+                    <LucideArrowLeft className="h-4 w-4" strokeWidth={2} />
+                    Notes
+                </Link>
 
-    const renderEditFields = () => {
-        return (
-            <div className="space-y-4">
-                {/* field -> is star */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Is Starred</label>
-                    <input
-                        type="checkbox"
-                        checked={formData.isStar}
-                        className="mt-1"
-                        onChange={(e) => setFormData({ ...formData, isStar: e.target.checked })}
-                    />
+                <span className="hidden font-mono text-[10px] text-zinc-400 sm:inline md:hidden lg:inline">
+                    · {shortId}
+                </span>
+
+                <div className="ml-auto flex flex-wrap items-center gap-1.5">
+                    <button
+                        type="button"
+                        onClick={openAiChatWithNote}
+                        className="inline-flex h-9 items-center gap-1 rounded-none border border-violet-500 bg-violet-500 px-2.5 text-xs font-semibold text-white shadow-[2px_2px_0_0_rgb(91_33_182)] hover:bg-violet-600 active:translate-x-px active:translate-y-px active:shadow-none"
+                    >
+                        <LucideMessageSquare className="h-3.5 w-3.5" strokeWidth={2} />
+                        AI chat
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => deleteRecord()}
+                        className="inline-flex h-9 items-center gap-1 rounded-none border border-red-300 bg-white px-2.5 text-xs font-medium text-red-700 hover:bg-red-50"
+                    >
+                        <LucideTrash2 className="h-3.5 w-3.5" strokeWidth={2} />
+                        Delete
+                    </button>
+                    <button
+                        type="button"
+                        disabled={requestEdit.loading}
+                        onClick={() => editRecord()}
+                        className="inline-flex h-9 items-center gap-1.5 rounded-none border border-emerald-700 bg-emerald-600 px-3 text-xs font-bold uppercase tracking-wide text-white shadow-[2px_2px_0_0_rgb(6_95_70)] hover:bg-emerald-500 disabled:opacity-50 active:translate-x-px active:translate-y-px active:shadow-none"
+                    >
+                        <LucideSave className="h-3.5 w-3.5" strokeWidth={2} />
+                        {requestEdit.loading ? 'Saving…' : 'Save'}
+                    </button>
                 </div>
+            </header>
 
-                {/* field -> workspace */}
-                <div>
-                    <ComponentNotesEditWorkspace
-                        workspaceId={formData.notesWorkspaceId}
-                        setWorkspaceId={(workspaceId: string) => setFormData({ ...formData, notesWorkspaceId: workspaceId })}
-                    />
-                </div>
-
-                {/* field -> title */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Title *</label>
-                    <input
-                        type="text"
-                        value={formData.title}
-                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
-                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    />
-                    <div className="flex items-center mt-1">
-                        <span className='pr-2 py-1'>
+            {/* Body: editor + sidebar */}
+            <div className="flex flex-1 flex-col xl:flex-row xl:items-stretch">
+                {/* Main column */}
+                <main className="min-w-0 flex-1 border-zinc-200 xl:border-r">
+                    <div className="border-b border-zinc-200 bg-white px-4 py-4 sm:px-6 sm:py-5">
+                        <div className="mb-3 flex flex-wrap items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, isStar: !formData.isStar })}
+                                className={
+                                    (formData.isStar
+                                        ? 'border-amber-400 bg-amber-50 text-amber-900 '
+                                        : 'border-zinc-200 bg-zinc-50 text-zinc-500 hover:text-zinc-800 ') +
+                                    'inline-flex items-center gap-1 rounded-none border px-2 py-1 text-[11px] font-semibold uppercase tracking-wide'
+                                }
+                            >
+                                <LucideStar
+                                    className={'h-3.5 w-3.5 ' + (formData.isStar ? 'fill-amber-400 text-amber-600' : '')}
+                                    strokeWidth={2}
+                                />
+                                Starred
+                            </button>
                             <SpeechToTextComponent
                                 onTranscriptionComplete={(text: string) => {
                                     if (text.trim() !== '') {
-                                        setFormData({ ...formData, title: formData.title + ' ' + text })
+                                        setFormData({ ...formData, title: formData.title + ' ' + text });
                                     }
                                 }}
                                 parentEntityId={notesObj._id}
                             />
-                        </span>
-                        {formData?.title.length >= 1 && formData.title.includes("Empty Note") && (
-                            <button
-                                type="button"
-                                className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-sm"
-                                onClick={() => setFormData({ ...formData, title: '' })}
-                                aria-label="Clear title"
-                            >
-                                Clear
-                                <LucideX
-                                    className="w-4 h-4 inline-block ml-2"
-                                    style={{
-                                        position: 'relative',
-                                        top: '-2px',
-                                    }}
-                                />
-                            </button>
-                        )}
-                        {formData?.title.length >= 1 && (
-                            <button
-                                type="button"
-                                className="text-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 p-2 mt-1 rounded-sm ml-2"
-                                onClick={() => {
-                                    navigator.clipboard.writeText(formData.title);
-                                    toast.success('Title copied to clipboard!');
-                                }}
-                                aria-label="Copy title"
-                            >
-                                Copy
-                                <LucideCopy
-                                    className="w-4 h-4 inline-block ml-2"
-                                    style={{
-                                        position: 'relative',
-                                        top: '-2px',
-                                    }}
-                                />
-                            </button>
-                        )}
-                    </div>
-
-                </div>
-
-                {/* field -> description */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Description</label>
-                    {/* <textarea
-                        value={formData.description}
-                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        rows={10}
-                    /> */}
-                    <QuillEditorCustom1
-                        value={formData.description}
-                        setValue={(value) => setFormData({ ...formData, description: value })}
-                        featureType="notes"
-                        parentEntityId={notesObj._id}
-                        subType="messages"
-                    />
-                </div>
-
-                {/* field -> comments */}
-                <div>
-                    <CommentCommonComponent
-                        commentType="note"
-                        recordId={notesObj._id}
-                    />
-                </div>
-
-                {/* field -> tags */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Tags</label>
-                    <div className="flex flex-wrap gap-2 mb-2">
-                        {formData.tags.map((tag, idx) => (
-                            <span key={idx} className="inline-flex items-center bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-sm shadow-sm border border-yellow-200">
-                                {tag}
+                            {formData.title.length >= 1 && formData.title.includes('Empty Note') && (
                                 <button
                                     type="button"
-                                    className="ml-1 text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 rounded-sm px-1"
-                                    style={{ fontSize: '1rem', lineHeight: 1, marginLeft: 4 }}
-                                    onClick={() => {
-                                        setFormData({
-                                            ...formData,
-                                            tags: formData.tags.filter((_, i) => i !== idx)
-                                        });
-                                    }}
-                                    aria-label={`Remove tag ${tag}`}
+                                    className="rounded-none border border-zinc-200 bg-white px-2 py-1 text-[11px] font-medium hover:bg-zinc-50"
+                                    onClick={() => setFormData({ ...formData, title: '' })}
                                 >
-                                    X
+                                    Clear title <LucideX className="ml-0.5 inline h-3 w-3" />
                                 </button>
-                            </span>
-                        ))}
-                    </div>
-                    <div className="flex gap-2">
+                            )}
+                            {formData.title.length >= 1 && (
+                                <button
+                                    type="button"
+                                    className="rounded-none border border-zinc-200 bg-white px-2 py-1 text-[11px] font-medium hover:bg-zinc-50"
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(formData.title);
+                                        toast.success('Title copied');
+                                    }}
+                                >
+                                    Copy <LucideCopy className="ml-0.5 inline h-3 w-3" />
+                                </button>
+                            )}
+                        </div>
+
+                        <label className={panelTitle + ' mb-1 block'}>Title</label>
                         <input
                             type="text"
-                            value={formData.tagsInput || ''}
-                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
-                            onChange={e => setFormData({ ...formData, tagsInput: e.target.value })}
-                            onKeyDown={e => {
-                                if ((e.key === 'Enter' || e.key === ',') && formData.tagsInput && formData.tagsInput.trim() !== '') {
-                                    e.preventDefault();
-                                    const newTag = formData.tagsInput.trim();
-                                    if (!formData.tags.includes(newTag)) {
-                                        setFormData({
-                                            ...formData,
-                                            tags: [...formData.tags, newTag],
-                                            tagsInput: ''
-                                        });
-                                    } else {
-                                        setFormData({ ...formData, tagsInput: '' });
-                                    }
-                                }
-                            }}
-                            placeholder="Type a tag and press Enter or Comma"
+                            value={formData.title}
+                            className="w-full border-0 border-b-2 border-zinc-200 bg-transparent pb-2 text-xl font-semibold tracking-tight text-zinc-950 placeholder:text-zinc-400 focus:border-emerald-600 focus:outline-none focus:ring-0 sm:text-2xl"
+                            placeholder="Untitled note"
+                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         />
-                        <button
-                            type="button"
-                            className="mt-1 px-3 py-2 bg-blue-100 text-blue-800 rounded-sm hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
-                            onClick={() => {
-                                if (formData.tagsInput && formData.tagsInput.trim() !== '') {
-                                    const newTag = formData.tagsInput.trim();
-                                    if (!formData.tags.includes(newTag)) {
-                                        setFormData({
-                                            ...formData,
-                                            tags: [...formData.tags, newTag],
-                                            tagsInput: ''
-                                        });
-                                    } else {
-                                        setFormData({ ...formData, tagsInput: '' });
-                                    }
-                                }
-                            }}
-                            aria-label="Add tag"
-                        >
-                            <LucidePlus className="w-4 h-4" />
-                        </button>
-                    </div>
-                </div>
 
-                {/* field -> ai tags */}
-                {formData.aiTags.length > 0 && (
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">AI Tags</label>
-                        <div className="mt-2">
-                            {formData.aiTags.map((tag, index) => (
-                                <div key={index} className="inline-block bg-gray-100 rounded-sm p-1 px-2 text-sm text-gray-600 mb-2 mr-2">
-                                    {tag}
-                                </div>
-                            ))}
+                        <div className="mt-4">
+                            <label className={panelTitle + ' mb-2 block'}>Tags</label>
+                            <div className="mb-2 flex flex-wrap gap-1.5">
+                                {formData.tags.map((tag, idx) => (
+                                    <span
+                                        key={idx}
+                                        className="inline-flex items-center gap-1 rounded-none border border-zinc-300 bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-800"
+                                    >
+                                        {tag}
+                                        <button
+                                            type="button"
+                                            className="text-zinc-500 hover:text-red-600"
+                                            onClick={() =>
+                                                setFormData({
+                                                    ...formData,
+                                                    tags: formData.tags.filter((_, i) => i !== idx),
+                                                })}
+                                            aria-label={`Remove ${tag}`}
+                                        >
+                                            ×
+                                        </button>
+                                    </span>
+                                ))}
+                            </div>
+                            <div className="flex gap-1">
+                                <input
+                                    type="text"
+                                    value={formData.tagsInput || ''}
+                                    className="min-w-0 flex-1 rounded-none border border-zinc-300 bg-white py-1.5 px-2 text-sm focus:border-emerald-600 focus:outline-none"
+                                    placeholder="Add tag, Enter"
+                                    onChange={(e) => setFormData({ ...formData, tagsInput: e.target.value })}
+                                    onKeyDown={(e) => {
+                                        if (
+                                            (e.key === 'Enter' || e.key === ',') &&
+                                            formData.tagsInput &&
+                                            formData.tagsInput.trim() !== ''
+                                        ) {
+                                            e.preventDefault();
+                                            const newTag = formData.tagsInput.trim();
+                                            if (!formData.tags.includes(newTag)) {
+                                                setFormData({
+                                                    ...formData,
+                                                    tags: [...formData.tags, newTag],
+                                                    tagsInput: '',
+                                                });
+                                            } else {
+                                                setFormData({ ...formData, tagsInput: '' });
+                                            }
+                                        }
+                                    }}
+                                />
+                                <button
+                                    type="button"
+                                    className="rounded-none border border-zinc-300 bg-zinc-900 px-2.5 py-1.5 text-white hover:bg-zinc-800"
+                                    onClick={() => {
+                                        if (formData.tagsInput && formData.tagsInput.trim() !== '') {
+                                            const newTag = formData.tagsInput.trim();
+                                            if (!formData.tags.includes(newTag)) {
+                                                setFormData({
+                                                    ...formData,
+                                                    tags: [...formData.tags, newTag],
+                                                    tagsInput: '',
+                                                });
+                                            } else {
+                                                setFormData({ ...formData, tagsInput: '' });
+                                            }
+                                        }
+                                    }}
+                                    aria-label="Add tag"
+                                >
+                                    <LucidePlus className="h-4 w-4" strokeWidth={2} />
+                                </button>
+                            </div>
                         </div>
                     </div>
-                )}
 
-                {/* field -> ai summary */}
-                {formData.aiSummary.length > 0 && (
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">AI Summary</label>
-                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-sm p-3 text-gray-700 text-sm whitespace-pre-line break-words">
-                            {formData.aiSummary}
+                    <div className="bg-white px-4 py-3 sm:px-6">
+                        <label className={panelTitle + ' mb-2 block'}>Body</label>
+                        <div className="rounded-none border border-zinc-200 bg-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)]">
+                            <QuillEditorCustom1
+                                value={formData.description}
+                                setValue={(value) => setFormData({ ...formData, description: value })}
+                                featureType="notes"
+                                parentEntityId={notesObj._id}
+                                subType="messages"
+                            />
                         </div>
                     </div>
-                )}
 
-                {/* field -> ai suggestions */}
-                {formData.aiSuggestions.length > 0 && (
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">AI Suggestions</label>
-                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-sm p-3 text-gray-700 text-sm whitespace-pre-line break-words">
-                            {formData.aiSuggestions}
+                    <section className="border-t border-zinc-200 bg-[#fafaf8] px-4 py-4 sm:px-6">
+                        <h3 className={panelTitle + ' mb-2'}>Comments</h3>
+                        <div className="rounded-none border border-zinc-200 bg-white p-2 text-sm [&_*]:text-sm">
+                            <CommentCommonComponent commentType="note" recordId={notesObj._id} />
+                        </div>
+                    </section>
+                </main>
+
+                {/* Sidebar */}
+                <aside className="w-full shrink-0 border-zinc-200 bg-[#eef0ec] xl:w-[340px] xl:border-t-0 xl:border-l">
+                    <div className="sticky top-[52px] max-h-[calc(100vh-120px)] overflow-y-auto overscroll-contain px-3 py-4">
+                        <div className="mb-4 rounded-none border border-zinc-300/80 bg-white p-3 shadow-[3px_3px_0_0_rgb(228_228_231)]">
+                            <NotesWorkspacePicker
+                                selectedId={formData.notesWorkspaceId}
+                                onSelect={(workspaceId: string) =>
+                                    setFormData({ ...formData, notesWorkspaceId: workspaceId })}
+                            />
+                        </div>
+
+                        {(formData.aiTags.length > 0 ||
+                            formData.aiSummary.length > 0 ||
+                            formData.aiSuggestions.length > 0) && (
+                            <div className="mb-4 space-y-2">
+                                <h3 className={`${panelTitle} flex items-center gap-1 text-zinc-600`}>
+                                    <LucideSparkles className="h-3 w-3" />
+                                    From AI
+                                </h3>
+                                {formData.aiTags.length > 0 && (
+                                    <div className="rounded-none border border-zinc-200 bg-white p-2">
+                                        <p className="mb-1 text-[10px] font-bold uppercase text-zinc-500">Tags</p>
+                                        <div className="flex flex-wrap gap-1">
+                                            {formData.aiTags.map((tag, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="rounded-none border border-violet-200 bg-violet-50 px-1.5 py-0.5 text-[11px] text-violet-900"
+                                                >
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {formData.aiSummary.length > 0 && (
+                                    <details className="group rounded-none border border-zinc-200 bg-white open:shadow-sm" open>
+                                        <summary className="cursor-pointer list-none px-2 py-2 text-[11px] font-bold uppercase tracking-wide text-zinc-600 marker:content-none [&::-webkit-details-marker]:hidden">
+                                            <span className="flex items-center justify-between">
+                                                Summary
+                                                <LucideBot className="h-3.5 w-3.5 text-violet-500" />
+                                            </span>
+                                        </summary>
+                                        <div className="border-t border-zinc-100 px-2 py-2 text-xs leading-relaxed text-zinc-700 whitespace-pre-line">
+                                            {formData.aiSummary}
+                                        </div>
+                                    </details>
+                                )}
+                                {formData.aiSuggestions.length > 0 && (
+                                    <details className="rounded-none border border-zinc-200 bg-white">
+                                        <summary className="cursor-pointer list-none px-2 py-2 text-[11px] font-bold uppercase tracking-wide text-zinc-600 marker:content-none [&::-webkit-details-marker]:hidden">
+                                            Suggestions
+                                        </summary>
+                                        <div className="border-t border-zinc-100 px-2 py-2 text-xs leading-relaxed text-zinc-700 whitespace-pre-line">
+                                            {formData.aiSuggestions}
+                                        </div>
+                                    </details>
+                                )}
+                            </div>
+                        )}
+
+                        <div className="mb-4 space-y-3 [&_.rounded-sm]:rounded-none">
+                            <CommonComponentAiFaq sourceId={notesObj._id} />
+                        </div>
+                        <div className="[&_.rounded-sm]:rounded-none">
+                            <CommonComponentAiKeywords
+                                sourceId={notesObj._id}
+                                metadataSourceType="notes"
+                            />
                         </div>
                     </div>
-                )}
-
-                {/* field -> ai faq */}
-                <CommonComponentAiFaq
-                    sourceId={notesObj._id}
-                />
-
-                {/* field -> ai keyword */}
-                <CommonComponentAiKeywords
-                    sourceId={notesObj._id}
-                />
+                </aside>
             </div>
-        )
-    }
-
-    return (
-        <div>
-            {requestEdit.loading && (
-                <div className="flex justify-between my-4">
-                    <button
-                        className="px-3 py-1 rounded-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
-                    >
-                        <LucideArrowLeft className="w-4 h-4 inline-block mr-2" />
-                        Saving...
-                    </button>
-                </div>
-            )}
-            {!requestEdit.loading && (
-                <div className="flex justify-between my-4">
-                    <Link
-                        to={`/user/notes?workspace=${notesObj.notesWorkspaceId}`}
-                        className="px-3 py-1 rounded-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
-                    >
-                        <LucideArrowLeft className="w-4 h-4 inline-block mr-2" />
-                        Back
-                    </Link>
-                    <div className="flex gap-2">
-                        <button
-                            className="px-3 py-1 rounded-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
-                            onClick={() => {
-                                deleteRecord();
-                            }}
-                        >
-                            <LucideTrash
-                                className="w-4 h-4 inline-block mr-2"
-                                style={{
-                                    position: 'relative',
-                                    top: '-2px',
-                                }}
-                            />
-                            Delete
-                        </button>
-                        <button
-                            className="px-3 py-1 rounded-sm bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200"
-                            onClick={() => {
-                                editRecord();
-                            }}
-                            aria-label="Save"
-                        >
-                            <LucideSave
-                                className="w-4 h-4 inline-block mr-2"
-                                style={{
-                                    position: 'relative',
-                                    top: '-2px',
-                                }}
-                            />
-                            Save
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {renderButtonAction()}
-
-            {renderEditFields()}
-
         </div>
-    )
-}
+    );
+};
 
 const ComponentNotesEditWrapper = ({
     recordId
@@ -548,12 +459,10 @@ const ComponentNotesEditWrapper = ({
 
     useEffect(() => {
         fetchList();
-    }, [
-        recordId,
-    ])
+    }, [recordId]);
 
     const fetchList = async () => {
-        setLoading(true); // Set loading to true before the fetch
+        setLoading(true);
         try {
             const config = {
                 method: 'post',
@@ -567,56 +476,49 @@ const ComponentNotesEditWrapper = ({
             } as AxiosRequestConfig;
 
             const response = await axiosCustom.request(config);
-            console.log(response.data);
-            console.log(response.data.docs);
 
             let tempArr = [];
             if (Array.isArray(response.data.docs)) {
                 tempArr = response.data.docs;
             }
-            setLoading(false);
             setList(tempArr);
             setWorkspaceRefresh(prev => prev + 1);
         } catch (error) {
             console.error(error);
         } finally {
-            setLoading(false); // Set loading to false after the fetch is complete
+            setLoading(false);
         }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex min-h-[calc(100vh-60px)] flex-col items-center justify-center bg-[#f6f6f4] px-4">
+                <div className="max-w-xs border border-zinc-300 bg-white p-6 text-center shadow-[4px_4px_0_0_rgb(24_24_27)]">
+                    <p className="font-mono text-xs uppercase tracking-widest text-zinc-500">Loading note</p>
+                    <div className="loader mt-3" />
+                </div>
+            </div>
+        );
     }
 
-    return (
-        <div className='bg-white rounded-sm p-4'>
-            <h1 className="text-3xl font-bold text-gray-800 my-4">Notes {'->'} Edit</h1>
-            {loading && (
-                <div className="text-center">
-                    <p className="text-lg text-blue-500">Loading...</p>
-                    <div className="loader"></div>
+    if (list.length === 0) {
+        return (
+            <div className="flex min-h-[calc(100vh-60px)] flex-col items-center justify-center bg-[#f6f6f4] px-4">
+                <div className="max-w-md border-2 border-red-200 bg-white p-6 text-center shadow-[4px_4px_0_0_rgb(248_113_113)]">
+                    <p className="text-sm font-semibold text-red-800">This note doesn’t exist or was removed.</p>
+                    <button
+                        type="button"
+                        className="mt-4 rounded-none border border-zinc-900 bg-zinc-900 px-4 py-2 text-xs font-bold uppercase tracking-wide text-white hover:bg-zinc-800"
+                        onClick={() => navigate('/user/notes')}
+                    >
+                        Back to notes
+                    </button>
                 </div>
-            )}
-            {!loading && list.length === 0 && (
-                <div>
-                    <div className="text-center">
-                        <p className="text-lg text-red-500">Record does not exist.</p>
-                        <button
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600"
-                            onClick={() => {
-                                navigate('/user/notes');
-                            }}
-                        >
-                            Back
-                        </button>
-                    </div>
-                </div>
-            )}
-            {!loading && list.length === 1 && (
-                <div>
-                    <ComponentNotesEdit
-                        notesObj={list[0]}
-                    />
-                </div>
-            )}
-        </div>
-    )
+            </div>
+        );
+    }
+
+    return <ComponentNotesEdit notesObj={list[0]} />;
 };
 
 export default ComponentNotesEditWrapper;

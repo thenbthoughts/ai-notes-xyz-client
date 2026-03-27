@@ -9,7 +9,9 @@ import { useEffect, useState } from "react";
 
 const getModalStyles = (isMobile: boolean) => ({
     overlay: {
-        backgroundColor: 'rgb(0 0 0 / 75%)',
+        backgroundColor: 'rgb(15 23 42 / 55%)',
+        backdropFilter: 'blur(6px)',
+        WebkitBackdropFilter: 'blur(6px)',
         zIndex: 1000,
     },
     content: isMobile ? {
@@ -35,10 +37,10 @@ const getModalStyles = (isMobile: boolean) => ({
         height: '85vh',
         maxHeight: '800px',
         border: 'none',
-        borderRadius: '8px',
+        borderRadius: '16px',
         background: 'transparent',
         overflow: 'hidden',
-        boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.25)',
+        boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.35), 0 0 0 1px rgb(0 0 0 / 0.06)',
     },
 });
 

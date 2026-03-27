@@ -30,6 +30,9 @@ import {
     jotaiStateNotesWorkspaceId
 } from './stateJotai/notesStateJotai.ts';
 
+const railBtnClass =
+    'flex items-center justify-center py-1.5 rounded-md bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white active:bg-zinc-600 transition-colors';
+
 const NotesWrapper = () => {
 
     // useState
@@ -101,46 +104,25 @@ const NotesWrapper = () => {
     }
 
     return (
-        <div style={{ display: 'flex', width: '100%' }}>
-            <div
-                style={{
-                    width: 'calc(100vw - 50px)'
-                }}
-            >
-                <div className='container mx-auto px-1'>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row'
-                        }}
-                    >
+        <div className="flex w-full">
+            <div className="w-[calc(100vw-50px)] min-w-0">
+                <div className="w-full max-w-none px-0">
+                    <div className="flex flex-row">
                         {/* part 1 -> 25% */}
                         {screenWidth === screenList.lg && (
-                            <div
-                                style={{
-                                    width: '25%'
-                                }}
-                            >
+                            <div className="w-[25%] min-w-0 shrink-0">
                                 <ComponentNotesLeftRender />
                             </div>
                         )}
 
                         {/* part 2 -> 75% */}
                         <div
-                            style={{
-                                width: screenWidth === screenList.lg ? '75%' : '100%'
-                            }}
+                            className={
+                                screenWidth === screenList.lg ? 'w-[75%] min-w-0' : 'w-full min-w-0'
+                            }
                         >
-                            <div style={{
-                                maxWidth: '1320px',
-                                margin: '0 auto',
-                            }}>
-                                {/*  */}
-                                <div
-                                    style={{
-                                        height: 'calc(100vh - 60px)',
-                                    }}
-                                >
+                            <div className="w-full max-w-none mx-0">
+                                <div className="h-[calc(100vh-60px)]">
                                     <ComponentRightWrapper
                                         refreshRandomNumParent={refreshRandomNum}
                                     />
@@ -151,94 +133,63 @@ const NotesWrapper = () => {
                 </div>
             </div>
 
-            {/* part 3 -> 50px */}
+            {/* part 3 -> 50px tool rail */}
             <div
-                style={{
-                    width: '50px',
-                }}
-                className='text-center flex flex-col items-center justify-center'
+                className="w-[50px] shrink-0 flex flex-col items-stretch bg-zinc-900 border-l border-zinc-800 py-0.5"
             >
-                <div className='w-full'>
-                    {/* setting */}
-                    <div
-                        className='p-1 cursor-pointer'
-                    >
-                        <div className={`py-3 rounded-sm bg-gray-600`}>
-                            <Link to={'/user/setting'}>
-                                <LucideSettings
-                                    style={{
-                                        width: '100%',
-                                        color: 'white', // Set icon color to white
-                                    }}
-                                    className=''
-                                />
-                            </Link>
-                        </div>
+                <div className="flex flex-col gap-0.5 px-0.5 w-full">
+                    <div className="cursor-pointer">
+                        <Link
+                            to={'/user/setting'}
+                            className={`block ${railBtnClass}`}
+                            title="Settings"
+                        >
+                            <LucideSettings className="w-4 h-4" strokeWidth={1.75} />
+                        </Link>
                     </div>
 
-                    {/* add */}
-                    <div
-                        className='p-1 cursor-pointer'
+                    <button
+                        type="button"
+                        className={`w-full cursor-pointer border-0 ${railBtnClass}`}
                         onClick={() => {
                             notesAddAxiosLocal();
                         }}
+                        title="New note"
                     >
-                        <div className={`py-3 rounded-sm bg-gray-600`}>
-                            <LucidePlus
-                                style={{
-                                    width: '100%',
-                                    color: 'white',
-                                }}
-                                className=''
-                            />
-                        </div>
-                    </div>
+                        <LucidePlus className="w-4 h-4" strokeWidth={1.75} />
+                    </button>
 
-                    {/* move up */}
-                    <div
-                        className='p-1 cursor-pointer'
+                    <button
+                        type="button"
+                        className={`w-full cursor-pointer border-0 ${railBtnClass}`}
                         onClick={() => {
                             const messagesScrollUp = document.getElementById('messagesScrollUp');
                             if (messagesScrollUp) {
-                                messagesScrollUp?.scrollIntoView({ behavior: "smooth" });
+                                messagesScrollUp?.scrollIntoView({ behavior: 'smooth' });
                             }
                         }}
+                        title="Scroll to top"
                     >
-                        <div className='py-3 bg-gray-600 rounded'>
-                            <LucideMoveUp
-                                style={{
-                                    width: '100%',
-                                    color: 'white', // Set icon color to white
-                                }}
-                                className=''
-                            />
-                        </div>
-                    </div>
+                        <LucideMoveUp className="w-4 h-4" strokeWidth={1.75} />
+                    </button>
 
-                    {/* move up */}
-                    <div
-                        className='p-1 cursor-pointer'
+                    <button
+                        type="button"
+                        className={`w-full cursor-pointer border-0 ${railBtnClass}`}
                         onClick={() => {
                             const messagesScrollDown = document.getElementById('messagesScrollDown');
                             if (messagesScrollDown) {
-                                messagesScrollDown?.scrollIntoView({ behavior: "smooth" });
+                                messagesScrollDown?.scrollIntoView({ behavior: 'smooth' });
                             }
                         }}
+                        title="Scroll to bottom"
                     >
-                        <div className='py-3 bg-gray-600 rounded'>
-                            <LucideMoveDown
-                                style={{
-                                    width: '100%',
-                                    color: 'white', // Set icon color to white
-                                }}
-                                className=''
-                            />
-                        </div>
-                    </div>
+                        <LucideMoveDown className="w-4 h-4" strokeWidth={1.75} />
+                    </button>
 
-                    {/* refresh */}
-                    <div
-                        className='p-1 cursor-pointer'
+                    <button
+                        type="button"
+                        className={`w-full cursor-pointer border-0 ${railBtnClass}`}
                         onClick={() => {
                             toast.success('Refreshing...');
                             setRefreshRandomNum(
@@ -247,42 +198,30 @@ const NotesWrapper = () => {
                                 )
                             );
                         }}
+                        title="Refresh"
                     >
-                        <div className='py-3 bg-gray-600 rounded'>
-                            <LucideRefreshCcw
-                                style={{
-                                    width: '100%',
-                                    color: 'white', // Set icon color to white
-                                }}
-                                className=''
-                            />
-                        </div>
-                    </div>
+                        <LucideRefreshCcw className="w-4 h-4" strokeWidth={1.75} />
+                    </button>
 
-                    {/* chat history */}
                     {screenWidth === screenList.sm && (
-                        <div
-                            className='p-1 cursor-pointer'
+                        <button
+                            type="button"
+                            className={`w-full cursor-pointer border-0 py-1.5 rounded-md transition-colors ${
+                                stateDisplayChatHistory
+                                    ? 'bg-indigo-600 text-white hover:bg-indigo-500'
+                                    : 'bg-zinc-800 text-zinc-200 hover:bg-zinc-700'
+                            }`}
                             onClick={() => {
                                 setStateDisplayChatHistory(!stateDisplayChatHistory);
                             }}
+                            title="Sidebar"
                         >
-                            <div className={`py-3 rounded-sm ${stateDisplayChatHistory ? 'bg-blue-600' : 'bg-gray-600'}`}>
-                                <LucideList
-                                    style={{
-                                        width: '100%',
-                                        color: 'white', // Set icon color to white
-                                    }}
-                                    className=''
-                                />
-                            </div>
-                        </div>
+                            <LucideList className="w-4 h-4 mx-auto" strokeWidth={1.75} />
+                        </button>
                     )}
-
                 </div>
             </div>
 
-            {/* screen list */}
             {screenWidth === screenList.sm && (
                 <div>
                     {stateDisplayChatHistory && (

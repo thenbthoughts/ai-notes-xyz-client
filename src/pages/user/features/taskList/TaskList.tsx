@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { DebounceInput } from 'react-debounce-input';
+import { ChevronDown, ChevronRight, LucideSearch, LucideX } from 'lucide-react';
 
 import axiosCustom from '../../../../config/axiosCustom';
 import TaskAiTools from './TaskAiTools';
@@ -17,11 +18,14 @@ import { atomWithStorage } from 'jotai/utils';
 
 const expandedSectionsAtom = atomWithStorage(`taskList-expanded`, [] as string[]);
 
+const selectClass =
+    'w-full rounded-none border border-zinc-300 bg-white py-1.5 px-2 text-[11px] text-zinc-800 focus:border-emerald-600 focus:outline-none';
+
 const TaskList: React.FC = () => {
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
     const [tasks, setTasks] = useState<tsPageTask[]>([]);
     const [searchInput, setSearchInput] = useState('');
-    const [loading, setLoading] = useState(false); // State to manage loading
+    const [loading, setLoading] = useState(false);
     const [priority, setPriority] = useState('');
     const [isArchived, setIsArchived] = useState('not-archived');
     const [isCompleted, setIsCompleted] = useState('not-completed');
@@ -48,24 +52,18 @@ const TaskList: React.FC = () => {
     }, [refreshRandomNum]);
 
     useEffect(() => {
-        setRefreshRandomNum(
-            Math.floor(
-                Math.random() * 1_000_000
-            )
-        )
+        setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
     }, [
         isTaskAddModalIsOpen,
-        taskStatusList,
         priority,
         isArchived,
         isCompleted,
         workspaceId,
         searchInput,
         selectedLabels
-    ])
+    ]);
 
     useEffect(() => {
-        // if query has add-task-dialog, then open the dialog
         const searchParams = new URLSearchParams(window.location.search);
         const addTaskDialog = searchParams.get('add-task-dialog');
         if (addTaskDialog === 'yes') {
@@ -74,15 +72,12 @@ const TaskList: React.FC = () => {
                 modalType: 'add',
                 recordId: '',
             });
-
-            // remove the query add-task-dialog from the url
             searchParams.delete('add-task-dialog');
             window.history.replaceState({}, '', window.location.pathname + '?' + searchParams.toString());
         }
     }, []);
 
     useEffect(() => {
-        // if query has edit-task-id, then open the dialog
         const searchParams = new URLSearchParams(window.location.search);
         const editTaskId = searchParams.get('edit-task-id');
         if (editTaskId) {
@@ -91,15 +86,13 @@ const TaskList: React.FC = () => {
                 modalType: 'edit',
                 recordId: editTaskId,
             });
-
-            // remove the query add-task-dialog from the url
             searchParams.delete('edit-task-id');
             window.history.replaceState({}, '', window.location.pathname + '?' + searchParams.toString());
         }
     }, []);
 
     const fetchTasks = async () => {
-        setLoading(true); // Set loading to true when fetching starts
+        setLoading(true);
         const config = {
             method: 'post',
             url: '/api/task/crud/taskGet',
@@ -123,267 +116,243 @@ const TaskList: React.FC = () => {
         } catch (error) {
             console.error('Error fetching tasks:', error);
         } finally {
-            setLoading(false); // Set loading to false when fetching ends
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        // from query
         const searchParams = new URLSearchParams(window.location.search);
         const workspace = searchParams.get('workspace');
         if (workspace) {
             setWorkspaceId(workspace);
-        } else {
         }
     }, []);
-
-    const renderHeading = () => {
-        return (
-            <div className='px-2'>
-                <h1 className="text-3xl font-bold text-center text-white mb-4">
-                    Smart AI Task Manager
-                </h1>
-            </div>
-        )
-    }
 
     const renderLeft = () => {
         return (
             <div
-                className="bg-white shadow rounded-sm p-4"
-                id='task-filter'
+                className="rounded-none border border-zinc-300 bg-white p-3 shadow-[3px_3px_0_0_rgb(228_228_231)]"
+                id="task-filter"
             >
-                {/* <TasksBoardNamesList /> */}
+                <header className="mb-3 flex items-center gap-2 border-b border-zinc-200 pb-2">
+                    <span className="h-6 w-1 shrink-0 bg-emerald-600" aria-hidden />
+                    <div>
+                        <h2 className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500">
+                            Workspace & filters
+                        </h2>
+                    </div>
+                </header>
+
                 <ComponentTaskWorkspace />
 
-                {/* Tasks Board List Names */}
                 {workspaceId.length === 24 && (
-                    <ComponentTaskStatusListNames
-                        workspaceId={workspaceId}
-                        setTaskStatusList={setTaskStatusList}
-                    />
-                )}
-
-                {/* Filter */}
-                <div
-                    className="mb-6"
-                >
-                    <h2 className="text-xl font-semibold mb-2 text-blue-600">Filter</h2>
-
-                    {/* Search */}
-                    <div className="mb-2">
-                        <DebounceInput
-                            debounceTimeout={750}
-                            type="text"
-                            placeholder="Search tasks..."
-                            className="border border-gray-300 p-1 rounded-sm w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                            value={searchInput}
-                            onChange={(e) => setSearchInput(e.target.value)}
-                            id='task-search'
+                    <div className="mt-3 border-t border-zinc-200 pt-3">
+                        <ComponentTaskStatusListNames
+                            workspaceId={workspaceId}
+                            setTaskStatusList={setTaskStatusList}
                         />
                     </div>
+                )}
 
-                    {/* Priority Filter */}
-                    <div className="mb-2">
-                        {priority === '' && <label className="block text-xs font-medium text-gray-700 mb-1">Priority</label>}
-                        <select
-                            value={priority}
-                            onChange={(e) => setPriority(e.target.value)}
-                            className="border border-gray-300 p-1 rounded-sm w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                        >
-                            <option value="">All Priorities</option>
-                            <option value="very-high">Very High</option>
+                <section className="mt-3 space-y-2 border-t border-zinc-200 pt-3" aria-label="Task filters">
+                    <h3 className="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">
+                        List filters
+                    </h3>
+
+                    <div className="relative">
+                        <LucideSearch className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" strokeWidth={2} />
+                        <DebounceInput
+                            debounceTimeout={500}
+                            type="search"
+                            placeholder="Search tasks…"
+                            className="w-full rounded-none border border-zinc-300 bg-zinc-50 py-1.5 pl-8 pr-7 text-[11px] text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-600 focus:bg-white focus:outline-none"
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                            id="task-search"
+                            autoComplete="off"
+                        />
+                        {searchInput.length > 0 && (
+                            <button
+                                type="button"
+                                className="absolute right-1 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-zinc-500 hover:bg-zinc-200 hover:text-zinc-800"
+                                onClick={() => setSearchInput('')}
+                                aria-label="Clear search"
+                            >
+                                <LucideX className="h-3.5 w-3.5" strokeWidth={2} />
+                            </button>
+                        )}
+                    </div>
+
+                    <div>
+                        <label className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                            Priority
+                        </label>
+                        <select value={priority} onChange={(e) => setPriority(e.target.value)} className={selectClass}>
+                            <option value="">All</option>
+                            <option value="very-high">Very high</option>
                             <option value="high">High</option>
                             <option value="medium">Medium</option>
                             <option value="low">Low</option>
-                            <option value="very-low">Very Low</option>
+                            <option value="very-low">Very low</option>
                         </select>
                     </div>
 
-                    {/* Archive Status Filter */}
-                    <div className="mb-2">
-                        {isArchived === '' && <label className="block text-xs font-medium text-gray-700 mb-1">Archive Status</label>}
-                        <select
-                            value={isArchived}
-                            onChange={(e) => setIsArchived(e.target.value)}
-                            className="border border-gray-300 p-1 rounded-sm w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                        >
-                            <option value="">All Tasks</option>
+                    <div>
+                        <label className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                            Archive
+                        </label>
+                        <select value={isArchived} onChange={(e) => setIsArchived(e.target.value)} className={selectClass}>
+                            <option value="">All</option>
                             <option value="archived">Archived</option>
-                            <option value="not-archived">Not Archived</option>
+                            <option value="not-archived">Not archived</option>
                         </select>
                     </div>
 
-                    {/* Completion Status Filter */}
-                    <div className="mb-2">
-                        {isCompleted === '' && <label className="block text-xs font-medium text-gray-700 mb-1">Completion Status</label>}
-                        <select
-                            value={isCompleted}
-                            onChange={(e) => setIsCompleted(e.target.value)}
-                            className="border border-gray-300 p-1 rounded-sm w-full focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                        >
-                            <option value="">All Tasks</option>
+                    <div>
+                        <label className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                            Completion
+                        </label>
+                        <select value={isCompleted} onChange={(e) => setIsCompleted(e.target.value)} className={selectClass}>
+                            <option value="">All</option>
                             <option value="completed">Completed</option>
-                            <option value="not-completed">Not Completed</option>
+                            <option value="not-completed">Not completed</option>
                         </select>
                     </div>
-                </div>
+                </section>
 
-                {/* Section 3: Labels with Search Functionality */}
                 {workspaceId.length === 24 && (
-                    <ComponentTaskListLabels
-                        workspaceId={workspaceId}
-                        selectedLabels={selectedLabels}
-                        setSelectedLabels={setSelectedLabels}
-                    />
+                    <div className="mt-3 border-t border-zinc-200 pt-3">
+                        <ComponentTaskListLabels
+                            workspaceId={workspaceId}
+                            selectedLabels={selectedLabels}
+                            setSelectedLabels={setSelectedLabels}
+                        />
+                    </div>
                 )}
             </div>
-        )
-    }
+        );
+    };
+
     const renderRight = () => {
         return (
-            <div
-                id='task-list'
-            >
+            <div id="task-list" className="min-h-[200px]">
                 {loading && (
-                    <div className="text-center mt-4">
-                        <button className="bg-blue-500 text-white p-2 rounded-sm" disabled>
-                            Loading...
-                        </button>
+                    <div className="flex justify-center py-8">
+                        <p className="font-mono text-[11px] uppercase tracking-widest text-zinc-500">Loading tasks…</p>
                     </div>
                 )}
 
-                <div>
-                    {workspaceId.length === 24 && (
-                        <div>
-                            {taskStatusList.map((itemTaskStatus) => {
-                                let tempTaskList = tasks.filter(filterTask => itemTaskStatus._id === filterTask.taskStatusId);
-                                // let tempTaskList = tasks;
+                {!loading && workspaceId.length === 24 && (
+                    <div className="space-y-3">
+                        {taskStatusList.map((itemTaskStatus) => {
+                            const tempTaskList = tasks.filter((filterTask) => itemTaskStatus._id === filterTask.taskStatusId);
 
-                                const isExpanded = expandedSections.includes(itemTaskStatus._id);
+                            const isExpanded = expandedSections.includes(itemTaskStatus._id);
 
-                                const toggleExpanded = () => {
-                                    setExpandedSections(prev => {
-                                        let returnArr = [];
-                                        if (prev.includes(itemTaskStatus._id)) {
-                                            // Remove the item if it exists
-                                            returnArr = prev.filter(id => id !== itemTaskStatus._id);
-                                        } else {
-                                            // Add the item if it doesn't exist
-                                            returnArr = [...prev, itemTaskStatus._id];
-                                        }
-                                        // last 50 items
-                                        if (returnArr.length > 50) {
-                                            returnArr = returnArr.slice(-50);
-                                        }
-                                        return returnArr;
-                                    });
-                                };
+                            const toggleExpanded = () => {
+                                setExpandedSections((prev) => {
+                                    let returnArr: string[];
+                                    if (prev.includes(itemTaskStatus._id)) {
+                                        returnArr = prev.filter((id) => id !== itemTaskStatus._id);
+                                    } else {
+                                        returnArr = [...prev, itemTaskStatus._id];
+                                    }
+                                    if (returnArr.length > 50) {
+                                        returnArr = returnArr.slice(-50);
+                                    }
+                                    return returnArr;
+                                });
+                            };
 
-                                return (
-                                    <div key={itemTaskStatus._id} className="mb-4 p-4 rounded-sm shadow bg-gray-100">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <h2 className="text-xl font-semibold text-blue-600">
-                                                {itemTaskStatus.statusTitle}{' '}
-                                                {tempTaskList.length > 0 && (
-                                                    <span className="text-gray-500">
-                                                        ({tempTaskList.length})
-                                                    </span>
-                                                )}
-                                            </h2>
-                                            <button
-                                                onClick={toggleExpanded}
-                                                className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {isExpanded === false ? (
-                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                                    </svg>
-                                                ) : (
-                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                    </svg>
-                                                )}
-                                            </button>
-                                        </div>
-                                        {isExpanded === false && (
-                                            <>
-                                                {tempTaskList.length === 0 && (
-                                                    <div className="text-center">
-                                                        <p>No tasks available in this group.</p>
-                                                    </div>
-                                                )}
-                                                <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                    {
-                                                        tempTaskList.map(task => {
-                                                            return (
-                                                                <div key={task._id}>
-                                                                    <TaskItem
-                                                                        task={task}
-                                                                        taskStatusList={taskStatusList}
-                                                                        setRefreshRandomNum={setRefreshRandomNum}
-                                                                        setIsTaskAddModalIsOpen={setIsTaskAddModalIsOpen}
-                                                                    />
-                                                                </div>
-                                                            )
-                                                        })
-                                                    }
-                                                </ul>
-                                            </>
-                                        )}
+                            return (
+                                <section
+                                    key={itemTaskStatus._id}
+                                    className="rounded-none border border-zinc-300 bg-zinc-50/80 shadow-[2px_2px_0_0_rgb(212_212_216)]"
+                                >
+                                    <div className="flex items-center justify-between gap-2 border-b border-zinc-200 bg-white px-3 py-2">
+                                        <h2 className="min-w-0 text-sm font-semibold text-zinc-900">
+                                            <span className="truncate">{itemTaskStatus.statusTitle}</span>
+                                            {tempTaskList.length > 0 && (
+                                                <span className="ml-1.5 font-mono text-xs font-normal text-zinc-500">
+                                                    {tempTaskList.length}
+                                                </span>
+                                            )}
+                                        </h2>
+                                        <button
+                                            type="button"
+                                            onClick={toggleExpanded}
+                                            className="shrink-0 rounded-none border border-zinc-200 bg-zinc-50 p-1 text-zinc-600 hover:bg-zinc-100"
+                                            aria-expanded={isExpanded}
+                                            title={isExpanded ? 'Show tasks' : 'Hide tasks'}
+                                        >
+                                            {isExpanded === false ? (
+                                                <ChevronDown className="h-4 w-4" strokeWidth={2} />
+                                            ) : (
+                                                <ChevronRight className="h-4 w-4" strokeWidth={2} />
+                                            )}
+                                        </button>
                                     </div>
-                                )
-                            })}
-                        </div>
-                    )}
-                </div>
+                                    {isExpanded === false && (
+                                        <div className="p-3">
+                                            {tempTaskList.length === 0 && (
+                                                <p className="py-4 text-center text-[11px] text-zinc-500">No tasks in this list.</p>
+                                            )}
+                                            <ul className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
+                                                {tempTaskList.map((task) => (
+                                                    <li key={task._id}>
+                                                        <TaskItem
+                                                            task={task}
+                                                            taskStatusList={taskStatusList}
+                                                            setRefreshRandomNum={setRefreshRandomNum}
+                                                            setIsTaskAddModalIsOpen={setIsTaskAddModalIsOpen}
+                                                        />
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </section>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
-        )
-    }
+        );
+    };
 
     return (
-        <div
-            className="min-h-[90vh] pt-5"
-            style={{
-                paddingBottom: "100px"
-            }}
-        >
-            <div
-                className='container m-auto'
-            >
-                <div className="h-full">
-                    {renderHeading()}
-
-                    <div className='px-2'>
-                        <TaskAiTools
-                            setRefreshParentRandomNum={setRefreshRandomNum}
-                        />
-                    </div>
-
-                    <div className="flex flex-col md:flex-row">
-                        <div className="w-full md:w-1/4 p-2">
-                            <div>
-                                {renderLeft()}
-                            </div>
-                        </div>
-                        <div className="w-full md:w-3/4 p-2">
-                            {/* Content for the two-thirds */}
-                            {renderRight()}
+        <div className="min-h-[90vh] bg-[#f4f4f5] pb-24 pt-4">
+            <div className="container m-auto max-w-[1600px] px-3">
+                <header className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-zinc-200 pb-3">
+                    <div className="flex items-center gap-2">
+                        <span className="hidden h-8 w-1 bg-emerald-600 sm:block" aria-hidden />
+                        <div>
+                            <h1 className="text-lg font-bold tracking-tight text-zinc-900 sm:text-xl">
+                                Tasks
+                            </h1>
+                            <p className="text-[11px] text-zinc-500">Workspace lists, filters, and board</p>
                         </div>
                     </div>
+                </header>
+
+                <TaskAiTools setRefreshParentRandomNum={setRefreshRandomNum} />
+
+                <div className="flex flex-col gap-4 lg:flex-row">
+                    <div className="w-full shrink-0 lg:w-[300px] xl:w-[320px]">
+                        {renderLeft()}
+                    </div>
+                    <div className="min-w-0 flex-1">{renderRight()}</div>
                 </div>
-                <ComponentTaskListFooter
+            </div>
+
+            <ComponentTaskListFooter setIsTaskAddModalIsOpen={setIsTaskAddModalIsOpen} />
+
+            {isTaskAddModalIsOpen.openStatus && (
+                <TaskAddOrEdit
+                    isTaskAddModalIsOpen={isTaskAddModalIsOpen}
                     setIsTaskAddModalIsOpen={setIsTaskAddModalIsOpen}
                 />
-                {
-                    isTaskAddModalIsOpen.openStatus && (
-                        <TaskAddOrEdit
-                            isTaskAddModalIsOpen={isTaskAddModalIsOpen}
-                            setIsTaskAddModalIsOpen={setIsTaskAddModalIsOpen}
-                        />
-                    )
-                }
-            </div>
+            )}
         </div>
     );
 };

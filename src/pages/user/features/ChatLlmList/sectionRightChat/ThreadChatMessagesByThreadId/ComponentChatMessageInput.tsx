@@ -85,8 +85,8 @@ const TextAndFileInput = ({
     return (
         <div className="w-full">
             <textarea
-                className="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-blue-500 resize-none bg-white"
-                placeholder={"Type your message or drag & drop any files here..."}
+                className="min-h-[4.5rem] w-full resize-none rounded-xl border border-zinc-200/80 bg-zinc-50/80 px-3 py-2.5 text-sm text-zinc-900 shadow-inner placeholder:text-zinc-400 transition-shadow focus:border-teal-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                placeholder="Message… drop files to attach"
                 ref={textareaRef}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
@@ -95,7 +95,7 @@ const TextAndFileInput = ({
                 onPaste={handlePaste}
                 style={{
                     height: 'auto',
-                    maxHeight: `50vh`,
+                    maxHeight: '50vh',
                 }}
             />
         </div>
@@ -472,8 +472,7 @@ const ComponentChatMessageInput = ({
         <>
             <div
                 ref={actionContainerRef}
-                style={{ paddingTop: '1px' }}
-                className='px-2'
+                className="border-t border-zinc-200/80 bg-gradient-to-b from-white to-zinc-50/90 px-3 pb-2 pt-2 shadow-[0_-12px_32px_-16px_rgba(15,23,42,0.08)]"
             >
                 <ComponentFilesDisplay
                     files={files}
@@ -488,24 +487,24 @@ const ComponentChatMessageInput = ({
                     threadId={threadId}
                 />
 
-                {/* action container */}
-                <div className='flex'>
-                    <div className={cssNoteAdvanceList.actionContainer}
+                <div className="flex items-stretch gap-0">
+                    <div
+                        className={cssNoteAdvanceList.actionContainer}
                         style={{
-                            width: screenWidth === screenList.lg ? '100%' : 'calc(100vw - 50px)'
+                            width: screenWidth === screenList.lg ? '100%' : 'calc(100vw - 52px)',
                         }}
                     >
-                        {/* send */}
                         <button
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                            style={{ height: '40px' }}
+                            type="button"
+                            className="inline-flex h-9 shrink-0 items-center justify-center rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500 to-teal-600 px-3.5 text-white shadow-md shadow-emerald-900/15 transition-all hover:from-emerald-400 hover:to-teal-500 hover:shadow-lg disabled:opacity-60"
                             onClick={handleAddNote}
                             disabled={isSubmitting}
+                            title="Send"
                         >
                             {isSubmitting ? (
-                                <LucideLoader2 className="w-4 h-4 animate-spin" />
+                                <LucideLoader2 className="h-4 w-4 animate-spin" />
                             ) : (
-                                <LucideSend style={{ height: '20px' }} />
+                                <LucideSend className="h-4 w-4" strokeWidth={2} />
                             )}
                         </button>
 
@@ -528,60 +527,57 @@ const ComponentChatMessageInput = ({
                             setChatInputValue={setNewNote}
                         />
 
-                        {/* ai call */}
                         <button
+                            type="button"
                             onClick={handleAiCall}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded whitespace-nowrap inline-flex items-center gap-1"
-                            style={{ height: '40px', fontSize: '0.82rem' }}
+                            className="inline-flex h-9 shrink-0 items-center gap-1 rounded-xl border border-zinc-200/90 bg-white px-2.5 text-xs font-medium text-zinc-800 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50"
                             title="AI Call — voice conversation"
                         >
-                            🎙️ Call
+                            <span aria-hidden>🎙️</span>
+                            Call
                         </button>
 
                         {isSubmitting === false && (
                             <button
-                                className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                                style={{ height: '40px' }}
+                                type="button"
+                                className="inline-flex h-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200/90 bg-white px-2.5 text-zinc-700 shadow-sm transition-colors hover:bg-zinc-50"
                                 onClick={regenerateResponse}
                                 disabled={isSubmitting}
+                                title="Regenerate"
                             >
-                                <LucideRepeat style={{ height: '20px' }} />
+                                <LucideRepeat className="h-4 w-4" strokeWidth={2} />
                             </button>
                         )}
 
-                        {/* auto select context notes */}
                         <button
-                            className="bg-purple-500 hover:bg-purple-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded-sm whitespace-nowrap"
-                            style={{ height: '40px' }}
+                            type="button"
+                            className="inline-flex h-9 shrink-0 items-center rounded-xl border border-violet-200/80 bg-violet-50 px-2.5 text-xs font-medium text-violet-900 shadow-sm transition-colors hover:bg-violet-100/90"
                             onClick={() => {
                                 handleAutoSelectContext({ threadId: threadId });
                             }}
                         >
-                            AI: Auto Context
+                            Auto context
                         </button>
                     </div>
                     <div
+                        className="flex items-center justify-center"
                         style={{
-                            display: screenWidth === screenList.sm ? 'inline-block' : 'none',
-                            width: screenWidth === screenList.lg ? '100%' : '50px',
+                            display: screenWidth === screenList.sm ? 'flex' : 'none',
+                            width: '52px',
                         }}
                     >
-                        <LucideSidebar
-                            style={{
-                                width: '100%',
-                                height: '50px',
-                                color: 'white',
-                                cursor: 'pointer',
-                                padding: '10px',
-                            }}
+                        <button
+                            type="button"
+                            className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-100 shadow-md transition-colors hover:bg-zinc-800"
                             onClick={() => {
-                                setHideRightSidebar((prevProps) => {
-                                    return {
-                                        isOpen: !prevProps.isOpen,
-                                    };
-                                });
+                                setHideRightSidebar((prevProps) => ({
+                                    isOpen: !prevProps.isOpen,
+                                }));
                             }}
-                        />
+                            title="Toggle panel"
+                        >
+                            <LucideSidebar className="h-4 w-4" strokeWidth={2} />
+                        </button>
                     </div>
                 </div>
             </div>

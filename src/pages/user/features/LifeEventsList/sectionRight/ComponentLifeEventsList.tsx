@@ -1,30 +1,56 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
 import { useAtomValue } from 'jotai';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { tsLifeEventsItem } from '../../../../../types/pages/tsLifeEvents.ts';
-import ComponentLifeEventItem from './ComponentLifeEventItem.tsx';
+import ComponentLifeEventItem, { type LifeEventItemLayout } from './ComponentLifeEventItem.tsx';
 
-import { jotaiStateLifeEventSearch, jotaiStateLifeEventCategory, jotaiStateLifeEventCategorySub, jotaiStateLifeEventIsStar, jotaiStateLifeEventImpact, jotaiStateLifeEventDateRange,
+import {
+    jotaiStateLifeEventSearch,
+    jotaiStateLifeEventCategory,
+    jotaiStateLifeEventCategorySub,
+    jotaiStateLifeEventIsStar,
+    jotaiStateLifeEventImpact,
+    jotaiStateLifeEventDateRange,
     jotaiStateLifeEventAiCategory,
     jotaiStateLifeEventAiCategorySub,
     jotaiStateLifeEventHideDailyDiary,
 } from '../stateJotai/lifeEventStateJotai.ts';
 import ReactPaginate from 'react-paginate';
-import { PlusCircle } from 'lucide-react';
+import { LucideLayoutGrid, LucideList, LucidePlus } from 'lucide-react';
 import { lifeEventAddAxios } from '../utils/lifeEventsListAxios.ts';
 import { useNavigate } from 'react-router-dom';
 
 const perPage = 10;
+
+const VIEW_STORAGE_KEY = 'lifeEventsViewMode';
+
+function readSavedView(): 'grid' | 'list' {
+    try {
+        const v = sessionStorage.getItem(VIEW_STORAGE_KEY);
+        if (v === 'grid' || v === 'list') return v;
+    } catch {
+        /* ignore */
+    }
+    return 'grid';
+}
 
 const ComponentLifeEventsList = () => {
     const navigate = useNavigate();
     const [totalCount, setTotalCount] = useState(0 as number);
     const [list, setList] = useState([] as tsLifeEventsItem[]);
     const [page, setPage] = useState(1);
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>(readSavedView);
 
-    // jotai
+    const setViewModePersist = useCallback((mode: 'grid' | 'list') => {
+        setViewMode(mode);
+        try {
+            sessionStorage.setItem(VIEW_STORAGE_KEY, mode);
+        } catch {
+            /* ignore */
+        }
+    }, []);
 
     const searchTerm = useAtomValue(jotaiStateLifeEventSearch);
     const categoryId = useAtomValue(jotaiStateLifeEventCategory);
@@ -36,55 +62,38 @@ const ComponentLifeEventsList = () => {
     const dateRange = useAtomValue(jotaiStateLifeEventDateRange);
     const hideDailyDiary = useAtomValue(jotaiStateLifeEventHideDailyDiary);
 
-    const [
-        refreshRandomNum,
-        setRefreshRandomNum,
-    ] = useState(0);
+    const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
     useEffect(() => {
         const axiosCancelTokenSource: CancelTokenSource = axios.CancelToken.source();
-        fetchList({
-            axiosCancelTokenSource,
-        });
+        void fetchList({ axiosCancelTokenSource });
         return () => {
-            axiosCancelTokenSource.cancel('Operation canceled by the user.'); // Cancel the request if needed
+            axiosCancelTokenSource.cancel('Operation canceled by the user.');
         };
-    }, [
-        refreshRandomNum,
-    ])
-
-    useEffect(() => {
-        setRefreshRandomNum(Math.random());
-    }, [
-        page,
-    ])
+    }, [refreshRandomNum, page]);
 
     useEffect(() => {
         setPage(1);
         setRefreshRandomNum(Math.random());
     }, [
         searchTerm,
-
-        // category
         categoryId,
         categorySubId,
         aiCategory,
         aiSubCategory,
-
         isStar,
         eventImpact,
         dateRange,
         hideDailyDiary,
-    ])
+    ]);
 
     const fetchList = async ({
-        axiosCancelTokenSource
+        axiosCancelTokenSource,
     }: {
-        axiosCancelTokenSource: CancelTokenSource
+        axiosCancelTokenSource: CancelTokenSource;
     }) => {
         try {
             let startDate = '';
-            console.log('dateRange: ', dateRange);
             if (dateRange.startDate instanceof Date) {
                 startDate = `${dateRange.startDate.toISOString().split('T')[0]}T00:00:00.000Z`;
             }
@@ -119,118 +128,146 @@ const ComponentLifeEventsList = () => {
             } as AxiosRequestConfig;
 
             const response = await axiosCustom.request(config);
-            console.log(response.data);
-            console.log(response.data.docs);
-
             let tempArr = [];
             if (Array.isArray(response.data.docs)) {
-                tempArr = response.data.docs
+                tempArr = response.data.docs;
             }
             setList(tempArr);
 
             let tempTotalCount = 0;
             if (typeof response.data.count === 'number') {
-                tempTotalCount = response.data.count
+                tempTotalCount = response.data.count;
             }
-            setTotalCount(tempTotalCount); // Assuming you have a state variable for total count
-
+            setTotalCount(tempTotalCount);
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const lifeEventAddAxiosLocal = async () => {
         try {
             const result = await lifeEventAddAxios();
             if (result.success !== '') {
-                navigate(`/user/life-events?action=edit&id=${result.recordId}`)
+                navigate(`/user/life-events?action=edit&id=${result.recordId}`);
             }
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
-    const renderCount = () => {
-        return (
-            <div className="mb-4 flex items-center gap-3">
-                <div className="flex items-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-sm px-4 py-2 shadow-sm border border-blue-200">
-                    <button
-                        onClick={() => {
-                            lifeEventAddAxiosLocal();
-                        }}
-                    >
-                        <PlusCircle
-                            className="w-6 h-6 text-blue-500 mr-2 animate-pulse"
-                            strokeWidth={2}
-                            fill="#e0e7ff"
-                        />
-                    </button>
-                    <span className="text-lg font-bold text-blue-700 tracking-wide">
-                        {totalCount}
-                    </span>
-                    <span className="ml-2 text-gray-700 font-medium">
-                        Life Events
-                    </span>
-                    {totalCount === 0 && (
-                        <span className="ml-4 text-red-500 font-semibold">
-                            No result
-                        </span>
-                    )}
-                </div>
-            </div>
-        )
-    }
+    const goToTop = () => {
+        document.getElementById('messagesScrollUp')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const toggleBtn =
+        'inline-flex h-7 items-center justify-center rounded-md border px-2 text-zinc-600 transition-colors';
 
     return (
         <div>
-            {/* div scroll up */}
-            <div id='messagesScrollUp' />
+            <div id="messagesScrollUp" />
 
-            {renderCount()}
+            <div className="mb-1 flex flex-wrap items-center justify-between gap-1.5 rounded-md border border-zinc-200/90 bg-white px-1.5 py-1 shadow-sm">
+                <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                    <button
+                        type="button"
+                        onClick={() => void lifeEventAddAxiosLocal()}
+                        className="inline-flex h-7 shrink-0 items-center gap-1 rounded-md border border-emerald-700/25 bg-emerald-600 px-2 text-[11px] font-medium text-white shadow-sm hover:bg-emerald-700"
+                    >
+                        <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
+                        Add
+                    </button>
+                    <span className="text-[11px] text-zinc-600">
+                        <span className="font-semibold text-zinc-900">{totalCount}</span> events
+                    </span>
+                    {totalCount === 0 && (
+                        <span className="text-[11px] font-medium text-amber-700">No results</span>
+                    )}
+                </div>
 
-            {list.map((lifeEventObj) => {
-                return (
-                    <div>
+                <div
+                    className="flex shrink-0 rounded-md border border-zinc-200 bg-zinc-50/80 p-0.5"
+                    role="group"
+                    aria-label="Layout"
+                >
+                    <button
+                        type="button"
+                        title="Grid"
+                        aria-pressed={viewMode === 'grid'}
+                        onClick={() => setViewModePersist('grid')}
+                        className={`${toggleBtn} ${
+                            viewMode === 'grid'
+                                ? 'border-indigo-200 bg-white text-indigo-700 shadow-sm'
+                                : 'border-transparent bg-transparent hover:bg-white/80 hover:text-zinc-900'
+                        }`}
+                    >
+                        <LucideLayoutGrid className="h-3.5 w-3.5" strokeWidth={2} />
+                    </button>
+                    <button
+                        type="button"
+                        title="List"
+                        aria-pressed={viewMode === 'list'}
+                        onClick={() => setViewModePersist('list')}
+                        className={`${toggleBtn} ${
+                            viewMode === 'list'
+                                ? 'border-indigo-200 bg-white text-indigo-700 shadow-sm'
+                                : 'border-transparent bg-transparent hover:bg-white/80 hover:text-zinc-900'
+                        }`}
+                    >
+                        <LucideList className="h-3.5 w-3.5" strokeWidth={2} />
+                    </button>
+                </div>
+            </div>
+
+            {viewMode === 'grid' ? (
+                <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                    {list.map((lifeEventObj) => (
                         <ComponentLifeEventItem
+                            key={lifeEventObj._id}
                             lifeEventObj={lifeEventObj}
+                            layout={'grid' satisfies LifeEventItemLayout}
                         />
-                    </div>
-                )
-            })}
+                    ))}
+                </div>
+            ) : (
+                <div className="flex flex-col gap-1">
+                    {list.map((lifeEventObj) => (
+                        <ComponentLifeEventItem
+                            key={lifeEventObj._id}
+                            lifeEventObj={lifeEventObj}
+                            layout={'list' satisfies LifeEventItemLayout}
+                        />
+                    ))}
+                </div>
+            )}
 
             {totalCount >= 1 && (
-                <div className="w-full flex justify-center items-center">
+                <div className="mt-2 flex w-full items-center justify-center">
                     <ReactPaginate
-                        breakLabel="..."
-                        nextLabel="next >"
+                        breakLabel="…"
+                        nextLabel="›"
                         onPageChange={(e) => {
-                            setPage(e.selected+1);
+                            setPage(e.selected + 1);
+                            goToTop();
                         }}
                         marginPagesDisplayed={1}
-                        pageRangeDisplayed={3}
+                        pageRangeDisplayed={2}
                         pageCount={Math.ceil(totalCount / perPage)}
-                        previousLabel="< previous"
+                        previousLabel="‹"
                         renderOnZeroPageCount={null}
-                        forcePage={page-1}
-
-                        containerClassName="flex flex-wrap justify-center items-center gap-1 sm:space-x-1"
-                        pageClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        previousClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        previousLinkClassName="text-gray-700 px-2 sm:px-3"
-                        nextClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        nextLinkClassName="text-gray-700 px-2 sm:px-3"
-                        breakClassName="border border-gray-300 rounded-sm text-base sm:text-lg m-0.5"
-                        breakLinkClassName="text-gray-700 px-2 sm:px-3"
-                        activeLinkClassName="bg-blue-500 text-white"
-                        pageLinkClassName="text-gray-700 px-2 sm:px-3"
+                        forcePage={page - 1}
+                        containerClassName="flex flex-wrap items-center justify-center gap-1"
+                        pageLinkClassName="min-w-[1.75rem] rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-center text-[11px] text-zinc-700 hover:bg-zinc-50"
+                        previousLinkClassName="rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-[11px] text-zinc-700 hover:bg-zinc-50"
+                        nextLinkClassName="rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-[11px] text-zinc-700 hover:bg-zinc-50"
+                        breakLinkClassName="px-1 text-[11px] text-zinc-400"
+                        activeLinkClassName="border-indigo-600 bg-indigo-600 text-white hover:bg-indigo-600"
                     />
                 </div>
             )}
 
-            {/* div scroll down */}
-            <div id='messagesScrollDown' />
+            <div id="messagesScrollDown" />
         </div>
-    )
+    );
 };
 
 export default ComponentLifeEventsList;

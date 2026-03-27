@@ -1,9 +1,20 @@
 import { DebounceInput } from 'react-debounce-input';
-import { useNavigate } from 'react-router-dom';
+import { LucidePlus, LucideSearch, LucideTags } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { lifeEventAddAxios } from '../utils/lifeEventsListAxios.ts';
 
-import { jotaiStateLifeEventSearch, jotaiStateLifeEventCategory, jotaiStateLifeEventCategorySub, jotaiStateLifeEventIsStar, jotaiStateLifeEventImpact, jotaiStateLifeEventDateRange, jotaiStateLifeEventHideDailyDiary } from '../stateJotai/lifeEventStateJotai.ts';
+import {
+    jotaiStateLifeEventSearch,
+    jotaiStateLifeEventCategory,
+    jotaiStateLifeEventCategorySub,
+    jotaiStateLifeEventIsStar,
+    jotaiStateLifeEventImpact,
+    jotaiStateLifeEventDateRange,
+    jotaiStateLifeEventHideDailyDiary,
+    jotaiStateLifeEventAiCategory,
+    jotaiStateLifeEventAiCategorySub,
+} from '../stateJotai/lifeEventStateJotai.ts';
 import { useAtom, useSetAtom } from 'jotai';
 import ComponentFilterCategory from './ComponentFilterCategory.tsx';
 import ComponentFilterCategorySub from './ComponentFilterCategorySub.tsx';
@@ -16,28 +27,30 @@ const ComponentChatHistory = () => {
     const [searchTerm, setSearchTerm] = useAtom(jotaiStateLifeEventSearch);
     const setCategory = useSetAtom(jotaiStateLifeEventCategory);
     const setSubcategory = useSetAtom(jotaiStateLifeEventCategorySub);
+    const setAiCategory = useSetAtom(jotaiStateLifeEventAiCategory);
+    const setAiSubcategory = useSetAtom(jotaiStateLifeEventAiCategorySub);
     const [isStar, setIsStar] = useAtom(jotaiStateLifeEventIsStar);
     const [impact, setImpact] = useAtom(jotaiStateLifeEventImpact);
-    const [dateRange, setDateRange] = useAtom(jotaiStateLifeEventDateRange); // Added date range state
+    const [dateRange, setDateRange] = useAtom(jotaiStateLifeEventDateRange);
     const [hideDailyDiary, setHideDailyDiary] = useAtom(jotaiStateLifeEventHideDailyDiary);
-
-    // Fetch chat threads from API
 
     const lifeEventAddAxiosLocal = async () => {
         try {
             const result = await lifeEventAddAxios();
             if (result.success !== '') {
-                navigate(`/user/life-events?action=edit&id=${result.recordId}`)
+                navigate(`/user/life-events?action=edit&id=${result.recordId}`);
             }
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const clearFilters = () => {
         setSearchTerm('');
         setCategory('');
         setSubcategory('');
+        setAiCategory('');
+        setAiSubcategory('');
         setIsStar('');
         setImpact('');
         setDateRange({ startDate: null, endDate: null });
@@ -46,26 +59,36 @@ const ComponentChatHistory = () => {
 
     const setDateRangeToPreset = (preset: string) => {
         const today = new Date();
-        let startDate, endDate;
+        let startDate: Date;
+        let endDate: Date;
 
         switch (preset) {
             case 'today':
-                startDate = endDate = today;
+                startDate = endDate = new Date(today);
                 break;
-            case 'yesterday':
-                startDate = endDate = new Date(today.setDate(today.getDate() - 1));
+            case 'yesterday': {
+                const y = new Date(today);
+                y.setDate(y.getDate() - 1);
+                startDate = endDate = y;
                 break;
-            case 'this week':
-                startDate = new Date(today.setDate(today.getDate() - today.getDay()));
-                endDate = new Date(today.setDate(today.getDate() + (6 - today.getDay())));
+            }
+            case 'this week': {
+                const start = new Date(today);
+                start.setDate(today.getDate() - today.getDay());
+                const end = new Date(start);
+                end.setDate(start.getDate() + 6);
+                startDate = start;
+                endDate = end;
                 break;
-            case 'last week':
+            }
+            case 'last week': {
                 const lastWeekStart = new Date(today);
                 lastWeekStart.setDate(today.getDate() - today.getDay() - 7);
                 startDate = lastWeekStart;
                 endDate = new Date(lastWeekStart);
                 endDate.setDate(lastWeekStart.getDate() + 6);
                 break;
+            }
             case 'this month':
                 startDate = new Date(today.getFullYear(), today.getMonth(), 1);
                 endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -89,236 +112,178 @@ const ComponentChatHistory = () => {
         setDateRange({ startDate, endDate });
     };
 
-    const renderDateRange = () => {
-        return (
-            <div className="mb-4">
-                <label className="block text-sm font-medium">Date Range</label>
-                <input
-                    type="date"
-                    className="p-2 border border-gray-300 rounded-sm block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    value={dateRange.startDate ? dateRange.startDate.toISOString().split('T')[0] : ''}
-                    onChange={(e) => setDateRange({ ...dateRange, startDate: new Date(e.target.value) })}
-                />
-                <input
-                    type="date"
-                    className="p-2 border border-gray-300 rounded-sm block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-2"
-                    value={dateRange.endDate ? dateRange.endDate.toISOString().split('T')[0] : ''}
-                    onChange={(e) => setDateRange({ ...dateRange, endDate: new Date(e.target.value) })}
-                />
-                <div className="mt-4">
-                    <button onClick={() => setDateRange({ startDate: null, endDate: null })} className="mr-2 mb-1 px-2 py-1 bg-red-500 text-white rounded">Clear</button>
-                    <button onClick={() => setDateRangeToPreset('today')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">Today</button>
-                    <button onClick={() => setDateRangeToPreset('yesterday')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">Yesterday</button>
-                    <button onClick={() => setDateRangeToPreset('this week')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">This Week</button>
-                    <button onClick={() => setDateRangeToPreset('last week')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">Last Week</button>
-                    <button onClick={() => setDateRangeToPreset('this month')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">This Month</button>
-                    <button onClick={() => setDateRangeToPreset('last month')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">Last Month</button>
-                    <button onClick={() => setDateRangeToPreset('this year')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">This Year</button>
-                    <button onClick={() => setDateRangeToPreset('last year')} className="mr-2 mb-1 px-2 py-1 bg-blue-500 text-white rounded">Last Year</button>
-                </div>
+    const presetBtn =
+        'rounded-sm border border-zinc-200 bg-white px-1.5 py-0.5 text-[10px] font-medium text-zinc-700 hover:bg-zinc-50';
+
+    const renderDateRange = () => (
+        <div className="mb-2 rounded-md border border-zinc-200 bg-zinc-50/80 p-1.5">
+            <div className="mb-1 text-[10px] font-medium text-zinc-600">Date range</div>
+            <input
+                type="date"
+                className="mb-1 block w-full rounded-sm border border-zinc-200 bg-white px-2 py-1 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                value={dateRange.startDate ? dateRange.startDate.toISOString().split('T')[0] : ''}
+                onChange={(e) => setDateRange({ ...dateRange, startDate: new Date(e.target.value) })}
+            />
+            <input
+                type="date"
+                className="mb-1.5 block w-full rounded-sm border border-zinc-200 bg-white px-2 py-1 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                value={dateRange.endDate ? dateRange.endDate.toISOString().split('T')[0] : ''}
+                onChange={(e) => setDateRange({ ...dateRange, endDate: new Date(e.target.value) })}
+            />
+            <button
+                type="button"
+                onClick={() => setDateRange({ startDate: null, endDate: null })}
+                className="mb-1.5 w-full rounded-sm border border-red-200 bg-red-50 py-1 text-[10px] font-medium text-red-800 hover:bg-red-100"
+            >
+                Clear dates
+            </button>
+            <div className="flex flex-wrap gap-1">
+                {[
+                    ['Today', 'today'],
+                    ['Yesterday', 'yesterday'],
+                    ['This wk', 'this week'],
+                    ['Last wk', 'last week'],
+                    ['This mo', 'this month'],
+                    ['Last mo', 'last month'],
+                    ['This yr', 'this year'],
+                    ['Last yr', 'last year'],
+                ].map(([label, key]) => (
+                    <button key={key} type="button" className={presetBtn} onClick={() => setDateRangeToPreset(key)}>
+                        {label}
+                    </button>
+                ))}
             </div>
-        )
-    }
+        </div>
+    );
 
     return (
-        <div className="py-6 px-4">
-
-            <h1 className="text-2xl font-bold mb-5 text-indigo-700">Life Events</h1>
-
-            <div className="flex space-x-2 mb-4">
-                <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
-                    onClick={lifeEventAddAxiosLocal}
-                >+ Add</button>
-                <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
-                    onClick={clearFilters}
-                >Clear Filters</button>
-                <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
-                >Ai Extract</button>
+        <div className="px-2 py-2 text-zinc-900">
+            <div className="mb-2 flex items-baseline justify-between gap-2">
+                <h2 className="text-xs font-semibold tracking-tight text-zinc-900">Life events</h2>
+                <span className="text-[9px] font-medium uppercase tracking-wide text-zinc-500">Filters</span>
             </div>
 
-            {/* Chat Options Title */}
-            <h2 className="text-xl font-semibold mb-4 text-indigo-600">Filters</h2>
+            <div className="mb-1.5 flex flex-col gap-1 sm:flex-row">
+                <button
+                    type="button"
+                    className="flex flex-1 items-center justify-center gap-1 rounded-sm border border-emerald-700/30 bg-emerald-600 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-emerald-700"
+                    onClick={() => void lifeEventAddAxiosLocal()}
+                >
+                    <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
+                    Add
+                </button>
+                <button
+                    type="button"
+                    className="rounded-sm border border-zinc-200 bg-white px-2 py-1.5 text-xs font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
+                    onClick={clearFilters}
+                >
+                    Clear
+                </button>
+                <Link
+                    to="/user/life-events?action=category"
+                    className="inline-flex flex-1 items-center justify-center gap-1 rounded-sm border border-zinc-200 bg-white py-1.5 text-xs font-medium text-zinc-800 shadow-sm hover:bg-zinc-50"
+                >
+                    <LucideTags className="h-3.5 w-3.5" strokeWidth={2} />
+                    Categories
+                </Link>
+            </div>
 
-            {/* filter */}
-            <div className="mb-4">
-                <label className="block text-sm font-medium">Search:</label>
+            <div className="relative mb-2">
+                <LucideSearch
+                    className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400"
+                    strokeWidth={2}
+                />
                 <DebounceInput
                     debounceTimeout={500}
                     type="text"
-                    placeholder="Search..."
-                    className="border border-gray-300 rounded-sm p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Search…"
+                    className="w-full rounded-sm border border-zinc-200 bg-white py-1.5 pl-7 pr-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     onChange={(e) => setSearchTerm(e.target.value)}
                     value={searchTerm}
                 />
             </div>
 
-            {/* filter -> category */}
-            <ComponentFilterCategory />
+            <div className="mb-2 space-y-2 [&_label]:text-xs [&_label]:font-medium [&_label]:text-zinc-700 [&_select]:text-xs">
+                <ComponentFilterCategory />
+                <ComponentFilterCategorySub />
+                <ComponentFilterAiCategory />
+                <ComponentFilterAiCategorySub />
+            </div>
 
-            {/* filter -> subcategory */}
-            <ComponentFilterCategorySub />
-
-            {/* filter -> category */}
-            <ComponentFilterAiCategory />
-
-            {/* filter -> subcategory */}
-            <ComponentFilterAiCategorySub />
-
-            {/* filter -> date range */}
             {renderDateRange()}
 
-            <div className="mb-4">
-                <span className="mr-2 text-lg font-semibold">Is Started</span>
-                <div>
-                    <label className="items-center mr-4">
-                        <input
-                            type="radio"
-                            value="true"
-                            checked={isStar === ''}
-                            onChange={() => setIsStar('')}
-                            className="form-radio h-4 w-4 text-indigo-600"
-                        />
-                        <span className="ml-2">All</span>
-                    </label>
-                </div>
-                <div>
-                    <label className="items-center mr-4">
-                        <input
-                            type="radio"
-                            value="true"
-                            checked={isStar === 'true'}
-                            onChange={() => setIsStar('true')}
-                            className="form-radio h-4 w-4 text-indigo-600"
-                        />
-                        <span className="ml-2">Yes</span>
-                    </label>
-                </div>
-                <div>
-                    <label className="items-center">
-                        <input
-                            type="radio"
-                            value="false"
-                            checked={isStar === 'false'}
-                            onChange={() => setIsStar('false')}
-                            className="form-radio h-4 w-4 text-indigo-600"
-                        />
-                        <span className="ml-2">No</span>
-                    </label>
+            <div className="mb-1.5 rounded-md border border-zinc-200 bg-zinc-50/80 px-1.5 py-1.5">
+                <div className="mb-1 text-[10px] font-medium text-zinc-600">Starred</div>
+                <div className="flex flex-wrap gap-1">
+                    {[
+                        { label: 'All', value: '' as const },
+                        { label: 'Yes', value: 'true' as const },
+                        { label: 'No', value: 'false' as const },
+                    ].map((opt) => (
+                        <button
+                            key={opt.label}
+                            type="button"
+                            onClick={() => setIsStar(opt.value)}
+                            className={`rounded-sm border px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                                isStar === opt.value
+                                    ? 'border-indigo-600 bg-indigo-600 text-white'
+                                    : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300'
+                            }`}
+                        >
+                            {opt.label}
+                        </button>
+                    ))}
                 </div>
             </div>
 
-            {/* impact */}
-            <div className="mb-4">
-                <span className="font-medium">Event impact:</span><br />
-                <div>
-                    <label className="block">
-                        <input
-                            type="radio"
-                            value="all"
-                            checked={impact === ''}
-                            onChange={() => setImpact('')}
-                            className="mr-2"
-                        />
-                        All
-                    </label>
-                    <label className="block">
-                        <input
-                            type="radio"
-                            value="very-low"
-                            checked={impact === 'very-low'}
-                            onChange={() => setImpact('very-low')}
-                            className="mr-2"
-                        />
-                        Very Low
-                    </label>
-                    <label className="block">
-                        <input
-                            type="radio"
-                            value="low"
-                            checked={impact === 'low'}
-                            onChange={() => setImpact('low')}
-                            className="mr-2"
-                        />
-                        Low
-                    </label>
-                    <label className="block">
-                        <input
-                            type="radio"
-                            value="medium"
-                            checked={impact === 'medium'}
-                            onChange={() => setImpact('medium')}
-                            className="mr-2"
-                        />
-                        Medium
-                    </label>
-                    <label className="block">
-                        <input
-                            type="radio"
-                            value="large"
-                            checked={impact === 'large'}
-                            onChange={() => setImpact('large')}
-                            className="mr-2"
-                        />
-                        Large
-                    </label>
-                    <label className="block">
-                        <input
-                            type="radio"
-                            value="huge"
-                            checked={impact === 'huge'}
-                            onChange={() => setImpact('huge')}
-                            className="mr-2"
-                        />
-                        Huge
-                    </label>
+            <div className="mb-1.5 rounded-md border border-zinc-200 bg-white px-1.5 py-1.5 shadow-sm">
+                <div className="mb-1 text-[10px] font-medium text-zinc-600">Impact</div>
+                <div className="flex flex-wrap gap-1">
+                    {[
+                        { label: 'All', value: '' as const },
+                        { label: 'V.Low', value: 'very-low' as const },
+                        { label: 'Low', value: 'low' as const },
+                        { label: 'Med', value: 'medium' as const },
+                        { label: 'Large', value: 'large' as const },
+                        { label: 'Huge', value: 'huge' as const },
+                    ].map((opt) => (
+                        <button
+                            key={opt.label}
+                            type="button"
+                            onClick={() => setImpact(opt.value)}
+                            className={`rounded-sm border px-1.5 py-0.5 text-[10px] font-medium ${
+                                impact === opt.value
+                                    ? 'border-emerald-600 bg-emerald-600 text-white'
+                                    : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
+                            }`}
+                        >
+                            {opt.label}
+                        </button>
+                    ))}
                 </div>
             </div>
 
-            {/* hide daily diary */}
-            <div className="mb-4">
-                <label className="flex items-center">
-                    <input
-                        type="checkbox"
-                        checked={hideDailyDiary}
-                        onChange={(e) => setHideDailyDiary(e.target.checked)}
-                        className="form-checkbox h-4 w-4 text-indigo-600"
-                    />
-                    <span className="ml-2 font-medium">Hide Daily Diary</span>
+            <div className="flex items-center gap-2 rounded-sm border border-zinc-200 bg-white px-2 py-1.5">
+                <input
+                    type="checkbox"
+                    id="hideDailyDiary"
+                    checked={hideDailyDiary}
+                    onChange={(e) => setHideDailyDiary(e.target.checked)}
+                    className="h-3.5 w-3.5 rounded-sm border-zinc-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <label htmlFor="hideDailyDiary" className="cursor-pointer text-xs text-zinc-700">
+                    Hide daily diary
                 </label>
             </div>
-
         </div>
     );
 };
 
 const ComponentChatHistoryRender = () => {
     return (
-        // Main container with light background, padding, rounded-sm corners and max width for presentation
-        <div
-            style={{
-                paddingTop: '10px',
-                paddingBottom: '10px',
-            }}
-        >
-            <div
-                className="bg-white rounded-sm shadow-md"
-                style={{
-                    paddingTop: '10px',
-                    paddingBottom: '10px',
-                }}
-            >
-                <div
-                    style={{
-                        height: 'calc(100vh - 100px)',
-                        overflowY: 'auto',
-                    }}
-                    className="pt-3 pb-5"
-                >
-                    <ComponentChatHistory />
-                </div>
+        <div className="border-r border-zinc-200 bg-[#f4f4f5]">
+            <div className="h-[calc(100vh-60px)] overflow-y-auto bg-white">
+                <ComponentChatHistory />
             </div>
         </div>
     );
@@ -326,42 +291,12 @@ const ComponentChatHistoryRender = () => {
 
 const ComponentChatHistoryModelRender = () => {
     return (
-        // Main container with light background, padding, rounded-sm corners and max width for presentation
-        <div
-            style={{
-                position: 'fixed',
-                left: 0,
-                top: '60px',
-                width: '300px',
-                maxWidth: 'calc(100% - 50px)',
-                zIndex: 1001,
-            }}
-        >
-            <div>
-                <div
-                    className="bg-gray-100 shadow-md"
-                    style={{
-                        paddingTop: '10px',
-                        paddingBottom: '10px',
-                    }}
-                >
-                    <div
-                        style={{
-                            height: 'calc(100vh - 60px)',
-                            overflowY: 'auto',
-                        }}
-                        className="pt-3 pb-5"
-                    >
-                        <ComponentChatHistory />
-                    </div>
-                </div>
+        <div className="fixed left-0 top-[60px] z-[1001] w-[min(300px,calc(100%-50px))] border-r border-zinc-200 shadow-lg">
+            <div className="h-[calc(100vh-60px)] overflow-y-auto bg-white">
+                <ComponentChatHistory />
             </div>
         </div>
     );
 };
 
-export {
-    ComponentChatHistoryRender,
-    ComponentChatHistoryModelRender,
-};
-// export default ComponentChatHistoryModelRender;
+export { ComponentChatHistoryRender, ComponentChatHistoryModelRender };

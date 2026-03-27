@@ -83,21 +83,48 @@ const TaskListComponentSuggestAiGeneratedTask = ({
 
     return (
         <div>
-            {loading && <p className="text-center text-gray-500 pb-2 text-sm">Loading tasks...</p>} {/* Loading message */}
+            {loading && (
+                <p className="pb-2 text-center font-mono text-[10px] uppercase tracking-wide text-zinc-500">Loading AI suggestions…</p>
+            )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {tasks.map((task, index) => (
-                    <div key={index} className="p-2 border border-gray-300 rounded-sm bg-gray-50 hover:bg-gray-100 transition">
-                        <h3 className="text-lg font-semibold text-gray-700">{task.taskTitle}</h3>
-                        <p className="text-gray-600 text-sm">{task.taskDescription}</p>
-                        <p className="text-gray-500 text-sm">Priority: <span className={`font-bold ${task.taskPriority === 'high' ? 'text-red-500' : task.taskPriority === 'medium' ? 'text-yellow-500' : 'text-green-500'}`}>{task.taskPriority}</span></p>
-                        <p className="text-gray-500 text-sm">Due Date: <span className="font-semibold">{new Date(task.taskDueDate).toLocaleDateString()}</span></p>
-                        <p className="text-gray-500 text-sm">Tags: <span className="font-semibold">{task.taskTags.join(', ')}</span></p>
+                    <div
+                        key={index}
+                        className="rounded-none border border-zinc-300 bg-white p-2.5 text-left shadow-[2px_2px_0_0_rgb(228_228_231)] hover:bg-zinc-50"
+                    >
+                        <h3 className="text-sm font-semibold text-zinc-900">{task.taskTitle}</h3>
+                        <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-zinc-600">{task.taskDescription}</p>
+                        <p className="mt-1 text-[10px] text-zinc-500">
+                            Priority:{' '}
+                            <span
+                                className={
+                                    'font-semibold ' +
+                                    (task.taskPriority === 'high'
+                                        ? 'text-red-600'
+                                        : task.taskPriority === 'medium'
+                                          ? 'text-amber-600'
+                                          : 'text-emerald-600')
+                                }
+                            >
+                                {task.taskPriority}
+                            </span>
+                        </p>
+                        <p className="text-[10px] text-zinc-500">
+                            Due{' '}
+                            <span className="font-medium text-zinc-800">
+                                {new Date(task.taskDueDate).toLocaleDateString()}
+                            </span>
+                        </p>
+                        <p className="text-[10px] text-zinc-500 line-clamp-1">
+                            {task.taskTags.join(', ')}
+                        </p>
                         <button
+                            type="button"
                             onClick={() => addTask(task)}
-                            className="mt-1 bg-blue-600 text-white p-1 rounded-sm hover:bg-blue-700 transition"
+                            className="mt-2 w-full rounded-none border border-emerald-700 bg-emerald-600 py-1 text-[10px] font-bold uppercase tracking-wide text-white hover:bg-emerald-500"
                         >
-                            Add Task
+                            Add task
                         </button>
                     </div>
                 ))}
@@ -196,22 +223,26 @@ const TaskAiTools = ({
     const workspaceId = useAtomValue(jotaiStateTaskWorkspaceId);
 
     return (
-        <div className='pb-2'>
-            <div className="p-4 bg-white rounded-sm shadow-md">
-                <h2 className="text-xl font-bold mb-2 text-gray-800">AI Tools</h2>
+        <div className="pb-3">
+            <div className="rounded-none border border-zinc-300 bg-white p-3 shadow-[3px_3px_0_0_rgb(228_228_231)]">
+                <h2 className="mb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500">
+                    AI tools
+                </h2>
 
-                <div className="flex justify-center mb-2">
+                <div className="mb-3 flex flex-wrap gap-2">
                     <button
+                        type="button"
                         onClick={() => setCallGenerateAiTaskListRandomNum(Math.floor(Math.random() * 1_000_000))}
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-1 px-2 rounded-sm shadow-lg hover:shadow-xl transition duration-300 mx-1 cursor-pointer"
+                        className="rounded-none border border-violet-700 bg-violet-600 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-[2px_2px_0_0_rgb(91_33_182)] hover:bg-violet-500 active:translate-x-px active:translate-y-px active:shadow-none"
                     >
-                        🚀 Generate Tasks by AI
+                        Generate tasks
                     </button>
                     <button
+                        type="button"
                         onClick={() => taskWorkspaceChatWithAi({ taskWorkspaceId: workspaceId })}
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-1 px-2 rounded-sm shadow-lg hover:shadow-xl transition duration-300 mx-1 cursor-pointer"
+                        className="rounded-none border border-zinc-900 bg-zinc-900 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-[2px_2px_0_0_rgb(63_63_70)] hover:bg-zinc-800 active:translate-x-px active:translate-y-px active:shadow-none"
                     >
-                        Workspace Chat with AI
+                        Workspace chat
                     </button>
                 </div>
 

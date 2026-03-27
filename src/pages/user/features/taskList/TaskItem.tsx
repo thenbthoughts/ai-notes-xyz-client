@@ -1,3 +1,4 @@
+import type React from 'react';
 import { tsPageTask } from "../../../../types/pages/tsPageTaskList";
 
 import axiosCustom from '../../../../config/axiosCustom';
@@ -32,11 +33,7 @@ const TaskItem = ({
 
         try {
             await axiosCustom.post('/api/task/crud/taskEdit', data);
-            setRefreshRandomNum(
-                Math.floor(
-                    Math.random() * 1_000_000
-                )
-            )
+            setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
         } catch (error) {
             console.error('Error updating task group:', error);
         }
@@ -55,11 +52,7 @@ const TaskItem = ({
 
         try {
             await axiosCustom.post('/api/task/crud/taskEdit', data);
-            setRefreshRandomNum(
-                Math.floor(
-                    Math.random() * 1_000_000
-                )
-            )
+            setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
         } catch (error) {
             console.error('Error updating task group:', error);
         }
@@ -82,11 +75,7 @@ const TaskItem = ({
         try {
             const response = await axiosCustom.request(config);
             if (response.status === 200) {
-                setRefreshRandomNum(
-                    Math.floor(
-                        Math.random() * 1_000_000
-                    )
-                )
+                setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
             } else {
                 console.error('Failed to delete task:', response.statusText);
             }
@@ -98,172 +87,142 @@ const TaskItem = ({
     const getPriorityColor = (priority: string) => {
         switch (priority) {
             case 'very-high':
-                return 'bg-purple-100 text-purple-800';
+                return 'border-violet-300 bg-violet-100 text-violet-900';
             case 'high':
-                return 'bg-red-100 text-red-800';
+                return 'border-red-200 bg-red-50 text-red-900';
             case 'medium':
-                return 'bg-yellow-100 text-yellow-800';
+                return 'border-amber-200 bg-amber-50 text-amber-900';
             case 'low':
-                return 'bg-blue-100 text-blue-800';
+                return 'border-sky-200 bg-sky-50 text-sky-900';
             default:
-                return 'bg-gray-100 text-gray-800';
+                return 'border-zinc-200 bg-zinc-100 text-zinc-800';
         }
     };
-    const renderTaskNew = () => {
-        const now = new Date();
-        const dueDate = new Date(task.dueDate);
-        const isOverdue = task.dueDate && dueDate < now && !task.isCompleted;
 
-        let isUpdatedNow = false;
-        if (task.updatedAtUtc) {
-            const updatedAt = new Date(task.updatedAtUtc);
-            const now = new Date();
-            const timeDiff = now.getTime() - updatedAt.getTime();
-            const minutesDiff = Math.floor(timeDiff / (1000 * 60));
-            if (minutesDiff < 5) {
-                isUpdatedNow = true;
-            }
+    const now = new Date();
+    const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+    const isOverdue = dueDate && dueDate < now && !task.isCompleted;
+
+    let isUpdatedNow = false;
+    if (task.updatedAtUtc) {
+        const updatedAt = new Date(task.updatedAtUtc);
+        const timeDiff = now.getTime() - updatedAt.getTime();
+        const minutesDiff = Math.floor(timeDiff / (1000 * 60));
+        if (minutesDiff < 5) {
+            isUpdatedNow = true;
         }
+    }
 
-        return (
-            <div
-                className={`
-                    bg-white p-3 rounded-sm shadow-sm mb-2 hover:shadow-md transition-shadow group cursor-pointer
-                    ${isUpdatedNow ? 'border-2 border-blue-500' : ''}
-                `}
-            >
-                <div className="flex justify-between items-start">
-                    <h3 className="font-medium text-gray-800">{task.title}</h3>
-                </div>
+    const chip = 'inline-flex items-center gap-0.5 rounded-none border px-1.5 py-0 text-[10px] font-medium';
 
-                <div className="flex flex-wrap gap-2 mt-2 items-center">
-                    {task.labels && task.labels.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                            {task.labels.map((label) => (
-                                <div
-                                    key={label}
-                                    className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-sm bg-gray-100 text-gray-800"
-                                >
-                                    {label}
-                                </div>
-                            ))}
-                        </div>
-                    )}
+    return (
+        <div
+            className={
+                (isUpdatedNow ? 'ring-2 ring-emerald-500 ring-offset-1 ' : '') +
+                'group h-full rounded-none border border-zinc-300 bg-white p-2.5 shadow-[2px_2px_0_0_rgb(228_228_231)] transition-shadow hover:shadow-[3px_3px_0_0_rgb(212_212_216)]'
+            }
+        >
+            <div className="flex items-start justify-between gap-2">
+                <h3 className="min-w-0 text-sm font-semibold leading-snug text-zinc-900">{task.title}</h3>
+            </div>
 
-                    {task.isCompleted && (
-                        <div className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-sm">
-                            Completed
-                        </div>
-                    )}
-                    {task.isArchived && (
-                        <div className="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-sm">
-                            Archived
-                        </div>
-                    )}
-                    {task.priority && (
-                        <div className={`text-xs px-2 py-0.5 rounded-sm ${getPriorityColor(task?.priority)}`}>
-                            Priority: {task.priority.replace('-', ' ')}
-                        </div>
-                    )}
+            <div className="mt-2 flex flex-wrap gap-1">
+                {task.labels && task.labels.length > 0 &&
+                    task.labels.map((label) => (
+                        <span key={label} className={chip + ' border-zinc-200 bg-zinc-50 text-zinc-700'}>
+                            {label}
+                        </span>
+                    ))}
 
-                    {task.dueDate && (
-                        <div className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-sm ${isOverdue ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
-                            }`}>
-                            <LucideClock size={12} />
-                            <span>
-                                {dueDate.toLocaleDateString()}
-                                {' '}
-                                {dueDate.toLocaleTimeString()}
-                            </span>
-                        </div>
-                    )}
-                </div>
+                {task.isCompleted && (
+                    <span className={chip + ' border-emerald-300 bg-emerald-50 text-emerald-900'}>Done</span>
+                )}
+                {task.isArchived && (
+                    <span className={chip + ' border-zinc-400 bg-zinc-200 text-zinc-800'}>Archived</span>
+                )}
+                {task.priority && (
+                    <span className={chip + ' ' + getPriorityColor(task.priority)}>
+                        {task.priority.replace('-', ' ')}
+                    </span>
+                )}
 
-                <div className="flex items-center mt-2 gap-2">
-                    <select
-                        value={task.taskStatusId}
-                        onChange={(e) => {
-                            console.log(e.target.value);
-                            axiosChangeTaskList(e.target.value);
-                        }}
-                        className="border border-gray-300 px-2 py-1 pr-4 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out hover:bg-blue-50 text-sm"
-                        style={{
-                            width: '100px',
-                        }}
+                {dueDate && (
+                    <span
+                        className={
+                            chip +
+                            (isOverdue
+                                ? ' border-red-300 bg-red-50 text-red-800'
+                                : ' border-zinc-200 bg-zinc-50 text-zinc-700')
+                        }
                     >
-                        {taskStatusList.map((taskStatus) => (
-                            <option key={taskStatus._id} value={taskStatus._id}>
-                                {taskStatus.statusTitle}
-                            </option>
-                        ))}
-                    </select>
-                    <div className="flex gap-1">
-                        <button
-                            onClick={() => axiosDeleteTask(task._id)}
-                            className="text-red-600 p-1 rounded-sm hover:bg-red-50 transition"
-                            aria-label="Delete task"
-                        >
-                            <LucideTrash2 size={16} />
-                        </button>
-                        <button
-                            onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
-                            className="text-blue-600 p-1 rounded-sm hover:bg-blue-50 transition"
-                            aria-label="Edit task"
-                        >
-                            <LucideEdit3 size={16} />
-                        </button>
-                        <button
-                            onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
-                            className="text-gray-600 p-1 rounded-sm hover:bg-gray-50 transition"
-                            aria-label="View task details"
-                        >
-                            <LucideInfo size={16} />
-                        </button>
-                        <button
-                            onClick={() => {
-                                axiosChangeTaskPin({
-                                    isTaskPinned: !task.isTaskPinned,
-                                })
-                            }}
-                            className={`text-gray-600 p-1 rounded-sm hover:bg-gray-50 transition`}
-                            aria-label="Pin task"
-                        >
-                            <LucidePin
-                                size={24}
-                                className={`p-1 rounded-sm ${task.isTaskPinned ? 'text-blue-600 bg-blue-100' : 'text-gray-600'}`}
-                            />
-                        </button>
-                    </div>
-                </div>
+                        <LucideClock className="h-3 w-3 shrink-0" strokeWidth={2} />
+                        {dueDate.toLocaleDateString()}{' '}
+                        <span className="hidden sm:inline">{dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </span>
+                )}
+            </div>
 
-                {/* Action Buttons */}
-                <div>
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                <select
+                    value={task.taskStatusId}
+                    onChange={(e) => axiosChangeTaskList(e.target.value)}
+                    className="min-w-0 max-w-full flex-1 rounded-none border border-zinc-300 bg-white py-1 pl-1.5 pr-6 text-[11px] text-zinc-800 focus:border-emerald-600 focus:outline-none sm:max-w-[140px]"
+                >
+                    {taskStatusList.map((taskStatus) => (
+                        <option key={taskStatus._id} value={taskStatus._id}>
+                            {taskStatus.statusTitle}
+                        </option>
+                    ))}
+                </select>
+                <div className="flex items-center gap-0.5">
                     <button
-                        onClick={() => {
-                            // Handle chat with LLM functionality
-                            console.log('Chat with LLM for task:', task._id);
-                            taskChatWithAi(task._id);
-                        }}
-                        className="text-purple-600 p-1 rounded-sm hover:bg-purple-50 transition mt-2"
+                        type="button"
+                        onClick={() => axiosDeleteTask(task._id)}
+                        className="rounded-none border border-transparent p-1 text-red-600 hover:bg-red-50"
+                        aria-label="Delete task"
                     >
-                        <LucideMessageCircle
-                            size={16}
-                            className="inline-block mr-2"
-                            style={{
-                                marginBottom: '5px',
-                            }}
-                        /> AI chat with task
+                        <LucideTrash2 size={15} strokeWidth={2} />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
+                        className="rounded-none border border-transparent p-1 text-emerald-700 hover:bg-emerald-50"
+                        aria-label="Edit task"
+                    >
+                        <LucideEdit3 size={15} strokeWidth={2} />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
+                        className="rounded-none border border-transparent p-1 text-zinc-600 hover:bg-zinc-100"
+                        aria-label="View task details"
+                    >
+                        <LucideInfo size={15} strokeWidth={2} />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => axiosChangeTaskPin({ isTaskPinned: !task.isTaskPinned })}
+                        className={
+                            (task.isTaskPinned ? 'border-amber-300 bg-amber-50 text-amber-800 ' : 'border-transparent text-zinc-500 hover:bg-zinc-100 ') +
+                            'rounded-none border p-1'
+                        }
+                        aria-label="Pin task"
+                    >
+                        <LucidePin size={15} strokeWidth={2} className={task.isTaskPinned ? 'fill-amber-400' : ''} />
                     </button>
                 </div>
             </div>
-        )
-    }
 
-    return (
-        <div className="w-full">
-            {renderTaskNew()}
+            <button
+                type="button"
+                onClick={() => taskChatWithAi(task._id)}
+                className="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-none border border-violet-300 bg-violet-50 py-1 text-[10px] font-semibold uppercase tracking-wide text-violet-900 hover:bg-violet-100"
+            >
+                <LucideMessageCircle className="h-3.5 w-3.5" strokeWidth={2} />
+                AI chat
+            </button>
         </div>
     );
-}
+};
 
 export default TaskItem;

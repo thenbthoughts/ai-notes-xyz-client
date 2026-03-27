@@ -591,48 +591,46 @@ const ComponentThreadAdd = () => {
 
     return (
         <div
+            className="bg-[radial-gradient(ellipse_100%_60%_at_50%_-10%,rgba(45,212,191,0.07),transparent_55%),linear-gradient(to_bottom,#f8fafc,#f4f4f5)]"
             style={{
                 height: 'calc(-60px + 100vh)',
                 overflowY: 'auto',
             }}
         >
-            <div className="max-w-2xl mx-auto p-6">
-                {/* Header */}
-                <div className="flex items-center mb-6">
-                    <div className="w-10 h-10 bg-gray-100 rounded-sm flex items-center justify-center mr-3">
-                        <MessageCircle
-                            className="w-5 h-5 text-gray-600"
-                            style={{
-                                position: 'relative',
-                                top: '-0.5px',
-                                left: '1px',
-                            }}
-                        />
+            <div className="mx-auto max-w-2xl px-3 py-5 sm:p-8">
+                <div className="mb-6 flex items-center gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-900/20">
+                        <MessageCircle className="h-6 w-6" strokeWidth={2} />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-100">ChatUI</h1>
-                        <span className="text-sm text-gray-300">AI Assistant</span>
+                        <h1 className="text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl">
+                            New chat
+                        </h1>
+                        <span className="text-sm text-zinc-500">Choose a model, then start</span>
                     </div>
                 </div>
 
-                {/* Description */}
-                <p className="text-gray-600 mb-8">
-                    Start a new conversation with ChatUI to get help with any task.
+                <p className="mb-6 text-sm leading-relaxed text-zinc-600">
+                    Configure the assistant once. You can change models anytime in thread settings.
                 </p>
 
-                {/* Current Model Section */}
-                <div className="bg-gray-50 rounded-sm p-4 mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-sm font-medium text-gray-700">Current Model</h3>
-                        <button className="text-gray-400 hover:text-gray-600">
-                            <Settings className="w-5 h-5" />
+                <div className="mb-5 rounded-2xl border border-zinc-200/80 bg-white/90 p-4 shadow-lg shadow-zinc-900/[0.04] ring-1 ring-black/[0.02] backdrop-blur-sm sm:p-5">
+                    <div className="mb-3 flex items-center justify-between">
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                            Model
+                        </h3>
+                        <button
+                            type="button"
+                            className="text-zinc-400 hover:text-zinc-700"
+                            title="Settings"
+                        >
+                            <Settings className="h-4 w-4" />
                         </button>
                     </div>
 
-                    {/* field -> modelProvider */}
                     <div className="mb-2">
-                        <h3 className="text-sm font-medium text-gray-700 mb-2">Provider</h3>
-                        <div className="flex flex-col sm:flex-row gap-2 mb-2">
+                        <h3 className="mb-1.5 text-xs font-medium text-zinc-700">Provider</h3>
+                        <div className="mb-2 flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
                             {[
                                 { label: 'OpenRouter', value: 'openrouter' },
                                 { label: 'GROQ', value: 'groq' },
@@ -648,14 +646,11 @@ const ComponentThreadAdd = () => {
                                         setAiModelOpenAiCompatibleConfigId(null);
                                         setSelectRandomModel(Math.floor(Math.random() * 1000000));
                                     }}
-                                    className={
-                                        `flex-1 px-3 py-2 text-sm rounded-sm border transition-colors
-                                        ${aiModelProvider === provider.value
-                                            ? 'bg-blue-600 text-white border-blue-600'
-                                            : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'
-                                        }
-                                        font-semibold`
-                                    }
+                                    className={`flex-1 rounded-xl border px-2 py-2 text-xs font-medium transition-all sm:min-w-[5.5rem] ${
+                                        aiModelProvider === provider.value
+                                            ? 'border-teal-500/30 bg-gradient-to-br from-teal-600 to-emerald-600 text-white shadow-md shadow-teal-900/15'
+                                            : 'border-zinc-200/90 bg-zinc-50/80 text-zinc-800 hover:border-zinc-300 hover:bg-white'
+                                    }`}
                                     aria-pressed={aiModelProvider === provider.value}
                                 >
                                     {provider.label}
@@ -786,8 +781,7 @@ const ComponentThreadAdd = () => {
                     </div>
                 </div>
 
-                {/* answer engine */}
-                <div className="mb-4">
+                <div className="mb-5 rounded-2xl border border-zinc-200/80 bg-white/90 p-4 shadow-lg shadow-zinc-900/[0.04] ring-1 ring-black/[0.02] backdrop-blur-sm sm:p-5">
                     <div className="flex flex-col lg:flex-row lg:space-x-8 space-y-4 lg:space-y-0">
                         <div className="flex-1">
                             <div className="text-sm text-gray-700 mb-2">Answer Engine</div>
@@ -963,8 +957,7 @@ const ComponentThreadAdd = () => {
                     )}
                 </div>
 
-                {/* Chat Options */}
-                <div className="mb-4">
+                <div className="mb-5 rounded-2xl border border-zinc-200/80 bg-white/90 p-4 shadow-lg shadow-zinc-900/[0.04] ring-1 ring-black/[0.02] backdrop-blur-sm sm:p-5">
                     <div className="flex flex-col lg:flex-row lg:space-x-8 space-y-4 lg:space-y-0">
                         {/* field -> isPersonalContextEnabled */}
                         <div className="flex-1">
@@ -1026,21 +1019,21 @@ const ComponentThreadAdd = () => {
                     </div>
                 </div>
 
-                {/* New Chat Button */}
                 <div className="mb-4">
                     <button
+                        type="button"
                         onClick={addNewThread}
                         disabled={isAddThreadLoading}
-                        className="w-full p-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 hover:from-blue-400 hover:via-indigo-400 hover:to-purple-500 rounded-xl shadow-lg hover:shadow-blue-500/30 text-white transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] group"
+                        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-900/20 transition-all hover:from-teal-500 hover:to-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        <div className="inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <div className="flex items-center justify-center space-x-2 z-10">
-                            <div className="w-6 h-6 bg-white/20 rounded-sm flex items-center justify-center backdrop-blur-sm group-hover:rotate-12 transition-transform duration-300">
-                                <MessageCircle className="w-4 h-4 text-white drop-shadow-sm" />
-                            </div>
-                            <span className="text-base font-semibold tracking-wide">Start New Chat</span>
-                            <div className="w-2 h-2 bg-blue-300 rounded-sm animate-pulse"></div>
-                        </div>
+                        {isAddThreadLoading ? (
+                            <span className="text-xs">Starting…</span>
+                        ) : (
+                            <>
+                                <MessageCircle className="h-4 w-4" strokeWidth={2} />
+                                Start chat
+                            </>
+                        )}
                     </button>
                 </div>
             </div>

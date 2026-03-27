@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import ComponentNotesList from "./ComponentNotesList";
-import ComponentNotesEdit from "./ComponentNotesEdit/ComponentNotesEdit";
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import ComponentNotesList from './ComponentNotesList';
+import ComponentNotesEdit from './ComponentNotesEdit/ComponentNotesEdit';
 
 const ComponentRightWrapper = ({
     refreshRandomNumParent,
@@ -13,7 +13,7 @@ const ComponentRightWrapper = ({
         actionType: 'list',
         recordId: '',
     } as {
-        actionType: 'list' | 'edit',
+        actionType: 'list' | 'edit';
         recordId: string;
     });
 
@@ -26,7 +26,7 @@ const ComponentRightWrapper = ({
         if (actionType === 'edit') {
             const recordId = queryParams.get('id');
             if (typeof recordId === 'string') {
-                if(recordId.length === 24) {
+                if (recordId.length === 24) {
                     tempRecordId = recordId;
                     tempActionType = 'edit';
                 }
@@ -36,36 +36,30 @@ const ComponentRightWrapper = ({
             actionType: tempActionType,
             recordId: tempRecordId,
         });
-    }, [
-        location.search,
-        refreshRandomNumParent,
-    ]);
+    }, [location.search, refreshRandomNumParent]);
+
+    const subtitle =
+        pageName.actionType === 'edit'
+            ? 'Edit scheduled job'
+            : 'Automations, reminders, and AI summaries';
 
     return (
         <div
-            style={{
-                height: 'calc(100vh - 60px)',
-                overflowY: 'scroll'
-            }}
-            className="p-1 md:p-3"
+            className="min-h-0 overflow-y-auto bg-[#f4f4f5] px-2 py-2 md:px-3"
+            style={{ height: 'calc(100vh - 60px)' }}
         >
-
-            <div className="mb-6 p-4 rounded-sm shadow-lg text-white bg-yellow-500">
-                <h1 className="text-3xl font-extrabold mb-2 drop-shadow-md">Schedule</h1>
-                <p className="text-lg font-medium drop-shadow-sm">Schedule your tasks and events.</p>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-sm border border-zinc-200 bg-white px-3 py-2 shadow-sm">
+                <div className="min-w-0">
+                    <h1 className="text-sm font-semibold tracking-tight text-zinc-900 md:text-base">
+                        Task schedule
+                    </h1>
+                    <p className="text-[11px] text-zinc-500 md:text-xs">{subtitle}</p>
+                </div>
             </div>
 
-            {pageName.actionType === 'list' && (
-                <div>
-                    <ComponentNotesList />
-                </div>
-            )}
+            {pageName.actionType === 'list' && <ComponentNotesList />}
             {pageName.actionType === 'edit' && (
-                <div>
-                    <ComponentNotesEdit
-                        recordId={pageName.recordId}
-                    />
-                </div>
+                <ComponentNotesEdit recordId={pageName.recordId} />
             )}
         </div>
     );

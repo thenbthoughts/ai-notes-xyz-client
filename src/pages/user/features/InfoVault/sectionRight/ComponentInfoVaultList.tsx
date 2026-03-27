@@ -4,7 +4,7 @@ import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { IInfoVault } from '../../../../../types/pages/tsInfoVault.ts';
 import ComponentInfoVaultItem from './ComponentInfoVaultItem.tsx';
 import ReactPaginate from 'react-paginate';
-import { PlusCircle } from 'lucide-react';
+import { LucidePlus } from 'lucide-react';
 import { infoVaultAddAxios } from '../utils/infoVaultListAxios.ts';
 import { useNavigate } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
@@ -23,20 +23,16 @@ const ComponentInfoVaultList = () => {
 
     useEffect(() => {
         const axiosCancelTokenSource: CancelTokenSource = axios.CancelToken.source();
-        fetchList({ axiosCancelTokenSource });
+        void fetchList({ axiosCancelTokenSource });
         return () => {
             axiosCancelTokenSource.cancel('Operation canceled by the user.');
         };
-    }, [refreshRandomNum]);
+    }, [refreshRandomNum, page]);
 
     useEffect(() => {
         setPage(1);
         setRefreshRandomNum(Math.random());
-    }, [
-        page,
-        searchTerm,
-        isFavorite,
-    ]);
+    }, [searchTerm, isFavorite]);
 
     const fetchList = async ({ axiosCancelTokenSource }: { axiosCancelTokenSource: CancelTokenSource }) => {
         try {
@@ -83,62 +79,65 @@ const ComponentInfoVaultList = () => {
         }
     };
 
-    const renderCount = () => {
-        return (
-            <div className="mb-4 flex items-center gap-3">
-                <div className="flex items-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-sm px-4 py-2 shadow-sm border border-blue-200">
-                    <button onClick={notesAddAxiosLocal}>
-                        <PlusCircle className="w-6 h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
-                    </button>
-                    <span className="text-lg font-bold text-blue-700 tracking-wide">{totalCount}</span>
-                    <span className="ml-2 text-gray-700 font-medium">Notes</span>
-                    {totalCount === 0 && (
-                        <span className="ml-4 text-red-500 font-semibold">No result</span>
-                    )}
-                </div>
-            </div>
-        );
+    const goToTop = () => {
+        document.getElementById('messagesScrollUp')?.scrollIntoView({ behavior: 'smooth' });
     };
 
     return (
         <div>
-            {/* div scroll up */}
-            <div id='messagesScrollUp' />
-            {renderCount()}
-            {list.map((infoVaultObj) => (
-                <div key={infoVaultObj._id}>
-                    <ComponentInfoVaultItem infoVaultObj={infoVaultObj} />
+            <div id="messagesScrollUp" />
+
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-sm border border-zinc-200 bg-white px-2 py-1.5 shadow-sm">
+                <div className="flex items-center gap-2">
+                    <button
+                        type="button"
+                        onClick={notesAddAxiosLocal}
+                        className="inline-flex items-center gap-1 rounded-sm border border-emerald-700/30 bg-emerald-600 px-2 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+                    >
+                        <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
+                        Add
+                    </button>
+                    <span className="text-xs text-zinc-600">
+                        <span className="font-semibold text-zinc-900">{totalCount}</span> entries
+                    </span>
+                    {totalCount === 0 && (
+                        <span className="text-xs font-medium text-amber-700">No results</span>
+                    )}
                 </div>
-            ))}
+            </div>
+
+            <div className="space-y-1.5">
+                {list.map((infoVaultObj) => (
+                    <ComponentInfoVaultItem key={infoVaultObj._id} infoVaultObj={infoVaultObj} />
+                ))}
+            </div>
+
             {totalCount >= 1 && (
-                <div className="w-full flex justify-center items-center">
+                <div className="mt-3 flex w-full items-center justify-center">
                     <ReactPaginate
-                        breakLabel="..."
-                        nextLabel="next >"
+                        breakLabel="…"
+                        nextLabel="›"
                         onPageChange={(e) => {
-                            setPage(e.selected);
+                            setPage(e.selected + 1);
+                            goToTop();
                         }}
                         marginPagesDisplayed={1}
-                        pageRangeDisplayed={3}
+                        pageRangeDisplayed={2}
                         pageCount={Math.ceil(totalCount / perPage)}
-                        previousLabel="< previous"
+                        previousLabel="‹"
                         renderOnZeroPageCount={null}
-                        forcePage={page}
-                        containerClassName="flex flex-wrap justify-center items-center gap-1 sm:space-x-1"
-                        pageClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        previousClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        previousLinkClassName="text-gray-700 px-2 sm:px-3"
-                        nextClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        nextLinkClassName="text-gray-700 px-2 sm:px-3"
-                        breakClassName="border border-gray-300 rounded-sm text-base sm:text-lg m-0.5"
-                        breakLinkClassName="text-gray-700 px-2 sm:px-3"
-                        activeLinkClassName="bg-blue-500 text-white"
-                        pageLinkClassName="text-gray-700 px-2 sm:px-3"
+                        forcePage={page - 1}
+                        containerClassName="flex flex-wrap items-center justify-center gap-1"
+                        pageLinkClassName="min-w-[1.75rem] rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-center text-[11px] text-zinc-700 hover:bg-zinc-50"
+                        previousLinkClassName="rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-[11px] text-zinc-700 hover:bg-zinc-50"
+                        nextLinkClassName="rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-[11px] text-zinc-700 hover:bg-zinc-50"
+                        breakLinkClassName="px-1 text-[11px] text-zinc-400"
+                        activeLinkClassName="border-indigo-600 bg-indigo-600 text-white hover:bg-indigo-600"
                     />
                 </div>
             )}
-            {/* div scroll down */}
-            <div id='messagesScrollDown' />
+
+            <div id="messagesScrollDown" />
         </div>
     );
 };

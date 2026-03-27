@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import ComponentLifeEventsList from "./ComponentLifeEventsList";
-import ComponentLifeEventsEdit from "./ComponentLifeEventsEdit";
-import PageLifeEventCategoryCrud from "./PageLifeEventCategoryCrud/PageLifeEventCategoryCrud";
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import ComponentLifeEventsList from './ComponentLifeEventsList';
+import ComponentLifeEventsEdit from './ComponentLifeEventsEdit';
+import PageLifeEventCategoryCrud from './PageLifeEventCategoryCrud/PageLifeEventCategoryCrud';
 
 const ComponentRightWrapper = ({
     refreshRandomNumParent,
@@ -14,7 +14,7 @@ const ComponentRightWrapper = ({
         actionType: 'list',
         recordId: '',
     } as {
-        actionType: 'list' | 'edit' | 'category',
+        actionType: 'list' | 'edit' | 'category';
         recordId: string;
     });
 
@@ -27,7 +27,7 @@ const ComponentRightWrapper = ({
         if (actionType === 'edit') {
             const recordId = queryParams.get('id');
             if (typeof recordId === 'string') {
-                if(recordId.length === 24) {
+                if (recordId.length === 24) {
                     tempRecordId = recordId;
                     tempActionType = 'edit';
                 }
@@ -39,42 +39,34 @@ const ComponentRightWrapper = ({
             actionType: tempActionType,
             recordId: tempRecordId,
         });
-    }, [
-        location.search,
-        refreshRandomNumParent,
-    ]);
+    }, [location.search, refreshRandomNumParent]);
+
+    const subtitle =
+        pageName.actionType === 'edit'
+            ? 'Edit event'
+            : pageName.actionType === 'category'
+              ? 'Manage categories'
+              : 'Timeline, milestones, and diary entries';
 
     return (
         <div
-            style={{
-                height: 'calc(100vh - 60px)',
-                overflowY: 'scroll'
-            }}
-            className="p-1 md:p-3"
+            className="min-h-0 overflow-y-auto bg-[#f4f4f5] px-1.5 py-1 md:px-2"
+            style={{ height: 'calc(100vh - 60px)' }}
         >
-
-            <div className="mb-6 p-4 rounded-sm shadow-lg text-white bg-yellow-500">
-                <h1 className="text-3xl font-extrabold mb-2 drop-shadow-md">Life Events</h1>
-                <p className="text-lg font-medium drop-shadow-sm">Keep track of important moments in your life</p>
+            <div className="mb-1.5 flex flex-wrap items-center justify-between gap-1.5 rounded-md border border-zinc-200/90 bg-white px-2 py-1.5 shadow-sm">
+                <div className="min-w-0">
+                    <h1 className="text-xs font-semibold tracking-tight text-zinc-900 md:text-sm">
+                        Life events
+                    </h1>
+                    <p className="text-[10px] text-zinc-500 md:text-[11px]">{subtitle}</p>
+                </div>
             </div>
 
-            {pageName.actionType === 'list' && (
-                <div>
-                    <ComponentLifeEventsList />
-                </div>
-            )}
+            {pageName.actionType === 'list' && <ComponentLifeEventsList />}
             {pageName.actionType === 'edit' && (
-                <div>
-                    <ComponentLifeEventsEdit
-                        recordId={pageName.recordId}
-                    />
-                </div>
+                <ComponentLifeEventsEdit recordId={pageName.recordId} />
             )}
-            {pageName.actionType === 'category' && (
-                <div>
-                    <PageLifeEventCategoryCrud />
-                </div>
-            )}
+            {pageName.actionType === 'category' && <PageLifeEventCategoryCrud />}
         </div>
     );
 };

@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import axiosCustom from '../../../../../config/axiosCustom';
-import { LucideMoveDown, LucideMoveUp, LucidePlus, LucideRefreshCcw, LucideTrash2 } from 'lucide-react'; // Importing the delete icon
+import { LucideMoveDown, LucideMoveUp, LucidePlus, LucideRefreshCcw, LucideTrash2 } from 'lucide-react';
 
 const componentTaskStatusListNames = ({
     workspaceId,
@@ -17,15 +17,15 @@ const componentTaskStatusListNames = ({
         _id: string;
         statusTitle: string;
         listPosition: number;
-    }[]>([]); // State to hold the task boards
-    const [newListName, setNewListName] = useState(''); // State to hold the new board name
+    }[]>([]);
+    const [newListName, setNewListName] = useState('');
 
     useEffect(() => {
         fetchGroupList();
     }, [workspaceId]);
 
     const addGroup = async () => {
-        if (!newListName.trim()) return; // Prevent adding empty board names
+        if (!newListName.trim()) return;
 
         const newGroup = {
             taskWorkspaceId: workspaceId,
@@ -44,7 +44,7 @@ const componentTaskStatusListNames = ({
 
         try {
             await axiosCustom.request(config);
-            setNewListName(''); // Clear the input field
+            setNewListName('');
             await fetchGroupList();
         } catch (error) {
             console.error('Error adding task board:', error);
@@ -66,7 +66,7 @@ const componentTaskStatusListNames = ({
 
         try {
             await axiosCustom.request(config);
-            await fetchGroupList(); // Refresh the list after deletion
+            await fetchGroupList();
         } catch (error) {
             console.error('Error deleting task board:', error);
         }
@@ -84,7 +84,7 @@ const componentTaskStatusListNames = ({
                     listPosition: number;
                 }[];
 
-                setListArr(docs); // Assuming the response data is an array of group names
+                setListArr(docs);
                 setTaskStatusList(docs);
             } else {
                 console.error('Invalid response format: Expected an array');
@@ -117,9 +117,8 @@ const componentTaskStatusListNames = ({
         };
 
         try {
-            const response = await axiosCustom.request(config);
-            console.log(response.data.message); // Log success message
-            await fetchGroupList(); // Refresh the list after revalidation
+            await axiosCustom.request(config);
+            await fetchGroupList();
         } catch (error) {
             console.error('Error revalidating position:', error);
         }
@@ -127,59 +126,83 @@ const componentTaskStatusListNames = ({
 
     return (
         <div>
-            {/* Section 1: Display Task Boards */}
-            <div className="mb-2">
-                <h2 className="text-xl font-semibold mb-1 text-blue-600 flex justify-between items-center">
-                    List
-                    <button
-                        onClick={fetchGroupList}
-                        className="ml-4 bg-blue-500 text-white p-1 rounded-sm hover:bg-blue-600 transition flex items-center"
-                    >
-                        <LucideRefreshCcw size={16} className="" />
-                    </button>
+            <div className="mb-2 flex items-center justify-between gap-2">
+                <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">
+                    Status lists
                 </h2>
-                <div className="flex flex-col mb-2">
-                    {listArr.map((list) => (
-                        <div key={list._id} className="border border-gray-300 p-1 rounded-sm mb-1 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-center">
-                            <span>{list.statusTitle}</span>
-                            <div>
-                                <div>
-                                    {list.statusTitle !== 'Uncategorized' && (
-                                        <Fragment>
-                                            <button onClick={() => revalidatePositionById({ id: list._id, upOrDown: 'up', taskWorkspaceId: workspaceId })} className="text-red-600 hover:text-red-700 ml-1 mr-1">
-                                                <LucideMoveUp size={16} />
-                                            </button>
-                                            <button onClick={() => revalidatePositionById({ id: list._id, upOrDown: 'down', taskWorkspaceId: workspaceId })} className="text-red-600 hover:text-red-700 ml-1 mr-1">
-                                                <LucideMoveDown size={16} />
-                                            </button>
-                                            <button onClick={() => deleteGroup(list._id)} className="text-red-600 hover:text-red-700 ml-1">
-                                                <LucideTrash2 size={16} />
-                                            </button>
-                                        </Fragment>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                <div className="flex items-center space-x-1">
-                    <input
-                        type="text"
-                        placeholder="Enter list name"
-                        className="border border-gray-300 p-1 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                        value={newListName}
-                        onChange={(e) => setNewListName(e.target.value)} // Update state on input change
-                    />
-                    <button
-                        onClick={addGroup}
-                        className="bg-blue-500 text-white h-8 px-2 rounded-sm hover:bg-blue-600 transition"
+                <button
+                    type="button"
+                    onClick={() => fetchGroupList()}
+                    className="rounded-none border border-zinc-300 bg-zinc-100 p-1 text-zinc-700 hover:bg-white"
+                    title="Refresh lists"
+                >
+                    <LucideRefreshCcw size={14} strokeWidth={2} />
+                </button>
+            </div>
+            <div className="mb-2 flex max-h-48 flex-col gap-0.5 overflow-y-auto">
+                {listArr.map((list) => (
+                    <div
+                        key={list._id}
+                        className="flex items-center justify-between gap-1 rounded-none border border-zinc-200 bg-zinc-50 px-1.5 py-1 text-[11px] hover:bg-white"
                     >
-                        <LucidePlus size={16} />
-                    </button>
-                </div>
+                        <span className="min-w-0 truncate font-medium text-zinc-800">{list.statusTitle}</span>
+                        <div className="flex shrink-0 items-center">
+                            {list.statusTitle !== 'Uncategorized' && (
+                                <Fragment>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            revalidatePositionById({ id: list._id, upOrDown: 'up', taskWorkspaceId: workspaceId })
+                                        }
+                                        className="p-0.5 text-zinc-500 hover:text-zinc-900"
+                                        aria-label="Move up"
+                                    >
+                                        <LucideMoveUp size={14} strokeWidth={2} />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            revalidatePositionById({ id: list._id, upOrDown: 'down', taskWorkspaceId: workspaceId })
+                                        }
+                                        className="p-0.5 text-zinc-500 hover:text-zinc-900"
+                                        aria-label="Move down"
+                                    >
+                                        <LucideMoveDown size={14} strokeWidth={2} />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => deleteGroup(list._id)}
+                                        className="p-0.5 text-red-600 hover:bg-red-50"
+                                        aria-label="Delete list"
+                                    >
+                                        <LucideTrash2 size={14} strokeWidth={2} />
+                                    </button>
+                                </Fragment>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <div className="flex gap-1">
+                <input
+                    type="text"
+                    placeholder="New list…"
+                    className="min-w-0 flex-1 rounded-none border border-zinc-300 bg-white py-1.5 px-2 text-[11px] focus:border-emerald-600 focus:outline-none"
+                    value={newListName}
+                    onChange={(e) => setNewListName(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && addGroup()}
+                />
+                <button
+                    type="button"
+                    onClick={addGroup}
+                    className="shrink-0 rounded-none border border-emerald-700 bg-emerald-600 px-2 py-1.5 text-white hover:bg-emerald-500"
+                    aria-label="Add list"
+                >
+                    <LucidePlus size={16} strokeWidth={2} />
+                </button>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default componentTaskStatusListNames;

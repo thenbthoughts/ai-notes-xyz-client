@@ -62,38 +62,45 @@ const ComponentTaskListLabels = ({
     };
 
     return (
-        <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2 text-blue-600">Labels</h2>
+        <div>
+            <h2 className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">
+                Labels
+            </h2>
             <input
                 type="text"
-                placeholder="Search labels..."
-                className="border border-gray-300 p-3 rounded-sm mb-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Filter labels…"
+                className="mb-2 w-full rounded-none border border-zinc-300 bg-white py-1.5 px-2 text-[11px] focus:border-emerald-600 focus:outline-none"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
             />
 
-            {/* Selected labels */}
             {selectedLabels.length > 0 && (
-                <div className="mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">Selected Labels:</span>
+                <div className="mb-2 rounded-none border border-emerald-200 bg-emerald-50/50 p-2">
+                    <div className="mb-1 flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase text-emerald-800">Selected</span>
                         <button
+                            type="button"
                             onClick={() => setSelectedLabels([])}
-                            className="text-xs text-red-600 hover:text-red-800 flex items-center gap-1"
+                            className="inline-flex items-center gap-0.5 text-[10px] font-medium text-red-700 hover:underline"
                         >
-                            <X className="w-3 h-3" />
-                            Clear All
+                            <X className="h-3 w-3" />
+                            Clear
                         </button>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1">
                         {selectedLabels.map((label) => (
-                            <span key={label} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-sm text-sm flex items-center gap-1">
+                            <span
+                                key={label}
+                                className="inline-flex items-center gap-0.5 rounded-none border border-emerald-300 bg-white px-1.5 py-0.5 text-[10px] font-medium text-emerald-900"
+                            >
                                 {label}
                                 <button
+                                    type="button"
                                     onClick={() => handleLabelClick(label)}
-                                    className="text-blue-600 hover:text-blue-800"
+                                    className="text-emerald-700 hover:text-red-600"
+                                    aria-label={`Remove ${label}`}
                                 >
-                                    <LucideX className="w-3 h-3" />
+                                    <LucideX className="h-3 w-3" strokeWidth={2} />
                                 </button>
                             </span>
                         ))}
@@ -101,31 +108,39 @@ const ComponentTaskListLabels = ({
                 </div>
             )}
 
-            {/* display labels */}
-            <div className="mb-4">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Labels</h3>
-                
+            <div>
                 {loading ? (
-                    <div className="text-center py-4">
-                        <span className="text-gray-500">Loading labels...</span>
-                    </div>
+                    <p className="py-2 text-center font-mono text-[10px] text-zinc-500">Loading…</p>
                 ) : (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex max-h-40 flex-wrap gap-1 overflow-y-auto">
                         {filteredLabels.length === 0 ? (
-                            <span className="text-gray-500 text-sm">No labels found</span>
+                            <span className="text-[11px] text-zinc-500">No labels</span>
                         ) : (
                             <>
-                                {filteredLabels.slice(0, 100).map((label) => (
-                                    <span key={label._id} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-sm text-sm flex items-center gap-1" onClick={() => handleLabelClick(label._id)}>
-                                        {label._id}
-                                        <span className="bg-blue-200 text-blue-900 px-1 rounded-sm text-xs">
-                                            {label.count}
-                                        </span>
-                                    </span>
-                                ))}
+                                {filteredLabels.slice(0, 100).map((label) => {
+                                    const on = selectedLabels.includes(label._id);
+                                    return (
+                                        <button
+                                            key={label._id}
+                                            type="button"
+                                            onClick={() => handleLabelClick(label._id)}
+                                            className={
+                                                (on
+                                                    ? 'border-emerald-600 bg-emerald-600 text-white '
+                                                    : 'border-zinc-200 bg-zinc-50 text-zinc-800 hover:border-zinc-400 ') +
+                                                'inline-flex items-center gap-1 rounded-none border px-1.5 py-0.5 text-[10px] font-medium'
+                                            }
+                                        >
+                                            {label._id}
+                                            <span className={on ? 'bg-emerald-500 px-0.5 text-[9px]' : 'bg-zinc-200 px-0.5 text-[9px] text-zinc-700'}>
+                                                {label.count}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
                                 {filteredLabels.length > 100 && (
-                                    <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-sm text-sm">
-                                        + {filteredLabels.length - 100} more
+                                    <span className="rounded-none border border-zinc-200 bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-600">
+                                        +{filteredLabels.length - 100}
                                     </span>
                                 )}
                             </>
@@ -134,7 +149,7 @@ const ComponentTaskListLabels = ({
                 )}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default ComponentTaskListLabels;

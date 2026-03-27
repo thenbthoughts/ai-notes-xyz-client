@@ -181,20 +181,26 @@ const ComponentAiGeneratedQuestionList = ({
         return (
             <div>
                 {questions.length >= 1 && (
-                    <div className='text-center'>
-                        <p className="text-lg font-semibold mb-2">{questions.length} Questions Available</p>
+                    <div className="mb-3 text-center">
+                        <p className="text-sm font-semibold text-zinc-800">
+                            {questions.length} suggested questions
+                        </p>
                     </div>
                 )}
                 {loading ? (
-                    <p className="text-gray-500 text-center font-semibold">Loading questions...</p>
+                    <p className="text-center text-sm font-medium text-zinc-500">Loading…</p>
                 ) : (
-                    <ul className="overflow-auto max-h-[30vh]">
+                    <ul className="max-h-[30vh] space-y-2 overflow-auto pr-0.5">
                         {questions.map((question, index) => (
-                            <li key={index} className="mb-1 p-2 text-sm bg-gray-200">
-                                {question}
+                            <li
+                                key={index}
+                                className="flex items-start justify-between gap-2 rounded-xl border border-zinc-200/80 bg-zinc-50/90 p-3 text-sm text-zinc-800"
+                            >
+                                <span className="min-w-0 flex-1 leading-snug">{question}</span>
                                 <button
-                                    onClick={() => navigator.clipboard.writeText(question)}
-                                    className="ml-2 text-blue-500 hover:underline"
+                                    type="button"
+                                    onClick={() => void navigator.clipboard.writeText(question)}
+                                    className="shrink-0 rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[11px] font-medium text-teal-700 shadow-sm transition hover:border-teal-200 hover:bg-teal-50"
                                 >
                                     Copy
                                 </button>
@@ -203,58 +209,67 @@ const ComponentAiGeneratedQuestionList = ({
                     </ul>
                 )}
             </div>
-        )
-    }
+        );
+    };
 
     const renderTabInfo = () => {
         return (
             <div>
-                <div className="space-y-2">
-                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-sm p-2 border border-blue-200">
-                        <p className="text-gray-700 font-medium text-sm">{threadInfo.threadTitle}</p>
+                <div className="space-y-3">
+                    <div className="rounded-xl border border-violet-200/70 bg-gradient-to-br from-violet-50/90 to-teal-50/40 p-3">
+                        <p className="text-sm font-semibold text-zinc-900">{threadInfo.threadTitle}</p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div className="bg-green-50 rounded-sm p-2 border border-green-200">
-                            <div className="flex items-center gap-1.5">
-                                <div className={`w-2 h-2 rounded-sm ${threadInfo.isPersonalContextEnabled ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                                <span className="text-xs text-gray-700">Personal Context</span>
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        <div className="rounded-xl border border-emerald-200/70 bg-emerald-50/60 p-2.5">
+                            <div className="flex items-center gap-2">
+                                <div
+                                    className={`h-2 w-2 rounded-full ${threadInfo.isPersonalContextEnabled ? 'bg-emerald-500' : 'bg-zinc-300'}`}
+                                />
+                                <span className="text-xs font-medium text-zinc-700">Personal context</span>
                             </div>
                         </div>
 
-                        <div className="bg-orange-50 rounded-sm p-2 border border-orange-200">
-                            <div className="flex items-center gap-1.5">
-                                <div className={`w-2 h-2 rounded-sm ${threadInfo.isAutoAiContextSelectEnabled ? 'bg-orange-500' : 'bg-gray-400'}`}></div>
-                                <span className="text-xs text-gray-700">Auto AI Context</span>
+                        <div className="rounded-xl border border-amber-200/70 bg-amber-50/60 p-2.5">
+                            <div className="flex items-center gap-2">
+                                <div
+                                    className={`h-2 w-2 rounded-full ${threadInfo.isAutoAiContextSelectEnabled ? 'bg-amber-500' : 'bg-zinc-300'}`}
+                                />
+                                <span className="text-xs font-medium text-zinc-700">Auto AI context</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-indigo-50 rounded-sm p-2 border border-indigo-200 flex items-center justify-between">
-                        <div>
-                            <span className="text-sm font-medium text-gray-800">
+                    <div className="flex items-center justify-between rounded-xl border border-indigo-200/70 bg-indigo-50/70 p-3">
+                        <div className="min-w-0">
+                            <span className="block truncate text-sm font-medium text-zinc-900">
                                 {formatModelNameForDisplay(threadInfo.aiModelName)}
                             </span>
-                            <span className="text-xs text-gray-500 ml-2">
-                                ({threadInfo.aiModelProvider === 'openai-compatible' ? 'OpenAI Compatible' : threadInfo.aiModelProvider})
+                            <span className="text-xs text-zinc-500">
+                                {threadInfo.aiModelProvider === 'openai-compatible'
+                                    ? 'OpenAI Compatible'
+                                    : threadInfo.aiModelProvider}
                             </span>
                         </div>
-                        <div className="w-4 h-4 bg-indigo-100 rounded-sm flex items-center justify-center">
-                            <div className="w-2 h-2 bg-indigo-500 rounded-sm"></div>
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-100/90">
+                            <div className="h-2 w-2 rounded-full bg-indigo-500" />
                         </div>
                     </div>
 
                     {threadInfo.aiSummary && (
-                        <div className="bg-gray-50 rounded-sm p-2 border border-gray-200">
-                            <p className="text-xs text-gray-600 leading-relaxed">{threadInfo.aiSummary}</p>
+                        <div className="rounded-xl border border-zinc-200/80 bg-zinc-50/80 p-3">
+                            <p className="text-xs leading-relaxed text-zinc-600">{threadInfo.aiSummary}</p>
                         </div>
                     )}
 
                     {threadInfo.tagsAi && threadInfo.tagsAi.length > 0 && (
-                        <div className="bg-purple-50 rounded-sm p-2 border border-purple-200">
-                            <div className="flex flex-wrap gap-1">
+                        <div className="rounded-xl border border-violet-200/70 bg-violet-50/60 p-3">
+                            <div className="flex flex-wrap gap-1.5">
                                 {threadInfo.tagsAi.map((tag, index) => (
-                                    <span key={index} className="px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded-sm text-xs font-medium border border-purple-200">
+                                    <span
+                                        key={index}
+                                        className="rounded-md border border-violet-200/80 bg-violet-100/80 px-2 py-0.5 text-xs font-medium text-violet-800"
+                                    >
                                         {tag}
                                     </span>
                                 ))}
@@ -263,44 +278,49 @@ const ComponentAiGeneratedQuestionList = ({
                     )}
                 </div>
             </div>
-        )
-    }
+        );
+    };
+
+    const pillBtn =
+        'inline-flex items-center gap-1.5 rounded-xl bg-zinc-900 px-3 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-zinc-800 sm:text-sm';
 
     return (
-        <div className='py-3'>
-            <div className='px-2'>
-                <div className="bg-white border border-gray-300 rounded-sm px-3 py-2 shadow-md inline-block w-full whitespace-pre-wrap">
-                    <div className='text-center'>
+        <div className="py-4">
+            <div className="px-1 sm:px-0">
+                <div className="w-full rounded-2xl border border-zinc-200/80 bg-white/90 p-4 shadow-lg shadow-zinc-900/[0.04] ring-1 ring-black/[0.02] backdrop-blur-sm">
+                    <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
                         <button
+                            type="button"
                             onClick={() => {
                                 fetchQuestions();
-                                setTab('generate')
+                                setTab('generate');
                             }}
-                            className="mb-2 mt-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white px-4 py-1.5 rounded-sm shadow-sm hover:from-purple-600 hover:to-blue-700 transition duration-200 transform hover:scale-105 inline-flex items-center gap-1.5 text-sm font-medium mr-2"
+                            className={`${pillBtn} bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500`}
                         >
-                            <LucideZap className="w-4 h-4" />
-                            Generate AI Questions
+                            <LucideZap className="h-4 w-4" strokeWidth={2} />
+                            Suggest questions
                         </button>
                         <button
+                            type="button"
                             onClick={() => {
                                 fetchThreadInfo();
                                 setTab('info');
                             }}
-                            className="mb-2 mt-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white px-3 py-1.5 rounded-sm shadow-sm hover:from-purple-600 hover:to-blue-700 transition duration-200 transform hover:scale-105 inline-flex items-center gap-1.5 text-sm font-medium mr-2"
+                            className={pillBtn}
                         >
-                            <LucideInfo className="w-4 h-4" />
-                            Info
+                            <LucideInfo className="h-4 w-4" strokeWidth={2} />
+                            Thread info
                         </button>
-                        {/* button download */}
                         <button
+                            type="button"
                             onClick={() => {
                                 setTab('info');
                                 fetchThreadInfo();
                                 fetchThreadInfoAndDownload();
                             }}
-                            className="mb-2 mt-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white px-3 py-1.5 rounded-sm shadow-sm hover:from-purple-600 hover:to-blue-700 transition duration-200 transform hover:scale-105 inline-flex items-center gap-1.5 text-sm font-medium mr-2"
+                            className={pillBtn}
                         >
-                            <LucideDownload className="w-4 h-4" />
+                            <LucideDownload className="h-4 w-4" strokeWidth={2} />
                             Download
                         </button>
                     </div>

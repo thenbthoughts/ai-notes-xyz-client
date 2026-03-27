@@ -189,7 +189,6 @@ const CRightChatById = ({
                     if (messages.length > 0) {
                         const firstMessage = messages[0];
                         const firstMessageElement = document.getElementById(`key-message-${firstMessage._id}`);
-                        console.log('firstMessageElement', firstMessageElement, `key-message-${firstMessage._id}`);
                         if (firstMessageElement) {
                             firstMessageElement.scrollIntoView({ block: 'nearest', inline: 'nearest' });
                         }
@@ -224,8 +223,7 @@ const CRightChatById = ({
 
     // Handle intersection observer for loading more messages
     useEffect(() => {
-        let functionScroll = (e: Event) => {
-            console.log('functionScroll called', e);
+        let functionScroll = (_e: Event) => {
             if (loadingMore || loading) {
                 return;
             }
@@ -261,7 +259,7 @@ const CRightChatById = ({
     ]);
 
     return (
-        <div>
+        <div className="relative min-h-0 bg-[radial-gradient(ellipse_120%_80%_at_50%_-20%,rgba(45,212,191,0.08),transparent_50%),radial-gradient(ellipse_80%_50%_at_100%_50%,rgba(139,92,246,0.05),transparent_45%),linear-gradient(to_bottom,#f8fafc_0%,#f4f4f5_100%)]">
             <div
                 ref={messagesContainerRef}
                 style={{
@@ -269,48 +267,45 @@ const CRightChatById = ({
                     overflowY: 'scroll',
                 }}
             >
-                <div className="flex bg-background w-full">
-                    <div className="flex-1 flex flex-col min-w-0">
+                <div className="flex min-h-0 w-full">
+                    <div className="mx-auto flex min-h-0 min-w-0 w-full max-w-3xl flex-1 flex-col px-2 sm:px-4">
 
                         <div id="messagesScrollUp" />
 
-                        {/* section no result found */}
                         <div>
                             {loading === false && messages.length === 0 && (
-                                <div className='py-3 px-2'>
-                                    <div className='p-8 bg-white rounded-sm'>
-                                        <div className="flex flex-col items-center justify-center text-center">
-                                            <div className="text-4xl mb-4">💬</div>
-                                            <h3 className="text-gray-600 text-lg mb-2">
-                                                Start Your Conversation
-                                            </h3>
-                                            <p className="text-gray-400 text-sm">
-                                                Ask a question to begin
-                                            </p>
+                                <div className="px-1 py-8 sm:py-12">
+                                    <div className="rounded-2xl border border-zinc-200/80 bg-white/80 px-6 py-12 text-center shadow-lg shadow-zinc-900/5 ring-1 ring-white/60 backdrop-blur-sm">
+                                        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500/15 to-violet-500/15 text-2xl ring-1 ring-teal-500/20">
+                                            💬
                                         </div>
+                                        <h3 className="mb-2 text-base font-semibold tracking-tight text-zinc-900">
+                                            Start a conversation
+                                        </h3>
+                                        <p className="mx-auto max-w-sm text-sm leading-relaxed text-zinc-500">
+                                            Send a message below. You can attach files, paste images, or use voice from the toolbar.
+                                        </p>
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        {/* Loading trigger container */}
                         {hasMore && messages.length > 0 && totalCount >= LIMIT_MESSAGES + 1 && (
                             <div
                                 ref={loadingTriggerRef}
                                 className="flex items-center justify-center py-8"
                                 style={{ height: '100px' }}
                             >
-                                <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+                                <Loader2 className="h-6 w-6 animate-spin text-teal-600" />
                             </div>
                         )}
 
-                        {/* Loading more indicator */}
                         {messages.length > 0 && totalCount >= LIMIT_MESSAGES + 1 && (
                             <div>
                                 {loadingMore && (
-                                    <div className="flex justify-center items-center py-4">
-                                        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-gray-900"></div>
-                                        <span className="ml-2 text-sm text-gray-600">Loading messages...</span>
+                                    <div className="flex items-center justify-center py-4">
+                                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-200 border-t-teal-600" />
+                                        <span className="ml-2 text-xs text-zinc-600">Loading older messages…</span>
                                     </div>
                                 )}
                             </div>

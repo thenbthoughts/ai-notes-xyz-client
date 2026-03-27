@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from 'react';
 import {
     LucideList,
     LucideMoveDown,
@@ -6,7 +7,7 @@ import {
     LucideRefreshCcw,
     LucideSettings,
     LucideSettings2,
-    LucideSidebar
+    LucideSidebar,
 } from 'lucide-react';
 
 import { Link } from 'react-router-dom';
@@ -18,213 +19,133 @@ import { jotaiChatHistoryModalOpen, jotaiChatLlmThreadSetting, jotaiHideSidebar 
 import { useAtom } from 'jotai';
 import { toast } from 'react-hot-toast';
 
+const railBtn =
+    'mx-1 flex w-[calc(100%-0.5rem)] items-center justify-center rounded-xl border-0 py-2 text-zinc-300 transition-all duration-200 active:scale-95';
+
 const ChatRightFilterWrapper = ({
     setRefreshRandomNumFetchChat,
 }: {
-    setRefreshRandomNumFetchChat: React.Dispatch<React.SetStateAction<number>>
+    setRefreshRandomNumFetchChat: Dispatch<SetStateAction<number>>;
 }) => {
-
-    // useState
     const screenWidth = useResponsiveScreen();
 
-    const [
-        chatHistoryModalOpen,
-        setChatHistoryModalOpen,
-    ] = useAtom(jotaiChatHistoryModalOpen);
+    const [chatHistoryModalOpen, setChatHistoryModalOpen] = useAtom(jotaiChatHistoryModalOpen);
 
-    const [
-        chatLlmThreadSetting,
-        setChatLlmThreadSetting,
-    ] = useAtom(jotaiChatLlmThreadSetting);
+    const [chatLlmThreadSetting, setChatLlmThreadSetting] = useAtom(jotaiChatLlmThreadSetting);
 
-    const [
-        hideSidebar,
-        setHideSidebar,
-    ] = useAtom(jotaiHideSidebar);
+    const [hideSidebar, setHideSidebar] = useAtom(jotaiHideSidebar);
 
     return (
-        <div className='w-full'>
-            {/* chat history */}
+        <div className="flex w-full flex-col gap-1 px-0.5">
             {screenWidth === screenList.sm && (
-                <div
-                    className='p-1 cursor-pointer'
+                <button
+                    type="button"
+                    className={`${railBtn} ${
+                        chatHistoryModalOpen.isOpen
+                            ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-900/40 hover:bg-indigo-400'
+                            : 'bg-zinc-800/80 hover:bg-zinc-700 hover:text-white'
+                    }`}
                     onClick={() => {
                         setChatHistoryModalOpen({
                             isOpen: !chatHistoryModalOpen.isOpen,
                         });
-                        setChatLlmThreadSetting((prevProps) => {
-                            return {
-                                ...prevProps,
-                                isOpen: false,
-                            };
-                        });
-                    }}
-                >
-                    <div className={`py-3 rounded-sm ${chatHistoryModalOpen.isOpen ? 'bg-blue-600' : 'bg-gray-600'}`}>
-                        <LucideList
-                            style={{
-                                width: '100%',
-                                color: 'white', // Set icon color to white
-                            }}
-                            className=''
-                        />
-                    </div>
-                </div>
-            )}
-
-            {/* setting */}
-            <div
-                className='p-1 cursor-pointer'
-            >
-                <div className={`py-3 rounded-sm bg-gray-600`}>
-                    <Link to={'/user/setting'}>
-                        <LucideSettings
-                            style={{
-                                width: '100%',
-                                color: 'white', // Set icon color to white
-                            }}
-                            className=''
-                        />
-                    </Link>
-                </div>
-            </div>
-
-            {/* add chat */}
-            <div
-                className='p-1 cursor-pointer'
-            >
-                <div className={`py-3 rounded-sm bg-gray-600`}>
-                    <Link to={'/user/chat'}>
-                        <LucidePlus
-                            style={{
-                                width: '100%',
-                                color: 'white', // Set icon color to white
-                            }}
-                            className=''
-                        />
-                    </Link>
-                </div>
-            </div>
-
-            {/* move up */}
-            <div
-                className='p-1 cursor-pointer'
-                onClick={() => {
-                    const messagesScrollUp = document.getElementById('messagesScrollUp');
-                    if (messagesScrollUp) {
-                        messagesScrollUp?.scrollIntoView({ behavior: "smooth" });
-                    }
-                }}
-            >
-                <div className='py-3 bg-gray-600 rounded'>
-                    <LucideMoveUp
-                        style={{
-                            width: '100%',
-                            color: 'white', // Set icon color to white
-                        }}
-                        className=''
-
-                    />
-                </div>
-            </div>
-
-            {/* move down */}
-            <div
-                className='p-1 cursor-pointer'
-                onClick={() => {
-                    const messagesScrollDown = document.getElementById('messagesScrollDown');
-                    if (messagesScrollDown) {
-                        messagesScrollDown?.scrollIntoView({ behavior: "smooth" });
-                    }
-                }}
-            >
-                <div className='py-3 bg-gray-600 rounded'>
-                    <LucideMoveDown
-                        style={{
-                            width: '100%',
-                            color: 'white', // Set icon color to white
-                        }}
-                        className=''
-                    />
-                </div>
-            </div>
-
-            {/* hide sidebar */}
-            {screenWidth === screenList.lg && (
-                <div
-                    className='p-1 cursor-pointer'
-                    onClick={() => {
-                        setHideSidebar((prevProps) => {
-                            return {
-                                isOpen: !prevProps.isOpen,
-                            };
-                        });
-                    }}
-                >
-                    <div className={`py-3 rounded-sm ${hideSidebar.isOpen ? 'bg-blue-600' : 'bg-gray-600'}`}>
-                        <LucideSidebar
-                            style={{
-                                width: '100%',
-                                color: 'white',
-                            }}
-                            className=''
-                        />
-                    </div>
-                </div>
-            )}
-
-            {/* thread setting */}
-            {chatLlmThreadSetting.threadId.length === 24 && (
-                <div
-                    className='p-1 cursor-pointer'
-                    onClick={() => {
-                        toast.success('Refreshing...');
-                        let randomNum = Math.floor(Math.random() * 1_000_000);
-                        setRefreshRandomNumFetchChat(randomNum);
-                    }}
-                >
-                    <div className={`py-3 rounded-sm bg-gray-600`}>
-                        <LucideRefreshCcw
-                            style={{
-                                width: '100%',
-                                color: 'white',
-                            }}
-                            className=''
-                        />
-                    </div>
-                </div>
-            )}
-
-            {/* thread setting */}
-            {chatLlmThreadSetting.threadId.length === 24 && (
-                <div
-                    className='p-1 cursor-pointer'
-                    onClick={() => {
-                        setChatHistoryModalOpen({
+                        setChatLlmThreadSetting((prevProps) => ({
+                            ...prevProps,
                             isOpen: false,
-                        });
-                        setChatLlmThreadSetting((prevProps) => {
-                            return {
-                                ...prevProps,
-                                isOpen: true,
-                            };
-                        });
+                        }));
                     }}
+                    title="Threads"
                 >
-                    <div className={`py-3 rounded-sm bg-gray-600`}>
-                        <LucideSettings2
-                            style={{
-                                width: '100%',
-                                color: 'white',
-                            }}
-                            className=''
-                        />
-                    </div>
-                </div>
+                    <LucideList className="h-4 w-4" strokeWidth={1.75} />
+                </button>
             )}
 
+            <Link
+                to="/user/setting"
+                className={`${railBtn} bg-zinc-800/80 hover:bg-zinc-700 hover:text-white`}
+                title="Settings"
+            >
+                <LucideSettings className="h-4 w-4" strokeWidth={1.75} />
+            </Link>
+
+            <Link
+                to="/user/chat"
+                className={`${railBtn} bg-emerald-600/90 text-white shadow-md shadow-emerald-950/30 hover:bg-emerald-500`}
+                title="New chat"
+            >
+                <LucidePlus className="h-4 w-4" strokeWidth={1.75} />
+            </Link>
+
+            <button
+                type="button"
+                className={`${railBtn} bg-zinc-800/80 hover:bg-zinc-700 hover:text-white`}
+                onClick={() => {
+                    const el = document.getElementById('messagesScrollUp');
+                    el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                title="Scroll up"
+            >
+                <LucideMoveUp className="h-4 w-4" strokeWidth={1.75} />
+            </button>
+
+            <button
+                type="button"
+                className={`${railBtn} bg-zinc-800/80 hover:bg-zinc-700 hover:text-white`}
+                onClick={() => {
+                    const el = document.getElementById('messagesScrollDown');
+                    el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                title="Scroll down"
+            >
+                <LucideMoveDown className="h-4 w-4" strokeWidth={1.75} />
+            </button>
+
+            {screenWidth === screenList.lg && (
+                <button
+                    type="button"
+                    className={`${railBtn} ${
+                        hideSidebar.isOpen
+                            ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-900/40 hover:bg-indigo-400'
+                            : 'bg-zinc-800/80 hover:bg-zinc-700'
+                    }`}
+                    onClick={() => {
+                        setHideSidebar((prev) => ({ isOpen: !prev.isOpen }));
+                    }}
+                    title="Toggle thread sidebar"
+                >
+                    <LucideSidebar className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+            )}
+
+            {chatLlmThreadSetting.threadId.length === 24 && (
+                <button
+                    type="button"
+                    className={`${railBtn} bg-zinc-800/80 hover:bg-zinc-700 hover:text-white`}
+                    onClick={() => {
+                        toast.success('Refreshing…');
+                        setRefreshRandomNumFetchChat(Math.floor(Math.random() * 1_000_000));
+                    }}
+                    title="Refresh messages"
+                >
+                    <LucideRefreshCcw className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+            )}
+
+            {chatLlmThreadSetting.threadId.length === 24 && (
+                <button
+                    type="button"
+                    className={`${railBtn} bg-zinc-800/80 hover:bg-zinc-700 hover:text-white`}
+                    onClick={() => {
+                        setChatHistoryModalOpen({ isOpen: false });
+                        setChatLlmThreadSetting((prev) => ({ ...prev, isOpen: true }));
+                    }}
+                    title="Thread settings"
+                >
+                    <LucideSettings2 className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+            )}
         </div>
-    )
-}
+    );
+};
 
 export default ChatRightFilterWrapper;

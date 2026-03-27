@@ -1,9 +1,20 @@
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
 import { useRef, useState, useEffect } from 'react';
-import { LucideLink, LucidePlus } from 'lucide-react';
+import {
+    LucideCalendar,
+    LucideChevronLeft,
+    LucideChevronRight,
+    LucideLink,
+    LucideMoveDown,
+    LucideMoveUp,
+    LucidePlus,
+    LucideRefreshCcw,
+    LucideSettings,
+} from 'lucide-react';
 import axiosCustom from '../../../../config/axiosCustom';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 import calendarScss from './scss/calendarWrapper.module.scss';
 
@@ -11,17 +22,27 @@ interface Event {
     title: string;
     start: Date;
     end?: Date;
-    allDay: true,
+    allDay: true;
     extendedProps?: {
         recordId: string;
-        fromCollection: 'tasks' | 'lifeEvents' | 'infoVaultSignificantDate' | 'infoVaultSignificantDateRepeat' | 'taskSchedules';
+        fromCollection:
+            | 'tasks'
+            | 'lifeEvents'
+            | 'infoVaultSignificantDate'
+            | 'infoVaultSignificantDateRepeat'
+            | 'taskSchedules';
         moreInfoLink: string;
     };
 }
 
 interface tsCalenderApiRes {
     _id: string;
-    fromCollection: 'tasks' | 'lifeEvents' | 'infoVaultSignificantDate' | 'infoVaultSignificantDateRepeat' | 'taskSchedules';
+    fromCollection:
+        | 'tasks'
+        | 'lifeEvents'
+        | 'infoVaultSignificantDate'
+        | 'infoVaultSignificantDateRepeat'
+        | 'taskSchedules';
     taskInfo?: {
         _id: string;
         title: string;
@@ -52,6 +73,9 @@ interface tsCalenderApiRes {
     };
 }
 
+const railBtn =
+    'flex w-full items-center justify-center rounded-none border-0 py-1.5 text-zinc-200 transition-colors';
+
 const CalendarWrapper = () => {
     const calendarRef = useRef<FullCalendar | null>(null);
     const [currentView, setCurrentView] = useState<string>('dayGridMonth');
@@ -59,7 +83,7 @@ const CalendarWrapper = () => {
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
     const [events, setEvents] = useState<Event[]>([]);
-    
+
     const [filterEventTypeTasks, setFilterEventTypeTasks] = useState<boolean>(true);
     const [filterEventTypeLifeEvents, setFilterEventTypeLifeEvents] = useState<boolean>(true);
     const [filterEventTypeInfoVault, setFilterEventTypeInfoVault] = useState<boolean>(true);
@@ -82,7 +106,6 @@ const CalendarWrapper = () => {
                 startDate: startDateDynamic,
                 endDate: endDateDynamic,
 
-                // filter -> event type filters
                 filterEventTypeTasks,
                 filterEventTypeLifeEvents,
                 filterEventTypeInfoVault,
@@ -128,10 +151,12 @@ const CalendarWrapper = () => {
                                 moreInfoLink: `/user/info-vault?action=edit&id=${doc.infoVaultSignificantDate.infoVaultId}`,
                             },
                         });
-                    } else if (doc.fromCollection === 'infoVaultSignificantDateRepeat' && doc.infoVaultSignificantDateRepeat) {
+                    } else if (
+                        doc.fromCollection === 'infoVaultSignificantDateRepeat' &&
+                        doc.infoVaultSignificantDateRepeat
+                    ) {
                         let shouldInsert = true;
 
-                        // should not insert if the recordId is already in the tempArr
                         for (let indexRepeated = 0; indexRepeated < tempArr.length; indexRepeated++) {
                             const element = tempArr[indexRepeated];
                             if (element.extendedProps?.recordId === doc.infoVaultSignificantDateRepeat._id) {
@@ -143,7 +168,10 @@ const CalendarWrapper = () => {
                         if (shouldInsert) {
                             tempArr.push({
                                 title: doc.infoVaultSignificantDateRepeat.label,
-                                start: new Date(doc.infoVaultSignificantDateRepeat.normalizedDate || doc.infoVaultSignificantDateRepeat.date),
+                                start: new Date(
+                                    doc.infoVaultSignificantDateRepeat.normalizedDate ||
+                                        doc.infoVaultSignificantDateRepeat.date
+                                ),
                                 allDay: true,
                                 extendedProps: {
                                     recordId: doc.infoVaultSignificantDateRepeat._id,
@@ -166,26 +194,21 @@ const CalendarWrapper = () => {
                     }
                 }
             }
-            console.log('tempArr: ', tempArr);
 
-            let tempArrSorted = tempArr.sort((a, b) => {
-                return a.start.getTime() - b.start.getTime();
-            });
+            const tempArrSorted = tempArr.sort((a, b) => a.start.getTime() - b.start.getTime());
 
             setEvents(tempArrSorted);
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     useEffect(() => {
-        fetchEvents();
+        void fetchEvents();
     }, [
         startDate,
         endDate,
         currentView,
-
-        // event type filters
         filterEventTypeTasks,
         filterEventTypeLifeEvents,
         filterEventTypeInfoVault,
@@ -193,421 +216,341 @@ const CalendarWrapper = () => {
         filterEventTypeTaskSchedule,
     ]);
 
-    const renderSearchBox = () => {
-        return (
-            <div
-                className="
-                    bg-gradient-to-r from-indigo-500 to-purple-600
-                    rounded-xl px-6 py-4 my-6 shadow-lg
-                    gap-4
-                    calendar-header-responsive
-                "
-            >
-                <div className="flex items-center gap-4 flex-1 min-w-0">
-                    {/* Calendar Icon */}
-                    <span
-                        className="text-3xl text-white min-w-[2rem]"
-                        role="img"
-                        aria-label="calendar"
-                    >
-                        📅
-                    </span>
-                    <span
-                        className="text-white font-semibold text-lg tracking-wide truncate"
-                    >
-                        View your Tasks, Events & Important Dates
-                    </span>
-                </div>
+    const filterChip = (on: boolean) =>
+        `inline-flex cursor-pointer items-center gap-1 rounded-sm border px-2 py-1 text-xs font-medium transition-colors ${
+            on
+                ? 'border-indigo-300 bg-indigo-50 text-indigo-900'
+                : 'border-zinc-200 bg-white text-zinc-500'
+        }`;
 
-                <div
-                    className="text-white text-sm pt-2"
-                >
-                    {new Date(startDate).toString()}
-                </div>
+    const viewBtn = (active: boolean) =>
+        `rounded-sm border px-2 py-1.5 text-xs font-medium transition-colors sm:text-sm ${
+            active
+                ? 'border-indigo-600 bg-indigo-600 text-white'
+                : 'border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-50'
+        }`;
 
-                <div className="flex items-center gap-3 flex-1 min-w-0 pt-3">
-                    {/* Add Event Button */}
-                    <Link
-                        to="/user/life-events"
-                        className="
-                            bg-white text-indigo-500 border-none rounded-sm
-                            px-4 py-2 font-semibold text-base cursor-pointer
-                            shadow-md transition hover:bg-indigo-50
-                            whitespace-nowrap mb-1 flex-shrink-0
-                        "
-                    >
-                        <span role="img" aria-label="add" className="mr-1">
-                            <LucidePlus
-                                className='inline-block'
-                                size={18}
-                                style={{
-                                    marginTop: '-3px',
-                                }}
-                            />
-                        </span>
-                        Add Event
-                    </Link>
-                </div>
-            </div>
-        )
-    }
-
-    const renderFilters = () => {
-        return (
-            <div className="pb-3">
-                <label 
-                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
-                    onChange={() => setFilterEventTypeTasks((prev) => !prev)}
-                >
-                    <input
-                        type="checkbox"
-                        className="w-3 h-3 cursor-pointer align-middle mr-1"
-                        checked={filterEventTypeTasks}
-                    />
-                    <span className="align-middle">Tasks</span>
-                </label>
-                <label 
-                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
-                    onChange={() => setFilterEventTypeLifeEvents((prev) => !prev)}
-                >
-                    <input
-                        type="checkbox"
-                        className="w-3 h-3 cursor-pointer align-middle mr-1"
-                        checked={filterEventTypeLifeEvents}
-                    />
-                    <span className="align-middle">Life Events</span>
-                </label>
-                <label 
-                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
-                    onChange={() => setFilterEventTypeInfoVault((prev) => !prev)}
-                >
-                    <input
-                        type="checkbox"
-                        className="w-3 h-3 cursor-pointer align-middle mr-1"
-                        checked={filterEventTypeInfoVault}
-                    />
-                    <span className="align-middle">Info Vault</span>
-                </label>
-                <label 
-                    className="inline-block text-white text-xs cursor-pointer mr-2 hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
-                    onChange={() => setFilterEventTypeDiary((prev) => !prev)}
-                >
-                    <input
-                        type="checkbox"
-                        className="w-3 h-3 cursor-pointer align-middle mr-1"
-                        checked={filterEventTypeDiary}
-                    />
-                    <span className="align-middle">Diary</span>
-                </label>
-                <label 
-                    className="inline-block text-white text-xs cursor-pointer hover:opacity-80 transition-opacity bg-white/10 rounded-sm px-2.5 py-1 backdrop-blur-sm select-none"
-                    onChange={() => setFilterEventTypeTaskSchedule((prev) => !prev)}
-                >
-                    <input
-                        type="checkbox"
-                        className="w-3 h-3 cursor-pointer align-middle mr-1"
-                        checked={filterEventTypeTaskSchedule}
-                    />
-                    <span className="align-middle">Task Schedule</span>
-                </label>
-            </div>
-        )
-    }
-
-    const renderButtons = () => {
-        return (
-            <div>
-                <div>
-                    <div>
-                        <button
-                            style={{
-                                background: currentView === 'dayGridMonth' ? '#fff' : 'rgba(255,255,255,0.25)',
-                                color: currentView === 'dayGridMonth' ? '#764ba2' : '#fff',
-                                border: 'none',
-                                borderRadius: '6px 0 0 6px',
-                                padding: '8px 18px',
-                                fontWeight: 600,
-                                fontSize: '1rem',
-                                cursor: 'pointer',
-                                boxShadow: currentView === 'dayGridMonth' ? '0 2px 8px rgba(102, 126, 234, 0.10)' : 'none',
-                                transition: 'background 0.2s'
-                            }}
-                            onClick={() => {
-                                calendarRef.current?.getApi().changeView('dayGridMonth');
-                                setCurrentView && setCurrentView('dayGridMonth');
-                            }}
-                        >
-                            <span role="img" aria-label="month" style={{ marginRight: 6 }}>🗓️</span>
-                            Month
-                        </button>
-                        <button
-                            style={{
-                                background: currentView === 'dayGridWeek' ? '#fff' : 'rgba(255,255,255,0.25)',
-                                color: currentView === 'dayGridWeek' ? '#764ba2' : '#fff',
-                                border: 'none',
-                                borderRadius: 0,
-                                padding: '8px 18px',
-                                fontWeight: 600,
-                                fontSize: '1rem',
-                                cursor: 'pointer',
-                                boxShadow: currentView === 'dayGridWeek' ? '0 2px 8px rgba(102, 126, 234, 0.10)' : 'none',
-                                transition: 'background 0.2s'
-                            }}
-                            onClick={() => {
-                                calendarRef.current?.getApi().changeView('dayGridWeek');
-                                setCurrentView && setCurrentView('dayGridWeek');
-                            }}
-                        >
-                            <span role="img" aria-label="week" style={{ marginRight: 6 }}>📆</span>
-                            Week
-                        </button>
-                        <button
-                            style={{
-                                background: currentView === 'dayGridDay' ? '#fff' : 'rgba(255,255,255,0.25)',
-                                color: currentView === 'dayGridDay' ? '#764ba2' : '#fff',
-                                border: 'none',
-                                borderRadius: '0 6px 6px 0',
-                                padding: '8px 18px',
-                                fontWeight: 600,
-                                fontSize: '1rem',
-                                cursor: 'pointer',
-                                boxShadow: currentView === 'dayGridDay' ? '0 2px 8px rgba(102, 126, 234, 0.10)' : 'none',
-                                transition: 'background 0.2s'
-                            }}
-                            onClick={() => {
-                                calendarRef.current?.getApi().changeView('dayGridDay');
-                                setCurrentView && setCurrentView('dayGridDay');
-                            }}
-                        >
-                            <span role="img" aria-label="day" style={{ marginRight: 6 }}>📅</span>
-                            Day
-                        </button>
-
-                        <button
-                            style={{
-                                background: 'rgba(255,255,255,0.25)',
-                                color: '#fff',
-                                border: 'none',
-                                borderRadius: '6px 0 0 6px',
-                                padding: '8px 14px',
-                                fontWeight: 600,
-                                fontSize: '1rem',
-                                cursor: 'pointer',
-                                marginLeft: 4,
-                                transition: 'background 0.2s'
-                            }}
-                            onClick={() => {
-                                calendarRef.current?.getApi().prev();
-                            }}
-                        >
-                            <span role="img" aria-label="previous" style={{ marginRight: 6 }}>⬅️</span>
-                            Prev
-                        </button>
-
-                        <button
-                            style={{
-                                background: 'rgba(255,255,255,0.25)',
-                                color: '#fff',
-                                border: 'none',
-                                borderRadius: '0 6px 6px 0',
-                                padding: '8px 14px',
-                                fontWeight: 600,
-                                fontSize: '1rem',
-                                cursor: 'pointer',
-                                marginRight: 4,
-                                transition: 'background 0.2s'
-                            }}
-                            onClick={() => {
-                                calendarRef.current?.getApi().next();
-                            }}
-                        >
-                            <span role="img" aria-label="next" style={{ marginRight: 6 }}>➡️</span>
-                            Next
-                        </button>
-                        <button
-                            style={{
-                                background: currentView === 'today' ? '#fff' : 'rgba(255,255,255,0.25)',
-                                color: currentView === 'today' ? '#764ba2' : '#fff',
-                                border: 'none',
-                                borderRadius: 0,
-                                padding: '8px 18px',
-                                fontWeight: 600,
-                                fontSize: '1rem',
-                                cursor: 'pointer',
-                                boxShadow: currentView === 'today' ? '0 2px 8px rgba(102, 126, 234, 0.10)' : 'none',
-                                transition: 'background 0.2s'
-                            }}
-                            onClick={() => {
-                                calendarRef.current?.getApi().today();
-                                // Optionally, you can keep the currentView unchanged, or set it to the current view
-                                // setCurrentView && setCurrentView(currentView);
-                            }}
-                        >
-                            <span role="img" aria-label="today" style={{ marginRight: 6 }}>📍</span>
-                            Today
-                        </button>
+    const renderSearchBox = () => (
+        <div className="mb-3 rounded-sm border border-zinc-200 bg-white px-3 py-2 shadow-sm">
+            <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="flex min-w-0 items-start gap-2">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-zinc-200 bg-zinc-50">
+                        <LucideCalendar className="h-4 w-4 text-indigo-600" strokeWidth={2} />
+                    </div>
+                    <div className="min-w-0">
+                        <h1 className="text-sm font-semibold tracking-tight text-zinc-900 md:text-base">Calendar</h1>
+                        <p className="text-[11px] text-zinc-500 md:text-xs">
+                            Tasks, life events, Info Vault dates, diaries, and schedules
+                        </p>
+                        {startDate && (
+                            <p className="mt-1 text-[10px] text-zinc-400">
+                                Range anchor: {new Date(startDate).toLocaleString()}
+                            </p>
+                        )}
                     </div>
                 </div>
-            </div>
-        )
-    }
-
-    const renderRightList = () => {
-        return (
-            <div className='bg-white rounded-sm my-2 p-1 md:p-2'>
-                {/* heading */}
-                <h1 className='text-lg font-semibold text-gray-800'>Events</h1>
-
-                {/* no events */}
-                <div className='mt-2'>
-                    {events.length === 0 && (
-                        <div className='text-sm text-gray-500'>No events found</div>
-                    )}
-                </div>
-
-                {/* count */}
-                <div className='mt-2'>
-                    {(() => {
-                        // Count all types
-                        const taskCount = events.filter(event => event.extendedProps?.fromCollection === 'tasks').length;
-                        const lifeEventCount = events.filter(event => event.extendedProps?.fromCollection === 'lifeEvents').length;
-                        const staticDateCount = events.filter(event => event.extendedProps?.fromCollection === 'infoVaultSignificantDate').length;
-                        const significantDateCount = events.filter(event => event.extendedProps?.fromCollection === 'infoVaultSignificantDateRepeat').length;
-                        const taskScheduleCount = events.filter(event => event.extendedProps?.fromCollection === 'taskSchedules').length;
-                        return (
-                            <div className="mb-2">
-                                {events.length > 0 && (
-                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-gray-600 font-medium bg-gray-50 rounded-sm px-2 py-1">
-                                        📅 <span>All:</span> <span>{events.length}</span>
-                                    </div>
-                                )}
-                                {taskCount > 0 && (
-                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-indigo-600 font-medium bg-indigo-50 rounded-sm px-2 py-1">
-                                        📝 <span>Tasks:</span> <span>{taskCount}</span>
-                                    </div>
-                                )}
-                                {lifeEventCount > 0 && (
-                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-purple-600 font-medium bg-purple-50 rounded-sm px-2 py-1">
-                                        🎉 <span>Life Events:</span> <span>{lifeEventCount}</span>
-                                    </div>
-                                )}
-                                {staticDateCount > 0 && (
-                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-blue-600 font-medium bg-blue-50 rounded-sm px-2 py-1">
-                                        📌 <span>Significant Dates:</span> <span>{staticDateCount}</span>
-                                    </div>
-                                )}
-                                {significantDateCount > 0 && (
-                                    <div className="inline-block align-middle mr-4 mb-1 items-center gap-1 text-green-600 font-medium bg-green-50 rounded-sm px-2 py-1">
-                                        ⭐ <span>Significant Dates (Repeated):</span> <span>{significantDateCount}</span>
-                                    </div>
-                                )}
-                                {taskScheduleCount > 0 && (
-                                    <div className="inline-block align-middle mb-1 items-center gap-1 text-orange-600 font-medium bg-orange-50 rounded-sm px-2 py-1">
-                                        ⏰ <span>Task Schedules:</span> <span>{taskScheduleCount}</span>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })()}
-                </div>
-
-                {/* events */}
-                {events.map((event) => (
-                    <div
-                        key={event.title}
-                        className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-md p-1 mb-2 flex items-center gap-2 hover:scale-[1.025] transition-transform duration-200"
-                    >
-                        <div className="flex-shrink-0 w-7 h-7 bg-white bg-opacity-20 rounded-sm flex items-center justify-center text-lg text-white shadow">
-                            {event.extendedProps?.fromCollection === 'tasks' && '📝'}
-                            {event.extendedProps?.fromCollection === 'lifeEvents' && '🎉'}
-                            {event.extendedProps?.fromCollection === 'infoVaultSignificantDate' && '📌'}
-                            {event.extendedProps?.fromCollection === 'infoVaultSignificantDateRepeat' && '⭐'}
-                            {event.extendedProps?.fromCollection === 'taskSchedules' && '⏰'}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="text-sm font-semibold text-white">
-                                {event.extendedProps?.moreInfoLink ? (
-                                    <Link
-                                        to={event.extendedProps.moreInfoLink}
-                                        className="hover:underline flex items-center gap-1"
-                                    >
-                                        {event.title}
-                                        <LucideLink className="w-3 h-3 text-white opacity-80" />
-                                    </Link>
-                                ) : (
-                                    event.title
-                                )}
-                            </div>
-                            <div className="text-xs text-white text-opacity-80 mt-0.5">
-                                {event.start instanceof Date
-                                    ? event.start.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-                                    : ''}
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        )
-    }
-
-    return (
-        <div
-            className='container m-auto py-5 px-1'
-            style={{
-                maxWidth: '1280px',
-            }}
-        >
-            {/* heading */}
-
-
-            {/* search box */}
-            {renderSearchBox()}
-
-            {/* filters */}
-            {renderFilters()}
-
-            {/* buttons */}
-            {renderButtons()}
-
-            {/* Calendar */}
-            <div className='flex flex-col lg:flex-row gap-4'>
-                {/* left */}
-                <div className='w-full lg:w-3/4'>
-                    <div className='bg-white rounded-sm md:p-4 my-2'>
-                        <FullCalendar
-                            ref={calendarRef}
-                            plugins={[
-                                dayGridPlugin
-                            ]}
-                            initialView='dayGridMonth'
-                            weekends={true}
-                            events={events}
-                            eventContent={renderEventContent}
-                            datesSet={(arg) => {
-                                const d = arg.view.calendar.getDate(); // current anchor date of the view
-                                console.log('datesSet: ', d);
-                                setStartDate(d.toISOString());
-                                setEndDate(arg.end.toISOString());
-                            }}
-
-                            // height
-                            height="auto"
-                            contentHeight="auto"
-                            expandRows={true}
-                        />
-                    </div>
-                </div>
-
-                {/* right */}
-                <div className='w-full lg:w-1/4'>
-                    <div className='bg-white rounded-sm'>
-                        {renderRightList()}
-                    </div>
-                </div>
+                <Link
+                    to="/user/life-events"
+                    className="inline-flex shrink-0 items-center gap-1 rounded-sm border border-emerald-700/30 bg-emerald-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
+                >
+                    <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
+                    Add event
+                </Link>
             </div>
         </div>
-    )
-}
+    );
+
+    const renderFilters = () => (
+        <div className="mb-3 flex flex-wrap gap-1.5 rounded-sm border border-zinc-200 bg-white px-2 py-2 shadow-sm">
+            <label className={filterChip(filterEventTypeTasks)}>
+                <input
+                    type="checkbox"
+                    className="h-3 w-3 rounded-sm border-zinc-300 text-indigo-600"
+                    checked={filterEventTypeTasks}
+                    onChange={(e) => setFilterEventTypeTasks(e.target.checked)}
+                />
+                Tasks
+            </label>
+            <label className={filterChip(filterEventTypeLifeEvents)}>
+                <input
+                    type="checkbox"
+                    className="h-3 w-3 rounded-sm border-zinc-300 text-indigo-600"
+                    checked={filterEventTypeLifeEvents}
+                    onChange={(e) => setFilterEventTypeLifeEvents(e.target.checked)}
+                />
+                Life events
+            </label>
+            <label className={filterChip(filterEventTypeInfoVault)}>
+                <input
+                    type="checkbox"
+                    className="h-3 w-3 rounded-sm border-zinc-300 text-indigo-600"
+                    checked={filterEventTypeInfoVault}
+                    onChange={(e) => setFilterEventTypeInfoVault(e.target.checked)}
+                />
+                Info Vault
+            </label>
+            <label className={filterChip(filterEventTypeDiary)}>
+                <input
+                    type="checkbox"
+                    className="h-3 w-3 rounded-sm border-zinc-300 text-indigo-600"
+                    checked={filterEventTypeDiary}
+                    onChange={(e) => setFilterEventTypeDiary(e.target.checked)}
+                />
+                Diary
+            </label>
+            <label className={filterChip(filterEventTypeTaskSchedule)}>
+                <input
+                    type="checkbox"
+                    className="h-3 w-3 rounded-sm border-zinc-300 text-indigo-600"
+                    checked={filterEventTypeTaskSchedule}
+                    onChange={(e) => setFilterEventTypeTaskSchedule(e.target.checked)}
+                />
+                Task schedule
+            </label>
+        </div>
+    );
+
+    const renderButtons = () => (
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="flex flex-wrap items-center gap-1">
+                <button
+                    type="button"
+                    className={`${viewBtn(currentView === 'dayGridMonth')} rounded-r-none border-r-0`}
+                    onClick={() => {
+                        calendarRef.current?.getApi().changeView('dayGridMonth');
+                        setCurrentView('dayGridMonth');
+                    }}
+                >
+                    Month
+                </button>
+                <button
+                    type="button"
+                    className={`${viewBtn(currentView === 'dayGridWeek')} rounded-none border-x-0`}
+                    onClick={() => {
+                        calendarRef.current?.getApi().changeView('dayGridWeek');
+                        setCurrentView('dayGridWeek');
+                    }}
+                >
+                    Week
+                </button>
+                <button
+                    type="button"
+                    className={`${viewBtn(currentView === 'dayGridDay')} rounded-l-none border-l-0`}
+                    onClick={() => {
+                        calendarRef.current?.getApi().changeView('dayGridDay');
+                        setCurrentView('dayGridDay');
+                    }}
+                >
+                    Day
+                </button>
+            </div>
+            <div className="flex flex-wrap items-center gap-1">
+                <button
+                    type="button"
+                    className="inline-flex items-center gap-1 rounded-sm border border-zinc-200 bg-white px-2 py-1.5 text-xs font-medium text-zinc-800 hover:bg-zinc-50"
+                    onClick={() => calendarRef.current?.getApi().prev()}
+                >
+                    <LucideChevronLeft className="h-4 w-4" strokeWidth={2} />
+                    Prev
+                </button>
+                <button
+                    type="button"
+                    className="inline-flex items-center gap-1 rounded-sm border border-zinc-200 bg-white px-2 py-1.5 text-xs font-medium text-zinc-800 hover:bg-zinc-50"
+                    onClick={() => calendarRef.current?.getApi().next()}
+                >
+                    Next
+                    <LucideChevronRight className="h-4 w-4" strokeWidth={2} />
+                </button>
+                <button
+                    type="button"
+                    className="rounded-sm border border-emerald-200 bg-emerald-50 px-2 py-1.5 text-xs font-medium text-emerald-900 hover:bg-emerald-100"
+                    onClick={() => calendarRef.current?.getApi().today()}
+                >
+                    Today
+                </button>
+            </div>
+        </div>
+    );
+
+    const renderRightList = () => {
+        const taskCount = events.filter((e) => e.extendedProps?.fromCollection === 'tasks').length;
+        const lifeEventCount = events.filter((e) => e.extendedProps?.fromCollection === 'lifeEvents').length;
+        const staticDateCount = events.filter(
+            (e) => e.extendedProps?.fromCollection === 'infoVaultSignificantDate'
+        ).length;
+        const significantDateCount = events.filter(
+            (e) => e.extendedProps?.fromCollection === 'infoVaultSignificantDateRepeat'
+        ).length;
+        const taskScheduleCount = events.filter((e) => e.extendedProps?.fromCollection === 'taskSchedules').length;
+
+        const chip =
+            'mr-1.5 mb-1 inline-flex items-center gap-0.5 rounded-sm border px-1.5 py-0.5 text-[10px] font-medium';
+
+        return (
+            <div className="rounded-sm border border-zinc-200 bg-white p-2 shadow-sm md:p-2.5">
+                <h2 className="text-sm font-semibold text-zinc-900">In view</h2>
+
+                {events.length === 0 && <p className="mt-2 text-xs text-zinc-500">No events in this range.</p>}
+
+                {events.length > 0 && (
+                    <div className="mt-2 flex flex-wrap">
+                        <span className={`${chip} border-zinc-200 bg-zinc-50 text-zinc-800`}>
+                            All {events.length}
+                        </span>
+                        {taskCount > 0 && (
+                            <span className={`${chip} border-indigo-200 bg-indigo-50 text-indigo-900`}>
+                                Tasks {taskCount}
+                            </span>
+                        )}
+                        {lifeEventCount > 0 && (
+                            <span className={`${chip} border-violet-200 bg-violet-50 text-violet-900`}>
+                                Events {lifeEventCount}
+                            </span>
+                        )}
+                        {staticDateCount > 0 && (
+                            <span className={`${chip} border-sky-200 bg-sky-50 text-sky-900`}>
+                                Dates {staticDateCount}
+                            </span>
+                        )}
+                        {significantDateCount > 0 && (
+                            <span className={`${chip} border-emerald-200 bg-emerald-50 text-emerald-900`}>
+                                Repeating {significantDateCount}
+                            </span>
+                        )}
+                        {taskScheduleCount > 0 && (
+                            <span className={`${chip} border-amber-200 bg-amber-50 text-amber-900`}>
+                                Schedules {taskScheduleCount}
+                            </span>
+                        )}
+                    </div>
+                )}
+
+                <div className="mt-2 max-h-[60vh] space-y-1.5 overflow-y-auto">
+                    {events.map((event) => {
+                        const key = `${event.extendedProps?.recordId ?? 'x'}-${event.start.getTime()}-${event.title}`;
+                        return (
+                            <div
+                                key={key}
+                                className="flex items-center gap-2 rounded-sm border border-zinc-200 bg-zinc-50/80 px-2 py-1.5"
+                            >
+                                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-zinc-200 bg-white text-sm">
+                                    {event.extendedProps?.fromCollection === 'tasks' && '📝'}
+                                    {event.extendedProps?.fromCollection === 'lifeEvents' && '🎉'}
+                                    {event.extendedProps?.fromCollection === 'infoVaultSignificantDate' && '📌'}
+                                    {event.extendedProps?.fromCollection === 'infoVaultSignificantDateRepeat' && '⭐'}
+                                    {event.extendedProps?.fromCollection === 'taskSchedules' && '⏰'}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <div className="text-xs font-medium text-zinc-900">
+                                        {event.extendedProps?.moreInfoLink ? (
+                                            <Link
+                                                to={event.extendedProps.moreInfoLink}
+                                                className="inline-flex items-center gap-1 hover:text-indigo-700 hover:underline"
+                                            >
+                                                {event.title}
+                                                <LucideLink className="h-3 w-3 shrink-0 text-zinc-400" strokeWidth={2} />
+                                            </Link>
+                                        ) : (
+                                            event.title
+                                        )}
+                                    </div>
+                                    <div className="text-[10px] text-zinc-500">
+                                        {event.start instanceof Date
+                                            ? event.start.toLocaleDateString(undefined, {
+                                                  year: 'numeric',
+                                                  month: 'short',
+                                                  day: 'numeric',
+                                              })
+                                            : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div className="flex w-full bg-[#f4f4f5]">
+            <div className="min-w-0 w-[calc(100vw-50px)]">
+                <div id="messagesScrollUp" />
+                <div className="min-h-[calc(100vh-60px)] px-2 py-2 md:px-3">
+                    {renderSearchBox()}
+                    {renderFilters()}
+                    {renderButtons()}
+
+                    <div className="flex flex-col gap-3 lg:flex-row">
+                        <div className="w-full min-w-0 lg:w-3/4">
+                            <div className="rounded-sm border border-zinc-200 bg-white p-2 shadow-sm md:p-3">
+                                <FullCalendar
+                                    ref={calendarRef}
+                                    plugins={[dayGridPlugin]}
+                                    initialView="dayGridMonth"
+                                    weekends={true}
+                                    events={events}
+                                    eventContent={renderEventContent}
+                                    datesSet={(arg) => {
+                                        const d = arg.view.calendar.getDate();
+                                        setStartDate(d.toISOString());
+                                        setEndDate(arg.end.toISOString());
+                                    }}
+                                    height="auto"
+                                    contentHeight="auto"
+                                    expandRows={true}
+                                />
+                            </div>
+                        </div>
+                        <div className="w-full shrink-0 lg:w-1/4">{renderRightList()}</div>
+                    </div>
+                </div>
+                <div id="messagesScrollDown" />
+            </div>
+
+            <div className="flex w-[50px] shrink-0 flex-col items-stretch border-l border-zinc-800 bg-zinc-900 py-1">
+                <Link
+                    to="/user/setting"
+                    className={`${railBtn} bg-zinc-800 hover:bg-zinc-700 hover:text-white`}
+                    title="Settings"
+                >
+                    <LucideSettings className="h-4 w-4" strokeWidth={1.75} />
+                </Link>
+                <button
+                    type="button"
+                    className={`${railBtn} bg-zinc-800 hover:bg-zinc-700 hover:text-white`}
+                    title="Scroll up"
+                    onClick={() =>
+                        document.getElementById('messagesScrollUp')?.scrollIntoView({ behavior: 'smooth' })
+                    }
+                >
+                    <LucideMoveUp className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+                <button
+                    type="button"
+                    className={`${railBtn} bg-zinc-800 hover:bg-zinc-700 hover:text-white`}
+                    title="Scroll down"
+                    onClick={() =>
+                        document.getElementById('messagesScrollDown')?.scrollIntoView({ behavior: 'smooth' })
+                    }
+                >
+                    <LucideMoveDown className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+                <button
+                    type="button"
+                    className={`${railBtn} bg-zinc-800 hover:bg-zinc-700 hover:text-white`}
+                    title="Refresh events"
+                    onClick={() => {
+                        toast.success('Refreshing…');
+                        void fetchEvents();
+                    }}
+                >
+                    <LucideRefreshCcw className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+            </div>
+        </div>
+    );
+};
 
 function renderEventContent(eventInfo: {
     timeText: string;
@@ -615,37 +558,31 @@ function renderEventContent(eventInfo: {
         title: string;
         extendedProps: {
             recordId: string;
-            fromCollection: 'tasks' | 'lifeEvents' | 'taskSchedules';
+            fromCollection:
+                | 'tasks'
+                | 'lifeEvents'
+                | 'taskSchedules'
+                | 'infoVaultSignificantDate'
+                | 'infoVaultSignificantDateRepeat';
             moreInfoLink: string;
         };
     };
 }) {
     return (
-        <div className='p-1'>
-            <b>{eventInfo.timeText}</b>
-            <i
-                onClick={() => {
-                    console.log('eventInfo: ', eventInfo);
-                }}
-                className={`text-xs ${calendarScss.calendarTitleLink}`}
-                title={eventInfo.event.title}
-            >{eventInfo.event.title}</i>
-            <div className='text-xs text-gray-500'>
-                <Link
-                    to={eventInfo.event.extendedProps.moreInfoLink || ''}
-                    className='p-1 text-center block bg-white rounded-sm flex flex-col lg:flex-row items-center justify-center'
-                >
-                    <LucideLink
-                        size={12}
-                        style={{
-                            marginTop: '-3px',
-                        }}
-                        className='inline-block mr-1'
-                    /> View
-                </Link>
-            </div>
+        <div className="p-0.5">
+            <b className="text-[10px] text-zinc-600">{eventInfo.timeText}</b>
+            <i className={`block text-[11px] font-medium text-zinc-900 ${calendarScss.calendarTitleLink}`} title={eventInfo.event.title}>
+                {eventInfo.event.title}
+            </i>
+            <Link
+                to={eventInfo.event.extendedProps.moreInfoLink || '#'}
+                className="mt-0.5 flex items-center justify-center gap-0.5 rounded-sm border border-zinc-200 bg-zinc-50 py-0.5 text-[10px] font-medium text-indigo-700 hover:bg-zinc-100"
+            >
+                <LucideLink className="h-3 w-3" strokeWidth={2} />
+                View
+            </Link>
         </div>
-    )
+    );
 }
 
 export default CalendarWrapper;

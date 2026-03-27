@@ -10,9 +10,20 @@ import ComponentFolderAndFileList from './ComponentFolderAndFileList.tsx';
 import ComponentNotesWorkspace from './ComponentNotesWorkspace.tsx';
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { AxiosRequestConfig } from 'axios';
-import { LucideList, LucideMessageCircle, LucidePlus, LucideRefreshCcw } from 'lucide-react';
+import {
+    LucideList,
+    LucideMessageCircle,
+    LucidePlus,
+    LucideRefreshCcw,
+    LucideSearch,
+    LucideStar,
+    LucideX,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { notesWorkspaceChatWithAi } from '../utils/notesListAxios.ts';
+
+const btnPrimary =
+    'inline-flex items-center gap-0.5 rounded-none border border-indigo-500 bg-indigo-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide leading-tight text-white shadow-[2px_2px_0_0_rgb(67_56_202)] hover:bg-indigo-500 active:translate-x-px active:translate-y-px active:shadow-none transition-colors';
 
 const notesWorkspaceChatWithAiLocal = async ({
     notesWorkspaceId,
@@ -119,115 +130,155 @@ const ComponentNotesLeft = () => {
     };
 
     return (
-        <div className="py-6 px-2">
+        <div className="px-2.5 py-2 space-y-2.5">
 
-            <h1 className="text-2xl font-bold mb-5 text-indigo-700">Notes</h1>
+            <header className="border-b border-zinc-200 pb-2">
+                <div className="flex items-center gap-2">
+                    <span className="h-7 w-1 shrink-0 bg-indigo-600" aria-hidden />
+                    <div className="min-w-0">
+                        <h1 className="text-xs font-bold uppercase tracking-[0.12em] text-zinc-900">Notes</h1>
+                        <p className="text-[10px] text-zinc-500 leading-tight mt-0.5 font-mono">workspace · filters</p>
+                    </div>
+                </div>
+            </header>
 
-            {/* buttons -> add, random, clear */}
-            <div className="flex flex-wrap gap-2 mb-4">
-                <button
-                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
-                    onClick={notesAddAxiosLocal}
-                >
-                    <LucidePlus size={14} />
+            <div className="flex flex-wrap gap-1">
+                <button type="button" className={btnPrimary} onClick={notesAddAxiosLocal}>
+                    <LucidePlus size={12} strokeWidth={2} />
                     Add
                 </button>
-                <button
-                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
-                    onClick={openRandomNote}
-                >
-                    <LucideRefreshCcw size={14} />
+                <button type="button" className={btnPrimary} onClick={openRandomNote}>
+                    <LucideRefreshCcw size={12} strokeWidth={2} />
                     Random
                 </button>
-                <button
-                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
-                    onClick={clearFilters}
-                >
-                    <LucideList size={14} />
+                <button type="button" className={btnPrimary} onClick={clearFilters}>
+                    <LucideList size={12} strokeWidth={2} />
                     Clear
                 </button>
-                <button
-                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
-                    onClick={notesQuickDailyNotesAddAxiosLocal}
-                >
-                    <LucidePlus size={14} />
-                    Quick Daily Notes
+                <button type="button" className={btnPrimary} onClick={notesQuickDailyNotesAddAxiosLocal}>
+                    <LucidePlus size={12} strokeWidth={2} />
+                    Daily
                 </button>
                 <button
-                    className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
+                    type="button"
+                    className={btnPrimary}
                     onClick={() => notesWorkspaceChatWithAiLocal({ notesWorkspaceId: workspaceId })}
                 >
-                    <LucideMessageCircle size={14} />
-                    Workspace Chat with AI
+                    <LucideMessageCircle size={12} strokeWidth={2} />
+                    AI chat
                 </button>
             </div>
 
-            {/* Workspace */}
             <ComponentNotesWorkspace />
 
-            {/* Notes */}
-            <div className="mb-4">
-                <h2 className="text-xl font-semibold mb-4 text-indigo-600">Notes:</h2>
+            <div className="space-y-1">
+                <h2 className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">In workspace</h2>
                 {workspaceId.length === 24 && (
                     <ComponentFolderAndFileList />
                 )}
             </div>
 
-            {/* Chat Options Title */}
-            <h2 className="text-xl font-semibold mb-4 text-indigo-600">Filters</h2>
+            <section
+                className="rounded-none border border-zinc-300 bg-white p-2.5 shadow-[3px_3px_0_0_rgb(228_228_231)]"
+                aria-label="List filters"
+            >
+                <div className="mb-2 flex items-center justify-between gap-2">
+                    <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">
+                        List filters
+                    </h2>
+                    {(searchTerm.trim() !== '' || isStar !== '') && (
+                        <span className="font-mono text-[9px] text-amber-700" title="Filters change the main note list">
+                            active
+                        </span>
+                    )}
+                </div>
 
-            {/* filter */}
-            <div className="mb-4">
-                <label className="block text-sm font-medium">Search:</label>
-                <DebounceInput
-                    debounceTimeout={500}
-                    type="text"
-                    placeholder="Search..."
-                    className="border border-gray-300 rounded-sm p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    value={searchTerm}
-                />
-            </div>
+                <div className="space-y-2">
+                    <div>
+                        <label htmlFor="notes-search" className="sr-only">
+                            Search notes
+                        </label>
+                        <div className="relative flex items-center">
+                            <LucideSearch
+                                className="pointer-events-none absolute left-2 h-3.5 w-3.5 text-zinc-400"
+                                strokeWidth={2}
+                                aria-hidden
+                            />
+                            <DebounceInput
+                                id="notes-search"
+                                debounceTimeout={500}
+                                type="search"
+                                placeholder="Search titles & content…"
+                                className="w-full rounded-none border border-zinc-300 bg-zinc-50 py-1.5 pl-8 pr-7 text-[11px] text-zinc-900 placeholder:text-zinc-400 focus:border-indigo-600 focus:bg-white focus:outline-none"
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                value={searchTerm}
+                                autoComplete="off"
+                            />
+                            {searchTerm.length > 0 && (
+                                <button
+                                    type="button"
+                                    className="absolute right-1 flex h-6 w-6 items-center justify-center rounded-none text-zinc-500 hover:bg-zinc-200 hover:text-zinc-800"
+                                    onClick={() => setSearchTerm('')}
+                                    aria-label="Clear search"
+                                >
+                                    <LucideX className="h-3.5 w-3.5" strokeWidth={2} />
+                                </button>
+                            )}
+                        </div>
+                    </div>
 
-            <div className="mb-4">
-                <span className="mr-2 text-lg font-semibold">Is Started</span>
-                <div>
-                    <label className="items-center mr-4">
-                        <input
-                            type="radio"
-                            value="true"
-                            checked={isStar === ''}
-                            onChange={() => setIsStar('')}
-                            className="form-radio h-4 w-4 text-indigo-600"
-                        />
-                        <span className="ml-2">All</span>
-                    </label>
+                    <div>
+                        <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                            Starred
+                        </p>
+                        <div
+                            className="flex w-full border border-zinc-300 bg-zinc-100 p-0.5"
+                            role="group"
+                            aria-label="Filter by starred"
+                        >
+                            {(
+                                [
+                                    { value: '' as const, label: 'All' },
+                                    { value: 'true' as const, label: 'Starred', icon: LucideStar },
+                                    { value: 'false' as const, label: 'None' },
+                                ] as const
+                            ).map((option) => {
+                                const { value, label } = option;
+                                const Icon = 'icon' in option ? option.icon : undefined;
+                                const active = isStar === value;
+                                return (
+                                    <button
+                                        key={value || 'all'}
+                                        type="button"
+                                        onClick={() => setIsStar(value)}
+                                        className={
+                                            (active
+                                                ? 'border-indigo-600 bg-indigo-600 text-white shadow-[1px_1px_0_0_rgb(49_46_129)]'
+                                                : 'border-transparent bg-transparent text-zinc-600 hover:bg-white hover:text-zinc-900') +
+                                            ' flex flex-1 items-center justify-center gap-0.5 rounded-none border py-1 text-[10px] font-bold uppercase tracking-wide transition-colors'
+                                        }
+                                    >
+                                        {Icon && (
+                                            <Icon
+                                                className={
+                                                    (active ? 'text-amber-200' : 'text-amber-500') +
+                                                    ' h-3 w-3 shrink-0'
+                                                }
+                                                strokeWidth={2}
+                                            />
+                                        )}
+                                        {label}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <p className="text-[10px] leading-snug text-zinc-500">
+                        Applies to the paginated list on the right. Tree above is unchanged.
+                    </p>
                 </div>
-                <div>
-                    <label className="items-center mr-4">
-                        <input
-                            type="radio"
-                            value="true"
-                            checked={isStar === 'true'}
-                            onChange={() => setIsStar('true')}
-                            className="form-radio h-4 w-4 text-indigo-600"
-                        />
-                        <span className="ml-2">Yes</span>
-                    </label>
-                </div>
-                <div>
-                    <label className="items-center">
-                        <input
-                            type="radio"
-                            value="false"
-                            checked={isStar === 'false'}
-                            onChange={() => setIsStar('false')}
-                            className="form-radio h-4 w-4 text-indigo-600"
-                        />
-                        <span className="ml-2">No</span>
-                    </label>
-                </div>
-            </div>
+            </section>
 
         </div>
     );
@@ -235,29 +286,9 @@ const ComponentNotesLeft = () => {
 
 const ComponentNotesLeftRender = () => {
     return (
-        // Main container with light background, padding, rounded-sm corners and max width for presentation
-        <div
-            style={{
-                paddingTop: '10px',
-                paddingBottom: '10px',
-            }}
-        >
-            <div
-                className="bg-white rounded-sm shadow-md"
-                style={{
-                    paddingTop: '10px',
-                    paddingBottom: '10px',
-                }}
-            >
-                <div
-                    style={{
-                        height: 'calc(100vh - 100px)',
-                        overflowY: 'auto',
-                    }}
-                    className="pt-3 pb-5"
-                >
-                    <ComponentNotesLeft />
-                </div>
+        <div className="h-full min-h-0 border-r border-zinc-200 bg-[linear-gradient(180deg,#fafafa_0%,#f4f4f5_100%)]">
+            <div className="h-[calc(100vh-72px)] overflow-y-auto overscroll-contain">
+                <ComponentNotesLeft />
             </div>
         </div>
     );
@@ -265,34 +296,12 @@ const ComponentNotesLeftRender = () => {
 
 const ComponentNotesLeftModelRender = () => {
     return (
-        // Main container with light background, padding, rounded-sm corners and max width for presentation
         <div
-            style={{
-                position: 'fixed',
-                left: 0,
-                top: '60px',
-                width: '300px',
-                maxWidth: 'calc(100% - 50px)',
-                zIndex: 1001,
-            }}
+            className="fixed left-0 top-[60px] z-[1001] w-[300px] max-w-[calc(100%-50px)]"
         >
-            <div>
-                <div
-                    className="bg-gray-100 shadow-md"
-                    style={{
-                        paddingTop: '10px',
-                        paddingBottom: '10px',
-                    }}
-                >
-                    <div
-                        style={{
-                            height: 'calc(100vh - 60px)',
-                            overflowY: 'auto',
-                        }}
-                        className="pt-3 pb-5"
-                    >
-                        <ComponentNotesLeft />
-                    </div>
+            <div className="border-y border-r border-zinc-200 border-l-0 bg-[linear-gradient(180deg,#fafafa_0%,#f4f4f5_100%)] shadow-[4px_0_24px_-4px_rgba(0,0,0,0.12)]">
+                <div className="h-[calc(100vh-60px)] overflow-y-auto overscroll-contain">
+                    <ComponentNotesLeft />
                 </div>
             </div>
         </div>
@@ -303,4 +312,3 @@ export {
     ComponentNotesLeftRender,
     ComponentNotesLeftModelRender,
 };
-// export default ComponentChatHistoryModelRender;

@@ -627,6 +627,7 @@ const TaskAddOrEdit: React.FC<{
                                     {isTaskAddModalIsOpen.modalType === 'edit' && (
                                         <CommonComponentAiKeywords
                                             sourceId={isTaskAddModalIsOpen.recordId}
+                                            metadataSourceType="tasks"
                                         />
                                     )}
                                 </div>

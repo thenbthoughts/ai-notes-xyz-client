@@ -186,82 +186,114 @@ const AiSuggestionsDiary = () => {
     };
 
     return (
-        <div className="mb-2 bg-white rounded-sm shadow border border-gray-200 p-2 md:p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-                <LucideLightbulb className="w-4 h-4 text-amber-600" />
-                <h2 className="text-sm md:text-base font-bold text-gray-800">
-                    AI Diaries
-                    {stateRevailateAIAll.loading && (
-                        <LucideLoader2 className="w-4 h-4 text-gray-600 inline-block ml-1 animate-spin" />
-                    )}
-                    {!stateRevailateAIAll.loading && (
-                        <LucideRefreshCcw
-                            className="w-4 h-4 text-gray-600 inline-block ml-1 cursor-pointer hover:text-gray-800"
-                            onClick={fetchRevailateAIAll}
-                        />
-                    )}
-                </h2>
+        <div className="mb-2 rounded-sm border border-zinc-200 bg-white p-2 shadow-sm md:p-3">
+            <div className="mb-2 flex items-center gap-2">
+                <LucideLightbulb className="h-4 w-4 shrink-0 text-amber-600" strokeWidth={2} />
+                <h2 className="text-sm font-semibold text-zinc-900">AI diaries</h2>
+                {stateRevailateAIAll.loading && (
+                    <LucideLoader2 className="ml-auto h-4 w-4 animate-spin text-zinc-500" strokeWidth={2} />
+                )}
+                {!stateRevailateAIAll.loading && (
+                    <button
+                        type="button"
+                        title="Regenerate diaries"
+                        className="ml-auto rounded-sm border border-zinc-200 bg-white p-1 text-zinc-600 hover:bg-zinc-50"
+                        onClick={() => void fetchRevailateAIAll()}
+                    >
+                        <LucideRefreshCcw className="h-4 w-4" strokeWidth={2} />
+                    </button>
+                )}
             </div>
 
             <div>
-                <div className="flex flex-wrap gap-2 mb-2">
+                <div className="mb-2 flex flex-wrap gap-1">
                     {dailyAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
-                            <input type="checkbox" checked={showDaily} onChange={e => setShowDaily(e.target.checked)} />
+                        <label className="flex cursor-pointer items-center gap-1 rounded-sm border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs text-zinc-800">
+                            <input
+                                type="checkbox"
+                                checked={showDaily}
+                                onChange={(e) => setShowDaily(e.target.checked)}
+                                className="rounded-sm border-zinc-300 text-indigo-600"
+                            />
                             Today
                         </label>
                     )}
                     {yesterdayAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
-                            <input type="checkbox" checked={showYesterday} onChange={e => setShowYesterday(e.target.checked)} />
+                        <label className="flex cursor-pointer items-center gap-1 rounded-sm border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs text-zinc-800">
+                            <input
+                                type="checkbox"
+                                checked={showYesterday}
+                                onChange={(e) => setShowYesterday(e.target.checked)}
+                                className="rounded-sm border-zinc-300 text-indigo-600"
+                            />
                             Yesterday
                         </label>
                     )}
                     {currentWeekAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
-                            <input type="checkbox" checked={showWeekly} onChange={e => setShowWeekly(e.target.checked)} />
+                        <label className="flex cursor-pointer items-center gap-1 rounded-sm border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs text-zinc-800">
+                            <input
+                                type="checkbox"
+                                checked={showWeekly}
+                                onChange={(e) => setShowWeekly(e.target.checked)}
+                                className="rounded-sm border-zinc-300 text-indigo-600"
+                            />
                             This week
                         </label>
                     )}
                     {lastWeekAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
-                            <input type="checkbox" checked={showLastWeek} onChange={e => setShowLastWeek(e.target.checked)} />
+                        <label className="flex cursor-pointer items-center gap-1 rounded-sm border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs text-zinc-800">
+                            <input
+                                type="checkbox"
+                                checked={showLastWeek}
+                                onChange={(e) => setShowLastWeek(e.target.checked)}
+                                className="rounded-sm border-zinc-300 text-indigo-600"
+                            />
                             Last week
                         </label>
                     )}
                     {currentMonthAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
-                            <input type="checkbox" checked={showMonthly} onChange={e => setShowMonthly(e.target.checked)} />
+                        <label className="flex cursor-pointer items-center gap-1 rounded-sm border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs text-zinc-800">
+                            <input
+                                type="checkbox"
+                                checked={showMonthly}
+                                onChange={(e) => setShowMonthly(e.target.checked)}
+                                className="rounded-sm border-zinc-300 text-indigo-600"
+                            />
                             This month
                         </label>
                     )}
                     {lastMonthAiDiary.content && (
-                        <label className="flex items-center gap-1 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-sm px-2 py-1 cursor-pointer">
-                            <input type="checkbox" checked={showLastMonth} onChange={e => setShowLastMonth(e.target.checked)} />
+                        <label className="flex cursor-pointer items-center gap-1 rounded-sm border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs text-zinc-800">
+                            <input
+                                type="checkbox"
+                                checked={showLastMonth}
+                                onChange={(e) => setShowLastMonth(e.target.checked)}
+                                className="rounded-sm border-zinc-300 text-indigo-600"
+                            />
                             Last month
                         </label>
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
                     {/* Daily Diary - Today */}
                     {showDaily && dailyAiDiary.content && (
-                        <div className="p-2 rounded-sm border border-cyan-200 bg-cyan-50">
-                            <p className="text-xs text-gray-600">
+                        <div className="rounded-sm border border-zinc-200 bg-white p-2 shadow-sm">
+                            <p className="text-xs text-zinc-500">
                                 {new Date().toLocaleDateString()}
                             </p>
-                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
+                            <h3 className="mb-1 text-sm font-semibold text-zinc-900">
                                 Today
                                 {dailyAiDiary.lifeEventId && (
                                     <Link
                                         to={`/user/life-events?action=edit&id=${dailyAiDiary.lifeEventId}`}
-                                        className="ml-2 text-cyan-600 hover:text-cyan-800 text-xs"
+                                        className="ml-2 text-xs font-medium text-indigo-600 hover:text-indigo-800"
                                     >
                                         View
                                     </Link>
                                 )}
                             </h3>
-                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
+                            <div className="whitespace-pre-wrap text-xs text-zinc-800"
                                 style={{
                                     overflowY: 'auto',
                                     maxHeight: '250px',
@@ -272,22 +304,22 @@ const AiSuggestionsDiary = () => {
 
                     {/* Daily Diary - Yesterday */}
                     {showYesterday && yesterdayAiDiary.content && (
-                        <div className="p-2 rounded-sm border border-cyan-200 bg-cyan-50">
-                            <p className="text-xs text-gray-600">
+                        <div className="rounded-sm border border-zinc-200 bg-white p-2 shadow-sm">
+                            <p className="text-xs text-zinc-500">
                                 {new Date(new Date().valueOf() - 1000 * 60 * 60 * 24).toLocaleDateString()}
                             </p>
-                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
+                            <h3 className="mb-1 text-sm font-semibold text-zinc-900">
                                 Yesterday
                                 {yesterdayAiDiary.lifeEventId && (
                                     <Link
                                         to={`/user/life-events?action=edit&id=${yesterdayAiDiary.lifeEventId}`}
-                                        className="ml-2 text-cyan-600 hover:text-cyan-800 text-xs"
+                                        className="ml-2 text-xs font-medium text-indigo-600 hover:text-indigo-800"
                                     >
                                         View
                                     </Link>
                                 )}
                             </h3>
-                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
+                            <div className="whitespace-pre-wrap text-xs text-zinc-800"
                                 style={{
                                     overflowY: 'auto',
                                     maxHeight: '250px',
@@ -298,20 +330,20 @@ const AiSuggestionsDiary = () => {
 
                     {/* Weekly Diary - This Week */}
                     {showWeekly && currentWeekAiDiary.content && (
-                        <div className="p-2 rounded-sm border border-blue-200 bg-blue-50">
-                            <p className="text-xs text-gray-600">This Week</p>
-                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
+                        <div className="rounded-sm border border-zinc-200 bg-white p-2 shadow-sm">
+                            <p className="text-xs text-zinc-500">This Week</p>
+                            <h3 className="mb-1 text-sm font-semibold text-zinc-900">
                                 AI Weekly Diary
                                 {currentWeekAiDiary.lifeEventId && (
                                     <Link
                                         to={`/user/life-events?action=edit&id=${currentWeekAiDiary.lifeEventId}`}
-                                        className="ml-2 text-blue-600 hover:text-blue-800 text-xs"
+                                        className="ml-2 text-xs font-medium text-indigo-600 hover:text-indigo-800"
                                     >
                                         View
                                     </Link>
                                 )}
                             </h3>
-                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
+                            <div className="whitespace-pre-wrap text-xs text-zinc-800"
                                 style={{
                                     overflowY: 'auto',
                                     maxHeight: '250px',
@@ -322,20 +354,20 @@ const AiSuggestionsDiary = () => {
 
                     {/* Weekly Diary - Last Week */}
                     {showLastWeek && lastWeekAiDiary.content && (
-                        <div className="p-2 rounded-sm border border-amber-200 bg-amber-50">
-                            <p className="text-xs text-gray-600">Last Week</p>
-                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
+                        <div className="rounded-sm border border-zinc-200 bg-white p-2 shadow-sm">
+                            <p className="text-xs text-zinc-500">Last Week</p>
+                            <h3 className="mb-1 text-sm font-semibold text-zinc-900">
                                 AI Last Week Diary
                                 {lastWeekAiDiary.lifeEventId && (
                                     <Link
                                         to={`/user/life-events?action=edit&id=${lastWeekAiDiary.lifeEventId}`}
-                                        className="ml-2 text-amber-600 hover:text-amber-800 text-xs"
+                                        className="ml-2 text-xs font-medium text-indigo-600 hover:text-indigo-800"
                                     >
                                         View
                                     </Link>
                                 )}
                             </h3>
-                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
+                            <div className="whitespace-pre-wrap text-xs text-zinc-800"
                                 style={{
                                     overflowY: 'auto',
                                     maxHeight: '250px',
@@ -346,20 +378,20 @@ const AiSuggestionsDiary = () => {
 
                     {/* Monthly Diary - This Month */}
                     {showMonthly && currentMonthAiDiary.content && (
-                        <div className="p-2 rounded-sm border border-purple-200 bg-purple-50">
-                            <p className="text-xs text-gray-600">This Month</p>
-                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
+                        <div className="rounded-sm border border-zinc-200 bg-white p-2 shadow-sm">
+                            <p className="text-xs text-zinc-500">This Month</p>
+                            <h3 className="mb-1 text-sm font-semibold text-zinc-900">
                                 AI Monthly Diary
                                 {currentMonthAiDiary.lifeEventId && (
                                     <Link
                                         to={`/user/life-events?action=edit&id=${currentMonthAiDiary.lifeEventId}`}
-                                        className="ml-2 text-purple-600 hover:text-purple-800 text-xs"
+                                        className="ml-2 text-xs font-medium text-indigo-600 hover:text-indigo-800"
                                     >
                                         View
                                     </Link>
                                 )}
                             </h3>
-                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
+                            <div className="whitespace-pre-wrap text-xs text-zinc-800"
                                 style={{
                                     overflowY: 'auto',
                                     maxHeight: '250px',
@@ -370,20 +402,20 @@ const AiSuggestionsDiary = () => {
 
                     {/* Monthly Diary - Last Month */}
                     {showLastMonth && lastMonthAiDiary.content && (
-                        <div className="p-2 rounded-sm border border-indigo-200 bg-indigo-50">
-                            <p className="text-xs text-gray-600">Last Month</p>
-                            <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">
+                        <div className="rounded-sm border border-zinc-200 bg-white p-2 shadow-sm">
+                            <p className="text-xs text-zinc-500">Last Month</p>
+                            <h3 className="mb-1 text-sm font-semibold text-zinc-900">
                                 AI Last Month Diary
                                 {lastMonthAiDiary.lifeEventId && (
                                     <Link
                                         to={`/user/life-events?action=edit&id=${lastMonthAiDiary.lifeEventId}`}
-                                        className="ml-2 text-indigo-600 hover:text-indigo-800 text-xs"
+                                        className="ml-2 text-xs font-medium text-indigo-600 hover:text-indigo-800"
                                     >
                                         View
                                     </Link>
                                 )}
                             </h3>
-                            <div className="whitespace-pre-wrap text-xs md:text-sm text-gray-700"
+                            <div className="whitespace-pre-wrap text-xs text-zinc-800"
                                 style={{
                                     overflowY: 'auto',
                                     maxHeight: '250px',

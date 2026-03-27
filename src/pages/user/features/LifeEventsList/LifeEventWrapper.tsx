@@ -5,88 +5,58 @@ import {
     LucideMoveUp,
     LucidePlus,
     LucideRefreshCcw,
-    LucideSettings
+    LucideSettings,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-
 import { Link, useNavigate } from 'react-router-dom';
 
 import {
     ComponentChatHistoryModelRender,
-    ComponentChatHistoryRender
+    ComponentChatHistoryRender,
 } from './sectionLeft/ComponentChatHistory.tsx';
-import useResponsiveScreen, {
-    screenList
-} from '../../../../hooks/useResponsiveScreen.tsx';
+import useResponsiveScreen, { screenList } from '../../../../hooks/useResponsiveScreen.tsx';
 import ComponentRightWrapper from './sectionRight/ComponentRightWrapper.tsx';
 import { lifeEventAddAxios } from './utils/lifeEventsListAxios.ts';
 
-const ChatLlmListWrapper = () => {
+const railBtn =
+    'flex w-full items-center justify-center rounded-none border-0 py-1.5 text-zinc-200 transition-colors';
 
-    // useState
+const LifeEventWrapper = () => {
     const screenWidth = useResponsiveScreen();
     const navigate = useNavigate();
 
-    const [
-        stateDisplayChatHistory,
-        setStateDisplayChatHistory,
-    ] = useState(false);
-
+    const [stateDisplayChatHistory, setStateDisplayChatHistory] = useState(false);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
 
     const lifeEventAddAxiosLocal = async () => {
         try {
             const result = await lifeEventAddAxios();
             if (result.success !== '') {
-                navigate(`/user/life-events?action=edit&id=${result.recordId}`)
+                navigate(`/user/life-events?action=edit&id=${result.recordId}`);
             }
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     return (
-        <div style={{ display: 'flex', width: '100%' }}>
-            <div
-                style={{
-                    width: 'calc(100vw - 50px)'
-                }}
-            >
-                <div className='container mx-auto px-1'>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row'
-                        }}
-                    >
+        <div className="flex w-full bg-[#f4f4f5]">
+            <div className="min-w-0 w-[calc(100vw-50px)]">
+                <div className="mx-auto w-full max-w-none px-0">
+                    <div className="flex flex-row">
                         {screenWidth === screenList.lg && (
-                            <div
-                                style={{
-                                    width: '25%'
-                                }}
-                            >
+                            <div className="w-[240px] min-w-[220px] max-w-[28%] shrink-0">
                                 <ComponentChatHistoryRender />
                             </div>
                         )}
                         <div
-                            style={{
-                                width: screenWidth === screenList.lg ? '75%' : '100%'
-                            }}
+                            className={
+                                screenWidth === screenList.lg ? 'min-w-0 flex-1' : 'w-full min-w-0'
+                            }
                         >
-                            <div style={{
-                                maxWidth: '1000px',
-                                margin: '0 auto',
-                            }}>
-                                {/*  */}
-                                <div
-                                    style={{
-                                        height: 'calc(100vh - 60px)',
-                                    }}
-                                >
-                                    <ComponentRightWrapper
-                                        refreshRandomNumParent={refreshRandomNum}
-                                    />
-                                    {/* {renderChatList()} */}
+                            <div className="mx-auto w-full max-w-none">
+                                <div className="h-[calc(100vh-60px)]">
+                                    <ComponentRightWrapper refreshRandomNumParent={refreshRandomNum} />
                                 </div>
                             </div>
                         </div>
@@ -94,147 +64,77 @@ const ChatLlmListWrapper = () => {
                 </div>
             </div>
 
-            {/* part 3 -> 50px */}
-            <div
-                style={{
-                    width: '50px',
-                }}
-                className='text-center flex flex-col items-center justify-center'
-            >
-                <div className='w-full'>
-                    {/* setting */}
-                    <div
-                        className='p-1 cursor-pointer'
+            <div className="flex w-[50px] shrink-0 flex-col items-stretch border-l border-zinc-800 bg-zinc-900 py-1">
+                <Link
+                    to="/user/setting"
+                    className={`${railBtn} bg-zinc-800 hover:bg-zinc-700 hover:text-white`}
+                    title="Settings"
+                >
+                    <LucideSettings className="h-4 w-4" strokeWidth={1.75} />
+                </Link>
+
+                <button
+                    type="button"
+                    className={`${railBtn} bg-zinc-800 hover:bg-zinc-700 hover:text-white`}
+                    title="Add life event"
+                    onClick={() => void lifeEventAddAxiosLocal()}
+                >
+                    <LucidePlus className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+
+                <button
+                    type="button"
+                    className={`${railBtn} bg-zinc-800 hover:bg-zinc-700 hover:text-white`}
+                    title="Scroll up"
+                    onClick={() => {
+                        document.getElementById('messagesScrollUp')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                >
+                    <LucideMoveUp className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+
+                <button
+                    type="button"
+                    className={`${railBtn} bg-zinc-800 hover:bg-zinc-700 hover:text-white`}
+                    title="Scroll down"
+                    onClick={() => {
+                        document.getElementById('messagesScrollDown')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                >
+                    <LucideMoveDown className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+
+                <button
+                    type="button"
+                    className={`${railBtn} bg-zinc-800 hover:bg-zinc-700 hover:text-white`}
+                    title="Refresh"
+                    onClick={() => {
+                        toast.success('Refreshing…');
+                        setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
+                    }}
+                >
+                    <LucideRefreshCcw className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+
+                {screenWidth === screenList.sm && (
+                    <button
+                        type="button"
+                        className={`${railBtn} ${
+                            stateDisplayChatHistory
+                                ? 'bg-indigo-600 text-white hover:bg-indigo-500'
+                                : 'bg-zinc-800 hover:bg-zinc-700'
+                        }`}
+                        title="Filters"
+                        onClick={() => setStateDisplayChatHistory(!stateDisplayChatHistory)}
                     >
-                        <div className={`py-3 rounded-sm bg-gray-600`}>
-                            <Link to={'/user/setting'}>
-                                <LucideSettings
-                                    style={{
-                                        width: '100%',
-                                        color: 'white', // Set icon color to white
-                                    }}
-                                    className=''
-                                />
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* add */}
-                    <div
-                        className='p-1 cursor-pointer'
-                        onClick={() => {
-                            lifeEventAddAxiosLocal();
-                        }}
-                    >
-                        <div className={`py-3 rounded-sm bg-gray-600`}>
-                            <LucidePlus
-                                style={{
-                                    width: '100%',
-                                    color: 'white',
-                                }}
-                                className=''
-                            />
-                        </div>
-                    </div>
-
-                    {/* move up */}
-                    <div
-                        className='p-1 cursor-pointer'
-                        onClick={() => {
-                            const messagesScrollUp = document.getElementById('messagesScrollUp');
-                            if (messagesScrollUp) {
-                                messagesScrollUp?.scrollIntoView({ behavior: "smooth" });
-                            }
-                        }}
-                    >
-                        <div className='py-3 bg-gray-600 rounded'>
-                            <LucideMoveUp
-                                style={{
-                                    width: '100%',
-                                    color: 'white', // Set icon color to white
-                                }}
-                                className=''
-                            />
-                        </div>
-                    </div>
-
-                    {/* move up */}
-                    <div
-                        className='p-1 cursor-pointer'
-                        onClick={() => {
-                            const messagesScrollDown = document.getElementById('messagesScrollDown');
-                            if (messagesScrollDown) {
-                                messagesScrollDown?.scrollIntoView({ behavior: "smooth" });
-                            }
-                        }}
-                    >
-                        <div className='py-3 bg-gray-600 rounded'>
-                            <LucideMoveDown
-                                style={{
-                                    width: '100%',
-                                    color: 'white', // Set icon color to white
-                                }}
-                                className=''
-                            />
-                        </div>
-                    </div>
-
-                    {/* refresh */}
-                    <div
-                        className='p-1 cursor-pointer'
-                        onClick={() => {
-                            toast.success('Refreshing...');
-                            setRefreshRandomNum(
-                                Math.floor(
-                                    Math.random() * 1_000_000
-                                )
-                            );
-                        }}
-                    >
-                        <div className='py-3 bg-gray-600 rounded'>
-                            <LucideRefreshCcw
-                                style={{
-                                    width: '100%',
-                                    color: 'white', // Set icon color to white
-                                }}
-                                className=''
-                            />
-                        </div>
-                    </div>
-
-                    {/* chat history */}
-                    {screenWidth === screenList.sm && (
-                        <div
-                            className='p-1 cursor-pointer'
-                            onClick={() => {
-                                setStateDisplayChatHistory(!stateDisplayChatHistory);
-                            }}
-                        >
-                            <div className={`py-3 rounded-sm ${stateDisplayChatHistory ? 'bg-blue-600' : 'bg-gray-600'}`}>
-                                <LucideList
-                                    style={{
-                                        width: '100%',
-                                        color: 'white', // Set icon color to white
-                                    }}
-                                    className=''
-                                />
-                            </div>
-                        </div>
-                    )}
-
-                </div>
+                        <LucideList className="h-4 w-4" strokeWidth={1.75} />
+                    </button>
+                )}
             </div>
 
-            {/* screen list */}
-            {screenWidth === screenList.sm && (
-                <div>
-                    {stateDisplayChatHistory && (
-                        <ComponentChatHistoryModelRender />
-                    )}
-                </div>
-            )}
+            {screenWidth === screenList.sm && stateDisplayChatHistory && <ComponentChatHistoryModelRender />}
         </div>
     );
 };
 
-export default ChatLlmListWrapper;
+export default LifeEventWrapper;
