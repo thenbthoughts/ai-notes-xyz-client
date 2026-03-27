@@ -11,7 +11,7 @@ const mutedText = 'text-[11px] leading-snug font-medium text-sky-700/75';
 
 const ComponentFromBrithdayToToday = () => {
     const [birthday, setBirthday] = useState('0000-00-00');
-    const [age, setAge] = useState({ years: 0 });
+    const [age, setAge] = useState({ years: 0, months: 0, days: 0 });
     const [nextBirthday, setNextBirthday] = useState('');
     const [timeRemaining, setTimeRemaining] = useState('');
     const [totalMonths, setTotalMonths] = useState(0);
@@ -27,15 +27,19 @@ const ComponentFromBrithdayToToday = () => {
 
             const birthDate = DateTime.fromISO(birthday);
             const now = DateTime.local();
-            const { years, months } = now.diff(birthDate, ['years', 'months']).toObject();
-            setAge({ years: years || 0 });
+            const { years, months, days } = now.diff(birthDate, ['years', 'months', 'days']).toObject();
+            setAge({
+                years: Math.floor(years ?? 0),
+                months: Math.floor(months ?? 0),
+                days: Math.floor(days ?? 0),
+            });
 
-            setTotalMonths(Math.floor((years || 0) * 12 + (months || 0)));
+            setTotalMonths(Math.floor((years ?? 0) * 12 + (months ?? 0)));
             setTotalDays(Math.floor(now.diff(birthDate, 'days').days));
             setTotalHours(Math.floor(now.diff(birthDate, 'hours').hours));
             setTotalSeconds(Math.floor(now.diff(birthDate, 'seconds').seconds));
 
-            const nextBirthdayDate = birthDate.plus({ years: Math.floor(years || 0) + 1 });
+            const nextBirthdayDate = birthDate.plus({ years: Math.floor(years ?? 0) + 1 });
             setNextBirthday(nextBirthdayDate.toLocaleString(DateTime.DATE_MED));
 
             const timeDiff = nextBirthdayDate.diff(now, ['days', 'hours', 'minutes', 'seconds']).toObject();
@@ -86,9 +90,21 @@ const ComponentFromBrithdayToToday = () => {
                             <LucideClock className="h-3.5 w-3.5 text-sky-600" strokeWidth={2} />
                             Your age
                         </p>
-                        <p className="text-base font-extrabold text-sky-950">
-                            {Math.floor(age.years)}{' '}
-                            <span className="text-xs font-semibold text-sky-600/80">years</span>
+                        <p className="text-base font-extrabold leading-snug text-sky-950">
+                            <span className="tabular-nums">{age.years}</span>{' '}
+                            <span className="text-sm font-semibold text-sky-600/80">
+                                {age.years === 1 ? 'year' : 'years'}
+                            </span>
+                            <span className="font-semibold text-sky-400">, </span>
+                            <span className="tabular-nums">{age.months}</span>{' '}
+                            <span className="text-sm font-semibold text-sky-600/80">
+                                {age.months === 1 ? 'month' : 'months'}
+                            </span>
+                            <span className="font-semibold text-sky-400">, </span>
+                            <span className="tabular-nums">{age.days}</span>{' '}
+                            <span className="text-sm font-semibold text-sky-600/80">
+                                {age.days === 1 ? 'day' : 'days'}
+                            </span>
                         </p>
                         <p className={`${mutedText} mt-0.5`}>
                             {totalMonths.toLocaleString()} mo · {totalDays.toLocaleString()} d ·{' '}
