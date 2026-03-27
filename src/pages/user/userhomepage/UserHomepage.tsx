@@ -17,7 +17,6 @@ import {
     LucideLightbulb,
     LucideSearch,
     LucideCalendar,
-    LucideMic,
 } from 'lucide-react';
 import { useAtomValue } from 'jotai';
 import { Fragment, useEffect, useState, type ReactNode } from 'react';
@@ -310,11 +309,6 @@ const UserHomepage = () => {
                                 </span>
                                 <span className={navTileLabel}>Git</span>
                             </a>
-                            <NavTile
-                                to="/test/voice-activity-detection"
-                                label="Voice activity"
-                                icon={LucideMic}
-                            />
                         </div>
                     </section>
                 </div>
