@@ -5,25 +5,33 @@ import axiosCustom from '../../../../config/axiosCustom';
 import { LucideClock, LucideEdit3, LucideInfo, LucideMessageCircle, LucidePin, LucideTrash2 } from "lucide-react";
 import { taskChatWithAi } from "./utils/taskCrudUtils";
 
-const TaskItem = ({
-    task,
-    taskStatusList,
-    setRefreshRandomNum,
-    setIsTaskAddModalIsOpen,
-}: {
+export type TaskItemLayout = 'grid' | 'list';
+
+export type TaskItemProps = {
     task: tsPageTask;
     taskStatusList: {
         _id: string;
         statusTitle: string;
         listPosition: number;
-    }[],
+    }[];
     setRefreshRandomNum: (value: React.SetStateAction<number>) => void;
-    setIsTaskAddModalIsOpen: React.Dispatch<React.SetStateAction<{
-        openStatus: boolean;
-        modalType: "add" | "edit";
-        recordId: string;
-    }>>
-}) => {
+    setIsTaskAddModalIsOpen: React.Dispatch<
+        React.SetStateAction<{
+            openStatus: boolean;
+            modalType: 'add' | 'edit';
+            recordId: string;
+        }>
+    >;
+    layout?: TaskItemLayout;
+};
+
+const TaskItem = ({
+    task,
+    taskStatusList,
+    setRefreshRandomNum,
+    setIsTaskAddModalIsOpen,
+    layout = 'grid',
+}: TaskItemProps) => {
     const axiosChangeTaskList = async (taskStatusId: string): Promise<void> => {
         const data = {
             id: task._id,
@@ -87,16 +95,31 @@ const TaskItem = ({
     const getPriorityColor = (priority: string) => {
         switch (priority) {
             case 'very-high':
-                return 'border-violet-300 bg-violet-100 text-violet-900';
+                return 'border-fuchsia-400/70 bg-gradient-to-r from-fuchsia-100 to-violet-100 text-violet-900';
             case 'high':
-                return 'border-red-200 bg-red-50 text-red-900';
+                return 'border-rose-400/70 bg-gradient-to-r from-rose-100 to-orange-100 text-rose-900';
             case 'medium':
-                return 'border-amber-200 bg-amber-50 text-amber-900';
+                return 'border-amber-400/70 bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-950';
             case 'low':
-                return 'border-sky-200 bg-sky-50 text-sky-900';
+                return 'border-cyan-400/70 bg-gradient-to-r from-cyan-100 to-sky-100 text-sky-900';
             default:
-                return 'border-zinc-200 bg-zinc-100 text-zinc-800';
+                return 'border-violet-200 bg-violet-50/80 text-violet-900';
         }
+    };
+
+    const LABEL_CHIP_STYLES = [
+        'border-sky-300/80 bg-sky-100/90 text-sky-900',
+        'border-violet-300/80 bg-violet-100/90 text-violet-900',
+        'border-amber-300/80 bg-amber-100/90 text-amber-950',
+        'border-emerald-300/80 bg-emerald-100/90 text-emerald-900',
+        'border-pink-300/80 bg-pink-100/90 text-pink-900',
+        'border-orange-300/80 bg-orange-100/90 text-orange-900',
+    ] as const;
+
+    const labelChipClass = (label: string) => {
+        let h = 0;
+        for (let i = 0; i < label.length; i++) h = (h + label.charCodeAt(i) * (i + 1)) % 997;
+        return LABEL_CHIP_STYLES[Math.abs(h) % LABEL_CHIP_STYLES.length] ?? LABEL_CHIP_STYLES[0];
     };
 
     const now = new Date();
@@ -114,115 +137,175 @@ const TaskItem = ({
     }
 
     const chip =
-        'inline-flex items-center gap-0.5 rounded border px-1 py-px text-[9px] font-medium leading-tight';
+        'inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-medium leading-tight';
 
-    return (
-        <div
+    const isList = layout === 'list';
+
+    const chips = (
+        <div className={`flex flex-wrap gap-0.5 ${isList ? 'mt-0.5' : 'mt-1'}`}>
+            {task.labels &&
+                task.labels.length > 0 &&
+                task.labels.map((label) => (
+                    <span key={label} className={chip + ' ' + labelChipClass(label)}>
+                        {label}
+                    </span>
+                ))}
+
+            {task.isCompleted && (
+                <span className={chip + ' border-emerald-400/60 bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-900'}>
+                    Done
+                </span>
+            )}
+            {task.isArchived && (
+                <span className={chip + ' border-violet-300 bg-violet-100/90 text-violet-900'}>Archived</span>
+            )}
+            {task.priority && (
+                <span className={chip + ' ' + getPriorityColor(task.priority)}>
+                    {task.priority.replace('-', ' ')}
+                </span>
+            )}
+
+            {dueDate && (
+                <span
+                    className={
+                        chip +
+                        (isOverdue
+                            ? ' border-rose-400 bg-rose-100 text-rose-900'
+                            : ' border-indigo-200 bg-indigo-50/90 text-indigo-900')
+                    }
+                >
+                    <LucideClock className="h-3 w-3 shrink-0" strokeWidth={2} />
+                    {dueDate.toLocaleDateString()}{' '}
+                    <span className="hidden sm:inline">
+                        {dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                </span>
+            )}
+        </div>
+    );
+
+    const selectEl = (
+        <select
+            value={task.taskStatusId}
+            onChange={(e) => axiosChangeTaskList(e.target.value)}
             className={
-                (isUpdatedNow ? 'ring-1 ring-teal-500/35 ring-offset-1 ring-offset-white/80 ' : '') +
-                'group h-full overflow-hidden rounded-lg border border-zinc-200/80 bg-white/90 p-2 shadow-sm transition-shadow hover:border-zinc-300 hover:shadow-md'
+                'min-w-0 rounded-md border border-violet-200/70 bg-white/90 py-1 pl-1.5 pr-6 text-xs leading-tight text-zinc-900 shadow-sm focus:border-fuchsia-400 focus:outline-none focus:ring-1 focus:ring-fuchsia-200/50 ' +
+                (isList ? 'w-full max-w-full sm:w-auto sm:max-w-[160px]' : 'max-w-full flex-1 sm:max-w-[132px]')
             }
         >
+            {taskStatusList.map((taskStatus) => (
+                <option key={taskStatus._id} value={taskStatus._id}>
+                    {taskStatus.statusTitle}
+                </option>
+            ))}
+        </select>
+    );
+
+    const iconButtons = (
+        <div className="flex items-center gap-px">
+            <button
+                type="button"
+                onClick={() => axiosDeleteTask(task._id)}
+                className="rounded-md border border-transparent p-1 text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600"
+                aria-label="Delete task"
+            >
+                <LucideTrash2 className="h-4 w-4" strokeWidth={2} />
+            </button>
+            <button
+                type="button"
+                onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
+                className="rounded-md border border-transparent p-1 text-violet-500 transition-colors hover:bg-violet-100 hover:text-violet-800"
+                aria-label="Edit task"
+            >
+                <LucideEdit3 className="h-4 w-4" strokeWidth={2} />
+            </button>
+            <button
+                type="button"
+                onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
+                className="rounded-md border border-transparent p-1 text-sky-500 transition-colors hover:bg-sky-100 hover:text-sky-900"
+                aria-label="View task details"
+            >
+                <LucideInfo className="h-4 w-4" strokeWidth={2} />
+            </button>
+            <button
+                type="button"
+                onClick={() => axiosChangeTaskPin({ isTaskPinned: !task.isTaskPinned })}
+                className={
+                    (task.isTaskPinned
+                        ? 'border-amber-300 bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 '
+                        : 'border-transparent text-amber-600/80 hover:bg-amber-50 ') +
+                    'rounded-md border p-1 transition-colors'
+                }
+                aria-label="Pin task"
+            >
+                <LucidePin
+                    className={`h-4 w-4 ${task.isTaskPinned ? 'fill-amber-400' : ''}`}
+                    strokeWidth={2}
+                />
+            </button>
+            {isList && (
+                <button
+                    type="button"
+                    onClick={() => taskChatWithAi(task._id)}
+                    className="rounded-md bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 p-1 text-white shadow-md shadow-fuchsia-500/20 transition-transform hover:scale-105 active:scale-95"
+                    title="AI chat"
+                    aria-label="AI chat"
+                >
+                    <LucideMessageCircle className="h-4 w-4 text-white/95" strokeWidth={2} />
+                </button>
+            )}
+        </div>
+    );
+
+    const shellClass =
+        (isUpdatedNow
+            ? 'ring-2 ring-fuchsia-400/50 ring-offset-1 ring-offset-amber-50/80 '
+            : '') +
+        'group overflow-hidden border border-violet-200/60 bg-gradient-to-br from-white via-fuchsia-50/20 to-cyan-50/25 shadow-md shadow-violet-200/20 transition-all hover:border-fuchsia-300/70 hover:shadow-lg hover:shadow-fuchsia-200/25 ' +
+        (isList
+            ? 'rounded-lg p-1.5 sm:p-2'
+            : 'h-full rounded-xl p-2');
+
+    if (isList) {
+        return (
+            <div className={shellClass}>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
+                    <div className="min-w-0 flex-1">
+                        <h3 className="min-w-0 bg-gradient-to-r from-zinc-900 to-violet-900 bg-clip-text text-sm font-semibold leading-snug text-transparent">
+                            {task.title}
+                        </h3>
+                        {chips}
+                    </div>
+                    <div className="flex min-w-0 shrink-0 flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-end sm:gap-2">
+                        {selectEl}
+                        {iconButtons}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className={shellClass}>
             <div className="flex items-start justify-between gap-1">
-                <h3 className="min-w-0 text-xs font-semibold leading-snug text-zinc-900">{task.title}</h3>
+                <h3 className="min-w-0 bg-gradient-to-r from-zinc-900 to-violet-900 bg-clip-text text-sm font-semibold leading-snug text-transparent">
+                    {task.title}
+                </h3>
             </div>
 
-            <div className="mt-1 flex flex-wrap gap-0.5">
-                {task.labels && task.labels.length > 0 &&
-                    task.labels.map((label) => (
-                        <span key={label} className={chip + ' border-zinc-200 bg-zinc-50 text-zinc-700'}>
-                            {label}
-                        </span>
-                    ))}
-
-                {task.isCompleted && (
-                    <span className={chip + ' border-teal-200/80 bg-teal-50 text-teal-900'}>Done</span>
-                )}
-                {task.isArchived && (
-                    <span className={chip + ' border-zinc-400 bg-zinc-200 text-zinc-800'}>Archived</span>
-                )}
-                {task.priority && (
-                    <span className={chip + ' ' + getPriorityColor(task.priority)}>
-                        {task.priority.replace('-', ' ')}
-                    </span>
-                )}
-
-                {dueDate && (
-                    <span
-                        className={
-                            chip +
-                            (isOverdue
-                                ? ' border-red-300 bg-red-50 text-red-800'
-                                : ' border-zinc-200 bg-zinc-50 text-zinc-700')
-                        }
-                    >
-                        <LucideClock className="h-2.5 w-2.5 shrink-0" strokeWidth={2} />
-                        {dueDate.toLocaleDateString()}{' '}
-                        <span className="hidden sm:inline">{dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    </span>
-                )}
-            </div>
+            {chips}
 
             <div className="mt-1.5 flex flex-wrap items-center gap-1">
-                <select
-                    value={task.taskStatusId}
-                    onChange={(e) => axiosChangeTaskList(e.target.value)}
-                    className="min-w-0 max-w-full flex-1 rounded-md border border-zinc-200/80 bg-white/80 py-0.5 pl-1 pr-5 text-[11px] leading-tight text-zinc-900 shadow-sm focus:border-teal-500/40 focus:outline-none focus:ring-1 focus:ring-teal-500/20 sm:max-w-[132px]"
-                >
-                    {taskStatusList.map((taskStatus) => (
-                        <option key={taskStatus._id} value={taskStatus._id}>
-                            {taskStatus.statusTitle}
-                        </option>
-                    ))}
-                </select>
-                <div className="flex items-center gap-px">
-                    <button
-                        type="button"
-                        onClick={() => axiosDeleteTask(task._id)}
-                        className="rounded-md border border-transparent p-1 text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600"
-                        aria-label="Delete task"
-                    >
-                        <LucideTrash2 className="h-3.5 w-3.5" strokeWidth={2} />
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
-                        className="rounded-md border border-transparent p-1 text-zinc-500 transition-colors hover:bg-teal-50 hover:text-teal-700"
-                        aria-label="Edit task"
-                    >
-                        <LucideEdit3 className="h-3.5 w-3.5" strokeWidth={2} />
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setIsTaskAddModalIsOpen({ openStatus: true, modalType: 'edit', recordId: task._id })}
-                        className="rounded-md border border-transparent p-1 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-800"
-                        aria-label="View task details"
-                    >
-                        <LucideInfo className="h-3.5 w-3.5" strokeWidth={2} />
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => axiosChangeTaskPin({ isTaskPinned: !task.isTaskPinned })}
-                        className={
-                            (task.isTaskPinned ? 'border-amber-200/80 bg-amber-50 text-amber-700 ' : 'border-transparent text-zinc-500 hover:bg-zinc-100 ') +
-                            'rounded-md border p-1 transition-colors'
-                        }
-                        aria-label="Pin task"
-                    >
-                        <LucidePin
-                            className={`h-3.5 w-3.5 ${task.isTaskPinned ? 'fill-amber-400' : ''}`}
-                            strokeWidth={2}
-                        />
-                    </button>
-                </div>
+                {selectEl}
+                {iconButtons}
             </div>
 
             <button
                 type="button"
                 onClick={() => taskChatWithAi(task._id)}
-                className="mt-1.5 inline-flex w-full items-center justify-center gap-1 rounded-md border border-violet-200/80 bg-violet-50/90 py-1 text-[10px] font-semibold text-violet-900 shadow-sm transition-colors hover:border-violet-300 hover:bg-violet-100"
+                className="mt-1.5 inline-flex w-full items-center justify-center gap-1 rounded-lg bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 py-1.5 text-[11px] font-bold text-white shadow-md shadow-fuchsia-500/25 transition-transform hover:scale-[1.02] hover:shadow-lg hover:shadow-fuchsia-400/30 active:scale-[0.98]"
             >
-                <LucideMessageCircle className="h-3 w-3" strokeWidth={2} />
+                <LucideMessageCircle className="h-3.5 w-3.5 text-white/95" strokeWidth={2} />
                 AI chat
             </button>
         </div>

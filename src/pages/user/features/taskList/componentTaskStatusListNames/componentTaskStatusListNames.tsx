@@ -127,14 +127,16 @@ const componentTaskStatusListNames = ({
     return (
         <div>
             <div className="mb-1 flex items-center justify-between gap-1.5">
-                <h2 className="flex items-center gap-1 text-[11px] font-semibold text-zinc-800">
-                    <Kanban className="h-3 w-3 text-zinc-400" strokeWidth={2} aria-hidden />
+                <h2 className="flex items-center gap-1 text-xs font-semibold text-indigo-900">
+                    <span className="rounded bg-indigo-100 p-0.5">
+                        <Kanban className="h-3 w-3 text-indigo-600" strokeWidth={2} aria-hidden />
+                    </span>
                     Status lists
                 </h2>
                 <button
                     type="button"
                     onClick={() => fetchGroupList()}
-                    className="rounded-md border border-zinc-200/80 bg-white/80 p-1 text-zinc-600 shadow-sm transition-colors hover:border-zinc-300 hover:bg-white"
+                    className="rounded-md border border-indigo-200/80 bg-indigo-50/80 p-1 text-indigo-600 shadow-sm transition-colors hover:border-indigo-300 hover:bg-indigo-100"
                     title="Refresh lists"
                 >
                     <LucideRefreshCcw className="h-3 w-3" strokeWidth={2} />
@@ -144,7 +146,7 @@ const componentTaskStatusListNames = ({
                 {listArr.map((list) => (
                     <div
                         key={list._id}
-                        className="flex items-center justify-between gap-1 rounded-md border border-zinc-200/80 bg-white/70 px-1.5 py-1 text-[11px] leading-tight text-zinc-800 shadow-sm backdrop-blur-sm transition-colors hover:border-zinc-300 hover:bg-white/90"
+                        className="flex items-center justify-between gap-1 rounded-md border border-sky-200/70 bg-gradient-to-r from-sky-50/80 to-white px-1.5 py-1 text-xs leading-tight text-sky-950 shadow-sm backdrop-blur-sm transition-colors hover:border-fuchsia-300/60 hover:from-fuchsia-50/50 hover:to-white"
                     >
                         <span className="min-w-0 truncate font-medium text-zinc-800">{list.statusTitle}</span>
                         <div className="flex shrink-0 items-center">
@@ -188,7 +190,7 @@ const componentTaskStatusListNames = ({
                 <input
                     type="text"
                     placeholder="New list…"
-                    className="min-w-0 flex-1 rounded-lg border border-zinc-200/80 bg-white/80 py-1 px-2 text-[11px] text-zinc-900 shadow-sm backdrop-blur-sm focus:border-teal-500/40 focus:outline-none focus:ring-1 focus:ring-teal-500/20"
+                    className="min-w-0 flex-1 rounded-lg border border-amber-200/80 bg-amber-50/40 py-1.5 px-2 text-xs text-amber-950 shadow-sm backdrop-blur-sm focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-200/50"
                     value={newListName}
                     onChange={(e) => setNewListName(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && addGroup()}
@@ -196,7 +198,7 @@ const componentTaskStatusListNames = ({
                 <button
                     type="button"
                     onClick={addGroup}
-                    className="shrink-0 rounded-lg bg-gradient-to-r from-teal-600 to-emerald-600 px-2 py-1 text-white shadow-sm shadow-teal-900/10 transition hover:from-teal-500 hover:to-emerald-500"
+                    className="shrink-0 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 px-2 py-1 font-bold text-white shadow-md shadow-amber-500/25 transition hover:from-orange-400 hover:via-amber-400 hover:to-yellow-300"
                     aria-label="Add list"
                 >
                     <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />

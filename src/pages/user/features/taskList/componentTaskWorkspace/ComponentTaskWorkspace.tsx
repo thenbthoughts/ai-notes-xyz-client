@@ -57,10 +57,10 @@ const ComponentTaskWorkspace = () => {
     return (
         <div className="space-y-1">
             <div className="flex items-center justify-between gap-1.5">
-                <span className="text-[11px] font-semibold text-zinc-800">Workspace</span>
+                <span className="text-xs font-semibold text-violet-900">Workspace</span>
                 <Link
                     to="/user/task-workspace"
-                    className="inline-flex items-center gap-0.5 rounded-md border border-zinc-200/80 bg-white/80 px-1.5 py-0.5 text-[10px] font-medium text-zinc-700 shadow-sm backdrop-blur-sm transition-colors hover:border-zinc-300 hover:bg-white"
+                    className="inline-flex items-center gap-0.5 rounded-md border border-cyan-200/80 bg-gradient-to-r from-cyan-50 to-sky-50 px-1.5 py-0.5 text-[11px] font-semibold text-cyan-900 shadow-sm backdrop-blur-sm transition-colors hover:border-cyan-300 hover:from-cyan-100 hover:to-sky-100"
                     title="Manage workspaces"
                 >
                     <LucideSettings className="h-3 w-3" strokeWidth={2} />
@@ -68,7 +68,7 @@ const ComponentTaskWorkspace = () => {
                 </Link>
             </div>
             <select
-                className="block w-full rounded-lg border border-zinc-200/80 bg-white/80 py-1 px-2 text-[11px] leading-tight text-zinc-900 shadow-sm backdrop-blur-sm focus:border-teal-500/40 focus:outline-none focus:ring-1 focus:ring-teal-500/20"
+                className="block w-full rounded-lg border border-violet-200/70 bg-gradient-to-r from-white to-violet-50/40 py-1.5 px-2 text-xs leading-tight text-zinc-900 shadow-sm backdrop-blur-sm focus:border-fuchsia-400 focus:outline-none focus:ring-1 focus:ring-fuchsia-200/50"
                 value={workspaceId}
                 onChange={(e) => {
                     setWorkspaceId(e.target.value);
