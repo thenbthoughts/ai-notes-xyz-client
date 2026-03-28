@@ -20,19 +20,22 @@ import { useAtom } from 'jotai';
 import { toast } from 'react-hot-toast';
 
 const railLayout =
-    'mx-1 flex w-[calc(100%-0.5rem)] items-center justify-center rounded-xl py-2 transition-all duration-200 active:scale-95';
+    'group mx-auto flex w-[calc(100%-0.5rem)] max-w-[44px] items-center justify-center overflow-hidden rounded-2xl py-2.5 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.96]';
 
-/** Matches thread list surfaces: white glass, zinc border */
+const iconClass =
+    'h-[17px] w-[17px] transition-transform duration-300 ease-out group-hover:scale-110 group-active:scale-95';
+
+/** Frosted capsule — depth without heaviness */
 const railNeutral =
-    'border border-zinc-200/80 bg-white/70 text-zinc-600 shadow-sm backdrop-blur-sm hover:bg-zinc-50 hover:text-zinc-900';
+    'border border-white/80 bg-white/50 text-zinc-600 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.07),inset_0_1px_0_0_rgba(255,255,255,0.95)] ring-1 ring-zinc-950/[0.04] backdrop-blur-md hover:-translate-y-px hover:bg-white/85 hover:text-zinc-900 hover:shadow-[0_10px_24px_-8px_rgba(15,23,42,0.14)]';
 
-/** Matches active thread / teal accents in `ComponentChatHistory` */
+/** Teal → cyan gradient + glow (distinct from flat fills) */
 const railActive =
-    'border border-teal-500/35 bg-teal-600 text-white shadow-md shadow-teal-900/10 hover:border-teal-400/50 hover:bg-teal-500 hover:text-white';
+    'border border-teal-400/25 bg-gradient-to-br from-teal-500 via-teal-600 to-cyan-600 text-white shadow-[0_6px_22px_-5px_rgba(13,148,136,0.42),inset_0_1px_0_0_rgba(255,255,255,0.22)] ring-1 ring-white/15 hover:-translate-y-px hover:from-teal-400 hover:via-teal-500 hover:to-cyan-500 hover:shadow-[0_10px_28px_-6px_rgba(13,148,136,0.5)]';
 
-/** Same gradient as “New chat” in the thread sidebar */
+/** Primary action — brighter specular + motion */
 const railCta =
-    'border border-teal-600/25 bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-md shadow-teal-900/10 hover:from-teal-500 hover:to-emerald-500';
+    'border border-white/25 bg-gradient-to-br from-teal-500 via-emerald-500 to-cyan-500 text-white shadow-[0_8px_26px_-6px_rgba(5,150,105,0.48),inset_0_1px_0_0_rgba(255,255,255,0.35)] ring-1 ring-white/20 hover:-translate-y-0.5 hover:from-teal-400 hover:via-emerald-400 hover:to-cyan-400 hover:shadow-[0_14px_36px_-8px_rgba(5,150,105,0.55)]';
 
 const ChatRightFilterWrapper = ({
     setRefreshRandomNumFetchChat,
@@ -48,7 +51,7 @@ const ChatRightFilterWrapper = ({
     const [hideSidebar, setHideSidebar] = useAtom(jotaiHideSidebar);
 
     return (
-        <div className="flex w-full flex-col gap-1 px-0.5">
+        <div className="flex w-full flex-col gap-1.5 px-1">
             {screenWidth === screenList.sm && (
                 <button
                     type="button"
@@ -66,7 +69,7 @@ const ChatRightFilterWrapper = ({
                     }}
                     title="Threads"
                 >
-                    <LucideList className="h-4 w-4" strokeWidth={1.75} />
+                    <LucideList className={iconClass} strokeWidth={1.75} />
                 </button>
             )}
 
@@ -75,7 +78,7 @@ const ChatRightFilterWrapper = ({
                 className={`${railLayout} ${railNeutral}`}
                 title="Settings"
             >
-                <LucideSettings className="h-4 w-4" strokeWidth={1.75} />
+                <LucideSettings className={iconClass} strokeWidth={1.75} />
             </Link>
 
             <Link
@@ -83,7 +86,7 @@ const ChatRightFilterWrapper = ({
                 className={`${railLayout} ${railCta}`}
                 title="New chat"
             >
-                <LucidePlus className="h-4 w-4" strokeWidth={1.75} />
+                <LucidePlus className={iconClass} strokeWidth={1.75} />
             </Link>
 
             <button
@@ -95,7 +98,7 @@ const ChatRightFilterWrapper = ({
                 }}
                 title="Scroll up"
             >
-                <LucideMoveUp className="h-4 w-4" strokeWidth={1.75} />
+                <LucideMoveUp className={iconClass} strokeWidth={1.75} />
             </button>
 
             <button
@@ -107,7 +110,7 @@ const ChatRightFilterWrapper = ({
                 }}
                 title="Scroll down"
             >
-                <LucideMoveDown className="h-4 w-4" strokeWidth={1.75} />
+                <LucideMoveDown className={iconClass} strokeWidth={1.75} />
             </button>
 
             {screenWidth === screenList.lg && (
@@ -121,7 +124,7 @@ const ChatRightFilterWrapper = ({
                     }}
                     title="Toggle thread sidebar"
                 >
-                    <LucideSidebar className="h-4 w-4" strokeWidth={1.75} />
+                    <LucideSidebar className={iconClass} strokeWidth={1.75} />
                 </button>
             )}
 
@@ -135,7 +138,7 @@ const ChatRightFilterWrapper = ({
                     }}
                     title="Refresh messages"
                 >
-                    <LucideRefreshCcw className="h-4 w-4" strokeWidth={1.75} />
+                    <LucideRefreshCcw className={iconClass} strokeWidth={1.75} />
                 </button>
             )}
 
@@ -149,7 +152,7 @@ const ChatRightFilterWrapper = ({
                     }}
                     title="Thread settings"
                 >
-                    <LucideSettings2 className="h-4 w-4" strokeWidth={1.75} />
+                    <LucideSettings2 className={iconClass} strokeWidth={1.75} />
                 </button>
             )}
         </div>
