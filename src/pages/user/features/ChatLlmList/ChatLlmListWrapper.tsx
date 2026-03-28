@@ -88,7 +88,7 @@ const ChatLlmListWrapper = () => {
             </div>
 
             {(hideRightSidebar.isOpen === true || screenWidth === screenList.lg) && (
-                <div className="flex w-[52px] shrink-0 flex-col items-stretch border-l border-zinc-800/90 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 py-1.5 shadow-[4px_0_24px_-8px_rgba(0,0,0,0.35)]">
+                <div className="flex w-[52px] shrink-0 flex-col items-stretch border-l border-zinc-200/80 bg-gradient-to-b from-zinc-50/95 to-white py-1.5 shadow-[inset_1px_0_0_0_rgba(255,255,255,0.7)]">
                     <ChatRightFilterWrapper setRefreshRandomNumFetchChat={setRefreshRandomNumFetchChat} />
                 </div>
             )}

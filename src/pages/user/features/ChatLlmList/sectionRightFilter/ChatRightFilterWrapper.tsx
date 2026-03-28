@@ -19,8 +19,20 @@ import { jotaiChatHistoryModalOpen, jotaiChatLlmThreadSetting, jotaiHideSidebar 
 import { useAtom } from 'jotai';
 import { toast } from 'react-hot-toast';
 
-const railBtn =
-    'mx-1 flex w-[calc(100%-0.5rem)] items-center justify-center rounded-xl border-0 py-2 text-zinc-300 transition-all duration-200 active:scale-95';
+const railLayout =
+    'mx-1 flex w-[calc(100%-0.5rem)] items-center justify-center rounded-xl py-2 transition-all duration-200 active:scale-95';
+
+/** Matches thread list surfaces: white glass, zinc border */
+const railNeutral =
+    'border border-zinc-200/80 bg-white/70 text-zinc-600 shadow-sm backdrop-blur-sm hover:bg-zinc-50 hover:text-zinc-900';
+
+/** Matches active thread / teal accents in `ComponentChatHistory` */
+const railActive =
+    'border border-teal-500/35 bg-teal-600 text-white shadow-md shadow-teal-900/10 hover:border-teal-400/50 hover:bg-teal-500 hover:text-white';
+
+/** Same gradient as “New chat” in the thread sidebar */
+const railCta =
+    'border border-teal-600/25 bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-md shadow-teal-900/10 hover:from-teal-500 hover:to-emerald-500';
 
 const ChatRightFilterWrapper = ({
     setRefreshRandomNumFetchChat,
@@ -40,10 +52,8 @@ const ChatRightFilterWrapper = ({
             {screenWidth === screenList.sm && (
                 <button
                     type="button"
-                    className={`${railBtn} ${
-                        chatHistoryModalOpen.isOpen
-                            ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-900/40 hover:bg-indigo-400'
-                            : 'bg-zinc-800/80 hover:bg-zinc-700 hover:text-white'
+                    className={`${railLayout} ${
+                        chatHistoryModalOpen.isOpen ? railActive : railNeutral
                     }`}
                     onClick={() => {
                         setChatHistoryModalOpen({
@@ -62,7 +72,7 @@ const ChatRightFilterWrapper = ({
 
             <Link
                 to="/user/setting"
-                className={`${railBtn} bg-zinc-800/80 hover:bg-zinc-700 hover:text-white`}
+                className={`${railLayout} ${railNeutral}`}
                 title="Settings"
             >
                 <LucideSettings className="h-4 w-4" strokeWidth={1.75} />
@@ -70,7 +80,7 @@ const ChatRightFilterWrapper = ({
 
             <Link
                 to="/user/chat"
-                className={`${railBtn} bg-emerald-600/90 text-white shadow-md shadow-emerald-950/30 hover:bg-emerald-500`}
+                className={`${railLayout} ${railCta}`}
                 title="New chat"
             >
                 <LucidePlus className="h-4 w-4" strokeWidth={1.75} />
@@ -78,7 +88,7 @@ const ChatRightFilterWrapper = ({
 
             <button
                 type="button"
-                className={`${railBtn} bg-zinc-800/80 hover:bg-zinc-700 hover:text-white`}
+                className={`${railLayout} ${railNeutral}`}
                 onClick={() => {
                     const el = document.getElementById('messagesScrollUp');
                     el?.scrollIntoView({ behavior: 'smooth' });
@@ -90,7 +100,7 @@ const ChatRightFilterWrapper = ({
 
             <button
                 type="button"
-                className={`${railBtn} bg-zinc-800/80 hover:bg-zinc-700 hover:text-white`}
+                className={`${railLayout} ${railNeutral}`}
                 onClick={() => {
                     const el = document.getElementById('messagesScrollDown');
                     el?.scrollIntoView({ behavior: 'smooth' });
@@ -103,10 +113,8 @@ const ChatRightFilterWrapper = ({
             {screenWidth === screenList.lg && (
                 <button
                     type="button"
-                    className={`${railBtn} ${
-                        hideSidebar.isOpen
-                            ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-900/40 hover:bg-indigo-400'
-                            : 'bg-zinc-800/80 hover:bg-zinc-700'
+                    className={`${railLayout} ${
+                        hideSidebar.isOpen ? railActive : railNeutral
                     }`}
                     onClick={() => {
                         setHideSidebar((prev) => ({ isOpen: !prev.isOpen }));
@@ -120,7 +128,7 @@ const ChatRightFilterWrapper = ({
             {chatLlmThreadSetting.threadId.length === 24 && (
                 <button
                     type="button"
-                    className={`${railBtn} bg-zinc-800/80 hover:bg-zinc-700 hover:text-white`}
+                    className={`${railLayout} ${railNeutral}`}
                     onClick={() => {
                         toast.success('Refreshing…');
                         setRefreshRandomNumFetchChat(Math.floor(Math.random() * 1_000_000));
@@ -134,7 +142,7 @@ const ChatRightFilterWrapper = ({
             {chatLlmThreadSetting.threadId.length === 24 && (
                 <button
                     type="button"
-                    className={`${railBtn} bg-zinc-800/80 hover:bg-zinc-700 hover:text-white`}
+                    className={`${railLayout} ${railNeutral}`}
                     onClick={() => {
                         setChatHistoryModalOpen({ isOpen: false });
                         setChatLlmThreadSetting((prev) => ({ ...prev, isOpen: true }));
