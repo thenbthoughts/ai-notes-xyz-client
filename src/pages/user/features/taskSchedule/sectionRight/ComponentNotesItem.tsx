@@ -1,19 +1,19 @@
-import { LucideEdit, LucideTrash2 } from "lucide-react";
-import { ITaskSchedule } from "../../../../../types/pages/tsTaskSchedule";
-import { Link } from "react-router-dom";
-import axiosCustom from "../../../../../config/axiosCustom";
-import { Fragment, useState } from "react";
+import { LucideEdit, LucideTrash2 } from 'lucide-react';
+import { ITaskSchedule } from '../../../../../types/pages/tsTaskSchedule';
+import { Link } from 'react-router-dom';
+import axiosCustom from '../../../../../config/axiosCustom';
+import { Fragment, useState } from 'react';
 
 const ComponentNotesItem = ({
     taskScheduleObj,
 }: {
-    taskScheduleObj: ITaskSchedule
+    taskScheduleObj: ITaskSchedule;
 }) => {
     const [isDeleted, setIsDeleted] = useState(false);
 
     const deleteItem = async () => {
         try {
-            const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+            const confirmDelete = window.confirm('Are you sure you want to delete this item?');
             if (!confirmDelete) {
                 return;
             }
@@ -35,127 +35,106 @@ const ComponentNotesItem = ({
         } catch (error) {
             console.error(error);
         }
-    }
+    };
+
+    const chip =
+        'inline-flex max-w-full items-center truncate rounded-sm border px-1.5 py-0.5 text-[10px] font-medium';
 
     const renderItem = () => {
         return (
             <Fragment>
-                {/* title */}
-                <h3>{taskScheduleObj.title}</h3>
+                <h3 className="text-sm font-semibold leading-snug text-zinc-900">{taskScheduleObj.title}</h3>
 
-                <div className="flex flex-col gap-1">
-                    {/* Status indicators */}
-                    <div className="flex items-center gap-1 mb-1">
-                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded-sm text-xs font-medium ${
-                            taskScheduleObj.isActive 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-gray-100 text-gray-800'
-                        }`}>
+                <div className="mt-1.5 flex flex-col gap-1.5">
+                    <div className="flex flex-wrap gap-1">
+                        <span
+                            className={`${chip} ${
+                                taskScheduleObj.isActive
+                                    ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+                                    : 'border-zinc-200 bg-zinc-100 text-zinc-700'
+                            }`}
+                        >
                             {taskScheduleObj.isActive ? 'Active' : 'Inactive'}
                         </span>
-                        
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-xs font-medium bg-blue-100 text-blue-800">
+
+                        <span className={`${chip} border-zinc-200 bg-white text-zinc-800`}>
                             {taskScheduleObj.taskType}
                         </span>
-                        
+
                         {taskScheduleObj.shouldSendEmail && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-xs font-medium bg-purple-100 text-purple-800">
-                                Send Email
+                            <span className={`${chip} border-indigo-200 bg-indigo-50 text-indigo-900`}>
+                                Email
                             </span>
                         )}
                     </div>
 
-                    {/* Description */}
                     {taskScheduleObj.description && (
-                        <p className="text-xs text-gray-600 mb-1">{taskScheduleObj.description}</p>
+                        <p className="line-clamp-2 text-xs text-zinc-600">{taskScheduleObj.description}</p>
                     )}
 
-                    {/* Schedule info */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-1 text-xs">
-                        {/* Timezone */}
-                        <div className="flex items-center">
-                            <span className="text-gray-500 font-medium mr-1">TZ:</span>
-                            <span className="text-gray-700 truncate">{taskScheduleObj.timezoneName}</span>
+                    <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[11px] md:grid-cols-4">
+                        <div className="flex min-w-0 items-center gap-1">
+                            <span className="shrink-0 text-zinc-500">TZ</span>
+                            <span className="truncate text-zinc-800">{taskScheduleObj.timezoneName}</span>
                         </div>
-
-                        {/* Executed times */}
-                        <div className="flex items-center">
-                            <span className="text-gray-500 font-medium mr-1">Exec:</span>
-                            <span className="text-gray-700">{taskScheduleObj.executedTimes || 0}x</span>
+                        <div className="flex items-center gap-1">
+                            <span className="text-zinc-500">Exec</span>
+                            <span className="text-zinc-800">{taskScheduleObj.executedTimes || 0}×</span>
                         </div>
-
-                        {/* Schedule times count */}
                         {taskScheduleObj.scheduleTimeArr && taskScheduleObj.scheduleTimeArr.length > 0 && (
-                            <div className="flex items-center">
-                                <span className="text-gray-500 font-medium mr-1">Times:</span>
-                                <span className="text-gray-700">{taskScheduleObj.scheduleTimeArr.length}</span>
+                            <div className="flex items-center gap-1">
+                                <span className="text-zinc-500">Times</span>
+                                <span className="text-zinc-800">{taskScheduleObj.scheduleTimeArr.length}</span>
                             </div>
                         )}
-
-                        {/* Cron expressions count */}
                         {taskScheduleObj.cronExpressionArr && taskScheduleObj.cronExpressionArr.length > 0 && (
-                            <div className="flex items-center">
-                                <span className="text-gray-500 font-medium mr-1">Cron:</span>
-                                <span className="text-gray-700">{taskScheduleObj.cronExpressionArr.length}</span>
+                            <div className="flex items-center gap-1">
+                                <span className="text-zinc-500">Cron</span>
+                                <span className="text-zinc-800">{taskScheduleObj.cronExpressionArr.length}</span>
                             </div>
                         )}
                     </div>
 
-                    {/* Next execution time */}
-                    {taskScheduleObj.scheduleExecutionTimeArr && taskScheduleObj.scheduleExecutionTimeArr.length > 0 && (
-                        <div className="mt-1 p-1 bg-blue-50 rounded-sm text-xs">
-                            <span className="text-blue-600 font-medium">Next:</span>
-                            <span className="text-blue-800 ml-1">
+                    {taskScheduleObj.scheduleExecutionTimeArr &&
+                        taskScheduleObj.scheduleExecutionTimeArr.length > 0 && (
+                            <div className="rounded-sm border border-indigo-100 bg-indigo-50/60 px-2 py-1 text-[11px] text-indigo-950">
+                                <span className="font-medium text-indigo-800">Next</span>{' '}
                                 {new Date(taskScheduleObj.scheduleExecutionTimeArr[0]).toLocaleString()}
-                            </span>
-                        </div>
-                    )}
+                            </div>
+                        )}
                 </div>
 
-                {/* actions */}
-                <div className="flex justify-end">
-                    <div className="action-buttons my-4">
-                        <Link
-                            to={`/user/task-schedule?action=edit&id=${taskScheduleObj._id}`}
-                            className="px-3 py-1 rounded-sm bg-green-100 text-green-800 text-sm font-semibold hover:bg-green-200 mr-1"
-                        >
-                            <LucideEdit
-                                className="w-4 h-4 inline-block mr-2"
-                                style={{ height: '15px', top: '-2px', position: 'relative' }}
-                            />
-                            Edit
-                        </Link>
-                        <button
-                            className="px-3 py-1 rounded-sm bg-red-100 text-red-800 text-sm font-semibold hover:bg-red-200 mr-1"
-                            onClick={deleteItem}
-                        >
-                            <LucideTrash2
-                                className="w-4 h-4 inline-block mr-2"
-                                style={{ height: '15px', top: '-2px', position: 'relative' }}
-                            />
-                            Delete
-                        </button>
-                    </div>
+                <div className="action-buttons mt-2 flex justify-end gap-1">
+                    <Link
+                        to={`/user/task-schedule?action=edit&id=${taskScheduleObj._id}`}
+                        className="inline-flex items-center gap-1 rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-[11px] font-medium text-zinc-800 hover:bg-zinc-50"
+                    >
+                        <LucideEdit className="h-3 w-3" strokeWidth={2} />
+                        Edit
+                    </Link>
+                    <button
+                        type="button"
+                        className="inline-flex items-center gap-1 rounded-sm border border-red-200 bg-red-50 px-2 py-0.5 text-[11px] font-medium text-red-800 hover:bg-red-100"
+                        onClick={() => void deleteItem()}
+                    >
+                        <LucideTrash2 className="h-3 w-3" strokeWidth={2} />
+                        Delete
+                    </button>
                 </div>
             </Fragment>
-        )
-    }
+        );
+    };
 
     return (
-        <div
-            className="py-1 bg-white rounded-sm px-2"
-            style={{ borderBottom: '1px solid #ccc' }}
-        >
+        <div className="rounded-sm border border-zinc-200 bg-white px-2.5 py-2 shadow-sm">
             {isDeleted && (
-                <div className="text-red-500 text-sm border border-red-500 p-2 rounded">This item has been deleted.</div>
+                <div className="rounded-sm border border-red-200 bg-red-50 p-2 text-xs font-medium text-red-700">
+                    This item has been deleted.
+                </div>
             )}
-            {!isDeleted && (
-                <Fragment>
-                    {renderItem()}
-                </Fragment>
-            )}
+            {!isDeleted && <Fragment>{renderItem()}</Fragment>}
         </div>
     );
-}
+};
 
 export default ComponentNotesItem;

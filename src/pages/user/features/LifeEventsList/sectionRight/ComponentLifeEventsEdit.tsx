@@ -97,8 +97,6 @@ const ComponentLifeEventsEdit = ({
         }
 
         const date = DateTime.fromISO(formData.eventDateUtc);
-        console.log(date);
-        console.log(date.year);
         if (!date.isValid || date.year >= 9999) {
             newFormError.eventDateUtc = 'Event date is invalid.';
             isValid = false;
@@ -320,6 +318,7 @@ const ComponentLifeEventsEdit = ({
                 {/* field -> ai keyword */}
                 <CommonComponentAiKeywords
                     sourceId={lifeEventObj._id}
+                    metadataSourceType="lifeEvents"
                 />
 
                 {/* field -> ai faq */}
@@ -331,34 +330,33 @@ const ComponentLifeEventsEdit = ({
     }
 
     return (
-        <div>
+        <div className="rounded-sm border border-zinc-200 bg-white p-3 shadow-sm md:p-4">
             {requestEdit.loading && (
-                <div className="flex justify-between my-4">
-                    <button
-                        className="px-3 py-1 rounded-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
-                    >
-                        <LucideArrowLeft className="w-4 h-4 inline-block mr-2" />
-                        Saving...
-                    </button>
+                <div className="mb-3 flex justify-between border-b border-zinc-100 pb-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-sm border border-zinc-200 bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-600">
+                        <LucideArrowLeft className="h-3.5 w-3.5 animate-pulse" strokeWidth={2} />
+                        Saving…
+                    </span>
                 </div>
             )}
             {!requestEdit.loading && (
-                <div className="flex justify-between my-4">
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 pb-2">
                     <Link
-                        to={'/user/life-events'}
-                        className="px-3 py-1 rounded-sm bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200"
+                        to="/user/life-events"
+                        className="inline-flex items-center gap-1 rounded-sm border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-800 hover:bg-zinc-50"
                     >
-                        <LucideArrowLeft className="w-4 h-4 inline-block mr-2" />
+                        <LucideArrowLeft className="h-3.5 w-3.5" strokeWidth={2} />
                         Back
                     </Link>
                     <button
-                        className="px-3 py-1 rounded-sm bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200"
+                        type="button"
+                        className="inline-flex items-center gap-1 rounded-sm border border-emerald-700/30 bg-emerald-600 px-2 py-1 text-xs font-medium text-white hover:bg-emerald-700"
                         onClick={() => {
                             editRecord();
                         }}
                         aria-label="Save"
                     >
-                        <LucideSave className="w-4 h-4 inline-block mr-2" />
+                        <LucideSave className="h-3.5 w-3.5" strokeWidth={2} />
                         Save
                     </button>
                 </div>
@@ -405,8 +403,6 @@ const ComponentLifeEventsEditWrapper = ({
             } as AxiosRequestConfig;
 
             const response = await axiosCustom.request(config);
-            console.log(response.data);
-            console.log(response.data.docs);
 
             let tempArr = [];
             if (Array.isArray(response.data.docs)) {
@@ -422,38 +418,28 @@ const ComponentLifeEventsEditWrapper = ({
     }
 
     return (
-        <div className='bg-white rounded-sm p-4'>
-            <h1 className="text-3xl font-bold text-gray-800 my-4">Life Events {'->'} Edit</h1>
+        <div>
             {loading && (
-                <div className="text-center">
-                    <p className="text-lg text-blue-500">Loading...</p>
-                    <div className="loader"></div>
+                <div className="flex flex-col items-center justify-center gap-2 rounded-sm border border-zinc-200 bg-white py-10 shadow-sm">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-200 border-t-emerald-600" />
+                    <p className="text-xs text-zinc-600">Loading…</p>
                 </div>
             )}
             {!loading && list.length === 0 && (
-                <div>
-                    <div className="text-center">
-                        <p className="text-lg text-red-500">Record does not exist.</p>
-                        <button
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600"
-                            onClick={() => {
-                                navigate('/user/life-events');
-                            }}
-                        >
-                            Back
-                        </button>
-                    </div>
+                <div className="rounded-sm border border-zinc-200 bg-white px-4 py-8 text-center shadow-sm">
+                    <p className="text-sm font-medium text-red-700">Record does not exist.</p>
+                    <button
+                        type="button"
+                        className="mt-3 inline-flex rounded-sm border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-800 hover:bg-zinc-50"
+                        onClick={() => navigate('/user/life-events')}
+                    >
+                        Back to list
+                    </button>
                 </div>
             )}
-            {!loading && list.length === 1 && (
-                <div>
-                    <ComponentLifeEventsEdit
-                        lifeEventObj={list[0]}
-                    />
-                </div>
-            )}
+            {!loading && list.length === 1 && <ComponentLifeEventsEdit lifeEventObj={list[0]} />}
         </div>
-    )
+    );
 };
 
 export default ComponentLifeEventsEditWrapper;

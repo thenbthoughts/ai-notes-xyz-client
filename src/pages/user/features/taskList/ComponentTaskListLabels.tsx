@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axiosCustom from "../../../../config/axiosCustom";
-import { LucideX, X } from 'lucide-react';
+import { LucideTag, LucideX, X } from 'lucide-react';
 
 interface LabelData {
     _id: string;
@@ -62,38 +62,48 @@ const ComponentTaskListLabels = ({
     };
 
     return (
-        <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2 text-blue-600">Labels</h2>
+        <div>
+            <h2 className="mb-1 flex items-center gap-1 text-xs font-semibold text-pink-900">
+                <span className="rounded bg-pink-100 p-0.5">
+                    <LucideTag className="h-3 w-3 text-pink-600" strokeWidth={2} aria-hidden />
+                </span>
+                Labels
+            </h2>
             <input
                 type="text"
-                placeholder="Search labels..."
-                className="border border-gray-300 p-3 rounded-sm mb-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Filter labels…"
+                className="mb-1.5 w-full rounded-lg border border-pink-200/80 bg-pink-50/40 py-1.5 px-2 text-xs text-pink-950 shadow-sm backdrop-blur-sm focus:border-fuchsia-400 focus:outline-none focus:ring-1 focus:ring-fuchsia-200/40"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
             />
 
-            {/* Selected labels */}
             {selectedLabels.length > 0 && (
-                <div className="mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">Selected Labels:</span>
+                <div className="mb-1.5 rounded-lg border border-fuchsia-200/70 bg-gradient-to-r from-fuchsia-50/80 to-pink-50/60 p-1.5 shadow-sm backdrop-blur-sm">
+                    <div className="mb-0.5 flex items-center justify-between gap-1">
+                        <span className="text-[11px] font-semibold text-fuchsia-900">Selected</span>
                         <button
+                            type="button"
                             onClick={() => setSelectedLabels([])}
-                            className="text-xs text-red-600 hover:text-red-800 flex items-center gap-1"
+                            className="inline-flex items-center gap-0.5 text-[11px] font-medium text-red-700 hover:underline"
                         >
-                            <X className="w-3 h-3" />
-                            Clear All
+                            <X className="h-2.5 w-2.5" />
+                            Clear
                         </button>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-0.5">
                         {selectedLabels.map((label) => (
-                            <span key={label} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-sm text-sm flex items-center gap-1">
+                            <span
+                                key={label}
+                                className="inline-flex items-center gap-0.5 rounded border border-fuchsia-300/70 bg-white/95 px-1.5 py-0.5 text-[10px] font-medium leading-tight text-fuchsia-900 shadow-sm"
+                            >
                                 {label}
                                 <button
+                                    type="button"
                                     onClick={() => handleLabelClick(label)}
-                                    className="text-blue-600 hover:text-blue-800"
+                                    className="text-fuchsia-700 hover:text-red-600"
+                                    aria-label={`Remove ${label}`}
                                 >
-                                    <LucideX className="w-3 h-3" />
+                                    <LucideX className="h-2.5 w-2.5" strokeWidth={2} />
                                 </button>
                             </span>
                         ))}
@@ -101,31 +111,41 @@ const ComponentTaskListLabels = ({
                 </div>
             )}
 
-            {/* display labels */}
-            <div className="mb-4">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Labels</h3>
-                
+            <div>
                 {loading ? (
-                    <div className="text-center py-4">
-                        <span className="text-gray-500">Loading labels...</span>
+                    <div className="flex justify-center py-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-pink-200 border-t-fuchsia-500 border-r-amber-400" />
                     </div>
                 ) : (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex max-h-32 flex-wrap gap-0.5 overflow-y-auto">
                         {filteredLabels.length === 0 ? (
-                            <span className="text-gray-500 text-sm">No labels found</span>
+                            <span className="text-[11px] text-zinc-500">No labels</span>
                         ) : (
                             <>
-                                {filteredLabels.slice(0, 100).map((label) => (
-                                    <span key={label._id} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-sm text-sm flex items-center gap-1" onClick={() => handleLabelClick(label._id)}>
-                                        {label._id}
-                                        <span className="bg-blue-200 text-blue-900 px-1 rounded-sm text-xs">
-                                            {label.count}
-                                        </span>
-                                    </span>
-                                ))}
+                                {filteredLabels.slice(0, 100).map((label) => {
+                                    const on = selectedLabels.includes(label._id);
+                                    return (
+                                        <button
+                                            key={label._id}
+                                            type="button"
+                                            onClick={() => handleLabelClick(label._id)}
+                                            className={
+                                                (on
+                                                    ? 'border-fuchsia-600 bg-gradient-to-r from-fuchsia-600 to-pink-500 text-white shadow-md shadow-fuchsia-500/20 '
+                                                    : 'border-violet-200/80 bg-gradient-to-r from-violet-50/90 to-white text-violet-950 shadow-sm hover:border-fuchsia-300 ') +
+                                                'inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-medium leading-tight transition-colors'
+                                            }
+                                        >
+                                            {label._id}
+                                            <span className={on ? 'rounded bg-white/25 px-0.5 text-[9px] tabular-nums' : 'rounded bg-violet-200/80 px-0.5 text-[9px] tabular-nums text-violet-900'}>
+                                                {label.count}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
                                 {filteredLabels.length > 100 && (
-                                    <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-sm text-sm">
-                                        + {filteredLabels.length - 100} more
+                                    <span className="rounded border border-amber-200/80 bg-amber-50 px-1 py-px text-[10px] text-amber-900">
+                                        +{filteredLabels.length - 100}
                                     </span>
                                 )}
                             </>
@@ -134,7 +154,7 @@ const ComponentTaskListLabels = ({
                 )}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default ComponentTaskListLabels;

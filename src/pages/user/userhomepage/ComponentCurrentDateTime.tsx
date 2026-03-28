@@ -8,20 +8,26 @@ import {
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
-const HomepageDateTimeComponent = () => {
+const panel =
+    'rounded-2xl border-2 border-sky-200/80 bg-white/90 p-2.5 shadow-md shadow-sky-200/25 backdrop-blur-sm transition hover:shadow-lg hover:shadow-sky-200/40';
+const panelHeader = 'mb-1.5 flex items-center justify-between gap-1.5';
+const panelTitle = 'flex items-center gap-1.5 text-xs font-bold text-sky-900';
+const panelIconBtn =
+    'rounded-xl border-2 border-sky-200/70 bg-sky-50/80 p-1 text-sky-700 shadow-sm transition hover:border-sky-300 hover:bg-sky-100 hover:text-sky-900 disabled:opacity-40';
+const mutedText = 'text-[11px] leading-snug font-medium text-sky-700/75';
 
+const HomepageDateTimeComponent = () => {
     const [currentTime, setCurrentTime] = useState(new Date());
     const [isTimeExpanded, setIsTimeExpanded] = useState(true);
     const [is24HourFormat, setIs24HourFormat] = useState(false);
 
     useEffect(() => {
-        // Update time every second
         const timer = setInterval(() => {
             setCurrentTime(new Date());
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [])
+    }, []);
 
     const toggleTimeFormat = () => {
         setIs24HourFormat(!is24HourFormat);
@@ -29,53 +35,53 @@ const HomepageDateTimeComponent = () => {
     };
 
     return (
-        <div className="text-left p-3 border border-teal-400 rounded-sm shadow-md bg-gradient-to-r from-teal-100 to-teal-300 mb-2 hover:bg-teal-200 transition duration-300">
-            <div className="flex justify-between items-center mb-2">
-                <h2 className="text-lg font-bold text-teal-800">
-                    <LucideClock size={20} className="inline mr-1" style={{ position: 'relative', top: '-2px' }} />
-                    Current Time
+        <div className={`${panel} border-l-4 border-l-sky-400`}>
+            <div className={panelHeader}>
+                <h2 className={panelTitle}>
+                    <LucideClock className="h-3.5 w-3.5 text-sky-600" strokeWidth={2} />
+                    Current time
                 </h2>
                 <div className="flex gap-1">
                     <button
+                        type="button"
                         onClick={toggleTimeFormat}
-                        className="p-1 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
+                        className={panelIconBtn}
                         title={`Switch to ${is24HourFormat ? '12' : '24'}-hour format`}
                     >
-                        {is24HourFormat ?
-                            <LucideEye size={16} className="text-teal-600" /> :
-                            <LucideEyeOff size={16} className="text-teal-600" />
-                        }
+                        {is24HourFormat ? (
+                            <LucideEye className="h-3.5 w-3.5 text-sky-600" strokeWidth={2} />
+                        ) : (
+                            <LucideEyeOff className="h-3.5 w-3.5 text-sky-600" strokeWidth={2} />
+                        )}
                     </button>
                     <button
+                        type="button"
                         onClick={() => setIsTimeExpanded(!isTimeExpanded)}
-                        className="p-1 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-70 transition duration-200"
-                        title="Toggle Expand"
+                        className={panelIconBtn}
+                        title="Toggle"
                     >
-                        {isTimeExpanded ?
-                            <LucideChevronUp size={16} className="text-teal-600" /> :
-                            <LucideChevronDown size={16} className="text-teal-600" />
-                        }
+                        {isTimeExpanded ? (
+                            <LucideChevronUp className="h-3.5 w-3.5" strokeWidth={2} />
+                        ) : (
+                            <LucideChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
+                        )}
                     </button>
                 </div>
             </div>
 
             {isTimeExpanded && (
-                <div className="text-sm text-teal-700 space-y-2">
-                    <div
-                        className="font-semibold text-lg bg-white bg-opacity-50 rounded-sm p-2 cursor-pointer hover:bg-opacity-70 transition duration-200"
-                        // onClick={() => showNotification('Current time: ' + currentTime.toLocaleTimeString())}
-                    >
+                <div className="space-y-1.5">
+                    <div className="rounded-xl border-2 border-sky-200/80 bg-sky-50/90 px-2 py-1.5 font-mono text-sm font-bold tabular-nums tracking-tight text-sky-950">
                         {is24HourFormat
                             ? currentTime.toLocaleTimeString('en-GB', { hour12: false })
-                            : currentTime.toLocaleTimeString()
-                        }
+                            : currentTime.toLocaleTimeString()}
                     </div>
-                    <div className="text-xs bg-white bg-opacity-50 rounded-sm p-2">
+                    <div className={`rounded-xl border border-sky-100 bg-sky-50/60 px-2 py-1.5 ${mutedText}`}>
                         {currentTime.toLocaleDateString(undefined, {
                             weekday: 'long',
                             year: 'numeric',
                             month: 'long',
-                            day: 'numeric'
+                            day: 'numeric',
                         })}
                     </div>
                 </div>

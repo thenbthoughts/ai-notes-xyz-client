@@ -1,4 +1,9 @@
-import { LucideStar, LucideTrash } from 'lucide-react';
+import {
+    LucidePlus,
+    LucideSearch,
+    LucideStar,
+    LucideTrash,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -9,7 +14,10 @@ import { DateTime } from 'luxon';
 import { AxiosRequestConfig } from 'axios';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
-import { jotaiChatHistoryModalOpen, jotaiChatThreadRefreshRandomNum } from '../jotai/jotaiChatLlmThreadSetting.ts';
+import {
+    jotaiChatHistoryModalOpen,
+    jotaiChatThreadRefreshRandomNum,
+} from '../jotai/jotaiChatLlmThreadSetting.ts';
 
 /**
  * ComponentChatHistory displays the chat history section.
@@ -24,43 +32,37 @@ const ComponentChatHistory = () => {
 
     const [activeChatId, setActiveChatId] = useState('');
 
-    // pagination
     const perPage = 20;
     const [totalCount, setTotalCount] = useState(0 as number);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
-    const [items, setItems] = useState([] as {
-        _id: string;
-        threadTitle: string;
-        isFavourite: boolean;
-        createdAtUtc: string;
-    }[]);
+    const [items, setItems] = useState(
+        [] as {
+            _id: string;
+            threadTitle: string;
+            isFavourite: boolean;
+            createdAtUtc: string;
+        }[]
+    );
     const [searchTerm, setSearchTerm] = useState('');
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
     const [isFavourite, setIsFavourite] = useState('');
 
     const goToTop = () => {
         const chatHistoryTop = document.getElementById('chat-history-top');
-        if (chatHistoryTop) {
-            chatHistoryTop.scrollIntoView({ behavior: 'smooth' });
-        }
-    }
+        chatHistoryTop?.scrollIntoView({ behavior: 'smooth' });
+    };
 
-    // Fetch chat threads from API
     const fetchChatThreads = async () => {
         try {
             setLoading(true);
-            const response = await axiosCustom.post(
-                '/api/chat-llm/threads-crud/threadsGet',
-                {
-                    page: page,
-                    perPage: perPage,
-                    search: searchTerm,
-                    isFavourite: isFavourite,
-                }
-            );
+            const response = await axiosCustom.post('/api/chat-llm/threads-crud/threadsGet', {
+                page: page,
+                perPage: perPage,
+                search: searchTerm,
+                isFavourite: isFavourite,
+            });
             if (response.data && response.data.docs) {
-                // Map API data to expected format
                 setItems(response.data.docs);
                 setTotalCount(response.data.count);
             }
@@ -72,24 +74,13 @@ const ComponentChatHistory = () => {
     };
 
     useEffect(() => {
-        fetchChatThreads();
-    }, [
-        page,
-        refreshRandomNum,
-        chatThreadRefreshRandomNum,
-    ]);
+        void fetchChatThreads();
+    }, [page, refreshRandomNum, chatThreadRefreshRandomNum]);
 
     useEffect(() => {
         setPage(1);
-        setRefreshRandomNum(
-            Math.floor(
-                Math.random() * 1_000_000
-            )
-        );
-    }, [
-        searchTerm,
-        isFavourite,
-    ]);
+        setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
+    }, [searchTerm, isFavourite]);
 
     const deleteThread = async (argThreadId: string) => {
         try {
@@ -98,7 +89,7 @@ const ComponentChatHistory = () => {
             }
 
             await axiosCustom.post('/api/chat-llm/threads-crud/threadsDeleteById', {
-                threadId: argThreadId
+                threadId: argThreadId,
             });
             toast.success('Thread deleted successfully');
             await fetchChatThreads();
@@ -125,8 +116,6 @@ const ComponentChatHistory = () => {
                 },
                 data: {
                     threadId: recordId,
-
-                    // classification
                     isFavourite: isFavourite,
                 },
             } as AxiosRequestConfig;
@@ -150,155 +139,153 @@ const ComponentChatHistory = () => {
         setActiveChatId(tempActiveChatId);
     }, [location.search]);
 
-    const renderFilterIsFavourite = () => {
-        return (
-            <div className="mb-3">
-                <div className="mt-1 flex items-center">
-                    <input
-                        type="checkbox"
-                        id="favouriteCheckbox"
-                        checked={isFavourite === 'true'}
-                        onChange={(e) => setIsFavourite(e.target.checked ? 'true' : '')}
-                        className="h-4 w-4 text-indigo-600 border-gray-300 rounded-sm focus:ring-indigo-500"
-                    />
-                    <label
-                        htmlFor="favouriteCheckbox"
-                        className="ml-2 text-sm text-gray-700 cursor-pointer"
-                    >
-                        Show only favourites
-                    </label>
-                </div>
-            </div>
-        )
-    }
+    const renderFilterIsFavourite = () => (
+        <div className="mb-3 flex rounded-xl border border-zinc-200/80 bg-white/60 px-3 py-2 shadow-sm backdrop-blur-sm">
+            <label className="flex cursor-pointer items-center gap-2.5 text-xs font-medium text-zinc-700">
+                <input
+                    type="checkbox"
+                    id="favouriteCheckbox"
+                    checked={isFavourite === 'true'}
+                    onChange={(e) => setIsFavourite(e.target.checked ? 'true' : '')}
+                    className="h-4 w-4 rounded border-zinc-300 text-teal-600 focus:ring-teal-500/30"
+                />
+                Starred only
+            </label>
+        </div>
+    );
 
     return (
-        <div className="py-10 px-2 text-black">
-
+        <div className="px-3 py-4 text-zinc-900">
             <div id="chat-history-top" />
 
-            {/* Chat Options Title */}
-            <h2 className="text-lg font-bold mb-4 text-black flex justify-between items-center">
-                Chat History
-                <span className="text-sm text-gray-500">
-                    {totalCount} thread{totalCount !== 1 ? 's' : ''}
+            <div className="mb-3 flex items-center justify-between gap-2">
+                <div>
+                    <h2 className="text-sm font-semibold tracking-tight text-zinc-900">Threads</h2>
+                    <p className="mt-0.5 text-[11px] text-zinc-500">Your conversations</p>
+                </div>
+                <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-600">
+                    {totalCount}
                 </span>
-            </h2>
+            </div>
 
-            {/* New Chat Button */}
-            <div className="mb-4">
+            <div className="mb-3">
                 <Link
                     to="/user/chat"
-                    className="w-full p-1 text-white bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 rounded-sm shadow-sm hover:from-indigo-600 hover:via-purple-700 hover:to-pink-600 transition-colors duration-300 block text-center py-2"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 py-2 text-xs font-semibold text-white shadow-md shadow-teal-900/10 transition hover:from-teal-500 hover:to-emerald-500"
+                    onClick={() => setChatHistoryModalOpen({ isOpen: false })}
                 >
-                    + Add Chat
+                    <LucidePlus className="h-4 w-4" strokeWidth={2} />
+                    New chat
                 </Link>
             </div>
 
-            {/* Search Input */}
-            <div className="mb-4">
+            <div className="relative mb-3">
+                <LucideSearch
+                    className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400"
+                    strokeWidth={2}
+                />
                 <DebounceInput
                     debounceTimeout={500}
                     type="text"
-                    placeholder="Search chat history..."
-                    className="border rounded-sm p-2 w-full"
+                    placeholder="Search threads…"
+                    className="w-full rounded-xl border border-zinc-200/80 bg-white/80 py-2 pl-9 pr-3 text-xs text-zinc-900 shadow-sm placeholder:text-zinc-400 backdrop-blur-sm transition-shadow focus:border-teal-500/40 focus:outline-none focus:ring-2 focus:ring-teal-500/15"
                     onChange={(e) => setSearchTerm(e.target.value)}
                     value={searchTerm}
                 />
             </div>
 
-            {/* filter is favourite */}
             {renderFilterIsFavourite()}
 
-            {/* History Items List */}
-            <div className="space-y-3">
+            <div className="space-y-2">
                 {loading && (
-                    <div className="flex justify-center items-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+                    <div className="flex justify-center py-10">
+                        <div className="h-7 w-7 animate-spin rounded-full border-2 border-zinc-200 border-t-teal-600" />
                     </div>
                 )}
-                {items.map((item) => (
-                    <div key={item._id}>
-                        <Link
-                            to={`/user/chat?id=${item._id}`}
-                            className={
-                                `block p-3 rounded-sm border cursor-pointer transition-colors duration-150 ease-in-out 
-                                ${item._id === activeChatId
-                                    ? 'bg-blue-100 border-blue-600'
-                                    : 'bg-gray-100 border-gray-300 hover:border-gray-600'
-                                }`
-                            }
-                            onClick={() => {
-                                setChatHistoryModalOpen({
-                                    isOpen: false,
-                                });
-                            }}
+                {!loading &&
+                    items.map((item) => (
+                        <div
+                            key={item._id}
+                            className={`overflow-hidden rounded-xl border transition-shadow ${
+                                item._id === activeChatId
+                                    ? 'border-teal-400/50 bg-white shadow-md shadow-teal-900/5 ring-1 ring-teal-500/10'
+                                    : 'border-zinc-200/80 bg-white/90 shadow-sm hover:border-zinc-300 hover:shadow-md'
+                            }`}
                         >
-                            {/* Chat Title */}
-                            <span className="block text-base font-semibold text-black mb-1">
-                                {item.threadTitle}
-                            </span>
-                            {/* Timestamp */}
-                            <span className="block text-xs text-gray-600">
-                                {new Date(item.createdAtUtc).toLocaleDateString()}{' - '}
-                                {new Date(item.createdAtUtc).toLocaleTimeString()}{' - '}
-                                {DateTime.fromJSDate(new Date(item.createdAtUtc)).toRelative()}
-                            </span>
-                        </Link>
-                        <div>
-                            {/* Delete Icon */}
-                            <button
-                                className="text-red-500 hover:text-red-700 mt-2 mr-1"
-                                onClick={() => deleteThread(item._id)}
+                            <Link
+                                to={`/user/chat?id=${item._id}`}
+                                className={`block px-3 py-2.5 transition-colors ${
+                                    item._id === activeChatId ? 'bg-teal-50/40' : 'hover:bg-zinc-50/80'
+                                }`}
+                                onClick={() => setChatHistoryModalOpen({ isOpen: false })}
                             >
-                                <LucideTrash />
-                            </button>
-                            {/* favourite icon */}
-                            <button
-                                className="mt-2 mr-1"
-                                onClick={() => toggleFavourite({
-                                    recordId: item?._id,
-                                    isFavourite: item?.isFavourite ? false : true,
-                                })}
-                            >
-                                {item?.isFavourite ? <LucideStar
-                                    fill='yellow'
-                                    className='text-yellow-500 hover:text-yellow-700'
-                                /> : <LucideStar
-                                    className='text-gray-500 hover:text-gray-700'
-                                />}
-                            </button>
+                                <span className="line-clamp-2 text-sm font-medium leading-snug text-zinc-900">
+                                    {item.threadTitle}
+                                </span>
+                                <span className="mt-1 block text-[11px] leading-tight text-zinc-500">
+                                    {new Date(item.createdAtUtc).toLocaleDateString()} ·{' '}
+                                    {DateTime.fromJSDate(new Date(item.createdAtUtc)).toRelative()}
+                                </span>
+                            </Link>
+                            <div className="flex items-center gap-0.5 border-t border-zinc-100/80 bg-zinc-50/50 px-1.5 py-1">
+                                <button
+                                    type="button"
+                                    className="rounded-lg p-1.5 text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600"
+                                    title="Delete thread"
+                                    onClick={() => deleteThread(item._id)}
+                                >
+                                    <LucideTrash className="h-3.5 w-3.5" strokeWidth={2} />
+                                </button>
+                                <button
+                                    type="button"
+                                    className="rounded-lg p-1.5 text-zinc-500 transition-colors hover:bg-amber-50"
+                                    title={item?.isFavourite ? 'Remove favourite' : 'Favourite'}
+                                    onClick={() =>
+                                        toggleFavourite({
+                                            recordId: item?._id,
+                                            isFavourite: item?.isFavourite ? false : true,
+                                        })
+                                    }
+                                >
+                                    {item?.isFavourite ? (
+                                        <LucideStar
+                                            className="h-3.5 w-3.5 text-amber-500"
+                                            fill="currentColor"
+                                            strokeWidth={2}
+                                        />
+                                    ) : (
+                                        <LucideStar className="h-3.5 w-3.5" strokeWidth={2} />
+                                    )}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
             </div>
 
-            {/* pagination */}
             {totalCount >= 1 && (
                 <ReactPaginate
-                    breakLabel="..."
-                    nextLabel="next >"
+                    breakLabel="…"
+                    nextLabel="›"
                     forcePage={page - 1}
                     onPageChange={(e) => {
-                        console.log('e.selected', e.selected);
                         setPage(e.selected + 1);
                         goToTop();
                     }}
                     marginPagesDisplayed={1}
                     pageRangeDisplayed={2}
                     pageCount={Math.ceil(totalCount / perPage)}
-                    previousLabel="< previous"
+                    previousLabel="‹"
                     renderOnZeroPageCount={null}
-                    containerClassName="flex flex-wrap justify-center items-center gap-1 sm:space-x-1"
-                    pageClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                    previousClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                    previousLinkClassName="text-gray-700 px-2 sm:px-3"
-                    nextClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                    nextLinkClassName="text-gray-700 px-2 sm:px-3"
-                    breakClassName="border border-gray-300 rounded-sm text-base sm:text-lg m-0.5"
-                    breakLinkClassName="text-gray-700 px-2 sm:px-3"
-                    activeLinkClassName="bg-blue-500 text-white"
-                    pageLinkClassName="text-gray-700 px-2 sm:px-3"
+                    containerClassName="mt-4 flex flex-wrap items-center justify-center gap-1"
+                    pageClassName=""
+                    pageLinkClassName="min-w-[2rem] rounded-lg border border-zinc-200/90 bg-white px-2 py-1 text-center text-[11px] font-medium text-zinc-700 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+                    previousClassName=""
+                    previousLinkClassName="rounded-lg border border-zinc-200/90 bg-white px-2.5 py-1 text-[11px] font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
+                    nextClassName=""
+                    nextLinkClassName="rounded-lg border border-zinc-200/90 bg-white px-2.5 py-1 text-[11px] font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
+                    breakClassName=""
+                    breakLinkClassName="px-1 text-[11px] text-zinc-400"
+                    activeLinkClassName="border-teal-600 bg-teal-600 text-white shadow-md hover:bg-teal-600"
                 />
             )}
         </div>
@@ -307,29 +294,9 @@ const ComponentChatHistory = () => {
 
 const ComponentChatHistoryRender = () => {
     return (
-        // Main container with light background, padding, rounded-sm corners and max width for presentation
-        <div
-            style={{
-                paddingTop: '10px',
-                paddingBottom: '10px',
-            }}
-        >
-            <div
-                className="bg-white rounded-sm shadow-md"
-                style={{
-                    paddingTop: '10px',
-                    paddingBottom: '10px',
-                }}
-            >
-                <div
-                    style={{
-                        height: 'calc(100vh - 100px)',
-                        overflowY: 'auto',
-                    }}
-                    className="pt-3 pb-5"
-                >
-                    <ComponentChatHistory />
-                </div>
+        <div className="border-r border-zinc-200/80 bg-gradient-to-b from-zinc-50/95 to-white">
+            <div className="h-[calc(100vh-60px)] overflow-y-auto bg-white/40 backdrop-blur-[2px]">
+                <ComponentChatHistory />
             </div>
         </div>
     );
@@ -337,38 +304,12 @@ const ComponentChatHistoryRender = () => {
 
 const ComponentChatHistoryModelRender = () => {
     return (
-        // Main container with light background, padding, rounded-sm corners and max width for presentation
-        <div
-            style={{
-                position: 'fixed',
-                left: 0,
-                top: '60px',
-                width: '300px',
-                maxWidth: 'calc(100% - 60px)',
-                zIndex: 1001,
-            }}
-        >
-            <div>
-                <div
-                    className="bg-gray-100 shadow-md"
-                >
-                    <div
-                        style={{
-                            height: 'calc(100vh - 60px)',
-                            overflowY: 'auto',
-                        }}
-                        className="pt-3 pb-5"
-                    >
-                        <ComponentChatHistory />
-                    </div>
-                </div>
+        <div className="fixed left-0 top-[60px] z-[1001] w-[min(320px,calc(100%-48px))] border-r border-zinc-200/80 shadow-2xl shadow-zinc-900/15 ring-1 ring-black/5 backdrop-blur-md">
+            <div className="h-[calc(100vh-60px)] overflow-y-auto bg-white/95">
+                <ComponentChatHistory />
             </div>
         </div>
     );
 };
 
-export {
-    ComponentChatHistoryRender,
-    ComponentChatHistoryModelRender,
-};
-// export default ComponentChatHistoryModelRender;
+export { ComponentChatHistoryRender, ComponentChatHistoryModelRender };

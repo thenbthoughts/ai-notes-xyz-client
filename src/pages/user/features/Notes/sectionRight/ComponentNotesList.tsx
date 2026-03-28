@@ -4,7 +4,7 @@ import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { INotes } from '../../../../../types/pages/tsNotes.ts';
 import ComponentNotesItem from './ComponentNotesItem.tsx';
 import ReactPaginate from 'react-paginate';
-import { MessageCircle, PlusCircle } from 'lucide-react';
+import { MessageCircle, Plus } from 'lucide-react';
 import { notesAddAxios } from '../utils/notesListAxios.ts';
 import { useNavigate } from 'react-router-dom';
 import { jotaiStateNotesIsStar, jotaiStateNotesSearch, jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
@@ -63,12 +63,12 @@ const ComponentNotesList = () => {
         return () => {
             axiosCancelTokenSource.cancel('Operation canceled by the user.');
         };
-    }, [refreshRandomNum]);
+    }, [refreshRandomNum, page, workspaceId, searchTerm, isStar]);
 
     useEffect(() => {
         setPage(1);
         setRefreshRandomNum(Math.random());
-    }, [page, workspaceId, searchTerm, isStar]);
+    }, [workspaceId, searchTerm, isStar]);
 
     const fetchList = async ({ axiosCancelTokenSource }: { axiosCancelTokenSource: CancelTokenSource }) => {
         try {
@@ -120,30 +120,29 @@ const ComponentNotesList = () => {
 
     const renderCount = () => {
         return (
-            <div className="mb-4 flex items-center gap-3">
-                <div className="flex items-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-sm px-4 py-2 shadow-sm border border-blue-200">
-                    <button onClick={notesAddAxiosLocal}>
-                        <PlusCircle className="w-6 h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
+            <div className="mb-1.5 flex h-7 flex-wrap items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-1.5 text-xs text-zinc-700">
+                <span className="font-semibold text-zinc-900 tabular-nums">{totalCount}</span>
+                <span className="text-zinc-500">notes</span>
+                {totalCount === 0 && (
+                    <span className="text-amber-700">No results</span>
+                )}
+                <div className="ml-auto flex items-center gap-0.5">
+                    <button
+                        type="button"
+                        title="New note"
+                        className="inline-flex h-6 w-6 items-center justify-center rounded border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+                        onClick={notesAddAxiosLocal}
+                    >
+                        <Plus className="h-3.5 w-3.5" strokeWidth={2} />
                     </button>
-                    <span className="text-lg font-bold text-blue-700 tracking-wide">{totalCount}</span>
-                    <span className="ml-2 text-gray-700 font-medium">Notes</span>
-                    {totalCount === 0 && (
-                        <span className="ml-4 text-red-500 font-semibold">No result</span>
-                    )}
-                </div>
-                <div className="flex items-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-sm px-4 py-2 shadow-sm border border-blue-200">
-                    <button onClick={() => notesWorkspaceChatWithAiLocal({ notesWorkspaceId: workspaceId })}>
-                        <MessageCircle
-                            size={20}
-                            className="text-blue-500 mr-2 animate-pulse"
-                            strokeWidth={2}
-                            fill="#e0e7ff"
-                            style={{
-                                display: 'inline-block',
-                                marginTop: '-3px',
-                            }}
-                        />
-                        Workspace Chat with AI
+                    <button
+                        type="button"
+                        title="Workspace chat with AI"
+                        className="inline-flex h-6 items-center gap-0.5 rounded border border-zinc-200 bg-zinc-50 px-1.5 text-[11px] font-medium text-zinc-800 hover:bg-zinc-100"
+                        onClick={() => notesWorkspaceChatWithAiLocal({ notesWorkspaceId: workspaceId })}
+                    >
+                        <MessageCircle className="h-3 w-3" strokeWidth={2} />
+                        AI
                     </button>
                 </div>
             </div>
@@ -152,7 +151,6 @@ const ComponentNotesList = () => {
 
     return (
         <div>
-            {/* div scroll up */}
             <div id='messagesScrollUp' />
             {renderCount()}
             {list.map((noteObj) => (
@@ -161,33 +159,32 @@ const ComponentNotesList = () => {
                 </div>
             ))}
             {totalCount >= 1 && (
-                <div className="w-full flex justify-center items-center">
+                <div className="mt-2 flex w-full justify-center">
                     <ReactPaginate
-                        breakLabel="..."
-                        nextLabel="next >"
+                        breakLabel="…"
+                        nextLabel="›"
                         onPageChange={(e) => {
-                            setPage(e.selected);
+                            setPage(e.selected + 1);
                         }}
                         marginPagesDisplayed={1}
-                        pageRangeDisplayed={3}
+                        pageRangeDisplayed={2}
                         pageCount={Math.ceil(totalCount / perPage)}
-                        previousLabel="< previous"
+                        previousLabel="‹"
                         renderOnZeroPageCount={null}
-                        forcePage={page}
-                        containerClassName="flex flex-wrap justify-center items-center gap-1 sm:space-x-1"
-                        pageClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        previousClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        previousLinkClassName="text-gray-700 px-2 sm:px-3"
-                        nextClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        nextLinkClassName="text-gray-700 px-2 sm:px-3"
-                        breakClassName="border border-gray-300 rounded-sm text-base sm:text-lg m-0.5"
-                        breakLinkClassName="text-gray-700 px-2 sm:px-3"
-                        activeLinkClassName="bg-blue-500 text-white"
-                        pageLinkClassName="text-gray-700 px-2 sm:px-3"
+                        forcePage={page - 1}
+                        containerClassName="flex flex-wrap items-center justify-center gap-0.5"
+                        pageClassName="rounded border border-zinc-200 text-xs"
+                        previousClassName="rounded border border-zinc-200 text-xs"
+                        previousLinkClassName="text-zinc-700 px-1.5 py-0.5 block"
+                        nextClassName="rounded border border-zinc-200 text-xs"
+                        nextLinkClassName="text-zinc-700 px-1.5 py-0.5 block"
+                        breakClassName="rounded border border-transparent text-xs px-1 text-zinc-400"
+                        breakLinkClassName="px-1 py-0.5"
+                        activeLinkClassName="!bg-indigo-600 !text-white border-indigo-600"
+                        pageLinkClassName="text-zinc-700 px-1.5 py-0.5 block min-w-[1.5rem] text-center"
                     />
                 </div>
             )}
-            {/* div scroll down */}
             <div id='messagesScrollDown' />
         </div>
     );

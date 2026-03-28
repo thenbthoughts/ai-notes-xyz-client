@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { LucidePlus, LucideTrash2, LucideEdit, LucideX, LucideCheck } from 'lucide-react';
-import SettingHeader from '../SettingHeader';
 import { DriveBucket } from '../../../../types/pages/Drive.types';
 import { driveGetBuckets, driveAddBucket, driveUpdateBucket, driveDeleteBucket } from '../../features/Drive/utils/driveAxios';
 
@@ -152,17 +151,14 @@ const SettingS3Buckets = () => {
 
     if (loading) {
         return (
-            <div className="p-4" style={{ maxWidth: '800px', margin: '0 auto' }}>
-                <SettingHeader />
+            <div className="w-full max-w-3xl">
                 <p>Loading buckets...</p>
             </div>
         );
     }
 
     return (
-        <div className="p-4" style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <SettingHeader />
-
+        <div className="w-full max-w-3xl">
             <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold text-white">S3 Buckets</h2>

@@ -5,7 +5,7 @@ import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { ITaskSchedule } from '../../../../../types/pages/tsTaskSchedule.ts';
 import ComponentNotesItem from './ComponentNotesItem.tsx';
 import ReactPaginate from 'react-paginate';
-import { LucideEye, LucidePlusCircle, PlusCircle } from 'lucide-react';
+import { LucideEye, LucidePlus, LucidePlusCircle } from 'lucide-react';
 import { taskScheduleAddAxios } from '../utils/taskScheduleListAxios.ts';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -14,7 +14,7 @@ import {
     jotaiTaskScheduleFilterIsActive,
     jotaiTaskScheduleFilterShouldSendEmail,
     jotaiTaskScheduleFilterTaskType,
-    jotaiTaskScheduleListRefresh,  
+    jotaiTaskScheduleListRefresh,
     jotaiTaskScheduleSearchDescription,
     jotaiTaskScheduleSearchTitle,
 } from '../stateJotai/taskScheduleStateJotai.ts';
@@ -146,41 +146,29 @@ const ComponentScheduleButtonDailySummary = () => {
         }
     };
 
+    const shortcutClass =
+        'inline-flex items-center gap-1 rounded-sm border border-indigo-200 bg-indigo-50 px-2 py-1 text-[11px] font-medium text-indigo-900 shadow-sm hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-60';
+
     return (
         <Fragment>
             {submitIsAdding ? (
-                <div
-                    className="inline-block bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-sm px-3 sm:px-4 py-2 shadow-sm border border-blue-200 m-1 cursor-pointer"
-                >
-                    <div className="flex items-center">
-                        {
-                            showTextEditOrView ? (
-                                <LucideEye className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
-                            ) : (
-                                <LucidePlusCircle className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
-                            )
-                        }
-                        <span className="text-blue-700">Creating...</span>
-                    </div>
-                </div>
+                <span className={`${shortcutClass} cursor-wait`}>
+                    {showTextEditOrView ? (
+                        <LucideEye className="h-3.5 w-3.5 animate-pulse" strokeWidth={2} />
+                    ) : (
+                        <LucidePlusCircle className="h-3.5 w-3.5 animate-pulse" strokeWidth={2} />
+                    )}
+                    Creating…
+                </span>
             ) : (
-                <div
-                    className="inline-block bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-sm px-3 sm:px-4 py-2 shadow-sm border border-blue-200 m-1 cursor-pointer"
-                    onClick={() => {
-                        addAiDailySummary();
-                    }}
-                >
-                    <div className="flex items-center">
-                        {
-                            showTextEditOrView ? (
-                                <LucideEye className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
-                            ) : (
-                                <LucidePlusCircle className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
-                            )
-                        }
-                        <span className="text-blue-700">AI Daily Summary</span>
-                    </div>
-                </div>
+                <button type="button" className={shortcutClass} onClick={() => void addAiDailySummary()}>
+                    {showTextEditOrView ? (
+                        <LucideEye className="h-3.5 w-3.5" strokeWidth={2} />
+                    ) : (
+                        <LucidePlusCircle className="h-3.5 w-3.5" strokeWidth={2} />
+                    )}
+                    AI daily summary
+                </button>
             )}
         </Fragment>
     );
@@ -311,41 +299,29 @@ const ComponentScheduleButtonDailyTask = () => {
         }
     };
 
+    const shortcutClass =
+        'inline-flex items-center gap-1 rounded-sm border border-violet-200 bg-violet-50 px-2 py-1 text-[11px] font-medium text-violet-900 shadow-sm hover:bg-violet-100 disabled:cursor-not-allowed disabled:opacity-60';
+
     return (
         <Fragment>
             {submitIsAdding ? (
-                <div
-                    className="inline-block bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-sm px-3 sm:px-4 py-2 shadow-sm border border-blue-200 m-1 cursor-pointer"
-                >
-                    <div className="flex items-center">
-                        {
-                            showTextEditOrView ? (
-                                <LucideEye className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
-                            ) : (
-                                <LucidePlusCircle className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
-                            )
-                        }
-                        <span className="text-blue-700">Creating...</span>
-                    </div>
-                </div>
+                <span className={`${shortcutClass} cursor-wait`}>
+                    {showTextEditOrView ? (
+                        <LucideEye className="h-3.5 w-3.5 animate-pulse" strokeWidth={2} />
+                    ) : (
+                        <LucidePlusCircle className="h-3.5 w-3.5 animate-pulse" strokeWidth={2} />
+                    )}
+                    Creating…
+                </span>
             ) : (
-                <div
-                    className="inline-block bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-sm px-3 sm:px-4 py-2 shadow-sm border border-blue-200 m-1 cursor-pointer"
-                    onClick={() => {
-                        addAiDailyTask();
-                    }}
-                >
-                    <div className="flex items-center">
-                        {
-                            showTextEditOrView ? (
-                                <LucideEye className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
-                            ) : (
-                                <LucidePlusCircle className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
-                            )
-                        }
-                        <span className="text-blue-700">Suggest Daily Tasks</span>
-                    </div>
-                </div>
+                <button type="button" className={shortcutClass} onClick={() => void addAiDailyTask()}>
+                    {showTextEditOrView ? (
+                        <LucideEye className="h-3.5 w-3.5" strokeWidth={2} />
+                    ) : (
+                        <LucidePlusCircle className="h-3.5 w-3.5" strokeWidth={2} />
+                    )}
+                    Suggest daily tasks
+                </button>
             )}
         </Fragment>
     );
@@ -454,38 +430,38 @@ const ComponentNotesList = () => {
         }
     };
 
+    const goToTop = () => {
+        document.getElementById('messagesScrollUp')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     const renderCount = () => {
         return (
-            <div>
-                <div className="mb-4">
-                    {/* button -> add schedule -> schedule */}
-                    <div className="inline-block bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-sm px-3 sm:px-4 py-2 shadow-sm border border-blue-200 m-1">
-                        <button onClick={taskScheduleAddAxiosLocal} className="flex items-center">
-                            <PlusCircle className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-2 animate-pulse" strokeWidth={2} fill="#e0e7ff" />
-                            <span className="text-base sm:text-lg font-bold text-blue-700 tracking-wide">{totalCount}</span>
-                            <span className="ml-2 text-gray-700 font-medium text-sm sm:text-base">Schedule</span>
-                            {totalCount === 0 && (
-                                <span className="ml-2 sm:ml-4 text-red-500 font-semibold text-sm sm:text-base">No result</span>
-                            )}
-                        </button>
-                    </div>
-
-                    {/* button -> add schedule -> ai daily diary */}
-                    <ComponentScheduleButtonDailySummary />
-
-                    {/* button -> add schedule -> ai daily task */}
-                    <ComponentScheduleButtonDailyTask />
-                </div>
+            <div className="mb-2 flex flex-wrap items-center gap-1.5 rounded-sm border border-zinc-200 bg-white px-2 py-1.5 shadow-sm">
+                <button
+                    type="button"
+                    onClick={() => void taskScheduleAddAxiosLocal()}
+                    className="inline-flex items-center gap-1 rounded-sm border border-emerald-700/30 bg-emerald-600 px-2 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+                >
+                    <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
+                    Add
+                </button>
+                <span className="text-xs text-zinc-600">
+                    <span className="font-semibold text-zinc-900">{totalCount}</span> jobs
+                </span>
+                {totalCount === 0 && (
+                    <span className="text-xs font-medium text-amber-700">No results</span>
+                )}
+                <ComponentScheduleButtonDailySummary />
+                <ComponentScheduleButtonDailyTask />
             </div>
         );
     };
 
     return (
         <div>
-            {/* div scroll up */}
-            <div id='messagesScrollUp' />
+            <div id="messagesScrollUp" />
             {renderCount()}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 md:gap-2">
                 {list.map((taskScheduleObj) => (
                     <div key={taskScheduleObj._id}>
                         <ComponentNotesItem taskScheduleObj={taskScheduleObj} />
@@ -493,34 +469,30 @@ const ComponentNotesList = () => {
                 ))}
             </div>
             {totalCount >= 1 && (
-                <div className="w-full flex justify-center items-center">
+                <div className="mt-3 flex w-full items-center justify-center">
                     <ReactPaginate
-                        breakLabel="..."
-                        nextLabel="next >"
+                        breakLabel="…"
+                        nextLabel="›"
                         onPageChange={(e) => {
                             setPage(e.selected + 1);
+                            goToTop();
                         }}
                         marginPagesDisplayed={1}
-                        pageRangeDisplayed={3}
+                        pageRangeDisplayed={2}
                         pageCount={Math.max(1, Math.ceil(totalCount / perPage))}
-                        previousLabel="< previous"
+                        previousLabel="‹"
                         renderOnZeroPageCount={null}
                         forcePage={page - 1}
-                        containerClassName="flex flex-wrap justify-center items-center gap-1 sm:space-x-1"
-                        pageClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        previousClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        previousLinkClassName="text-gray-700 px-2 sm:px-3"
-                        nextClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                        nextLinkClassName="text-gray-700 px-2 sm:px-3"
-                        breakClassName="border border-gray-300 rounded-sm text-base sm:text-lg m-0.5"
-                        breakLinkClassName="text-gray-700 px-2 sm:px-3"
-                        activeLinkClassName="bg-blue-500 text-white"
-                        pageLinkClassName="text-gray-700 px-2 sm:px-3"
+                        containerClassName="flex flex-wrap items-center justify-center gap-1"
+                        pageLinkClassName="min-w-[1.75rem] rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-center text-[11px] text-zinc-700 hover:bg-zinc-50"
+                        previousLinkClassName="rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-[11px] text-zinc-700 hover:bg-zinc-50"
+                        nextLinkClassName="rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-[11px] text-zinc-700 hover:bg-zinc-50"
+                        breakLinkClassName="px-1 text-[11px] text-zinc-400"
+                        activeLinkClassName="border-indigo-600 bg-indigo-600 text-white hover:bg-indigo-600"
                     />
                 </div>
             )}
-            {/* div scroll down */}
-            <div id='messagesScrollDown' />
+            <div id="messagesScrollDown" />
         </div>
     );
 };

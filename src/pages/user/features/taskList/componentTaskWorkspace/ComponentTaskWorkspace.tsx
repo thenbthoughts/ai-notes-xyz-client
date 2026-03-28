@@ -26,20 +26,18 @@ const ComponentTaskWorkspace = () => {
                 setWorkspaces(result.data.docs);
 
                 const resultWorkspaceArr = result.data.docs;
-
                 let tempWorkspaceId = '';
 
                 if (resultWorkspaceArr.length >= 1) {
                     tempWorkspaceId = resultWorkspaceArr[0]._id;
                 }
 
-
                 const searchParams = new URLSearchParams(window.location.search);
                 const workspaceQuery = searchParams.get('workspace');
                 if (workspaceQuery) {
-                    for (const workspaceId of resultWorkspaceArr) {
-                        if (workspaceId._id === workspaceQuery) {
-                            tempWorkspaceId = workspaceId._id;
+                    for (const ws of resultWorkspaceArr) {
+                        if (ws._id === workspaceQuery) {
+                            tempWorkspaceId = ws._id;
                             break;
                         }
                     }
@@ -57,35 +55,32 @@ const ComponentTaskWorkspace = () => {
     }, []);
 
     return (
-        <div>
-            <div className="mb-4">
-                <h2 className="block text-sm font-medium pb-2 flex justify-between items-center text-blue-600">
-                    <span className='text-xl font-semibold mb-1 text-blue-600' >Workspace</span>
-                    <Link
-                        to={'/user/task-workspace'}
-                        className="ml-2 p-0 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300 inline-block text-sm"
-                    >
-                        <LucideSettings className="inline-block m-1"
-                            size={'20px'}
-                        />
-                    </Link>
-                </h2>
-                <select
-                    className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    value={workspaceId}
-                    onChange={(e) => {
-                        // Handle workspace selection
-                        setWorkspaceId(e.target.value);
-                        navigate(`/user/task?workspace=${e.target.value}`);
-                    }}
+        <div className="space-y-1">
+            <div className="flex items-center justify-between gap-1.5">
+                <span className="text-xs font-semibold text-violet-900">Workspace</span>
+                <Link
+                    to="/user/task-workspace"
+                    className="inline-flex items-center gap-0.5 rounded-md border border-cyan-200/80 bg-gradient-to-r from-cyan-50 to-sky-50 px-1.5 py-0.5 text-[11px] font-semibold text-cyan-900 shadow-sm backdrop-blur-sm transition-colors hover:border-cyan-300 hover:from-cyan-100 hover:to-sky-100"
+                    title="Manage workspaces"
                 >
-                    {workspaces.map((workspace) => (
-                        <option key={workspace._id} value={workspace._id}>
-                            {workspace.title}
-                        </option>
-                    ))}
-                </select>
+                    <LucideSettings className="h-3 w-3" strokeWidth={2} />
+                    Manage
+                </Link>
             </div>
+            <select
+                className="block w-full rounded-lg border border-violet-200/70 bg-gradient-to-r from-white to-violet-50/40 py-1.5 px-2 text-xs leading-tight text-zinc-900 shadow-sm backdrop-blur-sm focus:border-fuchsia-400 focus:outline-none focus:ring-1 focus:ring-fuchsia-200/50"
+                value={workspaceId}
+                onChange={(e) => {
+                    setWorkspaceId(e.target.value);
+                    navigate(`/user/task?workspace=${e.target.value}`);
+                }}
+            >
+                {workspaces.map((workspace) => (
+                    <option key={workspace._id} value={workspace._id}>
+                        {workspace.title}
+                    </option>
+                ))}
+            </select>
         </div>
     );
 };

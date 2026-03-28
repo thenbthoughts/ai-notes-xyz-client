@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import axiosCustom from "../../../../config/axiosCustom";
-import SettingHeader from "../SettingHeader";
 
 // Interface matching the Mongoose schema
 interface IUserDeviceList {
@@ -246,15 +245,7 @@ const LoginHistory = () => {
     };
 
     return (
-        <div
-            className="p-4"
-            style={{
-                maxWidth: '1200px',
-                margin: '0 auto'
-            }}
-        >
-            <SettingHeader />
-
+        <div className="w-full max-w-5xl">
             <div className="bg-white rounded-sm shadow-sm border">
                 <div className="p-4 border-b">
                     <h2 className="text-lg font-semibold text-gray-900">Login History & Devices</h2>

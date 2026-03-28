@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { LucideCalendarPlus } from "lucide-react";
 import ComponentNotesList from "./ComponentNotesList";
 import ComponentNotesEdit from "./ComponentNotesEdit/ComponentNotesEdit";
 import { notesQuickDailyNotesAddAxios } from "../utils/notesListAxios";
@@ -45,19 +46,18 @@ const ComponentRightWrapper = ({
 
     return (
         <div
-            style={{
-                height: 'calc(100vh - 60px)',
-                overflowY: 'scroll'
-            }}
-            className="p-1 md:p-3"
+            className={
+                pageName.actionType === 'edit'
+                    ? 'h-[calc(100vh-60px)] overflow-y-auto bg-[#f6f6f4]'
+                    : 'h-[calc(100vh-60px)] overflow-y-auto px-2 py-1 bg-zinc-50/80'
+            }
         >
-
-            <div className="mb-6 p-4 rounded-sm shadow-lg text-white bg-yellow-500">
-                <h1 className="text-3xl font-extrabold mb-2 drop-shadow-md">Notes</h1>
-                <p className="text-lg font-medium drop-shadow-sm">Notes are a great way to keep track of information. You can add, edit, and delete notes as you wish.</p>
-                <div>
-                    <button 
-                        className="mt-3 px-4 py-2 bg-white text-yellow-600 font-semibold rounded-sm shadow-md hover:bg-yellow-50 hover:shadow-lg transition-all duration-200 ease-in-out"
+            {pageName.actionType === 'list' && (
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-md border border-zinc-200/80 bg-white px-2 py-1.5 text-xs text-zinc-600">
+                    <span className="font-medium text-zinc-800">Notes</span>
+                    <button
+                        type="button"
+                        className="inline-flex items-center gap-1 rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 text-[11px] font-medium text-zinc-800 hover:bg-zinc-100"
                         onClick={async () => {
                             const result = await notesQuickDailyNotesAddAxios();
                             if (result.success.length > 0) {
@@ -65,10 +65,11 @@ const ComponentRightWrapper = ({
                             }
                         }}
                     >
-                        Quick Daily Notes
+                        <LucideCalendarPlus className="h-3.5 w-3.5" strokeWidth={1.75} />
+                        Quick daily
                     </button>
                 </div>
-            </div>
+            )}
 
             {pageName.actionType === 'list' && (
                 <div>
@@ -76,11 +77,9 @@ const ComponentRightWrapper = ({
                 </div>
             )}
             {pageName.actionType === 'edit' && (
-                <div>
-                    <ComponentNotesEdit
-                        recordId={pageName.recordId}
-                    />
-                </div>
+                <ComponentNotesEdit
+                    recordId={pageName.recordId}
+                />
             )}
         </div>
     );

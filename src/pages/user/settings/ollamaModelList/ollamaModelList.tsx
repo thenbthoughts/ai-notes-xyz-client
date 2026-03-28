@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axiosCustom from '../../../../config/axiosCustom';
-import SettingHeader from '../SettingHeader';
 import stateJotaiAuthAtom from '../../../../jotai/stateJotaiAuth';
 import { useAtomValue } from 'jotai';
 
@@ -152,11 +151,7 @@ const OllamaModelList: React.FC = () => {
     };
 
     return (
-        <div className="ollama-model-list p-2 sm:p-3 lg:p-4 max-w-4xl mx-auto">
-            <div>
-                <SettingHeader />
-            </div>
-
+        <div className="ollama-model-list w-full max-w-4xl">
             {/* title */}
             <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
@@ -379,10 +374,7 @@ const OllamaModelListWrapper = () => {
             {userAuth.apiKeyOllamaValid ? (
                 <OllamaModelList />
             ) : (
-                <div className='container mx-auto p-2'>
-
-                    <SettingHeader />
-
+                <div className="w-full max-w-4xl">
                     <div className="text-center py-4 sm:py-6 bg-red-50 border border-red-200 rounded-lg p-2">
                         <p className="text-sm sm:text-base">
                             Please set the Ollama API key in the <Link

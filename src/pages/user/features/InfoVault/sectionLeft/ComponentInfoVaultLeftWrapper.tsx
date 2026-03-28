@@ -1,167 +1,179 @@
 import { DebounceInput } from 'react-debounce-input';
+import { LucidePlus, LucideSearch } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { infoVaultAddAxios } from '../utils/infoVaultListAxios.ts';
 
-import { jotaiStateInfoVaultSearch, jotaiStateInfoVaultIsStar } from '../stateJotai/infoVaultStateJotai.ts';
+import {
+    jotaiStateInfoVaultArchivedFilter,
+    jotaiStateInfoVaultIsStar,
+    jotaiStateInfoVaultRelationshipFilter,
+    jotaiStateInfoVaultSearch,
+    jotaiStateInfoVaultTypeFilter,
+} from '../stateJotai/infoVaultStateJotai.ts';
 import { useAtom } from 'jotai';
+import { INFO_VAULT_TYPE_OPTIONS } from '../infoVaultTypeOptions.ts';
+
+const RELATIONSHIP_FILTER_OPTIONS = [
+    { label: 'All', value: '' as const },
+    { label: 'Myself', value: 'myself' as const },
+    { label: 'Personal', value: 'personal' as const },
+    { label: 'Professional', value: 'professional' as const },
+    { label: 'Family', value: 'family' as const },
+    { label: 'Other', value: 'other' as const },
+];
 
 const ComponentInfoVaultLeftWrapper = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useAtom(jotaiStateInfoVaultSearch);
     const [isStar, setIsStar] = useAtom(jotaiStateInfoVaultIsStar);
+    const [typeFilter, setTypeFilter] = useAtom(jotaiStateInfoVaultTypeFilter);
+    const [relationshipFilter, setRelationshipFilter] = useAtom(jotaiStateInfoVaultRelationshipFilter);
+    const [archivedFilter, setArchivedFilter] = useAtom(jotaiStateInfoVaultArchivedFilter);
 
     const infoVaultAddAxiosLocal = async () => {
         try {
             const result = await infoVaultAddAxios();
             if (result.success !== '') {
-                navigate(`/user/info-vault?action=edit&id=${result.recordId}`)
+                navigate(`/user/info-vault?action=edit&id=${result.recordId}`);
             }
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const clearFilters = () => {
         setSearchTerm('');
         setIsStar('');
+        setTypeFilter('');
+        setRelationshipFilter('');
+        setArchivedFilter('');
     };
 
+    const pillClass = (active: boolean) =>
+        `rounded-sm border px-2 py-0.5 text-[11px] font-medium transition-colors ${
+            active
+                ? 'border-indigo-600 bg-indigo-600 text-white'
+                : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300'
+        }`;
+
     return (
-        <div className="py-6 px-2">
-
-            <h1 className="text-2xl font-bold mb-5 text-indigo-700">Info Vault</h1>
-
-            <div className="flex space-x-2 mb-4">
-                <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
-                    onClick={infoVaultAddAxiosLocal}
-                >+ Add</button>
-                <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300"
-                    onClick={clearFilters}
-                >Clear Filters</button>
+        <div className="px-2 py-3 text-zinc-900">
+            <div className="mb-3 flex items-baseline justify-between gap-2">
+                <h2 className="text-sm font-semibold tracking-tight text-zinc-900">Info Vault</h2>
+                <span className="text-[10px] font-medium uppercase tracking-wide text-zinc-500">Filters</span>
             </div>
 
-            {/* Chat Options Title */}
-            <h2 className="text-xl font-semibold mb-4 text-indigo-600">Filters</h2>
+            <div className="mb-2 flex flex-col gap-1.5 sm:flex-row">
+                <button
+                    type="button"
+                    className="flex flex-1 items-center justify-center gap-1 rounded-sm border border-emerald-700/30 bg-emerald-600 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-emerald-700"
+                    onClick={infoVaultAddAxiosLocal}
+                >
+                    <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
+                    Add
+                </button>
+                <button
+                    type="button"
+                    className="rounded-sm border border-zinc-200 bg-white px-2 py-1.5 text-xs font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
+                    onClick={clearFilters}
+                >
+                    Clear
+                </button>
+            </div>
 
-            {/* filter */}
-            <div className="mb-4">
-                <label className="block text-sm font-medium">Search:</label>
+            <div className="relative mb-3">
+                <LucideSearch
+                    className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400"
+                    strokeWidth={2}
+                />
                 <DebounceInput
                     debounceTimeout={500}
                     type="text"
-                    placeholder="Search..."
-                    className="border border-gray-300 rounded-sm p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Search…"
+                    className="w-full rounded-sm border border-zinc-200 bg-white py-1.5 pl-7 pr-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     onChange={(e) => setSearchTerm(e.target.value)}
                     value={searchTerm}
                 />
             </div>
 
-            <div className="mb-4">
-                <span className="mr-2 text-lg font-semibold">Is Started</span>
-                <div>
-                    <label className="items-center mr-4">
-                        <input
-                            type="radio"
-                            value="true"
-                            checked={isStar === ''}
-                            onChange={() => setIsStar('')}
-                            className="form-radio h-4 w-4 text-indigo-600"
-                        />
-                        <span className="ml-2">All</span>
-                    </label>
+            <div className="mb-2 space-y-2">
+                <div className="rounded-sm border border-zinc-200 bg-zinc-50/80 px-2 py-2">
+                    <div className="mb-1.5 text-[11px] font-medium text-zinc-600">Type</div>
+                    <div className="flex flex-wrap gap-1">
+                        <button
+                            type="button"
+                            onClick={() => setTypeFilter('')}
+                            className={pillClass(typeFilter === '')}
+                        >
+                            All
+                        </button>
+                        {INFO_VAULT_TYPE_OPTIONS.map((opt) => (
+                            <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => setTypeFilter(opt.value)}
+                                className={pillClass(typeFilter === opt.value)}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-                <div>
-                    <label className="items-center mr-4">
-                        <input
-                            type="radio"
-                            value="true"
-                            checked={isStar === 'true'}
-                            onChange={() => setIsStar('true')}
-                            className="form-radio h-4 w-4 text-indigo-600"
-                        />
-                        <span className="ml-2">Yes</span>
-                    </label>
-                </div>
-                <div>
-                    <label className="items-center">
-                        <input
-                            type="radio"
-                            value="false"
-                            checked={isStar === 'false'}
-                            onChange={() => setIsStar('false')}
-                            className="form-radio h-4 w-4 text-indigo-600"
-                        />
-                        <span className="ml-2">No</span>
-                    </label>
-                </div>
-            </div>
 
-        </div>
-    );
-};
-
-const ComponentInfoVaultLeftWrapperRender = () => {
-    return (
-        // Main container with light background, padding, rounded-sm corners and max width for presentation
-        <div
-            style={{
-                paddingTop: '10px',
-                paddingBottom: '10px',
-            }}
-        >
-            <div
-                className="bg-white rounded-sm shadow-md"
-                style={{
-                    paddingTop: '10px',
-                    paddingBottom: '10px',
-                }}
-            >
-                <div
-                    style={{
-                        height: 'calc(100vh - 100px)',
-                        overflowY: 'auto',
-                    }}
-                    className="pt-3 pb-5"
-                >
-                    <ComponentInfoVaultLeftWrapper />
+                <div className="rounded-sm border border-zinc-200 bg-zinc-50/80 px-2 py-2">
+                    <div className="mb-1.5 text-[11px] font-medium text-zinc-600">Relationship</div>
+                    <div className="flex flex-wrap gap-1">
+                        {RELATIONSHIP_FILTER_OPTIONS.map((opt) => (
+                            <button
+                                key={opt.label}
+                                type="button"
+                                onClick={() => setRelationshipFilter(opt.value)}
+                                className={pillClass(relationshipFilter === opt.value)}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </div>
-        </div>
-    );
-};
 
-const ComponentInfoVaultLeftWrapperModelRender = () => {
-    return (
-        // Main container with light background, padding, rounded-sm corners and max width for presentation
-        <div
-            style={{
-                position: 'fixed',
-                left: 0,
-                top: '60px',
-                width: '300px',
-                maxWidth: 'calc(100% - 50px)',
-                zIndex: 1001,
-            }}
-        >
-            <div>
-                <div
-                    className="bg-gray-100 shadow-md"
-                    style={{
-                        paddingTop: '10px',
-                        paddingBottom: '10px',
-                    }}
-                >
-                    <div
-                        style={{
-                            height: 'calc(100vh - 60px)',
-                            overflowY: 'auto',
-                        }}
-                        className="pt-3 pb-5"
-                    >
-                        <ComponentInfoVaultLeftWrapper />
+                <div className="rounded-sm border border-zinc-200 bg-zinc-50/80 px-2 py-2">
+                    <div className="mb-1.5 text-[11px] font-medium text-zinc-600">Archived</div>
+                    <div className="flex flex-wrap gap-1">
+                        {[
+                            { label: 'All', value: '' as const },
+                            { label: 'Yes', value: 'true' as const },
+                            { label: 'No', value: 'false' as const },
+                        ].map((opt) => (
+                            <button
+                                key={opt.label}
+                                type="button"
+                                onClick={() => setArchivedFilter(opt.value)}
+                                className={pillClass(archivedFilter === opt.value)}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="rounded-sm border border-zinc-200 bg-zinc-50/80 px-2 py-2">
+                    <div className="mb-1.5 text-[11px] font-medium text-zinc-600">Starred</div>
+                    <div className="flex flex-wrap gap-1">
+                        {[
+                            { label: 'All', value: '' as const },
+                            { label: 'Yes', value: 'true' as const },
+                            { label: 'No', value: 'false' as const },
+                        ].map((opt) => (
+                            <button
+                                key={opt.label}
+                                type="button"
+                                onClick={() => setIsStar(opt.value)}
+                                className={pillClass(isStar === opt.value)}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -169,7 +181,24 @@ const ComponentInfoVaultLeftWrapperModelRender = () => {
     );
 };
 
-export {
-    ComponentInfoVaultLeftWrapperRender,
-    ComponentInfoVaultLeftWrapperModelRender,
+const ComponentInfoVaultLeftWrapperRender = () => {
+    return (
+        <div className="border-r border-zinc-200 bg-[#f4f4f5]">
+            <div className="h-[calc(100vh-60px)] overflow-y-auto border-zinc-200 bg-white">
+                <ComponentInfoVaultLeftWrapper />
+            </div>
+        </div>
+    );
 };
+
+const ComponentInfoVaultLeftWrapperModelRender = () => {
+    return (
+        <div className="fixed left-0 top-[60px] z-[1001] w-[min(300px,calc(100%-50px))] border-r border-zinc-200 shadow-lg">
+            <div className="h-[calc(100vh-60px)] overflow-y-auto bg-white">
+                <ComponentInfoVaultLeftWrapper />
+            </div>
+        </div>
+    );
+};
+
+export { ComponentInfoVaultLeftWrapperRender, ComponentInfoVaultLeftWrapperModelRender };

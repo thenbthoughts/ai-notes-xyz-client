@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useAtomValue } from "jotai";
 import { CheckCircle, XCircle } from "lucide-react";
 import stateJotaiAuthAtom from "../../../../jotai/stateJotaiAuth";
-import SettingHeader from "../SettingHeader";
-
 import ComponentApiKeySet from "../../userhomepage/ComponentApiKeySet";
 
 // API Key Components
@@ -133,15 +131,7 @@ const SettingApiKey = () => {
     }
 
     return (
-        <div
-            className="p-4"
-            style={{
-                maxWidth: '800px',
-                margin: '0 auto'
-            }}
-        >
-            <SettingHeader />
-
+        <div className="w-full max-w-3xl">
             {renderApiKeys()}
         </div>
     );

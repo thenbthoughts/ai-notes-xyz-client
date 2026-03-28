@@ -212,67 +212,66 @@ const ComponentFolderAndFileList = () => {
         const isActive = activeItem === item._id;
         const isExpanded = expandedItems.includes(item._id);
 
-        const indent = `${level * 10}px`;
+        const leftAccent =
+            isActive
+                ? 'border-l-indigo-600 bg-white text-zinc-950'
+                : item.isStar && level === 0
+                    ? 'border-l-amber-500 hover:bg-white/70'
+                    : 'border-l-transparent hover:bg-white/60';
+
+        const indentPx = level * 6;
         const borderStyle = level > 0 ? {
-            borderLeft: '1px solid #374151',
-            paddingLeft: '3px',
+            borderLeft: '1px solid #d4d4d8',
+            paddingLeft: '4px',
             height: '100%',
         } : {};
         return (
-            <div key={item._id} style={{ paddingLeft: indent, width: '100%', marginTop: 0, marginBottom: 0, ...borderStyle }}>
+            <div key={item._id} style={{ paddingLeft: `${indentPx}px`, width: '100%', marginTop: 0, marginBottom: 0, ...borderStyle }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 0 }}>
-                    <div style={{ width: '80%', display: 'flex', alignItems: 'center', minWidth: 0 }}>
+                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}>
                         <Link
                             to={`/user/notes?action=edit&id=${item._id}&workspace=${workspaceId}`}
+                            title={item.title}
                             onClick={() => {
                                 setActiveItem(item._id);
                                 // on selecting an item, close modal
                                 setStateNotesModalOpenStatus(false);
                                 // if (hasChildren) toggleExpanded(item._id);
                             }}
+                            className={
+                                `${leftAccent} block w-full rounded-none border-l-2 border-t-0 border-b-0 border-r-0 text-left py-0.5 pl-1.5 pr-1 text-[11px] font-medium text-zinc-800 overflow-hidden min-w-0`
+                            }
                             style={{
-                                width: '100%',
-                                background: isActive ? '#e5e7eb' : 'transparent', // light gray for active
-                                color: isActive ? '#111' : '#111', // always black text
-                                border: item.isStar && level === 0 ? '2px solid #fbbf24' : 'none',
-                                borderRadius: '0.5rem',
-                                padding: '6px 8px',
-                                textAlign: 'left',
-                                fontWeight: 500,
-                                fontSize: level === 0 ? '1rem' : '0.85rem',
-                                margin: 0,
-                                overflow: 'hidden',
-                                display: 'flex',
-                                alignItems: 'center',
-                                minWidth: 0,
+                                fontSize: level === 0 ? '12px' : '11px',
                             }}
                         >
                             <span style={{
                                 flex: 1,
                                 minWidth: 0,
                                 overflow: 'hidden',
-                                verticalAlign: 'middle',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
                                 display: 'block',
                             }}>{item.title}</span>
                         </Link>
                     </div>
                     {hasChildren && (
                         <div
-                            style={{ width: '10%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', }}
+                            className="shrink-0 flex w-6 items-center justify-center cursor-pointer text-zinc-500 hover:text-zinc-800"
                             onClick={() => {
                                 setActiveItem(item._id);
                                 if (hasChildren) toggleExpanded(item._id);
                             }}
                         >
-                            <span style={{ marginLeft: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                            <span className="flex items-center justify-center">
+                                {isExpanded                 ? <ChevronDown size={12} strokeWidth={2} /> : <ChevronRight size={12} strokeWidth={2} />}
                             </span>
                         </div>
                     )}
                 </div>
                 {/* Children */}
                 {hasChildren && isExpanded && (
-                    <div style={{ marginTop: 2, marginBottom: 2 }}>
+                    <div className="my-0.5">
                         {item.children!.map(child => renderMenuItem(child, level + 1))}
                     </div>
                 )}
@@ -281,12 +280,10 @@ const ComponentFolderAndFileList = () => {
     };
 
     return (
-        <div style={{ background: '#fff', color: '#111' }}>
-            <div>
-                <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                    {hierarchicalItems.map(item => renderMenuItem(item))}
-                </nav>
-            </div>
+        <div className="rounded-none border border-zinc-300/80 bg-white text-zinc-900 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.6)]">
+            <nav className="flex flex-col divide-y divide-zinc-100">
+                {hierarchicalItems.map(item => renderMenuItem(item))}
+            </nav>
         </div>
     );
 };

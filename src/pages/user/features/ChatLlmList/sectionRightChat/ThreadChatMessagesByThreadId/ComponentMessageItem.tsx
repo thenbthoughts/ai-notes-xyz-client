@@ -119,36 +119,42 @@ const ComponentAiTaskByNotesId = ({
                             <div className="flex justify-center">
                                 <Link
                                     to={'/user/task'}
-                                    className="bg-blue-600 text-white font-bold py-2 px-4 rounded-sm hover:bg-blue-700 transition duration-300 ease-in-out"
+                                    className="rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:from-teal-500 hover:to-emerald-500"
                                 >
-                                    Go to Tasks
+                                    Go to tasks
                                 </Link>
                             </div>
                         )}
-                        {loading ? ( // Show loading message while fetching
-                            <p className="text-center text-gray-500">Loading tasks...</p>
+                        {loading ? (
+                            <p className="text-center text-sm text-zinc-500">Loading tasks…</p>
                         ) : (
                             <Fragment>
                                 {tasks.length > 0 ? (
-                                    <ul className="list-disc pl-5">
+                                    <ul className="mt-2 space-y-2">
                                         {tasks.map((task, index) => (
-                                            <li key={index} className="mb-2 border p-2">
-                                                <h4 className="font-semibold">{task.taskTitle}</h4>
-                                                <p className="text-sm">{task.taskDescription}</p>
-                                                <p className="text-xs">Priority: {task.taskPriority}</p>
-                                                <p className="text-xs">Due Date: {new Date(task.taskDueDate).toLocaleDateString()}</p>
-                                                <p className="text-xs">Tags: {task.taskTags.join(', ')}</p>
+                                            <li
+                                                key={index}
+                                                className="rounded-xl border border-zinc-200/80 bg-zinc-50/80 p-3"
+                                            >
+                                                <h4 className="font-semibold text-zinc-900">{task.taskTitle}</h4>
+                                                <p className="text-sm text-zinc-600">{task.taskDescription}</p>
+                                                <p className="mt-1 text-xs text-zinc-500">Priority: {task.taskPriority}</p>
+                                                <p className="text-xs text-zinc-500">
+                                                    Due: {new Date(task.taskDueDate).toLocaleDateString()}
+                                                </p>
+                                                <p className="text-xs text-zinc-500">Tags: {task.taskTags.join(', ')}</p>
                                                 <button
+                                                    type="button"
                                                     onClick={() => addTask(task)}
-                                                    className="mt-2 bg-blue-600 text-white p-2 rounded-sm hover:bg-blue-700 transition"
+                                                    className="mt-2 rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-zinc-800"
                                                 >
-                                                    Add Task
+                                                    Add task
                                                 </button>
                                             </li>
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p className="text-center text-gray-500">No tasks available.</p>
+                                    <p className="text-center text-sm text-zinc-500">No tasks suggested.</p>
                                 )}
                             </Fragment>
                         )}
@@ -159,11 +165,18 @@ const ComponentAiTaskByNotesId = ({
     );
 }
 
+const messageIsAssistant = (m: tsMessageItem) =>
+    m.isAi === true ||
+    (m.type === 'text' &&
+        typeof m.content === 'string' &&
+        m.content.trimStart().startsWith('AI:'));
+
 const ComponentMessageItem = ({
     itemMessage
 }: {
     itemMessage: tsMessageItem;
 }) => {
+    const isAssistant = messageIsAssistant(itemMessage);
     const [isDeleted, setIsDeleted] = useState(false);
     const [showAllTags, setShowAllTags] = useState(false);
     const [showAiGeneratedFileInfo, setShowAiGeneratedFileInfo] = useState(false);
@@ -203,11 +216,11 @@ const ComponentMessageItem = ({
 
     const renderImage = () => {
         return (
-            <div className="pb-3">
+            <div className="pb-1">
                 <img
                     src={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${itemMessage?.fileUrl}`}
                     alt="Attached photo"
-                    className="max-w-full rounded"
+                    className="max-w-full rounded-xl ring-1 ring-black/5"
                     loading="lazy"
                     style={{
                         maxHeight: '30vh',
@@ -248,22 +261,21 @@ const ComponentMessageItem = ({
     };
 
     const renderDocument = () => {
+        const body = 'text-zinc-800';
+        const meta = 'text-zinc-500';
         return (
-            <div className="">
-                <span className="mr-2">📄</span>
+            <div className={`text-sm ${body}`}>
+                <span className="mr-2" aria-hidden>
+                    📄
+                </span>
                 <span>{itemMessage.content}</span>
-                <span className="text-xs text-gray-500">{itemMessage.fileContentAi}</span>
-                <span className="ml-2 text-xs text-gray-400">
+                <span className={`text-xs ${meta}`}>{itemMessage.fileContentAi}</span>
+                <span className={`ml-2 text-xs ${meta}`}>
                     ({typeof itemMessage.fileContentText === 'string' ? itemMessage.fileContentText.length : 0} chars)
                 </span>
                 {showExtractedText && (
-                    <div className="text-xs text-gray-500 py-2"
-                        style={{
-                            height: '300px',
-                            maxHeight: '80vh',
-                            overflowY: 'auto',
-                            whiteSpace: 'pre-wrap',
-                        }}
+                    <div
+                        className={`mt-2 max-h-[min(300px,80vh)] overflow-y-auto whitespace-pre-wrap rounded-lg border border-zinc-200/40 p-2 text-xs ${meta}`}
                     >
                         {itemMessage.fileContentText}
                     </div>
@@ -279,11 +291,19 @@ const ComponentMessageItem = ({
     const renderText = () => {
         const mdContent = itemMessage.content.replace('AI: ', '');
         return (
-            <div className="w-full min-w-0">
+            <div
+                className={`w-full min-w-0 text-sm leading-relaxed ${
+                    isAssistant
+                        ? 'text-zinc-800'
+                        : 'text-zinc-800 [&_a]:text-teal-700 [&_code]:text-teal-900'
+                }`}
+            >
                 {itemMessage?.reasoningContent?.length >= 1 && (
-                    <div className="bg-blue-100 rounded-sm p-2 mb-2">
-                        <div className="font-semibold text-blue-500 mb-1">Reasoning:</div>
-                        <span className="text-xs text-blue-500">{itemMessage?.reasoningContent}</span>
+                    <div className="mb-3 rounded-xl border border-violet-200/60 bg-violet-50/90 p-3">
+                        <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-violet-600">
+                            Reasoning
+                        </div>
+                        <span className="text-xs text-violet-800/90">{itemMessage?.reasoningContent}</span>
                     </div>
                 )}
                 <MarkdownRenderer content={mdContent} />
@@ -308,13 +328,20 @@ const ComponentMessageItem = ({
         }
     };
 
+    const iconBtnBase =
+        'inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-medium transition-colors';
+    const iconBtnAssistant = `${iconBtnBase} bg-zinc-100/90 text-zinc-600 hover:bg-zinc-200/90`;
+    const iconBtnUser = `${iconBtnBase} bg-white/90 text-zinc-600 shadow-sm ring-1 ring-teal-200/40 hover:bg-teal-50/80`;
+
     const renderButtons = () => {
+        const btn = isAssistant ? iconBtnAssistant : iconBtnUser;
         return (
-            <div>
-                <div className="">
+            <div className="mt-3 border-t border-zinc-200/50 pt-2">
+                <div className="flex flex-wrap items-center gap-1">
                     {itemMessage.type === 'text' && (
                         <Fragment>
                             <button
+                                type="button"
                                 onClick={() => {
                                     const textSplit = itemMessage.content.split('. ');
                                     setTtsModalOpenStatus({
@@ -325,281 +352,212 @@ const ComponentMessageItem = ({
                                         textSplit: textSplit,
                                     });
                                 }}
-                                className="px-2 py-1 rounded-sm bg-green-500 text-white mb-1 mr-1"
+                                className={btn}
+                                title="Listen"
                             >
-                                <LucideAudioLines
-                                    style={{
-                                        color: '#FFFFFF',
-                                        marginBottom: '0',
-                                        display: 'inline-block',
-                                        lineHeight: '24px',
-                                        width: "19px",
-                                        height: "19px",
-                                        position: 'relative',
-                                        top: '-2px',
-                                    }}
-                                />
+                                <LucideAudioLines className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+                                <span className="hidden sm:inline">Listen</span>
                             </button>
 
                             <button
+                                type="button"
                                 onClick={() => {
-                                    navigator.clipboard.writeText(itemMessage?.content).then(() => {
+                                    void navigator.clipboard.writeText(itemMessage?.content).then(() => {
                                         toast.success('Copied to clipboard!');
                                     });
                                 }}
-                                className="px-2 py-1 rounded-sm bg-gray-300 text-white mb-1 mr-1"
+                                className={btn}
+                                title="Copy"
                             >
-                                <LucideClipboard
-                                    style={{
-                                        color: '#FFFFFF',
-                                        marginBottom: '0',
-                                        display: 'inline-block',
-                                        lineHeight: '24px',
-                                        width: "19px",
-                                        height: "19px",
-                                        position: 'relative',
-                                        top: '-2px',
-                                    }}
-                                />
+                                <LucideClipboard className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+                                <span className="hidden sm:inline">Copy</span>
                             </button>
                         </Fragment>
                     )}
                     <button
+                        type="button"
                         onClick={() => handleDeleteMessage()}
-                        className="px-2 py-1 rounded-sm bg-red-500 text-white mb-1 mr-1"
+                        className={`${iconBtnBase} bg-red-50 text-red-600 hover:bg-red-100`}
+                        title="Delete"
                     >
-                        <LucideTrash
-                            style={{
-                                color: '#FFFFFF',
-                                marginBottom: '0',
-                                display: 'inline-block',
-                                lineHeight: '24px',
-                                width: "19px",
-                                height: "19px",
-                                position: 'relative',
-                                top: '-2px',
-                            }}
-                        />
+                        <LucideTrash className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
                     </button>
                     {itemMessage.type === 'text' && (
                         <button
+                            type="button"
                             onClick={() => {
-                                const randomNum = Math.ceil(
-                                    Math.random() * 1_000_000
-                                );
-                                setCallGenerateAiTaskListRandomNum(randomNum)
+                                const randomNum = Math.ceil(Math.random() * 1_000_000);
+                                setCallGenerateAiTaskListRandomNum(randomNum);
                             }}
-                            className="px-2 py-1 rounded-sm bg-green-500 text-white my-1 mr-1"
+                            className={btn}
+                            title="Suggest tasks"
                         >
-                            🚀 Tasks
+                            <span aria-hidden className="text-[11px]">
+                                ✦
+                            </span>
+                            Tasks
                         </button>
                     )}
 
-                    {/* ai generated image info */}
                     {itemMessage.type === 'image' && itemMessage.fileContentAi.length > 0 && (
                         <button
+                            type="button"
                             onClick={() => {
                                 setShowAiGeneratedFileInfo(!showAiGeneratedFileInfo);
                             }}
-                            className="px-2 py-1 rounded-sm bg-blue-500 text-white mb-1 mr-1"
+                            className={btn}
                         >
                             {showAiGeneratedFileInfo ? (
-                                <LucideInfo
-                                    style={{
-                                        color: '#FFFFFF',
-                                        marginBottom: '0',
-                                        display: 'inline-block',
-                                        lineHeight: '24px',
-                                        width: "19px",
-                                        height: "19px",
-                                        position: 'relative',
-                                        top: '-2px',
-                                    }}
-                                />
+                                <LucideInfo className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
                             ) : (
-                                <LucideEyeOff
-                                    style={{
-                                        color: '#FFFFFF',
-                                        marginBottom: '0',
-                                        display: 'inline-block',
-                                        lineHeight: '24px',
-                                        width: "19px",
-                                        height: "19px",
-                                        position: 'relative',
-                                        top: '-2px',
-                                    }}
-                                />
+                                <LucideEyeOff className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
                             )}
-                            <span className="ml-1">AI Details</span>
+                            <span className="hidden sm:inline">AI details</span>
                         </button>
                     )}
 
-                    {/* If the message contains extracted text, display a button to view/copy it */}
                     {itemMessage.fileContentText && itemMessage.fileContentText.length > 0 && (
                         <button
+                            type="button"
                             onClick={() => {
                                 setShowExtractedText(!showExtractedText);
                             }}
-                            className="px-2 py-1 rounded-sm bg-yellow-500 text-white mb-1 mr-1"
+                            className={btn}
                         >
-                            {showExtractedText ? (
-                                <LucideEyeOff
-                                    style={{
-                                        color: '#FFFFFF',
-                                        marginBottom: '0',
-                                        display: 'inline-block',
-                                        lineHeight: '24px',
-                                        width: "19px",
-                                        height: "19px",
-                                        position: 'relative',
-                                        top: '-2px',
-                                    }}
-                                />
-                            ) : (
-                                <LucideEyeOff
-                                    style={{
-                                        color: '#FFFFFF',
-                                        marginBottom: '0',
-                                        display: 'inline-block',
-                                        lineHeight: '24px',
-                                        width: "19px",
-                                        height: "19px",
-                                        position: 'relative',
-                                        top: '-2px',
-                                    }}
-                                />
-                            )}
-                            <span className="ml-1">{showExtractedText ? 'Hide Extracted Text' : 'Show Extracted Text'}</span>
+                            <LucideEyeOff className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+                            <span className="hidden sm:inline">
+                                {showExtractedText ? 'Hide text' : 'Extracted text'}
+                            </span>
                         </button>
                     )}
 
-                    {/* stats */}
                     {itemMessage.type === 'text' && (
                         <button
+                            type="button"
                             onClick={() => {
                                 setShowUsage(!showUsage);
                             }}
-                            className="px-2 py-1 rounded-sm bg-purple-500 text-white mb-1 mr-1"
+                            className={btn}
                         >
-                            <LucideGauge
-                                style={{
-                                    color: '#FFFFFF',
-                                    marginBottom: '0',
-                                    display: 'inline-block',
-                                    lineHeight: '24px',
-                                    width: "19px",
-                                    height: "19px",
-                                    position: 'relative',
-                                    top: '-2px',
-                                }}
-                            />
-                            <span className="ml-1">Usage</span>
+                            <LucideGauge className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+                            <span className="hidden sm:inline">Usage</span>
                         </button>
                     )}
                 </div>
             </div>
-        )
-    }
+        );
+    };
 
     const renderTags = () => {
         const displayedTags = showAllTags ? itemMessage.tags : itemMessage.tags.slice(0, 5);
+        const tagClass = isAssistant
+            ? 'rounded-md border border-teal-200/70 bg-teal-50/90 px-2 py-0.5 text-[11px] font-medium text-teal-800'
+            : 'rounded-md border border-emerald-200/80 bg-emerald-50/90 px-2 py-0.5 text-[11px] font-medium text-emerald-900';
+        const linkClass = isAssistant
+            ? 'text-xs font-medium text-teal-600 hover:text-teal-700'
+            : 'text-xs font-medium text-emerald-700 hover:text-emerald-900';
         return (
             <Fragment>
                 {itemMessage.tags?.length >= 1 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
+                    <div className="mt-2 flex flex-wrap gap-1.5">
                         {displayedTags.map((tag, index) => (
-                            <span key={index} className="bg-blue-200 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+                            <span key={index} className={tagClass}>
                                 {tag}
                             </span>
                         ))}
                         {itemMessage.tags.length > 5 && !showAllTags && (
-                            <button className="text-blue-500 text-xs mt-1" onClick={() => setShowAllTags(true)}>
+                            <button type="button" className={linkClass} onClick={() => setShowAllTags(true)}>
                                 Show more
                             </button>
                         )}
                         {showAllTags && (
-                            <button className="text-blue-500 text-xs mt-1" onClick={() => setShowAllTags(false)}>
+                            <button type="button" className={linkClass} onClick={() => setShowAllTags(false)}>
                                 Show less
                             </button>
                         )}
                     </div>
                 )}
             </Fragment>
-        )
-    }
+        );
+    };
 
     const renderMessageDate = () => {
         return (
-            <div>
-                <span className="text-gray-500 text-xs mr-5">{new Date(itemMessage.updatedAtUtc).toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                <span className="text-gray-500 text-xs mr-5">{new Date(itemMessage.updatedAtUtc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                <span className="text-gray-500 text-xs">{DateTime.fromJSDate(new Date(itemMessage.updatedAtUtc)).toRelative()}</span>
+            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-zinc-400">
+                <span>{new Date(itemMessage.updatedAtUtc).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                <span>{new Date(itemMessage.updatedAtUtc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                <span>{DateTime.fromJSDate(new Date(itemMessage.updatedAtUtc)).toRelative()}</span>
             </div>
-        )
-    }
+        );
+    };
 
     const renderAiGeneratedFileInfo = () => {
         return (
             <Fragment>
                 {showAiGeneratedFileInfo && (
-                    <div className="my-2 border border-gray-300 rounded-sm p-2 bg-gray-50">
-                        <p className="text-xs text-gray-600 leading-relaxed">{itemMessage.fileContentAi}</p>
+                    <div className="my-2 rounded-xl border border-zinc-200/80 bg-zinc-50/90 p-3">
+                        <p className="text-xs leading-relaxed text-zinc-600">{itemMessage.fileContentAi}</p>
                     </div>
                 )}
             </Fragment>
-        )
-    }
+        );
+    };
 
     const renderUsage = () => {
         return (
             <div>
                 {showUsage && (
-                    <div className="my-2 border border-gray-300 rounded-sm p-2 bg-gray-50">
-                        <p className="text-xs text-gray-600 leading-relaxed">Stats</p>
-                        <p className="text-xs text-gray-500">Prompt Tokens: {itemMessage?.promptTokens}</p>
-                        <p className="text-xs text-gray-500">Completion Tokens: {itemMessage?.completionTokens}</p>
-                        <p className="text-xs text-gray-500">Reasoning Tokens: {itemMessage?.reasoningTokens}</p>
-                        <p className="text-xs text-gray-500">Total Tokens: {itemMessage?.totalTokens}</p>
-                        <p className="text-xs text-gray-500">Cost: ${itemMessage?.costInUsd?.toFixed(10)}</p>
+                    <div className="my-2 rounded-xl border border-violet-200/70 bg-violet-50/80 p-3">
+                        <p className="mb-1 text-xs font-semibold text-violet-800">Usage</p>
+                        <p className="text-xs text-violet-700/90">Prompt: {itemMessage?.promptTokens}</p>
+                        <p className="text-xs text-violet-700/90">Completion: {itemMessage?.completionTokens}</p>
+                        <p className="text-xs text-violet-700/90">Reasoning: {itemMessage?.reasoningTokens}</p>
+                        <p className="text-xs text-violet-700/90">Total: {itemMessage?.totalTokens}</p>
+                        <p className="text-xs text-violet-700/90">Cost: ${itemMessage?.costInUsd?.toFixed(10)}</p>
                     </div>
                 )}
             </div>
-        )
-    }
+        );
+    };
+
+    const bubbleClass = isAssistant
+        ? 'border border-zinc-200/90 bg-white/95 shadow-lg shadow-zinc-900/[0.04] ring-1 ring-black/[0.03] backdrop-blur-sm'
+        : 'border border-teal-200/70 bg-gradient-to-br from-teal-50/95 to-emerald-50/80 shadow-md shadow-teal-900/[0.06] ring-1 ring-teal-100/80 backdrop-blur-sm';
 
     return (
         <div
             id={`message-id-${itemMessage._id}`}
-            className="px-2 py-1 w-full min-w-0"
+            className={`flex w-full min-w-0 py-1.5 ${isAssistant ? 'justify-start' : 'justify-end'}`}
         >
             {isDeleted && (
-                <div
-                    className="bg-white border border-gray-300 rounded-sm p-4 shadow-md max-w-full md:max-w-[650px] whitespace-pre-wrap"
-                >
-                    <span className="text-gray-500 text-xs">Deleted</span>
+                <div className="max-w-full rounded-2xl border border-zinc-200/80 bg-zinc-100/90 px-4 py-3 text-sm text-zinc-500 shadow-inner md:max-w-[650px]">
+                    Message removed
                 </div>
             )}
             {!isDeleted && (
                 <div
-                    className="bg-white border border-gray-300 rounded-sm px-3 py-2 shadow-md w-full md:w-auto md:inline-block md:max-w-[1200px] md:min-w-[40%]"
+                    className={`w-full max-w-[min(100%,42rem)] rounded-2xl px-3.5 py-3 sm:px-4 ${
+                        isAssistant ? 'rounded-tl-md' : 'rounded-tr-md'
+                    } ${bubbleClass}`}
                 >
                     {(
                         itemMessage.aiModelProvider === '' && itemMessage.aiModelName === ''
                     ) === false && (
-                            <p className="text-xs text-gray-400 hover:text-gray-800 pb-1">
-                                {(() => {
-                                    // Format model name for display
-                                    // aiModelName now contains only the model name (no configId prefix)
-                                    const displayModelName = itemMessage.aiModelName;
-                                    
-                                    const displayProvider = itemMessage.aiModelProvider === 'openai-compatible' 
-                                        ? 'OpenAI Compatible' 
+                        <p
+                            className="mb-2 text-[11px] font-medium uppercase tracking-wide text-zinc-400"
+                        >
+                            {(() => {
+                                const displayModelName = itemMessage.aiModelName;
+
+                                const displayProvider =
+                                    itemMessage.aiModelProvider === 'openai-compatible'
+                                        ? 'OpenAI Compatible'
                                         : itemMessage.aiModelProvider;
-                                    
-                                    return `${displayProvider !== '' ? `${displayProvider} - ` : ''}${displayModelName}:`;
-                                })()}
-                            </p>
-                        )}
+
+                                return `${displayProvider !== '' ? `${displayProvider} · ` : ''}${displayModelName}`;
+                            })()}
+                        </p>
+                    )}
                     {renderMessageContent()}
                     {renderAiGeneratedFileInfo()}
                     {renderUsage()}
@@ -613,7 +571,7 @@ const ComponentMessageItem = ({
                 </div>
             )}
         </div>
-    )
+    );
 }
 
 export default ComponentMessageItem;

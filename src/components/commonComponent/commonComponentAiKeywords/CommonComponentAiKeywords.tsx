@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { AxiosRequestConfig } from 'axios';
 import axiosCustom from '../../../config/axiosCustom.ts';
 import toast from 'react-hot-toast';
-import { RefreshCw } from 'lucide-react';
+import { Plus, RefreshCw } from 'lucide-react';
+
+const DISPLAY_SLOTS = 5;
 
 interface IKeyword {
     _id: string;
@@ -21,11 +23,16 @@ interface IKeyword {
 
 const CommonComponentAiKeyword = ({
     sourceId,
+    metadataSourceType = 'notes',
 }: {
     sourceId: string;
+    metadataSourceType?: string;
 }) => {
     const [keywords, setKeywords] = useState<IKeyword[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [adding, setAdding] = useState(false);
+    const [newKeyword, setNewKeyword] = useState('');
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         fetchKeywords();
@@ -43,7 +50,7 @@ const CommonComponentAiKeyword = ({
                 data: {
                     sourceId,
                     page: 1,
-                    limit: 10000,
+                    limit: 100,
                 },
             } as AxiosRequestConfig;
 
@@ -62,74 +69,185 @@ const CommonComponentAiKeyword = ({
         }
     };
 
+    const metaSource = useMemo(() => {
+        const withMeta = keywords.find(
+            (k) =>
+                k.aiCategory ||
+                k.aiSubCategory ||
+                k.aiTopic ||
+                k.aiSubTopic
+        );
+        return withMeta ?? keywords[0];
+    }, [keywords]);
+
+    const slotItems = useMemo(() => {
+        const seen = new Set<string>();
+        const ordered: IKeyword[] = [];
+        for (const k of keywords) {
+            const t = (k.keyword || '').trim();
+            if (!t || seen.has(t)) continue;
+            seen.add(t);
+            ordered.push(k);
+            if (ordered.length >= DISPLAY_SLOTS) break;
+        }
+        const slots: (IKeyword | null)[] = [];
+        for (let i = 0; i < DISPLAY_SLOTS; i++) {
+            slots.push(ordered[i] ?? null);
+        }
+        return slots;
+    }, [keywords]);
+
+    const submitAdd = async () => {
+        const trimmed = newKeyword.trim();
+        if (!trimmed) {
+            toast.error('Enter a keyword');
+            return;
+        }
+        setSaving(true);
+        try {
+            await axiosCustom.post('/api/ai-context/keyword/add', {
+                sourceId,
+                sourceType: metadataSourceType,
+                keyword: trimmed,
+            });
+            toast.success('Keyword added');
+            setNewKeyword('');
+            setAdding(false);
+            await fetchKeywords();
+        } catch (err: unknown) {
+            const msg =
+                err && typeof err === 'object' && 'response' in err
+                    ? (err as { response?: { data?: { message?: string } } }).response?.data
+                          ?.message
+                    : undefined;
+            toast.error(msg || 'Could not add keyword');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     return (
-        <div className="bg-white rounded-sm">
-            <h2 className="text-sm font-semibold text-gray-800 mb-2">
-                AI Generated Keywords
-                <button
-                    onClick={fetchKeywords}
-                    className="ml-2 text-gray-600 hover:text-blue-600 transition-colors cursor-pointer"
-                    title="Refresh Keywords"
-                >
-                    <RefreshCw className="h-4 w-4" />
-                </button>
-            </h2>
+        <div className="rounded-none border border-zinc-200 bg-white p-2">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-700">
+                    Keywords
+                </h2>
+                <div className="flex items-center gap-1">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setAdding((v) => !v);
+                        }}
+                        className="inline-flex h-6 items-center gap-0.5 rounded-none border border-indigo-600 bg-indigo-600 px-1.5 text-[10px] font-semibold uppercase tracking-wide text-white hover:bg-indigo-500"
+                        title="Add keyword"
+                    >
+                        <Plus className="h-3 w-3" strokeWidth={2} />
+                        Add
+                    </button>
+                    <button
+                        type="button"
+                        onClick={fetchKeywords}
+                        className="inline-flex h-6 w-6 items-center justify-center rounded-none border border-zinc-300 bg-zinc-50 text-zinc-600 hover:bg-zinc-100"
+                        title="Refresh"
+                    >
+                        <RefreshCw className="h-3.5 w-3.5" strokeWidth={2} />
+                    </button>
+                </div>
+            </div>
+
+            {adding && (
+                <div className="mb-2 flex gap-1">
+                    <input
+                        type="text"
+                        value={newKeyword}
+                        onChange={(e) => setNewKeyword(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                submitAdd();
+                            }
+                        }}
+                        placeholder="New keyword…"
+                        className="min-w-0 flex-1 rounded-none border border-zinc-300 bg-zinc-50/80 px-2 py-1 text-xs text-zinc-900 focus:border-indigo-600 focus:bg-white focus:outline-none"
+                        maxLength={256}
+                    />
+                    <button
+                        type="button"
+                        disabled={saving}
+                        onClick={submitAdd}
+                        className="rounded-none border border-zinc-300 bg-white px-2 py-1 text-[11px] font-medium text-zinc-800 hover:bg-zinc-50 disabled:opacity-50"
+                    >
+                        {saving ? '…' : 'Save'}
+                    </button>
+                </div>
+            )}
 
             {loading && (
-                <div className="text-center">
-                    <p className="text-sm text-blue-500">Loading Keywords...</p>
-                </div>
+                <p className="py-2 text-center font-mono text-[10px] text-zinc-500">Loading…</p>
             )}
 
-            {!loading && keywords.length === 0 && (
-                <div className="text-center">
-                    <p className="text-sm text-gray-500">No Keywords found.</p>
-                </div>
+            {!loading && (
+                <ul className="grid grid-cols-1 gap-1 sm:grid-cols-5" role="list">
+                    {slotItems.map((item, index) => (
+                        <li
+                            key={item?._id ?? `empty-${index}`}
+                            className={
+                                (item
+                                    ? 'border-indigo-200 bg-indigo-50/50 text-zinc-900'
+                                    : 'border-dashed border-zinc-300 bg-zinc-50/50 text-zinc-400') +
+                                ' flex min-h-[2rem] items-center justify-center rounded-none border px-1.5 py-1 text-center text-[11px] font-medium'
+                            }
+                        >
+                            {item ? (
+                                <span className="line-clamp-2 break-words" title={item.keyword}>
+                                    {item.keyword}
+                                </span>
+                            ) : (
+                                <span className="text-[10px] uppercase tracking-wide">—</span>
+                            )}
+                        </li>
+                    ))}
+                </ul>
             )}
 
-            {!loading && keywords.length > 0 && (
-                <div>
-                    {keywords.length > 0 && keywords[0] && (
-                        <div className="mb-3 border border-blue-200 rounded-sm p-3 bg-blue-50">
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                                {keywords[0].aiCategory && (
-                                    <div className="flex items-start">
-                                        <span className="font-semibold text-gray-700 mr-2">Category:</span>
-                                        <span className="text-gray-600">{keywords[0].aiCategory}</span>
-                                    </div>
-                                )}
-                                {keywords[0].aiSubCategory && (
-                                    <div className="flex items-start">
-                                        <span className="font-semibold text-gray-700 mr-2">Sub-Category:</span>
-                                        <span className="text-gray-600">{keywords[0].aiSubCategory}</span>
-                                    </div>
-                                )}
-                                {keywords[0].aiTopic && (
-                                    <div className="flex items-start">
-                                        <span className="font-semibold text-gray-700 mr-2">Topic:</span>
-                                        <span className="text-gray-600">{keywords[0].aiTopic}</span>
-                                    </div>
-                                )}
-                                {keywords[0].aiSubTopic && (
-                                    <div className="flex items-start">
-                                        <span className="font-semibold text-gray-700 mr-2">Sub-Topic:</span>
-                                        <span className="text-gray-600">{keywords[0].aiSubTopic}</span>
-                                    </div>
-                                )}
-                            </div>
+            {!loading && metaSource && (
+                (metaSource.aiCategory ||
+                    metaSource.aiSubCategory ||
+                    metaSource.aiTopic ||
+                    metaSource.aiSubTopic) && (
+                    <div className="mt-2 border border-zinc-200 bg-zinc-50/80 p-1.5">
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px] text-zinc-700">
+                            {metaSource.aiCategory ? (
+                                <div>
+                                    <span className="font-semibold text-zinc-600">Category</span>{' '}
+                                    <span>{metaSource.aiCategory}</span>
+                                </div>
+                            ) : null}
+                            {metaSource.aiSubCategory ? (
+                                <div>
+                                    <span className="font-semibold text-zinc-600">Sub</span>{' '}
+                                    <span>{metaSource.aiSubCategory}</span>
+                                </div>
+                            ) : null}
+                            {metaSource.aiTopic ? (
+                                <div>
+                                    <span className="font-semibold text-zinc-600">Topic</span>{' '}
+                                    <span>{metaSource.aiTopic}</span>
+                                </div>
+                            ) : null}
+                            {metaSource.aiSubTopic ? (
+                                <div>
+                                    <span className="font-semibold text-zinc-600">Sub-topic</span>{' '}
+                                    <span>{metaSource.aiSubTopic}</span>
+                                </div>
+                            ) : null}
                         </div>
-                    )}
-                    <div className="flex flex-wrap gap-2">
-                        {keywords.map((keyword) => (
-                            <div
-                                key={keyword._id}
-                                className="inline-block bg-gray-100 rounded-sm p-1 px-2 text-xs text-gray-600"
-                            >
-                                {keyword.keyword}
-                            </div>
-                        ))}
                     </div>
-                </div>
+                )
+            )}
+
+            {!loading && keywords.length === 0 && !adding && (
+                <p className="py-1 text-center text-[11px] text-zinc-500">No keywords yet. Use Add.</p>
             )}
         </div>
     );

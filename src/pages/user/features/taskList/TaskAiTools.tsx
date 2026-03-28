@@ -3,6 +3,7 @@ import axiosCustom from '../../../../config/axiosCustom.ts';
 import { useAtomValue } from 'jotai';
 import { jotaiStateTaskWorkspaceId } from './stateJotai/taskStateJotai';
 import toast from 'react-hot-toast';
+import { MessageSquare, Plus, Sparkles } from 'lucide-react';
 
 // interface for task
 interface Task {
@@ -83,21 +84,51 @@ const TaskListComponentSuggestAiGeneratedTask = ({
 
     return (
         <div>
-            {loading && <p className="text-center text-gray-500 pb-2 text-sm">Loading tasks...</p>} {/* Loading message */}
+            {loading && (
+                <div className="flex justify-center py-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-violet-200 border-t-fuchsia-500 border-r-amber-400" />
+                </div>
+            )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
                 {tasks.map((task, index) => (
-                    <div key={index} className="p-2 border border-gray-300 rounded-sm bg-gray-50 hover:bg-gray-100 transition">
-                        <h3 className="text-lg font-semibold text-gray-700">{task.taskTitle}</h3>
-                        <p className="text-gray-600 text-sm">{task.taskDescription}</p>
-                        <p className="text-gray-500 text-sm">Priority: <span className={`font-bold ${task.taskPriority === 'high' ? 'text-red-500' : task.taskPriority === 'medium' ? 'text-yellow-500' : 'text-green-500'}`}>{task.taskPriority}</span></p>
-                        <p className="text-gray-500 text-sm">Due Date: <span className="font-semibold">{new Date(task.taskDueDate).toLocaleDateString()}</span></p>
-                        <p className="text-gray-500 text-sm">Tags: <span className="font-semibold">{task.taskTags.join(', ')}</span></p>
+                    <div
+                        key={index}
+                        className="rounded-xl border border-violet-200/60 bg-gradient-to-br from-white via-violet-50/40 to-amber-50/30 p-2 text-left shadow-md shadow-violet-200/15 transition-all hover:-translate-y-0.5 hover:border-fuchsia-300/70 hover:shadow-lg hover:shadow-fuchsia-200/20"
+                    >
+                        <h3 className="text-sm font-semibold leading-tight text-violet-950">{task.taskTitle}</h3>
+                        <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-zinc-600">{task.taskDescription}</p>
+                        <p className="mt-0.5 text-[10px] text-zinc-500">
+                            Priority:{' '}
+                            <span
+                                className={
+                                    'font-semibold ' +
+                                    (task.taskPriority === 'high'
+                                        ? 'text-red-600'
+                                        : task.taskPriority === 'medium'
+                                          ? 'text-amber-600'
+                                          : 'text-emerald-600')
+                                }
+                            >
+                                {task.taskPriority}
+                            </span>
+                        </p>
+                        <p className="text-[10px] text-zinc-500">
+                            Due{' '}
+                            <span className="font-medium text-zinc-800">
+                                {new Date(task.taskDueDate).toLocaleDateString()}
+                            </span>
+                        </p>
+                        <p className="text-[10px] text-zinc-500 line-clamp-1">
+                            {task.taskTags.join(', ')}
+                        </p>
                         <button
+                            type="button"
                             onClick={() => addTask(task)}
-                            className="mt-1 bg-blue-600 text-white p-1 rounded-sm hover:bg-blue-700 transition"
+                            className="mt-1.5 inline-flex w-full items-center justify-center gap-1 rounded-lg bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 py-1.5 text-[11px] font-bold text-white shadow-md shadow-teal-500/20 transition hover:from-cyan-400 hover:via-teal-400 hover:to-emerald-400"
                         >
-                            Add Task
+                            <Plus className="h-3 w-3" strokeWidth={2} aria-hidden />
+                            Add
                         </button>
                     </div>
                 ))}
@@ -196,22 +227,37 @@ const TaskAiTools = ({
     const workspaceId = useAtomValue(jotaiStateTaskWorkspaceId);
 
     return (
-        <div className='pb-2'>
-            <div className="p-4 bg-white rounded-sm shadow-md">
-                <h2 className="text-xl font-bold mb-2 text-gray-800">AI Tools</h2>
+        <div className="pb-2">
+            <div className="rounded-xl border-2 border-transparent bg-gradient-to-r from-violet-300 via-fuchsia-300 to-amber-300 p-[2px] shadow-lg shadow-fuchsia-500/10">
+                <div className="rounded-[10px] bg-gradient-to-br from-violet-50/95 via-white to-amber-50/50 p-2 backdrop-blur-sm">
+                <div className="mb-1.5 flex items-center gap-1.5">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-600 shadow-md shadow-fuchsia-500/30">
+                        <Sparkles className="h-3.5 w-3.5 text-amber-200" strokeWidth={2} aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                        <h2 className="bg-gradient-to-r from-violet-700 to-fuchsia-600 bg-clip-text text-sm font-bold leading-tight text-transparent">
+                            AI tools
+                        </h2>
+                        <p className="text-[11px] leading-tight text-fuchsia-600/80">Generate · workspace chat</p>
+                    </div>
+                </div>
 
-                <div className="flex justify-center mb-2">
+                <div className="mb-2 flex flex-wrap gap-1.5">
                     <button
+                        type="button"
                         onClick={() => setCallGenerateAiTaskListRandomNum(Math.floor(Math.random() * 1_000_000))}
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-1 px-2 rounded-sm shadow-lg hover:shadow-xl transition duration-300 mx-1 cursor-pointer"
+                        className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 px-2 py-1.5 text-xs font-bold text-white shadow-md shadow-violet-500/25 transition hover:from-violet-500 hover:to-fuchsia-500"
                     >
-                        🚀 Generate Tasks by AI
+                        <Sparkles className="h-3 w-3 text-amber-200" strokeWidth={2} aria-hidden />
+                        Generate
                     </button>
                     <button
+                        type="button"
                         onClick={() => taskWorkspaceChatWithAi({ taskWorkspaceId: workspaceId })}
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-1 px-2 rounded-sm shadow-lg hover:shadow-xl transition duration-300 mx-1 cursor-pointer"
+                        className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-sky-600 to-cyan-600 px-2 py-1.5 text-xs font-bold text-white shadow-md shadow-cyan-500/25 transition hover:from-sky-500 hover:to-cyan-500"
                     >
-                        Workspace Chat with AI
+                        <MessageSquare className="h-3 w-3" strokeWidth={2} aria-hidden />
+                        Chat
                     </button>
                 </div>
 
@@ -219,6 +265,7 @@ const TaskAiTools = ({
                     setRefreshParentRandomNum={setRefreshParentRandomNum}
                     callGenerateAiTaskListRandomNum={callGenerateAiTaskListRandomNum}
                 />
+                </div>
             </div>
         </div>
     );
