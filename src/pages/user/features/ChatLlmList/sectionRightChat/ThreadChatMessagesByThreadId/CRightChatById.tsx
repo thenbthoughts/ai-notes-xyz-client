@@ -13,8 +13,6 @@ import {
 
 import ComponentAiGeneratedQuestionList from './ComponentAiGeneratedQuestionList.tsx';
 import ThreadSettingWrapper from '../ThreadSetting/ThreadSettingWrapper.tsx';
-import { useAtomValue } from 'jotai';
-import { jotaiChatLlmFooterHeight } from '../../jotai/jotaiChatLlmThreadSetting.ts';
 import ComponentAnswerMachineStatus from './ComponentAnswerMachineStatus.tsx';
 
 const LIMIT_MESSAGES = 10;
@@ -37,7 +35,11 @@ const CRightChatById = ({
         setLoadingMore,
     ] = useState(false);
 
-    const chatLlmFooterHeight = useAtomValue(jotaiChatLlmFooterHeight);
+    const sectionChatMessageInputRef = useRef<HTMLDivElement>(null);
+
+    const [chatLlmFooterHeight, setChatLlmFooterHeight] = useState(0);
+
+    // const [chatLlmFooterHeight, setChatLlmFooterHeight] = useAtom(jotaiChatLlmFooterHeight);
 
     // useState - old
     const [messages, setMessages] = useState<tsMessageItem[]>([]);
@@ -69,6 +71,21 @@ const CRightChatById = ({
             useEffectOneTimeMessagesScrollDownRef.current = false;
         }
     }, [messages])
+
+    useEffect(() => {
+        const el = sectionChatMessageInputRef.current;
+        if (!el) return;
+        const update = () => {
+          const r = el.getBoundingClientRect();
+          setChatLlmFooterHeight(r.height);
+          console.log('div size:', r.width, r.height);
+        };
+        update(); // initial (after mount / “reload” of this subtree)
+        const ro = new ResizeObserver(() => update());
+        ro.observe(el);
+        return () => ro.disconnect();
+      }, []);
+      
 
     // useEffect
 
@@ -357,10 +374,14 @@ const CRightChatById = ({
             </div>
 
             {/* component add */}
-            <ComponentNotesAdd
-                setRefreshParentRandomNum={setRefreshRandomNum}
-                threadId={threadId}
-            />
+            <div
+                ref={sectionChatMessageInputRef}
+            >
+                <ComponentNotesAdd
+                    setRefreshParentRandomNum={setRefreshRandomNum}
+                    threadId={threadId}
+                />
+            </div>
 
             <ThreadSettingWrapper />
         </div>

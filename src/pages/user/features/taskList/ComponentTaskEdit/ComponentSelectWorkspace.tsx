@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import axiosCustom from '../../../../../config/axiosCustom.ts';
+import { taskEditSelectClass } from './taskEditCons';
 
 interface Workspace {
     _id: string;
@@ -47,7 +48,7 @@ const ComponentSelectWorkspace = ({
         <Fragment>
             {workspaces.length > 0 && (
                 <select
-                    className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className={taskEditSelectClass}
                     value={workspaceId}
                     onChange={(e) => {
                         // Handle workspace selection
@@ -63,7 +64,7 @@ const ComponentSelectWorkspace = ({
 
             )}
             {workspaces.length === 0 && (
-                <div className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div className={`${taskEditSelectClass} text-slate-500`}>
                     No workspaces found
                 </div>
             )}

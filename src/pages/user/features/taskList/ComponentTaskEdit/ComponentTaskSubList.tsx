@@ -166,10 +166,10 @@ const ComponentSubTaskItem = ({
     return (
         <div>
             <div
-                className="w-full border p-1"
+                className="w-full rounded-lg border border-violet-200/60 bg-gradient-to-br from-white/90 via-fuchsia-50/10 to-cyan-50/20 p-1 shadow-sm"
             >
                 <div
-                    className='px-3'
+                    className='px-1.5'
                 >
                     {showEditTitle ? (
                         <textarea
@@ -178,18 +178,18 @@ const ComponentSubTaskItem = ({
                             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                                 setFormData({ ...formData, title: e.target.value })
                             }}
-                            className="w-full text-sm border border-gray-300 rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 mt-1"
+                            className="mt-0.5 w-full rounded-md border border-slate-200/80 bg-white p-1.5 text-xs text-slate-800 transition placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-200/55"
                             rows={2}
                         />
                     ) : (
-                        formData.title
+                        <span className="text-xs leading-snug text-slate-800">{formData.title}</span>
                     )}
                 </div>
 
                 {/* Actions */}
-                <div className="">
+                <div className="flex flex-wrap items-center gap-px">
                     {showEditTitle && (
-                        <span className='px-2 py-1'>
+                        <span className='px-1 py-0.5'>
                             <SpeechToTextComponent
                                 onTranscriptionComplete={(text: string) => {
                                     setFormData({ ...formData, title: formData.title + ' ' + text })
@@ -200,12 +200,12 @@ const ComponentSubTaskItem = ({
                     )}
                     <button
                         onClick={() => updateSubCompleted({ taskCompletedStatus: !subtask.taskCompletedStatus })}
-                        className="text-gray-500 hover:text-gray-700 mr-1 p-3"
+                        className="rounded-md p-1 text-slate-500 transition-colors hover:bg-sky-50 hover:text-slate-800"
                     >
                         {subtask.taskCompletedStatus ? (
-                            <CheckSquare size={20} className="text-green-500" />
+                            <CheckSquare size={16} className="text-emerald-600" />
                         ) : (
-                            <Square size={20} />
+                            <Square size={16} />
                         )}
                     </button>
                     {showEditTitle ? (
@@ -214,44 +214,44 @@ const ComponentSubTaskItem = ({
                                 updateSubTitle({ title: formData.title })
                                 setShowEditTitle(!showEditTitle)
                             }}
-                            className="text-gray-500 hover:text-gray-700 mr-1 p-3"
+                            className="rounded-md p-1 text-slate-500 transition-colors hover:bg-sky-50 hover:text-slate-800"
                         >
-                            <Save size={20} />
+                            <Save size={16} />
                         </button>
                     ) : (
                         <button
                             onClick={() => {
                                 setShowEditTitle(!showEditTitle)
                             }}
-                            className="text-gray-500 hover:text-gray-700 mr-1 p-3"
+                            className="rounded-md p-1 text-slate-500 transition-colors hover:bg-sky-50 hover:text-slate-800"
                         >
-                            <Edit size={20} />
+                            <Edit size={16} />
                         </button>
                     )}
                     <button
                         onClick={() => deleteSubtask()}
-                        className="text-red-500 hover:text-red-700 mr-1 p-3"
+                        className="rounded-md p-1 text-slate-400 transition-colors hover:bg-sky-100 hover:text-sky-800"
                     >
-                        <Trash2 size={20} />
+                        <Trash2 size={16} />
                     </button>
                     <button
                         onClick={() => {
                             setShowMoreOptions(!showMoreOptions)
                         }}
-                        className="text-gray-500 hover:text-gray-700 mr-1 p-3"
+                        className="rounded-md p-1 text-slate-500 transition-colors hover:bg-sky-50 hover:text-slate-800"
                     >
-                        <LucideMoreVertical size={20} />
+                        <LucideMoreVertical size={16} />
                     </button>
                 </div>
 
                 {/* show more options */}
                 {showMoreOptions && (
-                    <div>
+                    <div className="px-1.5 pb-0.5">
                         <button
                             onClick={() => {
                                 createTodoCardFromSubtaskLocal();
                             }}
-                            className="text-blue-500 hover:text-blue-700 p-2 text-sm"
+                            className="rounded-md px-1.5 py-0.5 text-[11px] font-medium text-sky-700 transition-colors hover:bg-sky-50 hover:text-sky-900"
                         >
                             Create Todo Card
                         </button>
@@ -260,7 +260,7 @@ const ComponentSubTaskItem = ({
 
                 {/* loading */}
                 {axiosEditTitleLoading && (
-                    <div className="text-sm text-gray-500">Saving...</div>
+                    <div className="px-1.5 pb-0.5 text-[11px] text-sky-600/90">Saving...</div>
                 )}
             </div>
         </div>
@@ -314,12 +314,12 @@ const ComponentTaskSubList: React.FC<{
     };
 
     return (
-        <div>
-            <div className="flex justify-between items-center mb-1">
-                <h3 className="text-sm font-medium text-gray-700">
-                    Subtasks {loading && <span className="text-blue-500">Loading...</span>} {/* Loading indicator */}
+        <div className="mt-1">
+            <div className="mb-0.5 flex items-center justify-between gap-2">
+                <h3 className="text-xs font-semibold text-violet-900">
+                    Subtasks {loading && <span className="font-normal text-fuchsia-600">Loading...</span>}
                 </h3>
-                <span className="text-sm text-gray-500">
+                <span className="text-[11px] tabular-nums text-violet-600/80">
                     {subtasks.filter(st => st.taskCompletedStatus).length}/{subtasks.length}
                 </span>
             </div>
@@ -333,26 +333,26 @@ const ComponentTaskSubList: React.FC<{
                         parentWorkspaceId={parentWorkspaceId}
                     />
                 ))}
-                <div className="gap-2 mt-2">
+                <div className="mt-1.5 gap-1">
                     <textarea
                         value={newSubtask}
-                        placeholder="✨ Add a new subtask..."
+                        placeholder="Add a subtask…"
                         onChange={(e) => setNewSubtask(e.target.value)}
-                        className="w-full p-2 border rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        rows={3}
+                        className="w-full rounded-md border border-slate-200/80 bg-white p-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-200/55"
+                        rows={2}
                     />
-                    <div className='flex items-center'>
+                    <div className='mt-1 flex items-center gap-1'>
                         <button
                             onClick={() => {
                                 onAddSubtask({
                                     argNewSubtask: newSubtask
                                 });
                             }}
-                            className="px-3 py-2 bg-white text-blue-600 rounded-sm border border-gray-300 hover:bg-gray-300 transition duration-200 flex items-center"
+                            className="flex items-center rounded-md border border-violet-200/80 bg-white px-2 py-1 text-violet-700 shadow-sm transition hover:bg-violet-50"
                         >
-                            <Plus size={16} />
+                            <Plus size={14} />
                         </button>
-                        <span className='px-2 py-1'>
+                        <span className='px-0.5 py-0.5'>
                             <SpeechToTextComponent
                                 onTranscriptionComplete={(text: string) => {
                                     if (text.trim() !== '') {
@@ -368,25 +368,25 @@ const ComponentTaskSubList: React.FC<{
 
             {/* New task sub tasks */}
             {newTaskSubtasks.length > 0 && (
-                <div className="bg-blue-100 p-2 rounded-sm mt-2">
-                    <div className="space-y-1">
+                <div className="mt-1.5 rounded-lg border border-sky-200/80 bg-sky-50/80 p-1.5">
+                    <div className="space-y-0.5">
                         {newTaskSubtasks.map((subtask, index) => (
                             <div
                                 key={index}
                                 className={`
-                                    flex items-center gap-1
-                                    ${index === newTaskSubtasks.length - 1 ? '' : 'border-b border-gray-300'} 
-                                    pb-1
+                                    flex flex-wrap items-center gap-1
+                                    ${index === newTaskSubtasks.length - 1 ? '' : 'border-b border-sky-100/90'} 
+                                    pb-0.5
                                 `}
                             >
-                                <span className="text-sm text-gray-500">AI Suggestion: {subtask}</span>
+                                <span className="min-w-0 flex-1 text-[11px] text-slate-700">AI: {subtask}</span>
                                 <button
                                     onClick={() => {
                                         onAddSubtask({
                                             argNewSubtask: subtask
                                         });
-                                    }} // Pass the title instead of the whole subtask object
-                                    className="bg-blue-500 text-white text-xs font-medium px-2 py-1 rounded-sm hover:bg-blue-600 transition duration-200 ml-2"
+                                    }}
+                                    className="shrink-0 rounded-md bg-gradient-to-r from-sky-500 to-blue-600 px-1.5 py-0.5 text-[11px] font-semibold text-white shadow-sm shadow-sky-500/20 transition hover:from-sky-400 hover:to-blue-500"
                                 >
                                     Add
                                 </button>
