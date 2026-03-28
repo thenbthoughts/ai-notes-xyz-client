@@ -76,7 +76,7 @@ const ChatLlmListWrapper = () => {
                             }
                         >
                             <div className="mx-auto w-full max-w-none">
-                                <div className="h-[calc(100vh-60px)] overflow-hidden rounded-none border-zinc-200/60 bg-white/40 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.6)] backdrop-blur-[2px] lg:rounded-l-2xl lg:border-l lg:border-t lg:border-b">
+                                <div className="h-[calc(100vh-60px)] overflow-hidden rounded-none border-zinc-200/60 bg-white/40 backdrop-blur-[2px] lg:rounded-l-2xl lg:border-l lg:border-t lg:border-b">
                                     <ComponentRightChatWrapper
                                         refreshRandomNumParent={refreshRandomNumFetchChat}
                                     />

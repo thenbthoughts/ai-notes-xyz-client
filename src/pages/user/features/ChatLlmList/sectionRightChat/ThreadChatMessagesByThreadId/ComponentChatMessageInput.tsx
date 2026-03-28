@@ -12,7 +12,6 @@ import { handleAutoSelectContextFirstMessage, handleAutoSelectContext } from '..
 import { uploadFeatureFile } from '../../../../../../utils/featureFileUpload.ts';
 
 import { useSetAtom } from 'jotai';
-import { jotaiChatLlmFooterHeight } from '../../jotai/jotaiChatLlmThreadSetting.ts';
 import ComponentUploadImage from './ComponentUploadImage.tsx';
 import useResponsiveScreen, { screenList } from '../../../../../../hooks/useResponsiveScreen.tsx';
 import { jotaiHideRightSidebar } from '../../jotai/jotaiChatLlmThreadSetting.ts';
@@ -35,8 +34,9 @@ const TextAndFileInput = ({
     useEffect(() => {
         const textarea = textareaRef.current;
         if (textarea) {
+            console.log(textarea.scrollHeight);
             textarea.style.height = 'auto';
-            textarea.style.height = Math.max(95, textarea.scrollHeight) + 'px';
+            textarea.style.height = Math.max(10, textarea.scrollHeight) + 'px';
         }
     }, [value]);
 
@@ -85,7 +85,7 @@ const TextAndFileInput = ({
     return (
         <div className="w-full">
             <textarea
-                className="min-h-[4.5rem] w-full resize-none rounded-xl border border-zinc-200/80 bg-zinc-50/80 px-3 py-2.5 text-sm text-zinc-900 shadow-inner placeholder:text-zinc-400 transition-shadow focus:border-teal-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                className="w-full resize-none rounded-xl border border-zinc-200/80 bg-zinc-50/80 px-3 py-2.5 text-sm text-zinc-900 shadow-inner placeholder:text-zinc-400 transition-shadow focus:border-teal-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 placeholder="Message… drop files to attach"
                 ref={textareaRef}
                 value={value}
@@ -93,9 +93,10 @@ const TextAndFileInput = ({
                 onDrop={handleFileDrop}
                 onDragOver={handleDragOver}
                 onPaste={handlePaste}
+                rows={1}
                 style={{
                     height: 'auto',
-                    maxHeight: '50vh',
+                    maxHeight: '30vh',
                 }}
             />
         </div>
@@ -271,7 +272,6 @@ const ComponentChatMessageInput = ({
     threadId: string;
 }) => {
     const actionContainerRef = useRef<HTMLDivElement>(null);
-    const setChatLlmFooterHeight = useSetAtom(jotaiChatLlmFooterHeight);
     const screenWidth = useResponsiveScreen();
     const setHideRightSidebar = useSetAtom(jotaiHideRightSidebar);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -279,11 +279,6 @@ const ComponentChatMessageInput = ({
     const [files, setFiles] = useState<string[]>([]);
     const [timer, setTimer] = useState(0);
     const navigate = useNavigate();
-    useEffect(() => {
-        if (actionContainerRef.current) {
-            setChatLlmFooterHeight(actionContainerRef.current.clientHeight);
-        }
-    }, [newNote, files]);
 
     // Polling effect - refresh every 1 second while generating
     useEffect(() => {
@@ -472,7 +467,7 @@ const ComponentChatMessageInput = ({
         <>
             <div
                 ref={actionContainerRef}
-                className="border-t border-zinc-200/80 bg-gradient-to-b from-white to-zinc-50/90 px-3 pb-2 pt-2 shadow-[0_-12px_32px_-16px_rgba(15,23,42,0.08)]"
+                className="border-t border-zinc-200/80 bg-gradient-to-b from-white to-zinc-50/90 px-3 pb-2 pt-2"
             >
                 <ComponentFilesDisplay
                     files={files}
