@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 
 import { stateJotaiAuthReloadAtom } from '../../../../jotai/stateJotaiAuth';
 import axiosCustom from "../../../../config/axiosCustom";
-import SettingHeader from "../SettingHeader";
 import OpenaiCompatibleModelModal from "./OpenaiCompatibleModelModal";
 
 interface IOpenaiCompatibleModel {
@@ -132,14 +131,7 @@ const OpenaiCompatibleModel = () => {
 
     if (loading) {
         return (
-            <div
-                className="p-4"
-                style={{
-                    maxWidth: '800px',
-                    margin: '0 auto'
-                }}
-            >
-                <SettingHeader />
+            <div className="w-full max-w-3xl">
                 <div className="animate-pulse">
                     <div className="h-8 bg-gray-300 rounded-sm w-1/3 mb-4"></div>
                     <div className="space-y-4">
@@ -153,15 +145,7 @@ const OpenaiCompatibleModel = () => {
     }
 
     return (
-        <div
-            className="p-4"
-            style={{
-                maxWidth: '800px',
-                margin: '0 auto'
-            }}
-        >
-            <SettingHeader />
-
+        <div className="w-full max-w-3xl">
             <div className="mb-6">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
                     <div>

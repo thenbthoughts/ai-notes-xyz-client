@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import axiosCustom from "../../../../config/axiosCustom";
-import SettingHeader from "../SettingHeader";
 
 const SettingChangePassword = () => {
     const [oldPassword, setOldPassword] = useState("");
@@ -75,15 +74,7 @@ const SettingChangePassword = () => {
     };
 
     return (
-        <div
-            className="p-4"
-            style={{
-                maxWidth: '800px',
-                margin: '0 auto'
-            }}
-        >
-            <SettingHeader />
-
+        <div className="w-full max-w-3xl">
             <div id="change-password">
                 <h2 className="text-xl font-bold text-gray-900 py-2">Change Password</h2>
 

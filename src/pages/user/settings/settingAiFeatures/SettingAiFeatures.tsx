@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axiosCustom from "../../../../config/axiosCustom";
-import SettingHeader from "../SettingHeader";
 import { AiModelProvider } from "../../../../types/pages/settings/aiFeaturesSettings.types";
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
@@ -844,15 +843,7 @@ const SettingAiFeatures = () => {
     };
 
     return (
-        <div
-            className="p-4"
-            style={{
-                maxWidth: '800px',
-                margin: '0 auto'
-            }}
-        >
-            <SettingHeader />
-
+        <div className="w-full max-w-3xl">
             <form onSubmit={handleSubmit}>
                 {renderAiFeaturesSettings()}
 

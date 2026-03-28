@@ -3,7 +3,6 @@ import axiosCustom from "../../../../config/axiosCustom";
 
 import SettingSelectTimeZone from "./SettingSelectTimeZone";
 import SettingRevalidate from "./SettingRevalidate";
-import SettingHeader from "../SettingHeader";
 import Select from "react-select";
 
 const languagesArr = [
@@ -765,15 +764,7 @@ const Setting = () => {
     }
 
     return (
-        <div
-            className="p-4"
-            style={{
-                maxWidth: '800px',
-                margin: '0 auto'
-            }}
-        >
-            <SettingHeader />
-
+        <div className="w-full max-w-3xl">
             <form onSubmit={handleSubmit}>
                 {renderPersonalInfo()}
                 {renderLocation()}

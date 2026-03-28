@@ -16,6 +16,7 @@ import UnauthorizedRoute from "./components/UnauthorizedRoute.tsx";
 import RefreshToken from "./components/RefreshToken.tsx";
 import AuthorizedRoute from "./components/AuthorizedRoute.tsx";
 import TextToSpeechModal from "./components/textToSpeechModalComponent/TextToSpeechModal.tsx";
+import SettingsLayout from "./pages/user/settings/SettingsLayout.tsx";
 
 // pages -> auth
 const UserLogin = lazy(() => import('./pages/user/auth/Login.tsx'));
@@ -281,89 +282,22 @@ function App() {
           path: "/user/setting",
           element: (
             <UnauthorizedRoute>
-              <SettingProfile />
+              <SettingsLayout />
             </UnauthorizedRoute>
           ),
-        },
-        {
-          path: "/user/setting/api-key",
-          element: (
-            <UnauthorizedRoute>
-              <SettingApiKey />
-            </UnauthorizedRoute>
-          ),
-        },
-        {
-          path: "/user/setting/s3-buckets",
-          element: (
-            <UnauthorizedRoute>
-              <SettingS3Buckets />
-            </UnauthorizedRoute>
-          ),
-        },
-        {
-          path: "/user/setting/login-history",
-          element: (
-            <UnauthorizedRoute>
-              <LoginHistory />
-            </UnauthorizedRoute>
-          ),
-        },
-        {
-          path: "/user/setting/change-password",
-          element: (
-            <UnauthorizedRoute>
-              <SettingChangePassword />
-            </UnauthorizedRoute>
-          ),
-        },
-        {
-          path: "/user/setting/notification",
-          element: (
-            <UnauthorizedRoute>
-              <NotificationWrapper />
-            </UnauthorizedRoute>
-          ),
-        },
-        {
-          path: "/user/setting/ollama-models",
-          element: (
-            <UnauthorizedRoute>
-              <SettingOllamaModels />
-            </UnauthorizedRoute>
-          ),
-        },
-        {
-          path: "/user/setting/localai-models",
-          element: (
-            <UnauthorizedRoute>
-              <SettingLocalaiModels />
-            </UnauthorizedRoute>
-          ),
-        },
-        {
-          path: "/user/setting/openai-compatible-model",
-          element: (
-            <UnauthorizedRoute>
-              <OpenaiCompatibleModel />
-            </UnauthorizedRoute>
-          ),
-        },
-        {
-          path: "/user/setting/ai-features",
-          element: (
-            <UnauthorizedRoute>
-              <SettingAiFeatures />
-            </UnauthorizedRoute>
-          ),
-        },
-        {
-          path: "/user/setting/memory",
-          element: (
-            <UnauthorizedRoute>
-              <SettingMemory />
-            </UnauthorizedRoute>
-          ),
+          children: [
+            { index: true, element: <SettingProfile /> },
+            { path: "api-key", element: <SettingApiKey /> },
+            { path: "s3-buckets", element: <SettingS3Buckets /> },
+            { path: "login-history", element: <LoginHistory /> },
+            { path: "change-password", element: <SettingChangePassword /> },
+            { path: "notification", element: <NotificationWrapper /> },
+            { path: "ollama-models", element: <SettingOllamaModels /> },
+            { path: "localai-models", element: <SettingLocalaiModels /> },
+            { path: "openai-compatible-model", element: <OpenaiCompatibleModel /> },
+            { path: "ai-features", element: <SettingAiFeatures /> },
+            { path: "memory", element: <SettingMemory /> },
+          ],
         },
         // -----
 
