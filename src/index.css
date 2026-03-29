@@ -9,7 +9,6 @@ body {
   padding-top: 60px;
 
   background: linear-gradient(110deg, #0f6b3b 0%, #2aa05a 50%, #cfe96a 100%);
-  background-image: url(/assets/img/ai-notes-xyz-background.png);
   background-size: cover;
   background-position: center;
 }
