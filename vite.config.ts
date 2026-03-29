@@ -34,4 +34,16 @@ export default defineConfig({
     // }),
   ],
   publicDir: 'public',
+  build: {
+    rollupOptions: {
+      output: {
+        // One chunk for all lucide icons instead of many tiny shared files (star-*.js, eye-off-*.js, …)
+        manualChunks(id) {
+          if (id.includes('node_modules/lucide-react')) {
+            return 'lucide-icons';
+          }
+        },
+      },
+    },
+  },
 })
