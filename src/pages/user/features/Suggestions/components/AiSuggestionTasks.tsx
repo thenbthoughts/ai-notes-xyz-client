@@ -139,7 +139,7 @@ const AiSuggestionTasks = () => {
                 isCompleted: false,
                 taskWorkspaceId: task.taskWorkspaceId,
                 taskStatusId: '',
-                reminderPresetTimeLabel: 'before-1-day',
+                dueDateReminderPresetLabels: ['before-1-day'],
             };
 
             const config = {

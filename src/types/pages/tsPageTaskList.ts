@@ -18,6 +18,23 @@ export interface tsPageTask {
     labels: string[];
     labelsAi: string[];
 
+    // due-date reminder presets (e.g. before-1-day)
+    dueDateReminderPresetLabels?: string[];
+    /** Exact times and cron stored under due-date reminders (require due date on save) */
+    dueDateReminderAbsoluteTimesIso?: string[];
+    dueDateReminderCronExpressions?: string[];
+    /** Next due-date reminder send instants (server-computed, UTC) */
+    dueDateReminderScheduledTimes?: string[];
+    /** Due-date reminder emails already sent (UTC) */
+    dueDateReminderScheduledTimesCompleted?: string[];
+
+    // remainder (email): exact times, cron, merged scheduled instants
+    remainderAbsoluteTimesIso?: string[];
+    remainderCronExpressions?: string[];
+    remainderScheduledTimes?: string[];
+    /** Task remainder emails already sent (UTC) */
+    remainderScheduledTimesCompleted?: string[];
+
     // identification
     _id: string;
     taskWorkspaceId: string;
@@ -53,9 +70,9 @@ export interface tsPageTask {
     }[];
 }
 
-export interface tsTaskStatusArr {
+export type tsTaskStatusArr = {
     _id: string;
     boardName: string;
     boardListName: string;
     listPosition: number;
-}[]
+}[];
