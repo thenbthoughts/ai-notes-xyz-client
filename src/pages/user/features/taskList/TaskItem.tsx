@@ -2,7 +2,7 @@ import type React from 'react';
 import { tsPageTask } from "../../../../types/pages/tsPageTaskList";
 
 import axiosCustom from '../../../../config/axiosCustom';
-import { LucideClock, LucideEdit3, LucideInfo, LucideMessageCircle, LucidePin, LucideTrash2 } from "lucide-react";
+import { LucideBell, LucideClock, LucideEdit3, LucideInfo, LucideMessageCircle, LucidePin, LucideTrash2 } from "lucide-react";
 import { taskChatWithAi } from "./utils/taskCrudUtils";
 
 export type TaskItemLayout = 'grid' | 'list';
@@ -126,6 +126,44 @@ const TaskItem = ({
     const dueDate = task.dueDate ? new Date(task.dueDate) : null;
     const isOverdue = dueDate && dueDate < now && !task.isCompleted;
 
+    const reminderActiveCount = (() => {
+        const presetLabels = task.dueDateReminderPresetLabels ?? [];
+        const dueAbsIso = task.dueDateReminderAbsoluteTimesIso ?? [];
+        const dueCrons = task.dueDateReminderCronExpressions ?? [];
+        const absIso = task.remainderAbsoluteTimesIso ?? [];
+        const crons = task.remainderCronExpressions ?? [];
+        const n =
+            presetLabels.length +
+            dueAbsIso.length +
+            dueCrons.length +
+            absIso.length +
+            crons.length;
+        if (n > 0) return n;
+        const sched = task.remainderScheduledTimes ?? [];
+        if (sched.length > 0) return sched.length;
+        return 0;
+    })();
+
+    const normIsoArr = (v: string[] | undefined): string[] =>
+        (v ?? []).filter((x) => typeof x === 'string' && x.trim()).sort();
+
+    const dueRemPending = normIsoArr(task.dueDateReminderScheduledTimes);
+    const dueRemSent = normIsoArr(task.dueDateReminderScheduledTimesCompleted);
+    const remPending = normIsoArr(task.remainderScheduledTimes);
+    const remSent = normIsoArr(task.remainderScheduledTimesCompleted);
+    const sendQueueTotal =
+        dueRemPending.length + dueRemSent.length + remPending.length + remSent.length;
+
+    const fmtQueueTime = (iso: string) => {
+        try {
+            const d = new Date(iso);
+            if (Number.isNaN(d.getTime())) return iso;
+            return d.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' });
+        } catch {
+            return iso;
+        }
+    };
+
     let isUpdatedNow = false;
     if (task.updatedAtUtc) {
         const updatedAt = new Date(task.updatedAtUtc);
@@ -181,8 +219,62 @@ const TaskItem = ({
                     </span>
                 </span>
             )}
+            {reminderActiveCount > 0 && (
+                <span
+                    className={chip + ' border-amber-300/80 bg-amber-50/95 text-amber-950'}
+                    title="Email reminders scheduled"
+                >
+                    <LucideBell className="h-3 w-3 shrink-0" strokeWidth={2} />
+                    {reminderActiveCount} reminder{reminderActiveCount === 1 ? '' : 's'}
+                </span>
+            )}
         </div>
     );
+
+    const sendQueueBlock =
+        sendQueueTotal > 0 ? (
+            <details className="mt-1 rounded-md border border-amber-200/60 bg-amber-50/35 px-1.5 py-1 text-[10px] text-zinc-700 sm:text-[11px]">
+                <summary className="cursor-pointer list-none font-medium text-amber-950 [&::-webkit-details-marker]:hidden">
+                    <span className="inline-flex items-center gap-0.5">
+                        <LucideBell className="h-3 w-3 shrink-0" strokeWidth={2} />
+                        Email queue ({sendQueueTotal} instant{sendQueueTotal === 1 ? '' : 's'})
+                    </span>
+                </summary>
+                <div className="mt-1 space-y-1 border-t border-amber-100/80 pt-1">
+                    {(dueRemPending.length > 0 || dueRemSent.length > 0) && (
+                        <div>
+                            <p className="font-medium text-sky-900">Due-date reminders</p>
+                            {dueRemPending.length > 0 && (
+                                <p className="text-zinc-600">
+                                    Pending:{' '}
+                                    {dueRemPending.map((iso) => fmtQueueTime(iso)).join(' · ')}
+                                </p>
+                            )}
+                            {dueRemSent.length > 0 && (
+                                <p className="text-zinc-500 line-through">
+                                    Sent: {dueRemSent.map((iso) => fmtQueueTime(iso)).join(' · ')}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                    {(remPending.length > 0 || remSent.length > 0) && (
+                        <div>
+                            <p className="font-medium text-amber-950">Task remainder</p>
+                            {remPending.length > 0 && (
+                                <p className="text-zinc-600">
+                                    Pending: {remPending.map((iso) => fmtQueueTime(iso)).join(' · ')}
+                                </p>
+                            )}
+                            {remSent.length > 0 && (
+                                <p className="text-zinc-500 line-through">
+                                    Sent: {remSent.map((iso) => fmtQueueTime(iso)).join(' · ')}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </details>
+        ) : null;
 
     const selectEl = (
         <select
@@ -275,6 +367,7 @@ const TaskItem = ({
                             {task.title}
                         </h3>
                         {chips}
+                        {sendQueueBlock}
                     </div>
                     <div className="flex min-w-0 shrink-0 flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-end sm:gap-2">
                         {selectEl}
@@ -294,6 +387,7 @@ const TaskItem = ({
             </div>
 
             {chips}
+            {sendQueueBlock}
 
             <div className="mt-1.5 flex flex-wrap items-center gap-1">
                 {selectEl}

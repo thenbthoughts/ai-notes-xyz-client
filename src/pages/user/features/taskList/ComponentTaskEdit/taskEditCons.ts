@@ -1,6 +1,6 @@
 // Simple calculation of reminder times based on dueDate and preset labels (lowercase, minus)
 
-interface IReminderLabelToMsArr {
+export interface IReminderLabelToMsArr {
     labelName: string;
     labelNameStr: string;
     subTime: number;

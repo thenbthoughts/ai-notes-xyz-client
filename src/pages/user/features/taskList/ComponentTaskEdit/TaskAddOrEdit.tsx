@@ -8,7 +8,8 @@ import ComponentSelectWorkspace from './ComponentSelectWorkspace';
 import ComponentSelectTaskStatus from './ComponentSelectTaskStatus';
 
 import getDateTimeForInputTypeDateTimeLocal from '../../../../../utils/getDateTimeForInputTypeDateTimeLocal';
-import { reminderLabelToMsArr, taskEditInputClass, taskEditSelectClass, taskEditSelectInlineClass } from './taskEditCons';
+import { reminderLabelToMsArr, taskEditInputClass, taskEditSelectInlineClass } from './taskEditCons';
+import ComponentTaskRemindersPanel from './ComponentTaskRemindersPanel';
 import CommentCommonComponent from '../../../../../components/commentCommonComponent/CommentCommonComponent';
 import CommonComponentAiFaq from '../../../../../components/commonComponent/commonComponentAiFaq/CommonComponentAiFaq';
 import CommonComponentAiKeywords from '../../../../../components/commonComponent/commonComponentAiKeywords/CommonComponentAiKeywords';
@@ -35,8 +36,18 @@ const TaskAddOrEdit: React.FC<{
     const [newLabel, setNewLabel] = useState(''); // New state for new label
     const [isAddingLabel, setIsAddingLabel] = useState(false); // State to control label input visibility
 
-    // remainder
-    const [reminderPresetTimeLabel, setReminderPresetTimeLabel] = useState('before-1-day');
+    // due-date presets + remainder (bundle sent on save in edit mode)
+    const [dueDateReminderPresetLabels, setDueDateReminderPresetLabels] = useState<string[]>([]);
+    const [dueDateReminderAbsoluteTimesIso, setDueDateReminderAbsoluteTimesIso] = useState<string[]>([]);
+    const [dueDateReminderCronExpressions, setDueDateReminderCronExpressions] = useState<string[]>([]);
+    const [remainderAbsoluteTimesIso, setRemainderAbsoluteTimesIso] = useState<string[]>([]);
+    const [remainderCronExpressions, setRemainderCronExpressions] = useState<string[]>([]);
+    const [dueDateReminderScheduledTimes, setDueDateReminderScheduledTimes] = useState<string[]>([]);
+    const [dueDateReminderScheduledTimesCompleted, setDueDateReminderScheduledTimesCompleted] = useState<string[]>(
+        []
+    );
+    const [remainderScheduledTimes, setRemainderScheduledTimes] = useState<string[]>([]);
+    const [remainderScheduledTimesCompleted, setRemainderScheduledTimesCompleted] = useState<string[]>([]);
 
     const [formData, setFormData] = useState({
         priority: '',
@@ -94,7 +105,62 @@ const TaskAddOrEdit: React.FC<{
                             priority: taskInfo.priority || '',
                         });
 
-                        setReminderPresetTimeLabel(taskInfo.reminderPresetTimeLabel || 'before-1-day');
+                        const fromArr = Array.isArray(taskInfo.dueDateReminderPresetLabels)
+                            ? taskInfo.dueDateReminderPresetLabels.filter(
+                                  (x: unknown) => typeof x === 'string' && x.trim() !== ''
+                              )
+                            : [];
+                        setDueDateReminderPresetLabels(fromArr);
+
+                        const abs = Array.isArray(taskInfo.remainderAbsoluteTimesIso)
+                            ? taskInfo.remainderAbsoluteTimesIso
+                            : [];
+                        setRemainderAbsoluteTimesIso(
+                            abs.filter((x: unknown) => typeof x === 'string' && x.trim() !== '')
+                        );
+                        const crons = Array.isArray(taskInfo.remainderCronExpressions)
+                            ? taskInfo.remainderCronExpressions
+                            : [];
+                        setRemainderCronExpressions(
+                            crons.filter((x: unknown) => typeof x === 'string' && x.trim() !== '')
+                        );
+                        const dueAbs = Array.isArray(
+                            (taskInfo as { dueDateReminderAbsoluteTimesIso?: string[] })
+                                .dueDateReminderAbsoluteTimesIso
+                        )
+                            ? (taskInfo as { dueDateReminderAbsoluteTimesIso: string[] })
+                                  .dueDateReminderAbsoluteTimesIso
+                            : [];
+                        setDueDateReminderAbsoluteTimesIso(
+                            dueAbs.filter((x: unknown) => typeof x === 'string' && x.trim() !== '')
+                        );
+                        const dueCr = Array.isArray(
+                            (taskInfo as { dueDateReminderCronExpressions?: string[] })
+                                .dueDateReminderCronExpressions
+                        )
+                            ? (taskInfo as { dueDateReminderCronExpressions: string[] })
+                                  .dueDateReminderCronExpressions
+                            : [];
+                        setDueDateReminderCronExpressions(
+                            dueCr.filter((x: unknown) => typeof x === 'string' && x.trim() !== '')
+                        );
+
+                        const normDates = (v: unknown): string[] => {
+                            if (!Array.isArray(v)) return [];
+                            return v
+                                .map((x: unknown) => {
+                                    if (typeof x === 'string' && x.trim()) return x;
+                                    return '';
+                                })
+                                .filter(Boolean)
+                                .sort();
+                        };
+                        setDueDateReminderScheduledTimes(normDates(taskInfo.dueDateReminderScheduledTimes));
+                        setDueDateReminderScheduledTimesCompleted(
+                            normDates(taskInfo.dueDateReminderScheduledTimesCompleted)
+                        );
+                        setRemainderScheduledTimes(normDates(taskInfo.remainderScheduledTimes));
+                        setRemainderScheduledTimesCompleted(normDates(taskInfo.remainderScheduledTimesCompleted));
                     } else {
                         toggleModal();
                     }
@@ -110,7 +176,15 @@ const TaskAddOrEdit: React.FC<{
                 setLabels([]); // Reset labels
                 setNewLabel(''); // Reset new label
                 setIsAddingLabel(false); // Reset label input visibility
-                setReminderPresetTimeLabel('before-1-day');
+                setDueDateReminderPresetLabels([]);
+                setDueDateReminderAbsoluteTimesIso([]);
+                setDueDateReminderCronExpressions([]);
+                setRemainderAbsoluteTimesIso([]);
+                setRemainderCronExpressions([]);
+                setDueDateReminderScheduledTimes([]);
+                setDueDateReminderScheduledTimesCompleted([]);
+                setRemainderScheduledTimes([]);
+                setRemainderScheduledTimesCompleted([]);
             }
         };
 
@@ -152,8 +226,12 @@ const TaskAddOrEdit: React.FC<{
             taskWorkspaceId: workspaceId,
             taskStatusId: taskStatusId,
 
-            // remainder
-            reminderPresetTimeLabel: reminderPresetTimeLabel,
+            // due date + remainder (edit applies; add flow ignores on server)
+            dueDateReminderPresetLabels: dueDateReminderPresetLabels,
+            dueDateReminderAbsoluteTimesIso: dueDateReminderAbsoluteTimesIso,
+            dueDateReminderCronExpressions: dueDateReminderCronExpressions,
+            remainderAbsoluteTimesIso: remainderAbsoluteTimesIso,
+            remainderCronExpressions: remainderCronExpressions,
         } as {
             id?: string;
             title: string;
@@ -175,8 +253,11 @@ const TaskAddOrEdit: React.FC<{
             taskWorkspaceId: string;
             taskStatusId: string;
 
-            // remainder
-            reminderPresetTimeLabel: string;
+            dueDateReminderPresetLabels: string[];
+            dueDateReminderAbsoluteTimesIso: string[];
+            dueDateReminderCronExpressions: string[];
+            remainderAbsoluteTimesIso: string[];
+            remainderCronExpressions: string[];
         };
 
         if (isTaskAddModalIsOpen.modalType === 'edit') {
@@ -201,7 +282,15 @@ const TaskAddOrEdit: React.FC<{
             setStatus('todo'); // Reset status
             setDueDate(''); // Reset due date
             setLabels([]); // Reset labels
-            setReminderPresetTimeLabel('before-1-day');
+            setDueDateReminderPresetLabels([]);
+            setDueDateReminderAbsoluteTimesIso([]);
+            setDueDateReminderCronExpressions([]);
+            setRemainderAbsoluteTimesIso([]);
+            setRemainderCronExpressions([]);
+            setDueDateReminderScheduledTimes([]);
+            setDueDateReminderScheduledTimesCompleted([]);
+            setRemainderScheduledTimes([]);
+            setRemainderScheduledTimesCompleted([]);
             if (isTaskAddModalIsOpen.modalType === 'add') {
                 let resRecordId = result.data._id;
                 // Redirect to task list with workspace parameter
@@ -343,14 +432,6 @@ const TaskAddOrEdit: React.FC<{
                                         <span className="rounded-md border border-sky-200/80 bg-sky-100/80 px-1.5 py-0.5 text-[11px] font-semibold text-slate-800">
                                             Status: {status}
                                         </span>
-                                        {
-                                            dueDate && (
-                                                <span className="rounded-md border border-sky-200/70 bg-sky-50/90 px-1.5 py-0.5 text-[11px] font-semibold text-slate-800">
-                                                    Due: {new Date(dueDate).toLocaleDateString()}{' '}
-                                                    {new Date(dueDate).toLocaleTimeString()}
-                                                </span>
-                                            )
-                                        }
                                         {formData.isCompleted && (
                                             <span className="rounded-md border border-emerald-200/80 bg-emerald-100/90 px-1.5 py-0.5 text-[11px] font-semibold text-emerald-900">
                                                 Completed
@@ -485,48 +566,54 @@ const TaskAddOrEdit: React.FC<{
                                         )}
                                     </div>
 
-                                    {/* due date */}
-                                    <div className="flex min-w-0 flex-wrap items-center gap-1.5 rounded-lg border border-sky-200/70 bg-gradient-to-r from-slate-50/90 to-sky-50/45 px-2 py-1 shadow-sm">
-                                        <label className="shrink-0 text-xs font-medium text-slate-700">Due date</label>
-                                        <input
-                                            type="datetime-local"
-                                            className="min-w-0 flex-1 rounded-lg border border-slate-200/80 bg-white py-1 px-1.5 text-xs text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-300/40"
-                                            value={getDateTimeForInputTypeDateTimeLocal(dueDate)}
-                                            onChange={(e) => {
-                                                console.log(e.target.value);
-                                                const newDueDate = new Date(`${e.target.value}`);
-                                                setDueDate(newDueDate.toISOString());
-                                            }}
-                                        />
-                                        {dueDate && (
-                                            <button
-                                                type="button"
-                                                onClick={() => setDueDate('')}
-                                                className="shrink-0 rounded-md border border-slate-200/90 bg-gradient-to-r from-slate-500 to-slate-600 px-2 py-1 text-[11px] font-semibold text-white shadow-sm transition hover:from-slate-400 hover:to-slate-500"
-                                            >
-                                                Clear
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    {/* reminder preset time label */}
-                                    {
-                                        dueDate && (
-                                            <div className="flex min-w-0 flex-wrap items-center gap-1.5 rounded-lg border border-sky-200/65 bg-gradient-to-r from-sky-50/55 to-white px-2 py-1 shadow-sm">
-                                                <label className="shrink-0 text-xs font-medium text-slate-700">Reminder</label>
-                                                <select
-                                                    className={`${taskEditSelectClass} min-w-0 flex-1 sm:min-w-[10rem]`}
-                                                    value={reminderPresetTimeLabel}
-                                                    onChange={(e) => setReminderPresetTimeLabel(e.target.value)}
+                                    {/* due date — add flow only; edit uses Due & email reminders panel */}
+                                    {isTaskAddModalIsOpen.modalType === 'add' && (
+                                        <div className="flex min-w-0 flex-wrap items-center gap-1.5 rounded-lg border border-sky-200/70 bg-gradient-to-r from-slate-50/90 to-sky-50/45 px-2 py-1 shadow-sm">
+                                            <label className="shrink-0 text-xs font-medium text-slate-700">Due date</label>
+                                            <input
+                                                type="datetime-local"
+                                                className="min-w-0 flex-1 rounded-lg border border-slate-200/80 bg-white py-1 px-1.5 text-xs text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-300/40"
+                                                value={getDateTimeForInputTypeDateTimeLocal(dueDate)}
+                                                onChange={(e) => {
+                                                    const newDueDate = new Date(`${e.target.value}`);
+                                                    setDueDate(newDueDate.toISOString());
+                                                }}
+                                            />
+                                            {dueDate && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setDueDate('')}
+                                                    className="shrink-0 rounded-md border border-slate-200/90 bg-gradient-to-r from-slate-500 to-slate-600 px-2 py-1 text-[11px] font-semibold text-white shadow-sm transition hover:from-slate-400 hover:to-slate-500"
                                                 >
-                                                    {reminderLabelToMsArr.map((label) => (
-                                                        <option key={label.labelName} value={label.labelName}>{label.labelNameStr}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        )
-                                    }
+                                                    Clear
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
+
+                                {isTaskAddModalIsOpen.modalType === 'edit' && (
+                                    <ComponentTaskRemindersPanel
+                                        dueDate={dueDate}
+                                        onDueDateChange={(iso) => setDueDate(iso)}
+                                        onDueDateClear={() => setDueDate('')}
+                                        dueDateReminderPresetLabels={dueDateReminderPresetLabels}
+                                        onDueDateReminderPresetLabelsChange={setDueDateReminderPresetLabels}
+                                        dueDateReminderAbsoluteTimesIso={dueDateReminderAbsoluteTimesIso}
+                                        onDueDateReminderAbsoluteTimesIsoChange={setDueDateReminderAbsoluteTimesIso}
+                                        dueDateReminderCronExpressions={dueDateReminderCronExpressions}
+                                        onDueDateReminderCronExpressionsChange={setDueDateReminderCronExpressions}
+                                        dueDateReminderScheduledTimes={dueDateReminderScheduledTimes}
+                                        dueDateReminderScheduledTimesCompleted={dueDateReminderScheduledTimesCompleted}
+                                        remainderAbsoluteTimesIso={remainderAbsoluteTimesIso}
+                                        onRemainderAbsoluteTimesIsoChange={setRemainderAbsoluteTimesIso}
+                                        remainderCronExpressions={remainderCronExpressions}
+                                        onRemainderCronExpressionsChange={setRemainderCronExpressions}
+                                        remainderScheduledTimes={remainderScheduledTimes}
+                                        remainderScheduledTimesCompleted={remainderScheduledTimesCompleted}
+                                        reminderLabelOptions={reminderLabelToMsArr}
+                                    />
+                                )}
 
                                 {isAddingLabel && (
                                     <div className="mt-1 rounded-lg border border-sky-200/65 bg-gradient-to-br from-sky-50/50 via-blue-50/35 to-slate-50/40 p-2">
