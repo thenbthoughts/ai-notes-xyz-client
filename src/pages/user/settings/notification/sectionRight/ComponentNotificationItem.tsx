@@ -36,7 +36,22 @@ const ComponentNotificationItem = ({
             <Fragment>
                 <div className="mb-1">
                     <h3 className="font-semibold">{notificationObj.subject || '(No Subject)'}</h3>
-                    <div className="text-sm text-gray-600">To: {notificationObj.smtpTo || '-'}</div>
+                    <div className="text-sm text-gray-600 flex flex-wrap gap-2 items-center">
+                        <span
+                            className={`text-xs font-semibold px-2 py-0.5 rounded ${
+                                notificationObj.channel === 'telegram'
+                                    ? 'bg-sky-100 text-sky-800'
+                                    : 'bg-gray-100 text-gray-700'
+                            }`}
+                        >
+                            {notificationObj.channel === 'telegram' ? 'Telegram' : 'Email'}
+                        </span>
+                        {notificationObj.channel === 'telegram' ? (
+                            <span>Chat: {notificationObj.telegramChatId || '-'}</span>
+                        ) : (
+                            <span>To: {notificationObj.smtpTo || '-'}</span>
+                        )}
+                    </div>
                 </div>
                 <div className="my-1 flex flex-wrap gap-2">
                     <span className="inline-block bg-orange-100 text-orange-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">

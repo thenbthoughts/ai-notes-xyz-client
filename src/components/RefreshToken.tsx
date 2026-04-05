@@ -38,6 +38,7 @@ const RefreshToken = () => {
             apiKeyOpenaiValid: false,
             apiKeyLocalaiValid: false,
             smtpValid: false,
+            telegramValid: false,
             clientFrontendUrl: '',
         };
 
@@ -86,6 +87,9 @@ const RefreshToken = () => {
                 if (typeof userInfoFromApi?.smtpValid === 'boolean') {
                     tempData.smtpValid = userInfoFromApi?.smtpValid;
                 }
+                if (typeof userInfoFromApi?.telegramValid === 'boolean') {
+                    tempData.telegramValid = userInfoFromApi?.telegramValid;
+                }
                 if (typeof userInfoFromApi?.clientFrontendUrl === 'string') {
                     tempData.clientFrontendUrl = userInfoFromApi?.clientFrontendUrl;
                 }
@@ -107,6 +111,7 @@ const RefreshToken = () => {
                 apiKeyOpenaiValid: false,
                 apiKeyLocalaiValid: false,
                 smtpValid: false,
+                telegramValid: false,
                 clientFrontendUrl: '',
             });
         }

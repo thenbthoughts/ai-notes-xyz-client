@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-type AuthState = {
+export type AuthState = {
     isLoggedIn: 'pending' | 'true' | 'false';
 
     fileStorageType: 'gridfs' | 's3';
@@ -14,6 +14,7 @@ type AuthState = {
     apiKeyOpenaiValid: boolean;
     apiKeyLocalaiValid: boolean;
     smtpValid: boolean;
+    telegramValid: boolean;
 
     clientFrontendUrl: string;
 };
@@ -32,6 +33,7 @@ const stateJotaiAuthAtom = atom<AuthState>({
     apiKeyOpenaiValid: false,
     apiKeyLocalaiValid: false,
     smtpValid: false,
+    telegramValid: false,
 
     clientFrontendUrl: '',
 });

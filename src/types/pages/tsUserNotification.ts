@@ -5,6 +5,8 @@ export interface IUserNotification {
     subject: string;
     text: string;
     html: string;
+    channel?: 'email' | 'telegram';
+    telegramChatId?: string;
     createdAtUtc: string;
 }
 
