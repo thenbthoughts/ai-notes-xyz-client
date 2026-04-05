@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAtom } from 'jotai';
 import Select from "react-select";
 import axiosCustom from '../../../../../../../config/axiosCustom';
+import stateJotaiAuthAtom from '../../../../../../../jotai/stateJotaiAuth';
+import {
+    type TelegramChatOption,
+    chatOptionKey,
+    parseChatOptionKey,
+} from '../../../../../settings/settingApiKeys/telegramSettingsShared';
 import { ISendMyselfEmailForm } from '../../../../../../../types/pages/tsTaskSchedule';
 import { tsSchemaAiModelListGroq } from '../../../../../../../types/pages/settings/dataModelGroq';
 import { tsSchemaAiModelListOpenrouter } from '../../../../../../../types/pages/settings/dataModelOpenrouter';
@@ -175,16 +182,186 @@ const ComponentScheduleSendMyselfEmail = ({
     formDataSendMyselfEmail: ISendMyselfEmailForm;
     setFormDataSendMyselfEmail: React.Dispatch<React.SetStateAction<ISendMyselfEmailForm>>;
 }) => {
+    const [authState] = useAtom(stateJotaiAuthAtom);
     const [selectRandomModel, setSelectRandomModel] = useState(0);
+    const [telegramChats, setTelegramChats] = useState<TelegramChatOption[]>([]);
+    const [telegramChatsLoading, setTelegramChatsLoading] = useState(false);
+
+    const loadCachedTelegramChats = useCallback(async () => {
+        if (!authState.telegramValid) return;
+        try {
+            setTelegramChatsLoading(true);
+            const res = await axiosCustom.post(
+                `/api/user/api-keys/telegramGetCachedChats`,
+                {}
+            );
+            const raw = res.data?.chats;
+            if (Array.isArray(raw)) {
+                setTelegramChats(raw as TelegramChatOption[]);
+            } else {
+                setTelegramChats([]);
+            }
+        } catch {
+            setTelegramChats([]);
+        } finally {
+            setTelegramChatsLoading(false);
+        }
+    }, [authState.telegramValid]);
+
+    useEffect(() => {
+        if (authState.telegramValid) {
+            void loadCachedTelegramChats();
+        }
+    }, [authState.telegramValid, loadCachedTelegramChats]);
+
+    const refreshTelegramChatsFromBot = async () => {
+        if (!authState.telegramValid) return;
+        try {
+            setTelegramChatsLoading(true);
+            await axiosCustom.post(`/api/user/api-keys/telegramListRecentChats`, {});
+            await loadCachedTelegramChats();
+        } catch {
+            await loadCachedTelegramChats();
+        } finally {
+            setTelegramChatsLoading(false);
+        }
+    };
 
     const handleAiModelNameChange = (value: string) => {
         setFormDataSendMyselfEmail({ ...formDataSendMyselfEmail, aiModelName: value });
     };
 
+    const telegramSelectOptions = telegramChats.map((c) => ({
+        value: chatOptionKey(c),
+        label: c.label,
+    }));
+    const selectedTgKey =
+        formDataSendMyselfEmail.telegramChatId.length >= 1
+            ? chatOptionKey({
+                  chatId: formDataSendMyselfEmail.telegramChatId,
+                  messageThreadId: formDataSendMyselfEmail.telegramMessageThreadId,
+                  label: '',
+                  type: '',
+              })
+            : '';
+    const selectedTgOption =
+        telegramSelectOptions.find((o) => o.value === selectedTgKey) ||
+        (selectedTgKey.length >= 1
+            ? {
+                  value: selectedTgKey,
+                  label:
+                      telegramChats.find((c) => chatOptionKey(c) === selectedTgKey)
+                          ?.label ?? `Chat ${formDataSendMyselfEmail.telegramChatId}`,
+              }
+            : null);
+
     return (
         <div className="py-2 border border-gray-200 rounded-sm p-4">
 
             <h1 className="text-2xl font-bold text-gray-800 my-4">Send Myself Email</h1>
+
+            <div className="py-2 space-y-3 border-b border-gray-100 mb-4">
+                <div className="flex items-center">
+                    <input
+                        type="checkbox"
+                        id="sendMailEnabled"
+                        checked={formDataSendMyselfEmail.sendMailEnabled}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        onChange={(e) =>
+                            setFormDataSendMyselfEmail({
+                                ...formDataSendMyselfEmail,
+                                sendMailEnabled: e.target.checked,
+                            })
+                        }
+                    />
+                    <label htmlFor="sendMailEnabled" className="ml-2 text-sm text-gray-700">
+                        Send email (SMTP must be valid in API keys)
+                    </label>
+                </div>
+
+                {authState.telegramValid && (
+                    <>
+                        <div className="flex items-center">
+                            <input
+                                type="checkbox"
+                                id="sendTelegramEnabled"
+                                checked={formDataSendMyselfEmail.sendTelegramEnabled}
+                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                onChange={(e) => {
+                                    const on = e.target.checked;
+                                    setFormDataSendMyselfEmail({
+                                        ...formDataSendMyselfEmail,
+                                        sendTelegramEnabled: on,
+                                        ...(on
+                                            ? {}
+                                            : {
+                                                  telegramChatId: '',
+                                                  telegramMessageThreadId: null,
+                                              }),
+                                    });
+                                    if (on) void loadCachedTelegramChats();
+                                }}
+                            />
+                            <label
+                                htmlFor="sendTelegramEnabled"
+                                className="ml-2 text-sm text-gray-700"
+                            >
+                                Send Telegram (same bot token as in settings; pick chat below)
+                            </label>
+                        </div>
+
+                        {formDataSendMyselfEmail.sendTelegramEnabled && (
+                            <div className="pl-6 space-y-2">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => void refreshTelegramChatsFromBot()}
+                                        className="text-xs px-2 py-1 rounded-sm border border-gray-300 bg-white hover:bg-gray-50 text-gray-800"
+                                    >
+                                        Refresh chat list from bot
+                                    </button>
+                                    <span className="text-xs text-gray-500">
+                                        Uses recent updates Telegram sent to your bot — say hi in the chat if the list is empty.
+                                    </span>
+                                </div>
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Telegram chat / topic
+                                </label>
+                                <Select<{ value: string; label: string }>
+                                    value={selectedTgOption}
+                                    onChange={(opt) => {
+                                        if (!opt) {
+                                            setFormDataSendMyselfEmail({
+                                                ...formDataSendMyselfEmail,
+                                                telegramChatId: '',
+                                                telegramMessageThreadId: null,
+                                            });
+                                            return;
+                                        }
+                                        const parsed = parseChatOptionKey(opt.value);
+                                        setFormDataSendMyselfEmail({
+                                            ...formDataSendMyselfEmail,
+                                            telegramChatId: parsed.chatId,
+                                            telegramMessageThreadId: parsed.messageThreadId,
+                                        });
+                                    }}
+                                    options={telegramSelectOptions}
+                                    placeholder="Select channel…"
+                                    isLoading={telegramChatsLoading}
+                                    isClearable
+                                    classNamePrefix="react-select"
+                                />
+                            </div>
+                        )}
+                    </>
+                )}
+
+                {!authState.telegramValid && (
+                    <p className="text-xs text-gray-500">
+                        Configure and verify Telegram under Settings → API keys to enable Telegram delivery here.
+                    </p>
+                )}
+            </div>
 
             {/* field -> email subject */}
             <div className="py-2">

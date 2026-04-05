@@ -73,6 +73,12 @@ export interface ISendMyselfEmailForm {
     // email fields -> staticContent
     emailSubject: string;
     emailContent: string;
+
+    // email fields -> send email or telegram
+    sendMailEnabled: boolean;
+    sendTelegramEnabled: boolean;
+    telegramChatId: string;
+    telegramMessageThreadId: number | null;
     
     // ai fields -> aiConversationMail
     aiEnabled: boolean;
