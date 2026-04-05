@@ -960,6 +960,10 @@ const ComponentNotesEditWrapper = ({
         taskScheduleId: '',
         emailSubject: '',
         emailContent: '',
+        sendMailEnabled: true,
+        sendTelegramEnabled: false,
+        telegramChatId: '',
+        telegramMessageThreadId: null,
         aiEnabled: false,
         passAiContextEnabled: false,
         systemPrompt: '',
@@ -1007,9 +1011,18 @@ const ComponentNotesEditWrapper = ({
                     });
                 }
                 if (tempArr[0]?.sendMyselfEmailArr?.length === 1) {
-                    let tempSendMyselfEmail = tempArr[0].sendMyselfEmailArr[0]
+                    const tempSendMyselfEmail = tempArr[0].sendMyselfEmailArr[0];
                     setFormDataSendMyselfEmail({
                         ...tempSendMyselfEmail,
+                        sendMailEnabled: tempSendMyselfEmail.sendMailEnabled !== false,
+                        sendTelegramEnabled: tempSendMyselfEmail.sendTelegramEnabled === true,
+                        telegramChatId:
+                            typeof tempSendMyselfEmail.telegramChatId === 'string' ? tempSendMyselfEmail.telegramChatId : '',
+                        telegramMessageThreadId:
+                            typeof tempSendMyselfEmail.telegramMessageThreadId === 'number' &&
+                            tempSendMyselfEmail.telegramMessageThreadId > 0
+                                ? tempSendMyselfEmail.telegramMessageThreadId
+                                : null,
                     });
                 }
             }

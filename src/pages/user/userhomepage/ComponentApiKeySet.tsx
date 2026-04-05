@@ -7,6 +7,7 @@ import {
     LucideCloud,
     LucideDatabase,
     LucideMail,
+    LucideSend,
     LucideBot,
     LucideChevronDown,
     LucideChevronUp,
@@ -92,6 +93,15 @@ const ComponentApiKeySet = () => {
             description: 'Notifications and email',
             color: 'red',
             required: true,
+        },
+        {
+            name: 'Telegram',
+            key: 'telegramValid',
+            valid: authState.telegramValid,
+            icon: LucideSend,
+            description: 'Task reminders via Telegram bot',
+            color: 'blue',
+            required: false,
         },
         {
             name: 'Replicate API',

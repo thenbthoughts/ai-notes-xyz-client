@@ -45,6 +45,7 @@ export default function Component() {
                 apiKeyOpenaiValid: false,
                 apiKeyLocalaiValid: false,
                 smtpValid: false,
+                telegramValid: false,
                 clientFrontendUrl: '',
             });
 
@@ -73,6 +74,7 @@ export default function Component() {
                 apiKeyOpenaiValid: false,
                 apiKeyLocalaiValid: false,
                 smtpValid: false,
+                telegramValid: false,
                 clientFrontendUrl: '',
             });
         } finally {

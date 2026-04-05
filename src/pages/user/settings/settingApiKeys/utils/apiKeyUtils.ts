@@ -10,7 +10,8 @@ export type ApiKeyType =
   | 'runpod'
   | 'openai'
   | 'localai'
-  | 'smtp';
+  | 'smtp'
+  | 'telegram';
 
 /**
  * Clears an API key for the specified service
