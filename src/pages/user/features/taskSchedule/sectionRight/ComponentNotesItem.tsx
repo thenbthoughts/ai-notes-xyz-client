@@ -102,6 +102,13 @@ const ComponentNotesItem = ({
                                 {new Date(taskScheduleObj.scheduleExecutionTimeArr[0]).toLocaleString()}
                             </div>
                         )}
+                    {taskScheduleObj.dueDateReminderComputedTimes &&
+                        taskScheduleObj.dueDateReminderComputedTimes.length > 0 && (
+                            <div className="rounded-sm border border-amber-100 bg-amber-50/60 px-2 py-1 text-[11px] text-amber-950">
+                                <span className="font-medium text-amber-800">Due reminder</span>{' '}
+                                {new Date(taskScheduleObj.dueDateReminderComputedTimes[0]).toLocaleString()}
+                            </div>
+                        )}
                 </div>
 
                 <div className="action-buttons mt-2 flex justify-end gap-1">
