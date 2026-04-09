@@ -9,8 +9,13 @@ import { getAllTimezones } from 'countries-and-timezones';
 import { ITaskSchedule, ITaskScheduleTaskAdd, ISendMyselfEmailForm } from '../../../../../../types/pages/tsTaskSchedule.ts';
 import ComponentScheduleTaskAdd from './scheduleTaskAdd/ComponentScheduleTaskAdd.tsx';
 import ComponentScheduleSendMyselfEmail from './scheduleSendMyselfEmail/ComponentScheduleSendMyselfEmail.tsx';
+import ComponentComputedReminderDates from './ComponentComputedReminderDates.tsx';
+import getDateTimeForInputTypeDateTimeLocal from '../../../../../../utils/getDateTimeForInputTypeDateTimeLocal.ts';
+import { REMINDER_LABEL_TO_MS } from '../../../../../../constants/reminderLabelToMsArr.ts';
 
 const timeZoneArr = getAllTimezones();
+
+const DUE_DATE_PRESET_OPTIONS = REMINDER_LABEL_TO_MS;
 
 const ScheduleTimeArr = ({
     scheduleTimeArr,
@@ -556,6 +561,12 @@ const ComponentNotesEdit = ({
         cronExpressionArr,
         setCronExpressionArr,
     ] = useState<string[]>(taskScheduleObj.cronExpressionArr || []);
+    const [dueDateInput, setDueDateInput] = useState<string>(
+        getDateTimeForInputTypeDateTimeLocal(taskScheduleObj.dueDate || ''),
+    );
+    const [dueDateReminderPresetLabels, setDueDateReminderPresetLabels] = useState<string[]>(
+        taskScheduleObj.dueDateReminderPresetLabels || [],
+    );
 
     const [formDataTaskAdd, setFormDataTaskAdd] = useState(parentFormDataTaskAdd);
 
@@ -573,6 +584,10 @@ const ComponentNotesEdit = ({
         timezoneName: taskScheduleObj.timezoneName,
         timezoneOffset: taskScheduleObj.timezoneOffset,
 
+        // Due date fields
+        dueDate: taskScheduleObj.dueDate,
+        dueDateReminderPresetLabels: taskScheduleObj.dueDateReminderPresetLabels,
+
         // UI helper fields
         tagsInput: '', // Temporary field for tag input
         scheduleTimeInput: '', // Temporary field for schedule time input
@@ -589,6 +604,10 @@ const ComponentNotesEdit = ({
         timezoneOffset: number;
         scheduleTimeArr: string[];
         cronExpressionArr: string[];
+
+        // Due date fields
+        dueDate: string | null;
+        dueDateReminderPresetLabels: string[];
 
         // Notes fields
         isStar: boolean;
@@ -630,6 +649,11 @@ const ComponentNotesEdit = ({
                     // Schedule fields
                     scheduleTimeArr: scheduleTimeArr,
                     cronExpressionArr: cronExpressionArr,
+                    dueDate:
+                        dueDateInput && dueDateInput.trim() !== '' && !Number.isNaN(new Date(dueDateInput).getTime())
+                            ? new Date(dueDateInput).toISOString()
+                            : null,
+                    dueDateReminderPresetLabels,
 
                     // Notes fields
                     isStar: formData.isStar,
@@ -814,6 +838,49 @@ const ComponentNotesEdit = ({
                             </option>
                         ))}
                     </select>
+                </div>
+
+                {/* field -> due date and due-date reminders */}
+                <div className="rounded-sm border border-gray-200 bg-gray-50 p-3">
+                    <label className="block text-sm font-medium text-gray-700">Due Date</label>
+                    <input
+                        type="datetime-local"
+                        value={dueDateInput}
+                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                        onChange={(e) => setDueDateInput(e.target.value)}
+                    />
+                    <div className="mt-3">
+                        <div className="text-sm font-medium text-gray-700 mb-2">Before due date reminders</div>
+                        <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+                            {DUE_DATE_PRESET_OPTIONS.map((option) => {
+                                const checked = dueDateReminderPresetLabels.includes(option.labelName);
+                                return (
+                                    <label
+                                        key={option.labelName}
+                                        className="inline-flex items-center gap-2 text-xs text-gray-700"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={checked}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setDueDateReminderPresetLabels((prev) =>
+                                                        [...new Set([...prev, option.labelName])],
+                                                    );
+                                                    return;
+                                                }
+                                                setDueDateReminderPresetLabels((prev) =>
+                                                    prev.filter((x) => x !== option.labelName),
+                                                );
+                                            }}
+                                        />
+                                        <span>{option.labelNameStr}</span>
+                                    </label>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    <ComponentComputedReminderDates dueDateInput={dueDateInput} />
                 </div>
 
                 {/* field -> schedule times */}

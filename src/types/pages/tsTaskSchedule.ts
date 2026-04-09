@@ -26,6 +26,9 @@ export interface ITaskSchedule {
     timezoneOffset: number;
     scheduleTimeArr: string[];
     cronExpressionArr: string[];
+    dueDate?: string | null;
+    dueDateReminderPresetLabels?: string[];
+    dueDateReminderComputedTimes?: string[];
     
     // executed
     scheduleExecutionTimeArr: string[];
