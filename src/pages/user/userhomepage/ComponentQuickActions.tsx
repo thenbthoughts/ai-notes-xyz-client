@@ -9,6 +9,7 @@ import {
     LucideHeart,
     LucideCalendar,
     LucideStar,
+    LucideStickyNote,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -312,6 +313,10 @@ const QuickActionsComponent = () => {
                     <button type="button" onClick={() => addNotesLocal()} className={chipAction}>
                         <LucideFileText className="h-3.5 w-3.5" strokeWidth={2} />
                         Add notes
+                    </button>
+                    <button type="button" onClick={() => navigate('/user/memo')} className={chipAction}>
+                        <LucideStickyNote className="h-3.5 w-3.5" strokeWidth={2} />
+                        Memo
                     </button>
                     <button type="button" onClick={() => addTaskLocal()} className={chipAction}>
                         <LucideStar className="h-3.5 w-3.5" strokeWidth={2} />

@@ -17,6 +17,7 @@ import {
     LucideLightbulb,
     LucideSearch,
     LucideCalendar,
+    LucideStickyNote,
 } from 'lucide-react';
 import { useAtomValue } from 'jotai';
 import { Fragment, useEffect, useState, type ReactNode } from 'react';
@@ -277,6 +278,7 @@ const UserHomepage = () => {
                                             )}
                                     </Link>
                                     <NavTile to="/user/notes" label="Notes" icon={LucideFileText} />
+                                    <NavTile to="/user/memo" label="Memo" icon={LucideStickyNote} />
                                     <NavTile
                                         to="/user/life-events"
                                         label="Life events"
