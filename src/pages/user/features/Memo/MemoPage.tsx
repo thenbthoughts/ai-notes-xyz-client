@@ -215,11 +215,11 @@ export default function MemoPage() {
         />
       ) : null}
 
-      {/* Mobile: invisible left strip above content so swipe-right reliably opens the drawer. */}
+      {/* Mobile: thin bezel strip only — a wide overlay sat above main and ate taps on the toolbar menu button. */}
       {!isDesktop && !mobileSidebarOpen && !labelsModalOpen ? (
         <div
           aria-hidden
-          className="fixed left-0 top-[60px] z-[135] h-[calc(100dvh-60px)] w-[max(3rem,calc(env(safe-area-inset-left,0px)+2.25rem))] max-w-[3.5rem] touch-none md:hidden"
+          className="fixed left-0 top-[60px] z-[135] h-[calc(100dvh-60px)] w-2 touch-none md:hidden"
           onTouchStart={onMobileEdgeTouchStart}
           onTouchEnd={onMobileEdgeTouchEnd}
           onTouchCancel={onMobileEdgeTouchCancel}
