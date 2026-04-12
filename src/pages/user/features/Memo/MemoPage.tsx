@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { TouchEvent as ReactTouchEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import MemoLabelsModal from './MemoLabelsModal';
 import MemoNoteCard from './MemoNoteCard';
@@ -41,6 +42,10 @@ function labelNameFor(nav: MemoNavSelection, labels: { id: string; name: string 
   if (nav.kind !== 'label') return '';
   return labels.find((l) => l.id === nav.labelId)?.name ?? 'Label';
 }
+
+/** Horizontal / vertical tolerance for opening the mobile drawer from the edge strip. */
+const MOBILE_MENU_SWIPE_MIN_DX = 36;
+const MOBILE_MENU_SWIPE_MAX_DY = 140;
 
 export default function MemoPage() {
   const isDesktop = useIsDesktop();
@@ -86,6 +91,35 @@ export default function MemoPage() {
       setMobileSidebarOpen((v) => !v);
     }
   }, [isDesktop]);
+
+  /** Narrow fixed strip: reliable hit target; main/sidebar stacking often ate edge touches. */
+  const mobileEdgeSwipeRef = useRef<{ id: number; x0: number; y0: number } | null>(null);
+
+  const onMobileEdgeTouchStart = useCallback((e: ReactTouchEvent<HTMLDivElement>) => {
+    const t = e.touches[0];
+    if (!t) return;
+    mobileEdgeSwipeRef.current = { id: t.identifier, x0: t.clientX, y0: t.clientY };
+  }, []);
+
+  const onMobileEdgeTouchEnd = useCallback((e: ReactTouchEvent<HTMLDivElement>) => {
+    const s = mobileEdgeSwipeRef.current;
+    if (!s) return;
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const t = e.changedTouches[i];
+      if (t.identifier !== s.id) continue;
+      mobileEdgeSwipeRef.current = null;
+      const dx = t.clientX - s.x0;
+      const dy = Math.abs(t.clientY - s.y0);
+      if (dx >= MOBILE_MENU_SWIPE_MIN_DX && dy <= MOBILE_MENU_SWIPE_MAX_DY) {
+        setMobileSidebarOpen(true);
+      }
+      return;
+    }
+  }, []);
+
+  const onMobileEdgeTouchCancel = useCallback(() => {
+    mobileEdgeSwipeRef.current = null;
+  }, []);
 
   const labelNoteCounts = useMemo(() => {
     const m = new Map<string, number>();
@@ -181,13 +215,26 @@ export default function MemoPage() {
         />
       ) : null}
 
+      {/* Mobile: invisible left strip above content so swipe-right reliably opens the drawer. */}
+      {!isDesktop && !mobileSidebarOpen && !labelsModalOpen ? (
+        <div
+          aria-hidden
+          className="fixed left-0 top-[60px] z-[135] h-[calc(100dvh-60px)] w-[max(3rem,calc(env(safe-area-inset-left,0px)+2.25rem))] max-w-[3.5rem] touch-none md:hidden"
+          onTouchStart={onMobileEdgeTouchStart}
+          onTouchEnd={onMobileEdgeTouchEnd}
+          onTouchCancel={onMobileEdgeTouchCancel}
+        />
+      ) : null}
+
       <div
         className={`fixed left-0 top-[60px] z-[150] flex h-[calc(100dvh-60px)] flex-col border-r border-[#e8eaed] bg-white shadow-lg transition-[width,transform] duration-200 ease-out md:h-[calc(100vh-60px)] md:shadow-none ${
           isDesktop
             ? desktopSidebarNarrow
               ? 'w-[72px] max-w-[72px] translate-x-0'
               : 'w-[min(280px,85vw)] max-w-[280px] translate-x-0 sm:w-[280px]'
-            : `w-[min(280px,min(85vw,20rem))] ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`
+            : `w-[min(280px,min(85vw,20rem))] ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} ${
+                !mobileSidebarOpen ? 'pointer-events-none' : ''
+              }`
         }`}
       >
         <MemoSidebar
