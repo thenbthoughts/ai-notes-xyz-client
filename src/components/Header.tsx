@@ -68,6 +68,9 @@ const Header = () => {
                             <Link to="/user/notes" className={navPill}>
                                 Notes
                             </Link>
+                            <Link to="/user/memo" className={navPill}>
+                                Memo
+                            </Link>
                             <Link to="/user/life-events" className={navPill}>
                                 Life Events
                             </Link>

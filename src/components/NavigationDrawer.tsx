@@ -77,6 +77,11 @@ const NavigationDrawer = () => {
                                     </Link>
                                 </li>
                                 <li>
+                                    <Link to="/user/memo" className={navLinkClass} onClick={handleLinkClick}>
+                                        Memo
+                                    </Link>
+                                </li>
+                                <li>
                                     <Link
                                         to="/user/life-events"
                                         className={navLinkClass}

@@ -48,6 +48,7 @@ const AiDeepResearchWrapper = lazy(() => import("./pages/user/features/AiDeepRes
 
 // pages -> notes
 const NotesWrapper = lazy(() => import("./pages/user/features/Notes/NotesWrapper.tsx"));
+const MemoPage = lazy(() => import("./pages/user/features/Memo/MemoPage.tsx"));
 const NotesWorkspaceCrud = lazy(() => import("./pages/user/features/NotesWorkspaceCrud/NotesWorkspaceCrud.tsx"));
 const InfoVaultWrapper = lazy(() => import("./pages/user/features/InfoVault/InfoVaultWrapper.tsx"));
 const LifeEventWrapper = lazy(() => import('./pages/user/features/LifeEventsList/LifeEventWrapper.tsx'));
@@ -198,6 +199,14 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <NotesWrapper />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
+          path: "/user/memo",
+          element: (
+            <UnauthorizedRoute>
+              <MemoPage />
             </UnauthorizedRoute>
           ),
         },
