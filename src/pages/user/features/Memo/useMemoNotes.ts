@@ -4,10 +4,12 @@ import {
   fetchMemoLabelList,
   fetchMemoList,
   memoAdd,
+  memoClearAllImages,
   memoDelete,
-  memoDeleteStoredImagePaths,
   memoEdit,
   memoEmptyBin,
+  memoFileAdd,
+  memoFileDelete,
   memoLabelAdd,
   memoLabelDelete,
   memoLabelEdit,
@@ -16,22 +18,6 @@ import type { MemoLabel, MemoNote } from './memoTypes';
 
 function namesForLabelIds(ids: string[], labels: MemoLabel[]): string[] {
   return ids.map((id) => labels.find((l) => l.id === id)?.name ?? '');
-}
-
-/** `ai-notes-xyz/...` paths present in `previous` but not in `next` (after memo edit). */
-function storagePathsRemovedFromMemo(previous: string[], next: string[]): string[] {
-  const keep = new Set(next.map((x) => x.trim()));
-  const out: string[] = [];
-  const seen = new Set<string>();
-  for (const p of previous) {
-    const t = p.trim();
-    if (!t.startsWith('ai-notes-xyz/')) continue;
-    if (keep.has(t)) continue;
-    if (seen.has(t)) continue;
-    seen.add(t);
-    out.push(t);
-  }
-  return out;
 }
 
 export function useMemoNotes() {
@@ -141,7 +127,8 @@ export function useMemoNotes() {
       body: string;
       labelIds?: string[];
       noteColor?: string;
-      imageDataUrls?: string[];
+      /** Storage paths from `uploadMemoNoteImage` — registered via `memoFileAdd` after the memo exists. */
+      uploadStoragePaths?: string[];
     }) => {
       const toastId = 'memo-add';
       toast.loading('Saving…', { id: toastId });
@@ -151,9 +138,20 @@ export function useMemoNotes() {
           body: input.body,
           labelIds: input.labelIds ?? [],
           noteColor: input.noteColor,
-          imageDataUrls: input.imageDataUrls,
         });
-        setNotes((prev) => [doc, ...prev]);
+        const paths = input.uploadStoragePaths ?? [];
+        for (const filePath of paths) {
+          await memoFileAdd(doc.id, filePath);
+        }
+        const withImages: MemoNote =
+          paths.length > 0
+            ? {
+                ...doc,
+                imageDataUrls: [...doc.imageDataUrls, ...paths.filter((p) => !doc.imageDataUrls.includes(p))],
+                updatedAt: Date.now(),
+              }
+            : doc;
+        setNotes((prev) => [withImages, ...prev]);
         toast.success('Memo saved', { id: toastId });
       } catch (e) {
         console.error(e);
@@ -167,28 +165,10 @@ export function useMemoNotes() {
   const updateNote = useCallback(
     async (
       id: string,
-      patch: Partial<
-        Pick<
-          MemoNote,
-          'title' | 'body' | 'labelIds' | 'pinned' | 'archived' | 'trashed' | 'noteColor' | 'imageDataUrls'
-        >
-      >,
+      patch: Partial<Pick<MemoNote, 'title' | 'body' | 'labelIds' | 'pinned' | 'archived' | 'trashed' | 'noteColor'>>,
     ) => {
-      let pathsToDeleteFromStorage: string[] = [];
-      if ('imageDataUrls' in patch && patch.imageDataUrls !== undefined) {
-        const prev = notesRef.current.find((n) => n.id === id)?.imageDataUrls ?? [];
-        pathsToDeleteFromStorage = storagePathsRemovedFromMemo(prev, patch.imageDataUrls);
-      }
       try {
         await memoEdit(id, patch);
-        if (pathsToDeleteFromStorage.length > 0) {
-          try {
-            await memoDeleteStoredImagePaths(pathsToDeleteFromStorage);
-          } catch (delErr) {
-            console.error(delErr);
-            toast.error('Memo saved but old images could not be removed from storage');
-          }
-        }
         setNotes((prev) =>
           prev.map((n) => {
             if (n.id !== id) return n;
@@ -212,38 +192,30 @@ export function useMemoNotes() {
     [refresh, labels],
   );
 
-  /**
-   * Append uploaded image paths using the latest in-memory note list so concurrent memoEdits
-   * never send a stale `imageDataUrls` array (which would wrongly delete storage for paths
-   * that were omitted from the stale payload).
-   */
   const appendNoteImages = useCallback(
     async (id: string, newPaths: string[]) => {
       if (newPaths.length === 0) return;
       const n = notesRef.current.find((x) => x.id === id);
       const existing = n?.imageDataUrls ?? [];
       const seen = new Set(existing);
-      const merged = [...existing];
+      const toAdd: string[] = [];
       for (const p of newPaths) {
         if (seen.has(p)) continue;
         seen.add(p);
-        merged.push(p);
+        toAdd.push(p);
       }
-      if (merged.length === existing.length) return;
-      const pathsToDeleteFromStorage = storagePathsRemovedFromMemo(existing, merged);
+      if (toAdd.length === 0) return;
       try {
-        await memoEdit(id, { imageDataUrls: merged });
-        if (pathsToDeleteFromStorage.length > 0) {
-          try {
-            await memoDeleteStoredImagePaths(pathsToDeleteFromStorage);
-          } catch (delErr) {
-            console.error(delErr);
-            toast.error('Memo saved but old images could not be removed from storage');
-          }
+        for (const filePath of toAdd) {
+          await memoFileAdd(id, filePath);
         }
         setNotes((prev) =>
           prev.map((x) => {
             if (x.id !== id) return x;
+            const merged = [...x.imageDataUrls];
+            for (const p of toAdd) {
+              if (!merged.includes(p)) merged.push(p);
+            }
             return { ...x, imageDataUrls: merged, updatedAt: Date.now() };
           }),
         );
@@ -253,7 +225,57 @@ export function useMemoNotes() {
           typeof e === 'object' && e !== null && 'response' in e
             ? (e as { response?: { data?: { message?: string } } }).response?.data?.message
             : undefined;
-        toast.error(msg || 'Could not update memo');
+        toast.error(msg || 'Could not attach images');
+        void refresh();
+      }
+    },
+    [refresh],
+  );
+
+  const removeMemoImage = useCallback(
+    async (memoNoteId: string, imageUrlOrPath: string) => {
+      const trimmed = imageUrlOrPath.trim();
+      const dropFromNote = (n: MemoNote): MemoNote => ({
+        ...n,
+        imageDataUrls: n.imageDataUrls.filter((u) => u !== imageUrlOrPath && u.trim() !== trimmed),
+        updatedAt: Date.now(),
+      });
+
+      if (!trimmed.startsWith('ai-notes-xyz/')) {
+        setNotes((cur) => cur.map((n) => (n.id === memoNoteId ? dropFromNote(n) : n)));
+        return;
+      }
+
+      try {
+        await memoFileDelete(memoNoteId, trimmed);
+        setNotes((cur) => cur.map((n) => (n.id === memoNoteId ? dropFromNote(n) : n)));
+      } catch (e: unknown) {
+        console.error(e);
+        const msg =
+          typeof e === 'object' && e !== null && 'response' in e
+            ? (e as { response?: { data?: { message?: string } } }).response?.data?.message
+            : undefined;
+        toast.error(msg || 'Could not remove image');
+        void refresh();
+      }
+    },
+    [refresh],
+  );
+
+  const clearMemoImages = useCallback(
+    async (memoNoteId: string) => {
+      try {
+        await memoClearAllImages(memoNoteId);
+        setNotes((prev) =>
+          prev.map((n) => (n.id === memoNoteId ? { ...n, imageDataUrls: [], updatedAt: Date.now() } : n)),
+        );
+      } catch (e: unknown) {
+        console.error(e);
+        const msg =
+          typeof e === 'object' && e !== null && 'response' in e
+            ? (e as { response?: { data?: { message?: string } } }).response?.data?.message
+            : undefined;
+        toast.error(msg || 'Could not clear images');
         void refresh();
       }
     },
@@ -337,6 +359,8 @@ export function useMemoNotes() {
     addNote,
     updateNote,
     appendNoteImages,
+    removeMemoImage,
+    clearMemoImages,
     togglePin,
     archiveNote,
     trashNote,

@@ -22,7 +22,8 @@ type MemoNoteComposerProps = {
     body: string;
     labelIds: string[];
     noteColor: string;
-    imageDataUrls: string[];
+    /** Storage paths returned from `uploadMemoNoteImage` — registered on the server after the memo is created. */
+    uploadStoragePaths: string[];
   }) => Promise<void>;
 };
 
@@ -50,7 +51,8 @@ export default function MemoNoteComposer({ labels, onSave }: MemoNoteComposerPro
   const [body, setBody] = useState('');
   const [labelIds, setLabelIds] = useState<string[]>([]);
   const [noteColor, setNoteColor] = useState<string>('');
-  const [imageDataUrls, setImageDataUrls] = useState<string[]>([]);
+  /** Local attachment list (storage paths and/or legacy display strings before save). */
+  const [uploadStoragePaths, setUploadStoragePaths] = useState<string[]>([]);
   const [colorMenuOpen, setColorMenuOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -62,7 +64,7 @@ export default function MemoNoteComposer({ labels, onSave }: MemoNoteComposerPro
     setBody('');
     setLabelIds([]);
     setNoteColor('');
-    setImageDataUrls([]);
+    setUploadStoragePaths([]);
     setColorMenuOpen(false);
     setExpanded(false);
   };
@@ -71,15 +73,15 @@ export default function MemoNoteComposer({ labels, onSave }: MemoNoteComposerPro
     if (saving) return;
     const t = title.trim();
     const b = body.trim();
-    if (!t && !b && imageDataUrls.length === 0) return;
+    if (!t && !b && uploadStoragePaths.length === 0) return;
     setSaving(true);
     try {
       await onSave({
-        title: t || (imageDataUrls.length > 0 ? 'Attachment' : ''),
+        title: t || (uploadStoragePaths.length > 0 ? 'Attachment' : ''),
         body: b,
         labelIds,
         noteColor,
-        imageDataUrls,
+        uploadStoragePaths,
       });
       reset();
     } catch {
@@ -113,7 +115,7 @@ export default function MemoNoteComposer({ labels, onSave }: MemoNoteComposerPro
       return;
     }
     const toastId = 'memo-file-upload';
-    const remaining = MEMO_MAX_IMAGES_PER_NOTE - imageDataUrls.length;
+    const remaining = MEMO_MAX_IMAGES_PER_NOTE - uploadStoragePaths.length;
     if (remaining <= 0) {
       toast.error(`At most ${MEMO_MAX_IMAGES_PER_NOTE} files per note`);
       return;
@@ -125,7 +127,7 @@ export default function MemoNoteComposer({ labels, onSave }: MemoNoteComposerPro
       for (const file of list) {
         paths.push(await uploadMemoNoteImage(file, envKeys.API_URL));
       }
-      setImageDataUrls((prev) => [...prev, ...paths]);
+      setUploadStoragePaths((prev) => [...prev, ...paths]);
       if (files.length > remaining) {
         toast.success(`Added ${paths.length} file(s) (limit ${MEMO_MAX_IMAGES_PER_NOTE})`, { id: toastId });
       } else {
@@ -199,9 +201,9 @@ export default function MemoNoteComposer({ labels, onSave }: MemoNoteComposerPro
           onChange={(e) => setBody(e.target.value)}
         />
 
-        {imageDataUrls.length > 0 ? (
+        {uploadStoragePaths.length > 0 ? (
           <div className="mb-2 flex flex-wrap gap-2">
-            {imageDataUrls.map((src, idx) => (
+            {uploadStoragePaths.map((src, idx) => (
               <div key={`${src}-${idx}`} className="relative inline-block max-w-[min(100%,240px)]">
                 {memoAttachmentLooksLikeImage(src) ? (
                   <MemoStoredImage
@@ -227,7 +229,7 @@ export default function MemoNoteComposer({ labels, onSave }: MemoNoteComposerPro
                   aria-label="Remove file"
                   disabled={saving}
                   onMouseDown={(ev) => ev.preventDefault()}
-                  onClick={() => setImageDataUrls((prev) => prev.filter((_, i) => i !== idx))}
+                  onClick={() => setUploadStoragePaths((prev) => prev.filter((_, i) => i !== idx))}
                 >
                   <LucideX className="h-3.5 w-3.5" strokeWidth={2} />
                 </button>

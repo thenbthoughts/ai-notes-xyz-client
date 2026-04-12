@@ -2,6 +2,7 @@ import axiosCustom from '../../../../config/axiosCustom';
 import type { MemoLabel, MemoNote } from './memoTypes';
 
 const MEMO_BASE = '/api/memo/crud';
+const MEMO_FILE_BASE = '/api/memo-file/crud';
 const MEMO_LABEL_BASE = '/api/memo-label/crud';
 
 type ApiMemoDoc = {
@@ -120,7 +121,6 @@ export async function memoAdd(input: {
   labelIds?: string[];
   pinned?: boolean;
   noteColor?: string;
-  imageDataUrls?: string[];
 }): Promise<MemoNote> {
   const { data } = await axiosCustom.post<{ doc: ApiMemoDoc }>(`${MEMO_BASE}/memoAdd`, input);
   return mapDoc(data.doc);
@@ -136,16 +136,23 @@ export async function memoEdit(
     archived: boolean;
     trashed: boolean;
     noteColor: string;
-    imageDataUrls: string[];
   }>,
 ): Promise<void> {
   await axiosCustom.post(`${MEMO_BASE}/memoEdit`, { _id: id, ...patch });
 }
 
-/** Deletes uploaded `ai-notes-xyz/...` files no longer attached to a memo. Call after a successful {@link memoEdit} that removed paths from `imageDataUrls`. */
-export async function memoDeleteStoredImagePaths(paths: string[]): Promise<void> {
-  if (paths.length === 0) return;
-  await axiosCustom.post(`${MEMO_BASE}/memoDeleteStoredImagePaths`, { paths });
+/** Register an uploaded storage path (from `POST /api/uploads/crud/uploadFile`) for a memo. */
+export async function memoFileAdd(memoNoteId: string, filePath: string): Promise<void> {
+  await axiosCustom.post(`${MEMO_FILE_BASE}/memoFileAdd`, { memoNoteId, filePath });
+}
+
+export async function memoFileDelete(memoNoteId: string, filePath: string): Promise<void> {
+  await axiosCustom.post(`${MEMO_FILE_BASE}/memoFileDelete`, { memoNoteId, filePath });
+}
+
+/** Clears memoFiles + storage + legacy `imageDataUrls` on the memo document. */
+export async function memoClearAllImages(memoNoteId: string): Promise<void> {
+  await axiosCustom.post(`${MEMO_FILE_BASE}/memoClearAllImages`, { memoNoteId });
 }
 
 export async function memoDelete(id: string): Promise<void> {

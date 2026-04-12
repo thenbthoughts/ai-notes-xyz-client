@@ -59,6 +59,8 @@ export default function MemoPage() {
     addNote,
     updateNote,
     appendNoteImages,
+    removeMemoImage,
+    clearMemoImages,
     togglePin,
     archiveNote,
     trashNote,
@@ -256,6 +258,8 @@ export default function MemoPage() {
                       viewMode={viewMode}
                       variant="default"
                       onChange={(id, patch) => void updateNote(id, patch)}
+                      onRemoveMemoImage={(id, url) => void removeMemoImage(id, url)}
+                      onClearMemoImages={(id) => void clearMemoImages(id)}
                       onAppendMemoImages={(id, paths) => appendNoteImages(id, paths)}
                       onTogglePin={(id) => void togglePin(id)}
                       onArchive={(id) => void archiveNote(id)}
@@ -283,6 +287,8 @@ export default function MemoPage() {
                       viewMode={viewMode}
                       variant="default"
                       onChange={(id, patch) => void updateNote(id, patch)}
+                      onRemoveMemoImage={(id, url) => void removeMemoImage(id, url)}
+                      onClearMemoImages={(id) => void clearMemoImages(id)}
                       onAppendMemoImages={(id, paths) => appendNoteImages(id, paths)}
                       onTogglePin={(id) => void togglePin(id)}
                       onArchive={(id) => void archiveNote(id)}

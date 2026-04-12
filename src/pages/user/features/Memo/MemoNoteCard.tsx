@@ -33,10 +33,11 @@ type MemoNoteCardProps = {
   labels: MemoLabel[];
   viewMode: 'grid' | 'list';
   variant: 'default' | 'bin' | 'archive';
-  onChange: (
-    id: string,
-    patch: Partial<Pick<MemoNote, 'title' | 'body' | 'labelIds' | 'imageDataUrls' | 'noteColor'>>,
-  ) => void;
+  onChange: (id: string, patch: Partial<Pick<MemoNote, 'title' | 'body' | 'labelIds' | 'noteColor'>>) => void;
+  /** Remove one image (storage path or legacy `data:image/...`). */
+  onRemoveMemoImage?: (id: string, imageUrlOrPath: string) => void | Promise<void>;
+  /** Clear all images for the note (memoFiles + legacy). */
+  onClearMemoImages?: (id: string) => void | Promise<void>;
   onTogglePin: (id: string) => void;
   onArchive: (id: string) => void;
   onTrash: (id: string) => void;
@@ -73,7 +74,7 @@ type OverflowMenuProps = {
   note: MemoNote;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  onChange: MemoNoteCardProps['onChange'];
+  onClearMemoImages?: MemoNoteCardProps['onClearMemoImages'];
   onArchive: MemoNoteCardProps['onArchive'];
   onTrash: MemoNoteCardProps['onTrash'];
   onRestore?: MemoNoteCardProps['onRestore'];
@@ -86,7 +87,7 @@ function MemoCardOverflowMenu({
   note,
   open,
   setOpen,
-  onChange,
+  onClearMemoImages,
   onArchive,
   onTrash,
   onRestore,
@@ -112,12 +113,12 @@ function MemoCardOverflowMenu({
           >
             {variant === 'default' && (
               <>
-                {note.imageDataUrls.length > 0 ? (
+                {note.imageDataUrls.length > 0 && onClearMemoImages ? (
                   <button
                     type="button"
                     className={menuItem}
                     onClick={() => {
-                      onChange(note.id, { imageDataUrls: [] });
+                      void onClearMemoImages(note.id);
                       setOpen(false);
                     }}
                   >
@@ -205,6 +206,8 @@ type EditableBodyProps = {
   onTogglePin: MemoNoteCardProps['onTogglePin'];
   onArchive: MemoNoteCardProps['onArchive'];
   onTrash: MemoNoteCardProps['onTrash'];
+  onRemoveMemoImage?: MemoNoteCardProps['onRemoveMemoImage'];
+  onClearMemoImages?: MemoNoteCardProps['onClearMemoImages'];
   uploadImagesForCard: (files: File[]) => void;
 };
 
@@ -222,6 +225,8 @@ function MemoCardEditableBody({
   onTogglePin,
   onArchive,
   onTrash,
+  onRemoveMemoImage,
+  onClearMemoImages,
   uploadImagesForCard,
 }: EditableBodyProps) {
   const atImageLimit = note.imageDataUrls.length >= MEMO_MAX_IMAGES_PER_NOTE;
@@ -261,14 +266,14 @@ function MemoCardEditableBody({
               )}
               <button
                 type="button"
-                className="absolute right-0.5 top-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/65"
+                className="absolute right-0.5 top-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/65 disabled:cursor-not-allowed disabled:opacity-40"
                 aria-label="Remove file"
+                disabled={!onRemoveMemoImage}
                 onMouseDown={(ev) => ev.preventDefault()}
-                onClick={() =>
-                  onChange(note.id, {
-                    imageDataUrls: note.imageDataUrls.filter((_, i) => i !== idx),
-                  })
-                }
+                onClick={() => {
+                  const src = note.imageDataUrls[idx];
+                  if (src && onRemoveMemoImage) void onRemoveMemoImage(note.id, src);
+                }}
               >
                 <LucideX className="h-3.5 w-3.5" strokeWidth={2} />
               </button>
@@ -361,7 +366,7 @@ function MemoCardEditableBody({
             note={note}
             open={menuOpen}
             setOpen={setMenuOpen}
-            onChange={onChange}
+            onClearMemoImages={onClearMemoImages}
             onArchive={onArchive}
             onTrash={onTrash}
           />
@@ -417,7 +422,7 @@ type StaticBodyProps = {
   labels: MemoLabel[];
   menuOpen: boolean;
   setMenuOpen: Dispatch<SetStateAction<boolean>>;
-  onChange: MemoNoteCardProps['onChange'];
+  onClearMemoImages?: MemoNoteCardProps['onClearMemoImages'];
   onArchive: MemoNoteCardProps['onArchive'];
   onTrash: MemoNoteCardProps['onTrash'];
   onRestore?: MemoNoteCardProps['onRestore'];
@@ -431,7 +436,7 @@ function MemoCardStaticBody({
   labels,
   menuOpen,
   setMenuOpen,
-  onChange,
+  onClearMemoImages,
   onArchive,
   onTrash,
   onRestore,
@@ -486,7 +491,7 @@ function MemoCardStaticBody({
           note={note}
           open={menuOpen}
           setOpen={setMenuOpen}
-          onChange={onChange}
+          onClearMemoImages={onClearMemoImages}
           onArchive={onArchive}
           onTrash={onTrash}
           onRestore={onRestore}
@@ -504,6 +509,8 @@ export default function MemoNoteCard({
   viewMode,
   variant,
   onChange,
+  onRemoveMemoImage,
+  onClearMemoImages,
   onTogglePin,
   onArchive,
   onTrash,
@@ -540,8 +547,6 @@ export default function MemoNoteCard({
         }
         if (onAppendMemoImages) {
           await onAppendMemoImages(note.id, paths);
-        } else {
-          onChange(note.id, { imageDataUrls: [...current, ...paths] });
         }
         if (files.length > remaining) {
           toast.success(`Added ${paths.length} file(s) (limit ${MEMO_MAX_IMAGES_PER_NOTE})`, { id: tid });
@@ -576,6 +581,8 @@ export default function MemoNoteCard({
             onTogglePin={onTogglePin}
             onArchive={onArchive}
             onTrash={onTrash}
+            onRemoveMemoImage={onRemoveMemoImage}
+            onClearMemoImages={onClearMemoImages}
             uploadImagesForCard={uploadImagesForCard}
           />
         ) : (
@@ -585,7 +592,7 @@ export default function MemoNoteCard({
             labels={labels}
             menuOpen={menuOpen}
             setMenuOpen={setMenuOpen}
-            onChange={onChange}
+            onClearMemoImages={onClearMemoImages}
             onArchive={onArchive}
             onTrash={onTrash}
             onRestore={onRestore}
