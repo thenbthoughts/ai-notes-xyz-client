@@ -360,12 +360,13 @@ const ComponentChatMessageInput = ({
             }
 
             if (newNote.trim().length > 1) {
+                const noteContentSent = newNote;
                 noteLoadingToastId = toast.loading('Adding note...');
 
                 await axiosCustom.post("/api/chat-llm/chat-add/notesAdd", {
                     threadId: threadId,
                     type: "text",
-                    content: newNote,
+                    content: noteContentSent,
                     visibility: 'public',
                     tags: [],
                     imagePathsArr: []
@@ -412,7 +413,7 @@ const ComponentChatMessageInput = ({
                     setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
                 }
 
-                setNewNote("");
+                setNewNote((prev) => (prev === noteContentSent ? '' : prev));
             }
         } catch (error) {
             console.error(error);
