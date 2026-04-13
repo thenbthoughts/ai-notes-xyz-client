@@ -4,8 +4,14 @@ import toast from "react-hot-toast";
 import { useEffect } from "react";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import { useAudioRecorder } from 'react-audio-voice-recorder';
-import { LucideMic, LucidePause, LucidePlay, LucideMicOff } from "lucide-react";
+import { LucideMic, LucidePause, LucidePlay, LucideSquare } from "lucide-react";
 import { uploadFeatureFile } from "../../../../../../utils/featureFileUpload";
+
+const btnIdle =
+    'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200/90 bg-white text-zinc-600 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/40';
+
+const btnRecording =
+    'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-rose-200/90 bg-rose-50 text-rose-700 shadow-sm transition-colors hover:border-rose-300 hover:bg-rose-100/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40';
 
 const ComponentRecordAudio = ({
     setRefreshParentRandomNum,
@@ -152,19 +158,15 @@ const ComponentRecordAudio = ({
 
             {!isRecording && (
                 <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                    style={{
-                        height: '40px',
-                    }}
+                    type="button"
+                    title="Record voice"
+                    aria-label="Record voice"
+                    className={btnIdle}
                     onClick={() => {
                         startRecording();
                     }}
                 >
-                    <LucideMic
-                        style={{
-                            height: '20px',
-                        }}
-                    />
+                    <LucideMic className="h-4 w-4" strokeWidth={2} />
                 </button>
             )}
 
@@ -172,53 +174,41 @@ const ComponentRecordAudio = ({
                 <Fragment>
                     {isPaused && (
                         <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                            style={{
-                                height: '40px',
-                            }}
+                            type="button"
+                            title="Resume recording"
+                            aria-label="Resume recording"
+                            className={btnRecording}
                             onClick={() => {
                                 togglePauseResume();
                             }}
                         >
-                            <LucidePlay
-                                style={{
-                                    height: '20px',
-                                }}
-                            />
+                            <LucidePlay className="h-4 w-4" strokeWidth={2} />
                         </button>
                     )}
                     {!isPaused && (
                         <Fragment>
                             <button
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                                style={{
-                                    height: '40px',
-                                }}
+                                type="button"
+                                title="Stop and send recording"
+                                aria-label="Stop and send recording"
+                                className={btnRecording}
                                 onClick={() => {
                                     stopRecording();
                                 }}
                             >
-                                <LucideMicOff
-                                    style={{
-                                        height: '20px',
-                                    }}
-                                />
+                                <LucideSquare className="h-3.5 w-3.5 fill-current" strokeWidth={0} />
                             </button>
 
                             <button
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                                style={{
-                                    height: '40px',
-                                }}
+                                type="button"
+                                title="Pause recording"
+                                aria-label="Pause recording"
+                                className={btnRecording}
                                 onClick={() => {
                                     togglePauseResume();
                                 }}
                             >
-                                <LucidePause
-                                    style={{
-                                        height: '20px',
-                                    }}
-                                />
+                                <LucidePause className="h-4 w-4" strokeWidth={2} />
                             </button>
                         </Fragment>
                     )}

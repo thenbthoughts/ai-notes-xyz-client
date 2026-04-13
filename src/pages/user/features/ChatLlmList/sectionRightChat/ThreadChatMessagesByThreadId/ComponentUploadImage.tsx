@@ -1,7 +1,7 @@
 import { Fragment } from "react/jsx-runtime";
 import toast from "react-hot-toast";
 import { ChangeEvent, useRef } from "react";
-import { LucideCamera } from "lucide-react";
+import { LucideImagePlus } from "lucide-react";
 import envKeys from "../../../../../../config/envKeys";
 import { uploadFeatureFile } from "../../../../../../utils/featureFileUpload";
 
@@ -61,21 +61,17 @@ const ComponentUploadImage = ({
     return (
         <Fragment>
             <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                style={{
-                    height: '40px'
-                }}
+                type="button"
+                title="Add image"
+                aria-label="Add image"
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200/90 bg-white text-zinc-600 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/40"
                 onClick={() => {
                     if (fileInputRef?.current) {
                         fileInputRef.current.click()
                     }
                 }}
             >
-                <LucideCamera
-                    style={{
-                        height: '20px',
-                    }}
-                />
+                <LucideImagePlus className="h-4 w-4" strokeWidth={2} />
             </button>
             <input
                 type="file"
