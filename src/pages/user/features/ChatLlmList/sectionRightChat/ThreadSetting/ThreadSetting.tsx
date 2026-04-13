@@ -125,6 +125,7 @@ const ThreadSetting = ({
                 error: '',
             });
             toast.success('Chat thread updated successfully!');
+            closeModal();
         } catch (error) {
             console.error(error);
             toast.error('An error occurred while trying to edit the chat thread. Please try again later.')
