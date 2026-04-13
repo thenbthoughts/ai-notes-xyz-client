@@ -296,6 +296,7 @@ const ComponentChatMessageInput = ({
 
     const handleAddNote = async () => {
         setIsSubmitting(true);
+        let noteLoadingToastId: string | undefined;
 
         try {
             if (files.length > 0) {
@@ -344,7 +345,7 @@ const ComponentChatMessageInput = ({
             }
 
             if (newNote.trim().length > 1) {
-                const toastLoadingId = toast.loading('Adding note...');
+                noteLoadingToastId = toast.loading('Adding note...');
 
                 await axiosCustom.post("/api/chat-llm/chat-add/notesAdd", {
                     threadId: threadId,
@@ -381,7 +382,7 @@ const ComponentChatMessageInput = ({
                     await axiosCustom.post("/api/chat-llm/add-auto-next-message/answerMachine", {
                         threadId: threadId,
                     });
-                    toast.dismiss(toastLoadingId);
+                    toast.dismiss(noteLoadingToastId);
                     toast.success('Answer Machine started processing...');
                     // Don't refresh immediately - polling will handle it when complete
                 } else {
@@ -389,7 +390,7 @@ const ComponentChatMessageInput = ({
                     await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
                         threadId: threadId,
                     });
-                    toast.dismiss(toastLoadingId);
+                    toast.dismiss(noteLoadingToastId);
                     toast.success('Generation completed!');
                     setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
                 }
@@ -398,6 +399,7 @@ const ComponentChatMessageInput = ({
             }
         } catch (error) {
             console.error(error);
+            if (noteLoadingToastId) toast.dismiss(noteLoadingToastId);
             toast.error('Error adding note. Please try again.');
         } finally {
             setIsSubmitting(false);
@@ -441,6 +443,7 @@ const ComponentChatMessageInput = ({
 
         } catch (error) {
             console.error(error);
+            toast.dismiss(toastLoadingId);
             toast.error('Error regenerating response. Please try again.');
         } finally {
             setIsSubmitting(false);
