@@ -43,15 +43,17 @@ export const chatLlmThreadAddAxios = async () => {
 
 export const handleAutoSelectContext = async ({
     threadId,
+    signal,
 }: {
     threadId: string;
+    signal?: AbortSignal;
 }) => {
     const startTime = new Date().valueOf();
     const toastLoadingId = toast.loading('Auto selecting context. It may take around 15 seconds...');
     try {
         await axiosCustom.post("/api/chat-llm/threads-context-crud/contextSelectAutoContext", {
             threadId: threadId,
-        });
+        }, { signal });
 
         const endTime = new Date().valueOf();
         const duration = endTime - startTime;
@@ -73,8 +75,10 @@ export const handleAutoSelectContext = async ({
 
 export const handleAutoSelectContextFirstMessage = async ({
     threadId,
+    signal,
 }: {
     threadId: string;
+    signal?: AbortSignal;
 }) => {
     
     try {
@@ -85,7 +89,8 @@ export const handleAutoSelectContextFirstMessage = async ({
         const responseThread = await axiosCustom.post(
             '/api/chat-llm/threads-crud/threadsGet', {
                 threadId: threadId,
-            }
+            },
+            { signal },
         );
         if (responseThread.data && responseThread.data.docs) {
             if (responseThread.data.docs.length > 0) {
@@ -116,7 +121,7 @@ export const handleAutoSelectContextFirstMessage = async ({
             },
         } as AxiosRequestConfig;
 
-        const response = await axiosCustom.request(config);
+        const response = await axiosCustom.request({ ...config, signal });
         const notes = response.data.docs;
 
         console.log('notes', notes.length);
@@ -124,6 +129,7 @@ export const handleAutoSelectContextFirstMessage = async ({
         // select context
         await handleAutoSelectContext({
             threadId: threadId,
+            signal,
         })
 
         toast.success('Context selected successfully!');

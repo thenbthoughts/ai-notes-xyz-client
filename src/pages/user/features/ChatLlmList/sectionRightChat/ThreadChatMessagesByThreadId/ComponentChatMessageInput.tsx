@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideRepeat, LucideSend, LucideSidebar, LucideVideo, LucideX } from 'lucide-react';
+import axios from 'axios';
+import { LucideAudioLines, LucideDownload, LucideFile, LucideFileText, LucideLoader2, LucideRepeat, LucideSend, LucideSidebar, LucideSquare, LucideVideo, LucideX } from 'lucide-react';
 import envKeys from '../../../../../../config/envKeys.tsx';
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
 
@@ -264,6 +265,10 @@ Safety:
 - Do not invent facts; if unsure, say so briefly.
 `.trim();
 
+function isSubmitRequestCancelled(err: unknown): boolean {
+    return axios.isCancel(err) || (err as { code?: string })?.code === 'ERR_CANCELED';
+}
+
 const ComponentChatMessageInput = ({
     setRefreshParentRandomNum,
     threadId,
@@ -279,6 +284,7 @@ const ComponentChatMessageInput = ({
     const [files, setFiles] = useState<string[]>([]);
     const [timer, setTimer] = useState(0);
     const navigate = useNavigate();
+    const submitAbortRef = useRef<AbortController | null>(null);
 
     // Polling effect - refresh every 1 second while generating
     useEffect(() => {
@@ -294,7 +300,16 @@ const ComponentChatMessageInput = ({
         }
     }, [timer, isSubmitting]);
 
+    const cancelOngoingSubmit = () => {
+        submitAbortRef.current?.abort();
+    };
+
     const handleAddNote = async () => {
+        submitAbortRef.current?.abort();
+        const ac = new AbortController();
+        submitAbortRef.current = ac;
+        const { signal } = ac;
+
         setIsSubmitting(true);
         let noteLoadingToastId: string | undefined;
 
@@ -332,7 +347,7 @@ const ComponentChatMessageInput = ({
                                 fileUrl: file,
                                 fileUrlArr: [],
                                 imagePathsArr: []
-                            });
+                            }, { signal });
                         } catch (error) {
                             console.error(error);
                             toast.error('Error adding file. Please try again.');
@@ -354,13 +369,14 @@ const ComponentChatMessageInput = ({
                     visibility: 'public',
                     tags: [],
                     imagePathsArr: []
-                });
+                }, { signal });
 
                 setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
 
                 // select auto context first message
                 await handleAutoSelectContextFirstMessage({
                     threadId: threadId,
+                    signal,
                 });
 
                 setTimeout(() => {
@@ -374,14 +390,15 @@ const ComponentChatMessageInput = ({
                 const responseThread = await axiosCustom.post(
                     '/api/chat-llm/threads-crud/threadsGet', {
                     threadId: threadId,
-                }
+                },
+                    { signal },
                 );
                 const threadInfo = responseThread.data.docs[0];
                 if (threadInfo.answerEngine === 'answerMachine') {
                     // answerMachine - processing happens asynchronously, polling will show status
                     await axiosCustom.post("/api/chat-llm/add-auto-next-message/answerMachine", {
                         threadId: threadId,
-                    });
+                    }, { signal });
                     toast.dismiss(noteLoadingToastId);
                     toast.success('Answer Machine started processing...');
                     // Don't refresh immediately - polling will handle it when complete
@@ -389,7 +406,7 @@ const ComponentChatMessageInput = ({
                     // Start streaming generation
                     await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
                         threadId: threadId,
-                    });
+                    }, { signal });
                     toast.dismiss(noteLoadingToastId);
                     toast.success('Generation completed!');
                     setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
@@ -400,13 +417,26 @@ const ComponentChatMessageInput = ({
         } catch (error) {
             console.error(error);
             if (noteLoadingToastId) toast.dismiss(noteLoadingToastId);
-            toast.error('Error adding note. Please try again.');
+            if (isSubmitRequestCancelled(error)) {
+                toast.success('Stopped.');
+                setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
+            } else {
+                toast.error('Error adding note. Please try again.');
+            }
         } finally {
+            if (submitAbortRef.current === ac) {
+                submitAbortRef.current = null;
+            }
             setIsSubmitting(false);
         }
     };
 
     const regenerateResponse = async () => {
+        submitAbortRef.current?.abort();
+        const ac = new AbortController();
+        submitAbortRef.current = ac;
+        const { signal } = ac;
+
         let toastLoadingId = toast.loading('Regenerating response...');
         setIsSubmitting(true);
         try {
@@ -421,14 +451,15 @@ const ComponentChatMessageInput = ({
             const responseThread = await axiosCustom.post(
                 '/api/chat-llm/threads-crud/threadsGet', {
                 threadId: threadId,
-            }
+            },
+                { signal },
             );
             const threadInfo = responseThread.data.docs[0];
             if (threadInfo.answerEngine === 'answerMachine') {
                 // answerMachine - processing happens asynchronously, polling will show status
                 await axiosCustom.post("/api/chat-llm/add-auto-next-message/answerMachine", {
                     threadId: threadId,
-                });
+                }, { signal });
                 toast.dismiss(toastLoadingId);
                 toast.success('Answer Machine started processing...');
                 // Don't refresh immediately - polling will handle it when complete
@@ -436,7 +467,7 @@ const ComponentChatMessageInput = ({
                 // Start streaming generation
                 await axiosCustom.post("/api/chat-llm/add-auto-next-message/notesAddAutoNextMessage", {
                     threadId: threadId,
-                });
+                }, { signal });
                 toast.dismiss(toastLoadingId);
                 toast.success('Regeneration completed!');
             }
@@ -444,8 +475,15 @@ const ComponentChatMessageInput = ({
         } catch (error) {
             console.error(error);
             toast.dismiss(toastLoadingId);
-            toast.error('Error regenerating response. Please try again.');
+            if (isSubmitRequestCancelled(error)) {
+                toast.success('Stopped.');
+            } else {
+                toast.error('Error regenerating response. Please try again.');
+            }
         } finally {
+            if (submitAbortRef.current === ac) {
+                submitAbortRef.current = null;
+            }
             setIsSubmitting(false);
             setRefreshParentRandomNum(Math.floor(Math.random() * 1_000_000));
         }
@@ -505,6 +543,17 @@ const ComponentChatMessageInput = ({
                                 <LucideSend className="h-4 w-4" strokeWidth={2} />
                             )}
                         </button>
+
+                        {isSubmitting && (
+                            <button
+                                type="button"
+                                className="inline-flex h-9 shrink-0 items-center justify-center rounded-xl border border-red-200/90 bg-red-50 px-3 text-xs font-medium text-red-800 shadow-sm transition-colors hover:bg-red-100"
+                                onClick={cancelOngoingSubmit}
+                                title="Stop generation"
+                            >
+                                <LucideSquare className="h-3.5 w-3.5 fill-current" strokeWidth={0} />
+                            </button>
+                        )}
 
                         {/* file */}
                         <ComponentUploadFile
