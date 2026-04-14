@@ -4,8 +4,6 @@ import axiosCustom from '../../../config/axiosCustom.ts';
 import toast from 'react-hot-toast';
 import { Plus, RefreshCw } from 'lucide-react';
 
-const DISPLAY_SLOTS = 5;
-
 interface IKeyword {
     _id: string;
     username: string;
@@ -80,7 +78,8 @@ const CommonComponentAiKeyword = ({
         return withMeta ?? keywords[0];
     }, [keywords]);
 
-    const slotItems = useMemo(() => {
+    /** Unique keywords by trimmed text (API may return duplicates); no display cap. */
+    const displayKeywords = useMemo(() => {
         const seen = new Set<string>();
         const ordered: IKeyword[] = [];
         for (const k of keywords) {
@@ -88,13 +87,8 @@ const CommonComponentAiKeyword = ({
             if (!t || seen.has(t)) continue;
             seen.add(t);
             ordered.push(k);
-            if (ordered.length >= DISPLAY_SLOTS) break;
         }
-        const slots: (IKeyword | null)[] = [];
-        for (let i = 0; i < DISPLAY_SLOTS; i++) {
-            slots.push(ordered[i] ?? null);
-        }
-        return slots;
+        return ordered;
     }, [keywords]);
 
     const submitAdd = async () => {
@@ -186,25 +180,16 @@ const CommonComponentAiKeyword = ({
                 <p className="py-2 text-center font-mono text-[10px] text-zinc-500">Loading…</p>
             )}
 
-            {!loading && (
-                <ul className="grid grid-cols-1 gap-1 sm:grid-cols-5" role="list">
-                    {slotItems.map((item, index) => (
+            {!loading && displayKeywords.length > 0 && (
+                <ul className="flex flex-wrap gap-1" role="list">
+                    {displayKeywords.map((item) => (
                         <li
-                            key={item?._id ?? `empty-${index}`}
-                            className={
-                                (item
-                                    ? 'border-indigo-200 bg-indigo-50/50 text-zinc-900'
-                                    : 'border-dashed border-zinc-300 bg-zinc-50/50 text-zinc-400') +
-                                ' flex min-h-[2rem] items-center justify-center rounded-none border px-1.5 py-1 text-center text-[11px] font-medium'
-                            }
+                            key={item._id}
+                            className="max-w-full border border-indigo-200 bg-indigo-50/50 px-1.5 py-0.5 text-[10px] font-medium leading-snug text-zinc-800"
                         >
-                            {item ? (
-                                <span className="line-clamp-2 break-words" title={item.keyword}>
-                                    {item.keyword}
-                                </span>
-                            ) : (
-                                <span className="text-[10px] uppercase tracking-wide">—</span>
-                            )}
+                            <span className="break-words" title={item.keyword}>
+                                {item.keyword}
+                            </span>
                         </li>
                     ))}
                 </ul>
@@ -246,7 +231,7 @@ const CommonComponentAiKeyword = ({
                 )
             )}
 
-            {!loading && keywords.length === 0 && !adding && (
+            {!loading && displayKeywords.length === 0 && !adding && (
                 <p className="py-1 text-center text-[11px] text-zinc-500">No keywords yet. Use Add.</p>
             )}
         </div>
