@@ -113,27 +113,27 @@ const ComponentChatHistory = () => {
     };
 
     const presetBtn =
-        'rounded-sm border border-zinc-200 bg-white px-1.5 py-0.5 text-[10px] font-medium text-zinc-700 hover:bg-zinc-50';
+        'rounded-lg border border-zinc-200/80 bg-white px-1.5 py-0.5 text-[10px] font-medium text-zinc-700 shadow-sm hover:bg-zinc-50';
 
     const renderDateRange = () => (
-        <div className="mb-2 rounded-md border border-zinc-200 bg-zinc-50/80 p-1.5">
-            <div className="mb-1 text-[10px] font-medium text-zinc-600">Date range</div>
+        <div className="mb-2 rounded-xl border border-zinc-200/80 bg-zinc-50/90 p-2 sm:p-2.5">
+            <div className="mb-1.5 text-[10px] font-medium text-zinc-600">Date range</div>
             <input
                 type="date"
-                className="mb-1 block w-full rounded-sm border border-zinc-200 bg-white px-2 py-1 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="mb-1.5 block w-full rounded-lg border border-zinc-200/90 bg-white px-2 py-1.5 text-xs text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                 value={dateRange.startDate ? dateRange.startDate.toISOString().split('T')[0] : ''}
                 onChange={(e) => setDateRange({ ...dateRange, startDate: new Date(e.target.value) })}
             />
             <input
                 type="date"
-                className="mb-1.5 block w-full rounded-sm border border-zinc-200 bg-white px-2 py-1 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="mb-2 block w-full rounded-lg border border-zinc-200/90 bg-white px-2 py-1.5 text-xs text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                 value={dateRange.endDate ? dateRange.endDate.toISOString().split('T')[0] : ''}
                 onChange={(e) => setDateRange({ ...dateRange, endDate: new Date(e.target.value) })}
             />
             <button
                 type="button"
                 onClick={() => setDateRange({ startDate: null, endDate: null })}
-                className="mb-1.5 w-full rounded-sm border border-red-200 bg-red-50 py-1 text-[10px] font-medium text-red-800 hover:bg-red-100"
+                className="mb-2 w-full rounded-lg border border-red-200/80 bg-red-50 py-1.5 text-[10px] font-medium text-red-800 hover:bg-red-100"
             >
                 Clear dates
             </button>
@@ -157,16 +157,16 @@ const ComponentChatHistory = () => {
     );
 
     return (
-        <div className="px-2 py-2 text-zinc-900">
+        <div className="px-2 py-2 text-zinc-900 sm:px-2.5 sm:py-2.5">
             <div className="mb-2 flex items-baseline justify-between gap-2">
-                <h2 className="text-xs font-semibold tracking-tight text-zinc-900">Life events</h2>
-                <span className="text-[9px] font-medium uppercase tracking-wide text-zinc-500">Filters</span>
+                <h2 className="text-xs font-semibold tracking-tight text-zinc-900 sm:text-sm">Life events</h2>
+                <span className="text-[9px] font-medium uppercase tracking-wide text-zinc-500 sm:text-[10px]">Filters</span>
             </div>
 
-            <div className="mb-1.5 flex flex-col gap-1 sm:flex-row">
+            <div className="mb-2 flex flex-col gap-1.5 sm:flex-row sm:flex-wrap sm:gap-2">
                 <button
                     type="button"
-                    className="flex flex-1 items-center justify-center gap-1 rounded-sm border border-emerald-700/30 bg-emerald-600 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-emerald-700"
+                    className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-indigo-600/20 bg-indigo-600 py-2 text-xs font-medium text-white shadow-sm hover:bg-indigo-500 sm:min-w-0 sm:py-1.5"
                     onClick={() => void lifeEventAddAxiosLocal()}
                 >
                     <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
@@ -174,14 +174,14 @@ const ComponentChatHistory = () => {
                 </button>
                 <button
                     type="button"
-                    className="rounded-sm border border-zinc-200 bg-white px-2 py-1.5 text-xs font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
+                    className="rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-xs font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 sm:py-1.5"
                     onClick={clearFilters}
                 >
                     Clear
                 </button>
                 <Link
                     to="/user/life-events?action=category"
-                    className="inline-flex flex-1 items-center justify-center gap-1 rounded-sm border border-zinc-200 bg-white py-1.5 text-xs font-medium text-zinc-800 shadow-sm hover:bg-zinc-50"
+                    className="inline-flex flex-1 items-center justify-center gap-1 rounded-lg border border-zinc-200/80 bg-white py-2 text-xs font-medium text-zinc-800 shadow-sm hover:bg-zinc-50 sm:py-1.5"
                 >
                     <LucideTags className="h-3.5 w-3.5" strokeWidth={2} />
                     Categories
@@ -190,14 +190,14 @@ const ComponentChatHistory = () => {
 
             <div className="relative mb-2">
                 <LucideSearch
-                    className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400"
+                    className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400"
                     strokeWidth={2}
                 />
                 <DebounceInput
                     debounceTimeout={500}
                     type="text"
                     placeholder="Search…"
-                    className="w-full rounded-sm border border-zinc-200 bg-white py-1.5 pl-7 pr-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full rounded-lg border border-zinc-200/90 bg-white py-2 pl-8 pr-2 text-xs text-zinc-900 shadow-sm placeholder:text-zinc-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 sm:py-1.5"
                     onChange={(e) => setSearchTerm(e.target.value)}
                     value={searchTerm}
                 />
@@ -212,8 +212,8 @@ const ComponentChatHistory = () => {
 
             {renderDateRange()}
 
-            <div className="mb-1.5 rounded-md border border-zinc-200 bg-zinc-50/80 px-1.5 py-1.5">
-                <div className="mb-1 text-[10px] font-medium text-zinc-600">Starred</div>
+            <div className="mb-2 rounded-xl border border-zinc-200/80 bg-zinc-50/90 px-2 py-1.5 sm:px-2.5 sm:py-2">
+                <div className="mb-1.5 text-[10px] font-medium text-zinc-600">Starred</div>
                 <div className="flex flex-wrap gap-1">
                     {[
                         { label: 'All', value: '' as const },
@@ -224,10 +224,10 @@ const ComponentChatHistory = () => {
                             key={opt.label}
                             type="button"
                             onClick={() => setIsStar(opt.value)}
-                            className={`rounded-sm border px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                            className={`rounded-lg border px-2 py-1 text-[11px] font-medium shadow-sm transition-colors sm:py-0.5 ${
                                 isStar === opt.value
                                     ? 'border-indigo-600 bg-indigo-600 text-white'
-                                    : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300'
+                                    : 'border-zinc-200/80 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50'
                             }`}
                         >
                             {opt.label}
@@ -236,8 +236,8 @@ const ComponentChatHistory = () => {
                 </div>
             </div>
 
-            <div className="mb-1.5 rounded-md border border-zinc-200 bg-white px-1.5 py-1.5 shadow-sm">
-                <div className="mb-1 text-[10px] font-medium text-zinc-600">Impact</div>
+            <div className="mb-2 rounded-xl border border-zinc-200/80 bg-white px-2 py-1.5 shadow-sm sm:px-2.5 sm:py-2">
+                <div className="mb-1.5 text-[10px] font-medium text-zinc-600">Impact</div>
                 <div className="flex flex-wrap gap-1">
                     {[
                         { label: 'All', value: '' as const },
@@ -251,10 +251,10 @@ const ComponentChatHistory = () => {
                             key={opt.label}
                             type="button"
                             onClick={() => setImpact(opt.value)}
-                            className={`rounded-sm border px-1.5 py-0.5 text-[10px] font-medium ${
+                            className={`rounded-lg border px-1.5 py-1 text-[10px] font-medium shadow-sm sm:py-0.5 ${
                                 impact === opt.value
-                                    ? 'border-emerald-600 bg-emerald-600 text-white'
-                                    : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
+                                    ? 'border-indigo-600 bg-indigo-600 text-white'
+                                    : 'border-zinc-200/80 bg-zinc-50/80 text-zinc-700 hover:bg-zinc-100'
                             }`}
                         >
                             {opt.label}
@@ -263,13 +263,13 @@ const ComponentChatHistory = () => {
                 </div>
             </div>
 
-            <div className="flex items-center gap-2 rounded-sm border border-zinc-200 bg-white px-2 py-1.5">
+            <div className="flex items-center gap-2 rounded-xl border border-zinc-200/80 bg-white px-2 py-2 shadow-sm sm:py-1.5">
                 <input
                     type="checkbox"
                     id="hideDailyDiary"
                     checked={hideDailyDiary}
                     onChange={(e) => setHideDailyDiary(e.target.checked)}
-                    className="h-3.5 w-3.5 rounded-sm border-zinc-300 text-indigo-600 focus:ring-indigo-500"
+                    className="h-3.5 w-3.5 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/25"
                 />
                 <label htmlFor="hideDailyDiary" className="cursor-pointer text-xs text-zinc-700">
                     Hide daily diary
@@ -281,8 +281,8 @@ const ComponentChatHistory = () => {
 
 const ComponentChatHistoryRender = () => {
     return (
-        <div className="border-r border-zinc-200 bg-[#f4f4f5]">
-            <div className="h-[calc(100vh-60px)] overflow-y-auto bg-white">
+        <div className="border-r border-zinc-200/80 bg-zinc-100/50">
+            <div className="h-[calc(100vh-60px)] overflow-y-auto overflow-x-hidden bg-white [scrollbar-width:thin]">
                 <ComponentChatHistory />
             </div>
         </div>
@@ -291,8 +291,8 @@ const ComponentChatHistoryRender = () => {
 
 const ComponentChatHistoryModelRender = () => {
     return (
-        <div className="fixed left-0 top-[60px] z-[1001] w-[min(300px,calc(100%-50px))] border-r border-zinc-200 shadow-lg">
-            <div className="h-[calc(100vh-60px)] overflow-y-auto bg-white">
+        <div className="fixed left-0 top-[60px] z-[1001] w-[min(320px,calc(100vw-50px))] border-r border-zinc-200/80 bg-white shadow-xl">
+            <div className="h-[calc(100vh-60px)] overflow-y-auto overflow-x-hidden [scrollbar-width:thin]">
                 <ComponentChatHistory />
             </div>
         </div>

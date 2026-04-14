@@ -42,17 +42,16 @@ const ScheduleTimeArr = ({
 
     return (
         <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">Schedule Times</label>
+            <label className="mb-2 block text-sm font-medium text-zinc-800 sm:mb-3">Schedule Times</label>
 
             {/* Display existing schedule times */}
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="mb-3 flex flex-wrap gap-1.5 sm:mb-4 sm:gap-2">
                 {scheduleTimeArr.map((scheduleTime, idx) => (
-                    <span key={idx} className="inline-flex items-center bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-sm shadow-sm border border-blue-200">
-                        {formatScheduleTimeLocalDisplay(scheduleTime)}
+                    <span key={idx} className="inline-flex max-w-full items-center gap-0.5 rounded-lg border border-indigo-200/70 bg-indigo-50/90 px-2 py-0.5 text-xs font-medium text-indigo-950 shadow-sm sm:px-2.5 sm:py-1">
+                        <span className="min-w-0 truncate">{formatScheduleTimeLocalDisplay(scheduleTime)}</span>
                         <button
                             type="button"
-                            className="ml-1 text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 rounded-sm px-1"
-                            style={{ fontSize: '1rem', lineHeight: 1, marginLeft: 4 }}
+                            className="ml-0.5 shrink-0 rounded px-1 text-base leading-none text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-400/40 sm:ml-1"
                             onClick={() => {
                                 setScheduleTimeArr(scheduleTimeArr.filter((_, i) => i !== idx));
                             }}
@@ -65,14 +64,14 @@ const ScheduleTimeArr = ({
             </div>
 
             {/* Date, Time, Timezone selector */}
-            <div className="bg-gray-50 border border-gray-200 rounded-sm p-4 space-y-4">
+            <div className="space-y-3 rounded-xl border border-zinc-200/80 bg-zinc-50/90 p-3 sm:space-y-4 sm:p-4">
                 {/* Date and Time */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Date & Time</label>
+                    <label className="mb-1.5 block text-sm font-medium text-zinc-700 sm:mb-2">Date & Time</label>
                     <input
                         type='datetime-local'
                         value={scheduleTimeInput || ''}
-                        className="w-full border border-gray-300 rounded-sm shadow-sm p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                        className="w-full rounded-lg border border-zinc-200 bg-white p-2 text-sm text-zinc-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                         onChange={e => setScheduleTimeInput(e.target.value)}
                     />
                 </div>
@@ -80,7 +79,7 @@ const ScheduleTimeArr = ({
                 {/* Add Schedule Button */}
                 <button
                     type="button"
-                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition font-medium"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 sm:py-2.5"
                     onClick={() => {
                         if (scheduleTimeInput && scheduleTimeInput.trim() !== '') {
                             // datetime-local is interpreted as local wall time; store UTC ISO on the server
@@ -98,7 +97,7 @@ const ScheduleTimeArr = ({
                     }}
                     aria-label="Add schedule time"
                 >
-                    <LucidePlus className="w-4 h-4 inline-block mr-2" />
+                    <LucidePlus className="h-4 w-4 shrink-0" strokeWidth={2} />
                     Schedule Time
                 </button>
             </div>
@@ -201,17 +200,16 @@ const CronExpressionArr = ({
 
     return (
         <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">Cron Expressions</label>
+            <label className="mb-2 block text-sm font-medium text-zinc-800 sm:mb-3">Cron Expressions</label>
 
             {/* Display existing cron expressions */}
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="mb-3 flex flex-wrap gap-1.5 sm:mb-4 sm:gap-2">
                 {cronExpressionArr.map((cronExpr, idx) => (
-                    <span key={idx} className="inline-flex items-center bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-sm shadow-sm border border-green-200">
-                        {cronExpr}
+                    <span key={idx} className="inline-flex max-w-full items-center gap-0.5 rounded-lg border border-zinc-200/80 bg-white px-2 py-0.5 font-mono text-xs font-medium text-zinc-800 shadow-sm sm:px-2.5 sm:py-1">
+                        <span className="min-w-0 break-all">{cronExpr}</span>
                         <button
                             type="button"
-                            className="ml-1 text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 rounded-sm px-1"
-                            style={{ fontSize: '1rem', lineHeight: 1, marginLeft: 4 }}
+                            className="ml-0.5 shrink-0 rounded px-1 text-base leading-none text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-400/40 sm:ml-1"
                             onClick={() => {
                                 setCronExpressionArr(cronExpressionArr.filter((_, i) => i !== idx));
                             }}
@@ -224,21 +222,21 @@ const CronExpressionArr = ({
             </div>
 
             {/* Cron expression input with builder */}
-            <div className="bg-gray-50 border border-gray-200 rounded-sm p-4 space-y-4">
+            <div className="space-y-3 rounded-xl border border-zinc-200/80 bg-zinc-50/90 p-3 sm:space-y-4 sm:p-4">
                 {/* Manual Cron Expression Input */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Manual Cron Expression</label>
-                    <div className="flex gap-2">
+                    <label className="mb-1.5 block text-sm font-medium text-zinc-700 sm:mb-2">Manual Cron Expression</label>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
                         <input
                             type="text"
                             value={cronExpressionInput || ''}
-                            className="flex-1 border border-gray-300 rounded-sm shadow-sm p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                            className="min-w-0 flex-1 rounded-lg border border-zinc-200 bg-white p-2 text-sm text-zinc-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                             onChange={e => setCronExpressionInput(e.target.value)}
                             placeholder="Enter cron expression (e.g., 0 9 * * 1-5)"
                         />
                         <button
                             type="button"
-                            className="px-4 py-2 bg-green-500 text-white rounded-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition"
+                            className="w-full shrink-0 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 sm:w-auto"
                             onClick={() => {
                                 if (cronExpressionInput && cronExpressionInput.trim() !== '') {
                                     const newCronExpr = cronExpressionInput.trim();
@@ -258,45 +256,45 @@ const CronExpressionArr = ({
                             Add
                         </button>
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="mt-1 text-[11px] leading-snug text-zinc-500 sm:text-xs">
                         Examples: "0 9 * * 1-5" (weekdays at 9am), "0 0 * * 0" (Sundays at midnight)
                     </div>
                 </div>
 
                 {/* OR Divider */}
                 <div className="flex items-center">
-                    <div className="flex-1 border-t border-gray-300"></div>
-                    <div className="px-3 text-sm text-gray-500 bg-gray-50">OR</div>
-                    <div className="flex-1 border-t border-gray-300"></div>
+                    <div className="flex-1 border-t border-zinc-200/80"></div>
+                    <div className="bg-zinc-50/90 px-2 text-xs text-zinc-500 sm:px-3 sm:text-sm">OR</div>
+                    <div className="flex-1 border-t border-zinc-200/80"></div>
                 </div>
 
                 {/* Cron Builder Toggle */}
                 <button
                     type="button"
-                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition font-medium"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-indigo-700 shadow-sm ring-1 ring-inset ring-zinc-200/80 transition hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/25"
                     onClick={() => setShowCronBuilder(!showCronBuilder)}
                 >
-                    <LucidePlus className="w-4 h-4 inline-block mr-2" />
+                    <LucidePlus className="h-4 w-4 shrink-0" strokeWidth={2} />
                     {showCronBuilder ? 'Hide' : 'Use'} Dynamic Cron Builder
                 </button>
 
                 {/* Dynamic Cron Builder */}
                 {showCronBuilder && (
-                    <div className="border border-gray-200 rounded-sm p-4 bg-white">
-                        <h4 className="font-medium mb-4 text-gray-900">Dynamic Cron Expression Builder</h4>
+                    <div className="rounded-xl border border-zinc-200/80 bg-white p-3 sm:p-4">
+                        <h4 className="mb-3 text-sm font-semibold text-zinc-900 sm:mb-4 sm:text-base">Dynamic Cron Expression Builder</h4>
 
                         {/* Type Selector */}
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Schedule Type</label>
-                            <div className="grid grid-cols-4 gap-2">
+                            <label className="mb-1.5 block text-sm font-medium text-zinc-700 sm:mb-2">Schedule Type</label>
+                            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                                 {['hour', 'daily', 'weekly', 'monthly'].map((type) => (
                                     <button
                                         key={type}
                                         type="button"
                                         onClick={() => setCronBuilder({ ...cronBuilder, type })}
-                                        className={`px-3 py-2 text-sm rounded-sm border ${cronBuilder.type === type
-                                            ? 'bg-blue-600 text-white border-blue-600'
-                                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                        className={`rounded-lg border px-2 py-2 text-xs font-medium sm:px-3 sm:text-sm ${cronBuilder.type === type
+                                            ? 'border-indigo-600 bg-indigo-600 text-white'
+                                            : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
                                             }`}
                                     >
                                         {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -309,7 +307,7 @@ const CronExpressionArr = ({
                         <div className="mb-4">
                             {cronBuilder.type === 'hour' && (
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Every N Hours</label>
+                                    <label className="block text-sm font-medium text-zinc-700 mb-2">Every N Hours</label>
                                     <div className="flex items-center gap-2">
                                         <input
                                             type="number"
@@ -317,21 +315,21 @@ const CronExpressionArr = ({
                                             max="23"
                                             value={cronBuilder.hourInterval}
                                             onChange={(e) => setCronBuilder({ ...cronBuilder, hourInterval: parseInt(e.target.value) || 1 })}
-                                            className="w-20 px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-20 rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:px-3 sm:py-2"
                                         />
-                                        <span className="text-sm text-gray-600">hour(s)</span>
+                                        <span className="text-sm text-zinc-600">hour(s)</span>
                                     </div>
                                 </div>
                             )}
 
                             {cronBuilder.type === 'daily' && (
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                                    <label className="block text-sm font-medium text-zinc-700 mb-2">Time</label>
                                     <input
                                         type="time"
                                         value={cronBuilder.dailyTime}
                                         onChange={(e) => setCronBuilder({ ...cronBuilder, dailyTime: e.target.value })}
-                                        className="px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:px-3 sm:py-2"
                                     />
                                 </div>
                             )}
@@ -339,26 +337,26 @@ const CronExpressionArr = ({
                             {cronBuilder.type === 'weekly' && (
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                                        <label className="block text-sm font-medium text-zinc-700 mb-2">Time</label>
                                         <input
                                             type="time"
                                             value={cronBuilder.weeklyTime}
                                             onChange={(e) => setCronBuilder({ ...cronBuilder, weeklyTime: e.target.value })}
-                                            className="px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:px-3 sm:py-2"
                                         />
                                     </div>
                                     
                                     {/* Weekday Selection */}
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Days of Week</label>
+                                        <label className="block text-sm font-medium text-zinc-700 mb-2">Days of Week</label>
                                         <div className="space-y-2">
-                                            <div className="flex gap-2">
+                                            <div className="flex flex-wrap gap-2">
                                                 <button
                                                     type="button"
                                                     onClick={() => setCronBuilder({ ...cronBuilder, weeklyType: 'all', specificWeekdays: [] })}
-                                                    className={`px-3 py-2 text-sm rounded-sm border ${cronBuilder.weeklyType === 'all'
-                                                        ? 'bg-blue-600 text-white border-blue-600'
-                                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                    className={`rounded-lg border px-2 py-2 text-xs font-medium sm:px-3 sm:text-sm ${cronBuilder.weeklyType === 'all'
+                                                        ? 'border-indigo-600 bg-indigo-600 text-white'
+                                                        : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
                                                         }`}
                                                 >
                                                     All Days
@@ -366,9 +364,9 @@ const CronExpressionArr = ({
                                                 <button
                                                     type="button"
                                                     onClick={() => setCronBuilder({ ...cronBuilder, weeklyType: 'specific' })}
-                                                    className={`px-3 py-2 text-sm rounded-sm border ${cronBuilder.weeklyType === 'specific'
-                                                        ? 'bg-blue-600 text-white border-blue-600'
-                                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                    className={`rounded-lg border px-2 py-2 text-xs font-medium sm:px-3 sm:text-sm ${cronBuilder.weeklyType === 'specific'
+                                                        ? 'border-indigo-600 bg-indigo-600 text-white'
+                                                        : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
                                                         }`}
                                                 >
                                                     Specific Days
@@ -377,7 +375,7 @@ const CronExpressionArr = ({
                                             
                                             {cronBuilder.weeklyType === 'specific' && (
                                                 <div>
-                                                    <div className="grid grid-cols-4 gap-2 mt-2">
+                                                    <div className="mt-2 grid grid-cols-4 gap-1 sm:gap-2">
                                                         {[
                                                             { num: 0, name: 'Sun' }, { num: 1, name: 'Mon' }, { num: 2, name: 'Tue' }, { num: 3, name: 'Wed' },
                                                             { num: 4, name: 'Thu' }, { num: 5, name: 'Fri' }, { num: 6, name: 'Sat' }
@@ -392,9 +390,9 @@ const CronExpressionArr = ({
                                                                         : [...cronBuilder.specificWeekdays, day.num].sort((a, b) => a - b);
                                                                     setCronBuilder({ ...cronBuilder, specificWeekdays: newWeekdays });
                                                                 }}
-                                                                className={`px-2 py-1 text-xs rounded-sm border ${cronBuilder.specificWeekdays.includes(day.num)
-                                                                    ? 'bg-green-600 text-white border-green-600'
-                                                                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                                className={`px-2 py-1 text-xs rounded-lg border ${cronBuilder.specificWeekdays.includes(day.num)
+                                                                    ? 'border-indigo-600 bg-indigo-600 text-white'
+                                                                    : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
                                                                     }`}
                                                             >
                                                                 {day.name}
@@ -402,7 +400,7 @@ const CronExpressionArr = ({
                                                         ))}
                                                     </div>
                                                     {cronBuilder.specificWeekdays.length === 0 && (
-                                                        <div className="text-xs text-amber-600 mt-2 bg-amber-50 p-2 rounded-sm border border-amber-200">
+                                                        <div className="mt-2 rounded-lg border border-zinc-200/80 bg-zinc-50 p-2 text-xs text-zinc-600">
                                                             No days selected. Will default to all days when added.
                                                         </div>
                                                     )}
@@ -415,40 +413,40 @@ const CronExpressionArr = ({
 
                             {cronBuilder.type === 'monthly' && (
                                 <div className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Day of Month</label>
+                                            <label className="block text-sm font-medium text-zinc-700 mb-2">Day of Month</label>
                                             <input
                                                 type="number"
                                                 min="1"
                                                 max="31"
                                                 value={cronBuilder.monthlyDay}
                                                 onChange={(e) => setCronBuilder({ ...cronBuilder, monthlyDay: parseInt(e.target.value) || 1 })}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:px-3 sm:py-2"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                                            <label className="block text-sm font-medium text-zinc-700 mb-2">Time</label>
                                             <input
                                                 type="time"
                                                 value={cronBuilder.monthlyTime}
                                                 onChange={(e) => setCronBuilder({ ...cronBuilder, monthlyTime: e.target.value })}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:px-3 sm:py-2"
                                             />
                                         </div>
                                     </div>
                                     
                                     {/* Month Selection */}
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Months</label>
+                                        <label className="block text-sm font-medium text-zinc-700 mb-2">Months</label>
                                         <div className="space-y-2">
-                                            <div className="flex gap-2">
+                                            <div className="flex flex-wrap gap-2">
                                                 <button
                                                     type="button"
                                                     onClick={() => setCronBuilder({ ...cronBuilder, monthlyType: 'all', specificMonths: [] })}
-                                                    className={`px-3 py-2 text-sm rounded-sm border ${cronBuilder.monthlyType === 'all'
-                                                        ? 'bg-blue-600 text-white border-blue-600'
-                                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                    className={`rounded-lg border px-2 py-2 text-xs font-medium sm:px-3 sm:text-sm ${cronBuilder.monthlyType === 'all'
+                                                        ? 'border-indigo-600 bg-indigo-600 text-white'
+                                                        : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
                                                         }`}
                                                 >
                                                     All Months
@@ -456,9 +454,9 @@ const CronExpressionArr = ({
                                                 <button
                                                     type="button"
                                                     onClick={() => setCronBuilder({ ...cronBuilder, monthlyType: 'specific' })}
-                                                    className={`px-3 py-2 text-sm rounded-sm border ${cronBuilder.monthlyType === 'specific'
-                                                        ? 'bg-blue-600 text-white border-blue-600'
-                                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                    className={`rounded-lg border px-2 py-2 text-xs font-medium sm:px-3 sm:text-sm ${cronBuilder.monthlyType === 'specific'
+                                                        ? 'border-indigo-600 bg-indigo-600 text-white'
+                                                        : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
                                                         }`}
                                                 >
                                                     Specific Months
@@ -484,9 +482,9 @@ const CronExpressionArr = ({
                                                                         : [...cronBuilder.specificMonths, month.num].sort((a, b) => a - b);
                                                                     setCronBuilder({ ...cronBuilder, specificMonths: newMonths });
                                                                 }}
-                                                                className={`px-2 py-1 text-xs rounded-sm border ${cronBuilder.specificMonths.includes(month.num)
-                                                                    ? 'bg-green-600 text-white border-green-600'
-                                                                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                                className={`px-2 py-1 text-xs rounded-lg border ${cronBuilder.specificMonths.includes(month.num)
+                                                                    ? 'border-indigo-600 bg-indigo-600 text-white'
+                                                                    : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
                                                                     }`}
                                                             >
                                                                 {month.name}
@@ -494,7 +492,7 @@ const CronExpressionArr = ({
                                                         ))}
                                                     </div>
                                                     {cronBuilder.specificMonths.length === 0 && (
-                                                        <div className="text-xs text-amber-600 mt-2 bg-amber-50 p-2 rounded-sm border border-amber-200">
+                                                        <div className="mt-2 rounded-lg border border-zinc-200/80 bg-zinc-50 p-2 text-xs text-zinc-600">
                                                             No months selected. Will default to all months when added.
                                                         </div>
                                                     )}
@@ -508,14 +506,14 @@ const CronExpressionArr = ({
 
                         {/* Preview */}
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Preview</label>
-                            <div className="bg-gray-100 p-3 rounded-sm">
-                                <div className="font-mono text-sm mb-1 text-gray-900">{generateCronExpression()}</div>
-                                <div className="text-xs text-gray-600">{getCronDescription()}</div>
+                            <label className="block text-sm font-medium text-zinc-700 mb-2">Preview</label>
+                            <div className="rounded-lg bg-zinc-100/80 p-2 sm:p-3">
+                                <div className="mb-1 font-mono text-xs text-zinc-900 sm:text-sm">{generateCronExpression()}</div>
+                                <div className="text-[11px] text-zinc-600 sm:text-xs">{getCronDescription()}</div>
                             </div>
                         </div>
 
-                        <div className="flex gap-2">
+                        <div className="flex flex-col gap-2 sm:flex-row">
                             <button
                                 type="button"
                                 onClick={() => {
@@ -524,15 +522,15 @@ const CronExpressionArr = ({
                                     setShowCronBuilder(false);
                                     toast.success('Cron expression added successfully!');
                                 }}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-sm hover:bg-blue-700 text-sm flex items-center gap-2"
+                                className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
                             >
-                                <LucidePlus className="w-4 h-4" />
+                                <LucidePlus className="h-4 w-4" />
                                 Add Expression
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setShowCronBuilder(false)}
-                                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-sm hover:bg-gray-400 text-sm"
+                                className="rounded-lg bg-zinc-200 px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-300"
                             >
                                 Cancel
                             </button>
@@ -728,19 +726,19 @@ const ComponentNotesEdit = ({
 
     const renderEditFields = () => {
         return (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
                 {/* field -> is active */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Is Active</label>
+                    <label className="mb-2 block text-sm font-medium text-zinc-800 sm:mb-3">Is Active</label>
                     <div className="flex items-center">
                         <input
                             type="checkbox"
                             id="isActive"
                             checked={formData.isActive}
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            className="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/25"
                             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                         />
-                        <label htmlFor="isActive" className="ml-2 text-sm text-gray-600">
+                        <label htmlFor="isActive" className="ml-2 text-sm text-zinc-600">
                             Is active
                         </label>
                     </div>
@@ -748,10 +746,10 @@ const ComponentNotesEdit = ({
 
                 {/* field -> task type */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Task Type *</label>
+                    <label className="block text-sm font-medium text-zinc-800">Task Type *</label>
                     <select
                         value={formData.taskType}
-                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                        className="mt-1 block w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-sm text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                         onChange={(e) => {
                             setFormData({ ...formData, taskType: e.target.value });
                             if (e.target.value === 'taskAdd' || e.target.value === 'notesAdd') {
@@ -771,27 +769,27 @@ const ComponentNotesEdit = ({
 
                 {/* field -> title */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Title *</label>
+                    <label className="block text-sm font-medium text-zinc-800">Title *</label>
                     <input
                         type="text"
                         value={formData.title}
-                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                        className="mt-1 block w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-sm text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     />
                 </div>
 
                 {/* field -> should send email */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Send Email Notifications</label>
+                    <label className="mb-2 block text-sm font-medium text-zinc-800 sm:mb-3">Send Email Notifications</label>
                     <div className="flex items-center">
                         <input
                             type="checkbox"
                             id="shouldSendEmail"
                             checked={formData.shouldSendEmail}
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            className="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/25"
                             onChange={(e) => setFormData({ ...formData, shouldSendEmail: e.target.checked })}
                         />
-                        <label htmlFor="shouldSendEmail" className="ml-2 text-sm text-gray-600">
+                        <label htmlFor="shouldSendEmail" className="ml-2 text-sm text-zinc-600">
                             Send email notifications when task is executed
                         </label>
                     </div>
@@ -816,14 +814,16 @@ const ComponentNotesEdit = ({
                 )}
 
                 {/* heading -> schedule */}
-                <h1 className="text-2xl font-bold text-gray-800 my-4">Schedule</h1>
+                <h2 className="my-3 border-b border-zinc-100 pb-2 text-lg font-semibold tracking-tight text-zinc-900 sm:my-4 sm:text-xl">
+                    Schedule
+                </h2>
 
                 {/* field -> scheduleTimeArrTimezone */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Schedule Timezone</label>
+                    <label className="block text-sm font-medium text-zinc-800">Schedule Timezone</label>
                     <select
                         value={formData.timezoneName}
-                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                        className="mt-1 block w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-sm text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                         onChange={(e) => {
                             const tempTimezoneName = e.target.value;
                             let timezoneName = 'Asia/Kolkata';
@@ -850,23 +850,23 @@ const ComponentNotesEdit = ({
                 </div>
 
                 {/* field -> due date and due-date reminders */}
-                <div className="rounded-sm border border-gray-200 bg-gray-50 p-3">
-                    <label className="block text-sm font-medium text-gray-700">Due Date</label>
+                <div className="rounded-xl border border-zinc-200/80 bg-zinc-50/90 p-2.5 sm:p-3">
+                    <label className="block text-sm font-medium text-zinc-800">Due Date</label>
                     <input
                         type="datetime-local"
                         value={dueDateInput}
-                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                        className="mt-1 block w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-sm text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                         onChange={(e) => setDueDateInput(e.target.value)}
                     />
                     <div className="mt-3">
-                        <div className="text-sm font-medium text-gray-700 mb-2">Before due date reminders</div>
+                        <div className="mb-2 text-sm font-medium text-zinc-800">Before due date reminders</div>
                         <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
                             {DUE_DATE_PRESET_OPTIONS.map((option) => {
                                 const checked = dueDateReminderPresetLabels.includes(option.labelName);
                                 return (
                                     <label
                                         key={option.labelName}
-                                        className="inline-flex items-center gap-2 text-xs text-gray-700"
+                                        className="inline-flex items-center gap-2 text-xs text-zinc-700"
                                     >
                                         <input
                                             type="checkbox"
@@ -907,15 +907,15 @@ const ComponentNotesEdit = ({
                 />
 
                 {/* field -> schedule execution times */}
-                <div className="py-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Schedule Execution Times</label>
-                    <div className="bg-gray-50 border border-gray-200 rounded-sm p-3 max-h-[200px] overflow-y-auto">
+                <div className="py-1.5 sm:py-2">
+                    <label className="mb-1.5 block text-sm font-medium text-zinc-800 sm:mb-2">Schedule Execution Times</label>
+                    <div className="max-h-[200px] overflow-y-auto rounded-xl border border-zinc-200/80 bg-zinc-50/90 p-2 sm:p-3 [scrollbar-width:thin]">
                         {taskScheduleObj.scheduleExecutionTimeArr.length === 0 ? (
-                            <div className="text-sm text-gray-500 italic">No execution times scheduled</div>
+                            <div className="text-sm italic text-zinc-500">No execution times scheduled</div>
                         ) : (
-                            <div className="space-y-2">
+                            <div className="space-y-1.5 sm:space-y-2">
                                 {taskScheduleObj.scheduleExecutionTimeArr.map((time, index) => (
-                                    <div key={index} className="text-sm text-gray-700 bg-white p-2 rounded-sm border">
+                                    <div key={index} className="rounded-lg border border-zinc-200/80 bg-white p-2 text-xs text-zinc-700 sm:text-sm">
                                         {index + 1}: {new Date(time).toLocaleString()}
                                     </div>
                                 ))}
@@ -925,15 +925,15 @@ const ComponentNotesEdit = ({
                 </div>
 
                 {/* field -> schedule executed times */}
-                <div className="py-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Schedule Executed Times</label>
-                    <div className="bg-gray-50 border border-gray-200 rounded-sm p-3 max-h-[200px] overflow-y-auto">
+                <div className="py-1.5 sm:py-2">
+                    <label className="mb-1.5 block text-sm font-medium text-zinc-800 sm:mb-2">Schedule Executed Times</label>
+                    <div className="max-h-[200px] overflow-y-auto rounded-xl border border-zinc-200/80 bg-zinc-50/90 p-2 sm:p-3 [scrollbar-width:thin]">
                         {taskScheduleObj.scheduleExecutedTimeArr.length === 0 ? (
-                            <div className="text-sm text-gray-500 italic">No executions completed yet</div>
+                            <div className="text-sm italic text-zinc-500">No executions completed yet</div>
                         ) : (
-                            <div className="space-y-2">
+                            <div className="space-y-1.5 sm:space-y-2">
                                 {taskScheduleObj.scheduleExecutedTimeArr.map((time, index) => (
-                                    <div key={index} className="text-sm text-gray-700 bg-white p-2 rounded-sm border">
+                                    <div key={index} className="rounded-lg border border-zinc-200/80 bg-white p-2 text-xs text-zinc-700 sm:text-sm">
                                         {index + 1}: {new Date(time).toLocaleString()}
                                     </div>
                                 ))}
@@ -943,9 +943,9 @@ const ComponentNotesEdit = ({
                 </div>
 
                 {/* field -> executed times count */}
-                <div className="py-2">
-                    <label className="block text-sm font-medium text-gray-700">Total Executed Times</label>
-                    <div className="mt-1 text-lg font-semibold text-blue-600">
+                <div className="py-1.5 sm:py-2">
+                    <label className="block text-sm font-medium text-zinc-800">Total Executed Times</label>
+                    <div className="mt-1 text-lg font-semibold text-indigo-600 tabular-nums">
                         {taskScheduleObj.executedTimes}
                     </div>
                 </div>
@@ -954,10 +954,10 @@ const ComponentNotesEdit = ({
     }
 
     return (
-        <div className="rounded-sm border border-zinc-200 bg-white p-3 shadow-sm md:p-4">
+        <div className="rounded-xl border border-zinc-200/80 bg-white p-2 shadow-sm sm:p-3 md:p-4">
             {requestEdit.loading && (
                 <div className="mb-3 flex justify-between border-b border-zinc-100 pb-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-sm border border-zinc-200 bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-600">
+                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-600">
                         <LucideArrowLeft className="h-3.5 w-3.5 animate-pulse" strokeWidth={2} />
                         Saving…
                     </span>
@@ -967,7 +967,7 @@ const ComponentNotesEdit = ({
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 pb-2">
                     <Link
                         to="/user/task-schedule"
-                        className="inline-flex items-center gap-1 rounded-sm border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-800 hover:bg-zinc-50"
+                        className="inline-flex items-center gap-1 rounded-lg border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-800 hover:bg-zinc-50"
                     >
                         <LucideArrowLeft className="h-3.5 w-3.5" strokeWidth={2} />
                         Back
@@ -975,7 +975,7 @@ const ComponentNotesEdit = ({
                     <div className="flex flex-wrap gap-1.5">
                         <button
                             type="button"
-                            className="inline-flex items-center gap-1 rounded-sm border border-red-200 bg-red-50 px-2 py-1 text-xs font-medium text-red-800 hover:bg-red-100"
+                            className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-2 py-1 text-xs font-medium text-red-800 hover:bg-red-100"
                             onClick={() => {
                                 deleteRecord();
                             }}
@@ -985,7 +985,7 @@ const ComponentNotesEdit = ({
                         </button>
                         <button
                             type="button"
-                            className="inline-flex items-center gap-1 rounded-sm border border-emerald-700/30 bg-emerald-600 px-2 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+                            className="inline-flex items-center gap-1 rounded-lg border border-indigo-600/20 bg-indigo-600 px-2 py-1 text-xs font-medium text-white hover:bg-indigo-500"
                             onClick={() => {
                                 editRecord();
                             }}
@@ -1115,17 +1115,17 @@ const ComponentNotesEditWrapper = ({
     return (
         <div>
             {loading && (
-                <div className="flex flex-col items-center justify-center gap-2 rounded-sm border border-zinc-200 bg-white py-10 shadow-sm">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-200 border-t-emerald-600" />
+                <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white py-10 shadow-sm">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-200 border-t-indigo-600" />
                     <p className="text-xs text-zinc-600">Loading…</p>
                 </div>
             )}
             {!loading && list.length === 0 && (
-                <div className="rounded-sm border border-zinc-200 bg-white px-4 py-8 text-center shadow-sm">
+                <div className="rounded-lg border border-zinc-200 bg-white px-4 py-8 text-center shadow-sm">
                     <p className="text-sm font-medium text-red-700">Record does not exist.</p>
                     <button
                         type="button"
-                        className="mt-3 inline-flex rounded-sm border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-800 hover:bg-zinc-50"
+                        className="mt-3 inline-flex rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-800 hover:bg-zinc-50"
                         onClick={() => navigate('/user/task-schedule')}
                     >
                         Back to list

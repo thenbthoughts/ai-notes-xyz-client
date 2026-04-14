@@ -45,10 +45,10 @@ const ComponentRightWrapper = ({
 
     return (
         <div
-            className="min-h-0 overflow-y-auto bg-[#f4f4f5] px-2 py-2 md:px-3"
+            className="min-h-0 overflow-y-auto bg-zinc-100/80 px-2 py-1.5 sm:px-3 sm:py-2"
             style={{ height: 'calc(100vh - 60px)' }}
         >
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-sm border border-zinc-200 bg-white px-3 py-2 shadow-sm">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-zinc-200/80 bg-white px-2.5 py-1.5 shadow-sm sm:mb-3 sm:px-3 sm:py-2">
                 <div className="min-w-0">
                     <h1 className="text-sm font-semibold tracking-tight text-zinc-900 md:text-base">
                         Task schedule

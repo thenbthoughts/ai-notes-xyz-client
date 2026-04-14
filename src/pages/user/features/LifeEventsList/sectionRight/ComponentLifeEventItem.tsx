@@ -176,13 +176,13 @@ const ComponentLifeEventItem = ({
                     {getImpactStr()}
                 </span>
                 {lifeEventObj.isStar && (
-                    <span className={`${chip} border-amber-200/80 bg-amber-50 text-amber-900`}>
+                    <span className={`${chip} border-indigo-200/80 bg-indigo-50 text-indigo-900`}>
                         <LucideStar className="mr-px h-2.5 w-2.5" strokeWidth={2} fill="currentColor" />
                     </span>
                 )}
                 {cat !== '' && (
                     <span
-                        className={`${chip} max-w-full border-amber-200/70 bg-amber-50/90 text-amber-950 ${
+                        className={`${chip} max-w-full border-zinc-200/90 bg-white text-zinc-700 ${
                             compact ? 'truncate' : ''
                         }`}
                         title={cat}
@@ -202,7 +202,7 @@ const ComponentLifeEventItem = ({
                 )}
                 {tags.slice(0, tagLimit).map((tagStr, tagIndex) => (
                     <span
-                        className={`${chip} border-emerald-200/80 bg-emerald-50 text-emerald-900`}
+                        className={`${chip} border-zinc-200/80 bg-zinc-100/90 text-zinc-700`}
                         key={tagIndex}
                     >
                         {tagStr}
@@ -391,8 +391,8 @@ const ComponentLifeEventItem = ({
 
     const cardShell =
         layout === 'grid'
-            ? 'group flex h-full min-h-[260px] flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm transition-all duration-200 hover:border-indigo-200/70 hover:shadow-md'
-            : 'rounded-lg border border-zinc-200/90 bg-white p-1.5 shadow-sm transition-shadow hover:shadow-md sm:p-2';
+            ? 'group flex h-full min-h-[260px] flex-col overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-200 hover:border-indigo-200/60 hover:shadow-md'
+            : 'rounded-xl border border-zinc-200/80 bg-white p-2 shadow-sm transition-shadow hover:shadow-md sm:p-2.5';
 
     return (
         <div className={cardShell}>

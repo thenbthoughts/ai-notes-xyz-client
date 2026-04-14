@@ -150,17 +150,20 @@ const ComponentLifeEventsEdit = ({
         }
     }
 
+    const fieldClass =
+        'mt-1 block w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-sm text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 sm:p-2.5';
+
     const renderEditFields = () => {
         return (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
 
                 {/* field -> event date utc */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Event Date *</label>
+                    <label className="block text-sm font-medium text-zinc-800">Event Date *</label>
                     <input
                         type="date"
                         value={formData.eventDateUtc?.substring(0, 10)} // Format the date for the input
-                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                        className={fieldClass}
                         onChange={(e) => {
                             setFormData({
                                 ...formData,
@@ -168,31 +171,34 @@ const ComponentLifeEventsEdit = ({
                             })
                         }}
                     />
-                    {formError.eventDateUtc.length >= 1 && <p className="text-red-500 text-sm">{formError.eventDateUtc}</p>}
+                    {formError.eventDateUtc.length >= 1 && <p className="mt-1 text-sm text-red-600">{formError.eventDateUtc}</p>}
                 </div>
 
                 {/* field -> is star */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Is Starred</label>
+                <div className="flex flex-wrap items-center gap-2">
                     <input
                         type="checkbox"
+                        id="life-event-starred"
                         checked={formData.isStar}
-                        className="mt-1"
+                        className="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/25"
                         onChange={(e) => setFormData({ ...formData, isStar: e.target.checked })}
                     />
+                    <label htmlFor="life-event-starred" className="text-sm font-medium text-zinc-800">
+                        Starred
+                    </label>
                 </div>
 
                 {/* field -> title */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Title *</label>
+                    <label className="block text-sm font-medium text-zinc-800">Title *</label>
                     <input
                         type="text"
                         value={formData.title}
-                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                        className={fieldClass}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     />
-                    {formError.title.length >= 1 && <p className="text-red-500 text-sm">{formError.title}</p>}
-                    <div className="mt-2">
+                    {formError.title.length >= 1 && <p className="mt-1 text-sm text-red-600">{formError.title}</p>}
+                    <div className="mt-1.5 sm:mt-2">
                         <SpeechToTextComponent
                             onTranscriptionComplete={(text: string) => {
                                 if (text.trim() !== '') {
@@ -206,14 +212,14 @@ const ComponentLifeEventsEdit = ({
 
                 {/* field -> description */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                    <label className="block text-sm font-medium text-zinc-800">Description</label>
                     <textarea
                         value={formData.description}
-                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                        className={`${fieldClass} min-h-[8rem] resize-y sm:min-h-[10rem]`}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         rows={10}
                     />
-                    <div className="mt-2">
+                    <div className="mt-1.5 sm:mt-2">
                         <SpeechToTextComponent
                             onTranscriptionComplete={(text: string) => {
                                 if (text.trim() !== '') {
@@ -227,17 +233,16 @@ const ComponentLifeEventsEdit = ({
 
                 {/* category */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Category
+                    <div className="mb-1 flex flex-wrap items-center gap-2">
+                        <label className="text-sm font-medium text-zinc-800">Category</label>
                         <Link
                             to={'/user/life-events?action=category'}
-                            className="ml-2 p-0 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300 inline-block text-sm"
+                            className="inline-flex items-center justify-center rounded-lg bg-indigo-600 p-1.5 text-white shadow-sm transition hover:bg-indigo-500"
+                            title="Manage categories"
                         >
-                            <LucidePlus className="inline-block m-1"
-                                size={'20px'}
-                            />
+                            <LucidePlus className="h-4 w-4" strokeWidth={2} />
                         </Link>
-                    </label>
+                    </div>
                     <ComponentLifeEventsEditCategory
                         value={formData.categoryId}
                         onChange={(e) => {
@@ -248,7 +253,7 @@ const ComponentLifeEventsEdit = ({
 
                 {/* sub category */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Sub Category</label>
+                    <label className="block text-sm font-medium text-zinc-800">Subcategory</label>
                     <ComponentLifeEventsEditCategorySub
                         value={formData.categorySubId}
                         onChange={(e) => {
@@ -260,10 +265,10 @@ const ComponentLifeEventsEdit = ({
 
                 {/* impact */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Event Impact *</label>
+                    <label className="block text-sm font-medium text-zinc-800">Event Impact *</label>
                     <select
                         value={formData.eventImpact}
-                        className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                        className={fieldClass}
                         onChange={(e) => setFormData({ ...formData, eventImpact: e.target.value })}
                     >
                         <option value="very-low">Very Low</option>
@@ -272,18 +277,21 @@ const ComponentLifeEventsEdit = ({
                         <option value="large">Large</option>
                         <option value="huge">Huge</option>
                     </select>
-                    {formError.eventImpact.length >= 1 && <p className="text-red-500 text-sm">{formError.eventImpact}</p>}
+                    {formError.eventImpact.length >= 1 && <p className="mt-1 text-sm text-red-600">{formError.eventImpact}</p>}
                 </div>
 
                 {/* field -> ai tags */}
                 {formData.aiTags.length > 0 && (
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">AI Tags</label>
-                        <div className="mt-2">
+                        <label className="block text-sm font-medium text-zinc-800">AI Tags</label>
+                        <div className="mt-1.5 flex flex-wrap gap-1.5 sm:mt-2 sm:gap-2">
                             {formData.aiTags.map((tag, index) => (
-                                <div key={index} className="inline-block bg-gray-100 rounded-sm p-1 px-2 text-sm text-gray-600 mb-2 mr-2">
+                                <span
+                                    key={index}
+                                    className="inline-block rounded-lg border border-zinc-200/80 bg-zinc-50 px-2 py-0.5 text-xs font-medium text-zinc-700 sm:text-sm"
+                                >
                                     {tag}
-                                </div>
+                                </span>
                             ))}
                         </div>
                     </div>
@@ -292,8 +300,8 @@ const ComponentLifeEventsEdit = ({
                 {/* field -> ai summary */}
                 {formData.aiSummary.length > 0 && (
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">AI Summary</label>
-                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-sm p-3 text-gray-700 text-sm whitespace-pre-line break-words">
+                        <label className="block text-sm font-medium text-zinc-800">AI Summary</label>
+                        <div className="mt-1.5 rounded-xl border border-zinc-200/80 bg-zinc-50/90 p-2.5 text-sm whitespace-pre-line break-words text-zinc-800 sm:mt-2 sm:p-3">
                             {formData.aiSummary}
                         </div>
                     </div>
@@ -302,13 +310,11 @@ const ComponentLifeEventsEdit = ({
                 {/* field -> ai category and sub category */}
                 {formData.aiCategory.length > 0 && (
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">AI Category</label>
-                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-sm p-3 text-gray-700 text-sm whitespace-pre-line break-words">
+                        <label className="block text-sm font-medium text-zinc-800">AI Category</label>
+                        <div className="mt-1.5 rounded-xl border border-zinc-200/80 bg-zinc-50/90 p-2.5 text-sm whitespace-pre-line break-words text-zinc-800 sm:mt-2 sm:p-3">
                             {formData?.aiCategory}
                             {formData?.aiSubCategory.length > 0 && (
-                                <span className='text-gray-500 px-3'>
-                                    {' ->'}
-                                </span>
+                                <span className="px-2 text-zinc-500 sm:px-3">{' ->'}</span>
                             )}
                             {formData?.aiSubCategory}
                         </div>
@@ -316,41 +322,45 @@ const ComponentLifeEventsEdit = ({
                 )}
 
                 {/* field -> ai keyword */}
-                <CommonComponentAiKeywords
-                    sourceId={lifeEventObj._id}
-                    metadataSourceType="lifeEvents"
-                />
+                <div className="[&_.rounded-sm]:rounded-xl">
+                    <CommonComponentAiKeywords
+                        sourceId={lifeEventObj._id}
+                        metadataSourceType="lifeEvents"
+                    />
+                </div>
 
                 {/* field -> ai faq */}
-                <CommonComponentAiFaq
-                    sourceId={lifeEventObj._id}
-                />
+                <div className="[&_.rounded-sm]:rounded-xl">
+                    <CommonComponentAiFaq
+                        sourceId={lifeEventObj._id}
+                    />
+                </div>
             </div>
         )
     }
 
     return (
-        <div className="rounded-sm border border-zinc-200 bg-white p-3 shadow-sm md:p-4">
+        <div className="rounded-xl border border-zinc-200/80 bg-white p-2 shadow-sm sm:p-3 md:p-4">
             {requestEdit.loading && (
-                <div className="mb-3 flex justify-between border-b border-zinc-100 pb-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-sm border border-zinc-200 bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-600">
+                <div className="mb-2 flex justify-between border-b border-zinc-100 pb-2 sm:mb-3">
+                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200/80 bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-600">
                         <LucideArrowLeft className="h-3.5 w-3.5 animate-pulse" strokeWidth={2} />
                         Saving…
                     </span>
                 </div>
             )}
             {!requestEdit.loading && (
-                <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 pb-2">
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 pb-2 sm:mb-3">
                     <Link
                         to="/user/life-events"
-                        className="inline-flex items-center gap-1 rounded-sm border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-800 hover:bg-zinc-50"
+                        className="inline-flex items-center gap-1 rounded-lg border border-zinc-200/80 bg-white px-2 py-1 text-xs font-medium text-zinc-800 shadow-sm hover:bg-zinc-50"
                     >
                         <LucideArrowLeft className="h-3.5 w-3.5" strokeWidth={2} />
                         Back
                     </Link>
                     <button
                         type="button"
-                        className="inline-flex items-center gap-1 rounded-sm border border-emerald-700/30 bg-emerald-600 px-2 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+                        className="inline-flex items-center gap-1 rounded-lg border border-indigo-600/20 bg-indigo-600 px-2.5 py-1 text-xs font-medium text-white shadow-sm hover:bg-indigo-500 sm:px-3 sm:py-1.5"
                         onClick={() => {
                             editRecord();
                         }}
@@ -364,10 +374,12 @@ const ComponentLifeEventsEdit = ({
 
             {renderEditFields()}
 
-            <CommentCommonComponent
-                commentType="lifeEvent"
-                recordId={lifeEventObj._id}
-            />
+            <div className="mt-4 border-t border-zinc-100 pt-4 sm:mt-6 sm:pt-5">
+                <CommentCommonComponent
+                    commentType="lifeEvent"
+                    recordId={lifeEventObj._id}
+                />
+            </div>
 
         </div>
     )
@@ -420,17 +432,17 @@ const ComponentLifeEventsEditWrapper = ({
     return (
         <div>
             {loading && (
-                <div className="flex flex-col items-center justify-center gap-2 rounded-sm border border-zinc-200 bg-white py-10 shadow-sm">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-200 border-t-emerald-600" />
+                <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-zinc-200/80 bg-white py-10 shadow-sm">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-200 border-t-indigo-600" />
                     <p className="text-xs text-zinc-600">Loading…</p>
                 </div>
             )}
             {!loading && list.length === 0 && (
-                <div className="rounded-sm border border-zinc-200 bg-white px-4 py-8 text-center shadow-sm">
+                <div className="rounded-xl border border-zinc-200/80 bg-white px-4 py-8 text-center shadow-sm">
                     <p className="text-sm font-medium text-red-700">Record does not exist.</p>
                     <button
                         type="button"
-                        className="mt-3 inline-flex rounded-sm border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-800 hover:bg-zinc-50"
+                        className="mt-3 inline-flex rounded-lg border border-zinc-200/80 bg-white px-3 py-1.5 text-xs font-medium text-zinc-800 shadow-sm hover:bg-zinc-50"
                         onClick={() => navigate('/user/life-events')}
                     >
                         Back to list

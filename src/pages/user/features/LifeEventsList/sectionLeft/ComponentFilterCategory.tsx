@@ -47,7 +47,7 @@ const ComponentFilterCategory = () => {
         <div>
             {loading && (
                 <select
-                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                    className="mt-1 block w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-xs text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 sm:text-sm"
                     value=""
                     onChange={() => { }}
                 >
@@ -55,20 +55,19 @@ const ComponentFilterCategory = () => {
                 </select>
             )}
             {!loading && (
-                <div className="mb-4">
-                    <label className="block text-sm font-medium pb-2">
-                        Category
+                <div className="mb-3 sm:mb-4">
+                    <div className="mb-1.5 flex flex-wrap items-center gap-2">
+                        <label className="text-xs font-medium text-zinc-800 sm:text-sm">Category</label>
                         <Link
                             to={'/user/life-events?action=category'}
-                            className="ml-2 p-0 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition duration-300 inline-block text-sm"
+                            className="inline-flex items-center justify-center rounded-lg bg-indigo-600 p-1 text-white shadow-sm transition hover:bg-indigo-500"
+                            title="Manage categories"
                         >
-                            <LucidePlus className="inline-block m-1"
-                                size={'20px'}
-                            />
+                            <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
                         </Link>
-                    </label>
+                    </div>
                     <select
-                        className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="block w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-xs text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 sm:text-sm"
                         value={category}
                         onChange={(e) => {
                             setCategory(e.target.value);

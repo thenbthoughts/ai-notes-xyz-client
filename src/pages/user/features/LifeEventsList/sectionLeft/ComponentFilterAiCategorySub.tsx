@@ -49,7 +49,7 @@ const ComponentFilterAiCategory = () => {
                 <Fragment>
                     {loading && (
                         <select
-                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                            className="mt-1 block w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-xs text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 sm:text-sm"
                             value=""
                             onChange={() => { }}
                         >
@@ -57,12 +57,10 @@ const ComponentFilterAiCategory = () => {
                         </select>
                     )}
                     {!loading && (
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium pb-2">
-                                AI Sub Category
-                            </label>
+                        <div className="mb-3 sm:mb-4">
+                            <label className="mb-1.5 block text-xs font-medium text-zinc-800 sm:text-sm">AI Sub Category</label>
                             <select
-                                className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="block w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-xs text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 sm:text-sm"
                                 value={aiSubCategory}
                                 onChange={(e) => {
                                     setAiSubCategory(e.target.value);

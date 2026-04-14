@@ -53,7 +53,7 @@ const ComponentSelectWorkspace = ({
         <Fragment>
             {workspaces.length > 0 && (
                 <select
-                    className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="block w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-sm text-zinc-900 shadow-sm hover:bg-zinc-50 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                     value={workspaceId}
                     onChange={(e) => {
                         // Handle workspace selection
@@ -69,7 +69,7 @@ const ComponentSelectWorkspace = ({
 
             )}
             {workspaces.length === 0 && (
-                <div className="p-2 border border-gray-300 rounded-sm hover:bg-gray-200 block w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div className="block w-full rounded-lg border border-zinc-200/90 bg-zinc-50 p-2 text-sm text-zinc-500">
                     No workspaces found
                 </div>
             )}
