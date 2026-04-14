@@ -213,19 +213,19 @@ const NotesWrapper = () => {
     const isSmall = screenWidth === screenList.sm;
 
     return (
-        <div className="relative flex w-full min-w-0 max-w-full overflow-x-hidden">
+        <div className="relative flex h-[calc(100vh-60px)] min-h-[calc(100vh-60px)] max-h-[calc(100vh-60px)] w-full min-w-0 max-w-full overflow-hidden">
             <div
                 className={
                     isSmall
-                        ? 'w-full min-w-0 max-w-full flex-1'
-                        : 'w-[calc(100vw-50px)] min-w-0 max-w-full flex-1'
+                        ? 'h-full w-full min-w-0 max-w-full flex-1'
+                        : 'h-full w-[calc(100vw-50px)] min-w-0 max-w-full flex-1'
                 }
             >
-                <div className="w-full max-w-none px-0">
-                    <div className="flex flex-row">
+                <div className="h-full w-full max-w-none px-0">
+                    <div className="flex h-full flex-row">
                         {/* part 1 -> 25% */}
                         {screenWidth === screenList.lg && (
-                            <div className="w-[25%] min-w-0 shrink-0">
+                            <div className="h-full w-[25%] min-w-0 shrink-0">
                                 <ComponentNotesLeftRender />
                             </div>
                         )}
@@ -233,15 +233,15 @@ const NotesWrapper = () => {
                         {/* part 2 -> 75% */}
                         <div
                             className={
-                                screenWidth === screenList.lg ? 'w-[75%] min-w-0' : 'w-full min-w-0'
+                                screenWidth === screenList.lg ? 'h-full w-[75%] min-w-0' : 'h-full w-full min-w-0'
                             }
                         >
-                            <div className="mx-0 w-full max-w-none">
+                            <div className="mx-0 h-full w-full max-w-none min-h-0">
                                 <div
                                     className={
                                         isSmall
-                                            ? 'box-border flex h-[calc(100vh-60px)] max-h-[calc(100vh-60px)] flex-col pb-[calc(3rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]'
-                                            : 'flex h-[calc(100vh-60px)] flex-col'
+                                            ? 'box-border flex h-full max-h-full flex-col pb-[calc(3rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]'
+                                            : 'flex h-full flex-col'
                                     }
                                 >
                                     <div className="min-h-0 flex-1 overflow-hidden">

@@ -27,6 +27,8 @@ interface Event {
         recordId: string;
         fromCollection:
             | 'tasks'
+            | 'taskRemainders'
+            | 'taskDueDateRemainders'
             | 'lifeEvents'
             | 'infoVaultSignificantDate'
             | 'infoVaultSignificantDateRepeat'
@@ -39,6 +41,8 @@ interface tsCalenderApiRes {
     _id: string;
     fromCollection:
         | 'tasks'
+        | 'taskRemainders'
+        | 'taskDueDateRemainders'
         | 'lifeEvents'
         | 'infoVaultSignificantDate'
         | 'infoVaultSignificantDateRepeat'
@@ -47,6 +51,15 @@ interface tsCalenderApiRes {
         _id: string;
         title: string;
         dueDate: Date;
+        dueDateReminderPresetLabels?: string[];
+        dueDateReminderAbsoluteTimesIso?: string[];
+        dueDateReminderCronExpressions?: string[];
+        dueDateReminderScheduledTimes?: string[];
+        dueDateReminderScheduledTimesCompleted?: string[];
+        remainderAbsoluteTimesIso?: string[];
+        remainderCronExpressions?: string[];
+        remainderScheduledTimes?: string[];
+        remainderScheduledTimesCompleted?: string[];
     };
     lifeEventInfo?: {
         _id: string;
@@ -70,6 +83,12 @@ interface tsCalenderApiRes {
         _id: string;
         title: string;
         scheduleExecutionTime: Date;
+    };
+    taskReminderInfo?: {
+        _id: string;
+        title: string;
+        dueDate: Date;
+        reminderTime: Date;
     };
 }
 
@@ -119,9 +138,10 @@ const CalendarWrapper = () => {
             if (Array.isArray(resDocs)) {
                 for (const doc of resDocs) {
                     if (doc.fromCollection === 'tasks' && doc.taskInfo) {
+                        const taskDueDate = new Date(doc.taskInfo.dueDate);
                         tempArr.push({
                             title: doc.taskInfo.title,
-                            start: new Date(doc.taskInfo.dueDate),
+                            start: taskDueDate,
                             allDay: true,
                             extendedProps: {
                                 recordId: doc.taskInfo._id,
@@ -130,9 +150,10 @@ const CalendarWrapper = () => {
                             },
                         });
                     } else if (doc.fromCollection === 'lifeEvents' && doc.lifeEventInfo) {
+                        const lifeEventDate = new Date(doc.lifeEventInfo.eventDateUtc);
                         tempArr.push({
                             title: doc.lifeEventInfo.title,
-                            start: new Date(doc.lifeEventInfo.eventDateUtc),
+                            start: lifeEventDate,
                             allDay: true,
                             extendedProps: {
                                 recordId: doc.lifeEventInfo._id,
@@ -141,9 +162,10 @@ const CalendarWrapper = () => {
                             },
                         });
                     } else if (doc.fromCollection === 'infoVaultSignificantDate' && doc.infoVaultSignificantDate) {
+                        const dateInfo = new Date(doc.infoVaultSignificantDate.date);
                         tempArr.push({
                             title: doc.infoVaultSignificantDate.label,
-                            start: new Date(doc.infoVaultSignificantDate.date),
+                            start: dateInfo,
                             allDay: true,
                             extendedProps: {
                                 recordId: doc.infoVaultSignificantDate._id,
@@ -166,12 +188,13 @@ const CalendarWrapper = () => {
                         }
 
                         if (shouldInsert) {
+                            const repeatDate = new Date(
+                                doc.infoVaultSignificantDateRepeat.normalizedDate ||
+                                    doc.infoVaultSignificantDateRepeat.date
+                            );
                             tempArr.push({
                                 title: doc.infoVaultSignificantDateRepeat.label,
-                                start: new Date(
-                                    doc.infoVaultSignificantDateRepeat.normalizedDate ||
-                                        doc.infoVaultSignificantDateRepeat.date
-                                ),
+                                start: repeatDate,
                                 allDay: true,
                                 extendedProps: {
                                     recordId: doc.infoVaultSignificantDateRepeat._id,
@@ -181,14 +204,39 @@ const CalendarWrapper = () => {
                             });
                         }
                     } else if (doc.fromCollection === 'taskSchedules' && doc.taskScheduleInfo) {
+                        const scheduleDate = new Date(doc.taskScheduleInfo.scheduleExecutionTime);
                         tempArr.push({
                             title: doc.taskScheduleInfo.title,
-                            start: new Date(doc.taskScheduleInfo.scheduleExecutionTime),
+                            start: scheduleDate,
                             allDay: true,
                             extendedProps: {
                                 recordId: doc.taskScheduleInfo._id,
                                 fromCollection: 'taskSchedules',
                                 moreInfoLink: `/user/task-schedule?action=edit&id=${doc.taskScheduleInfo._id}`,
+                            },
+                        });
+                    } else if (doc.fromCollection === 'taskRemainders' && doc.taskReminderInfo) {
+                        const reminderDate = new Date(doc.taskReminderInfo.reminderTime);
+                        tempArr.push({
+                            title: `Task remainder: ${doc.taskReminderInfo.title}`,
+                            start: reminderDate,
+                            allDay: true,
+                            extendedProps: {
+                                recordId: doc.taskReminderInfo._id,
+                                fromCollection: 'taskRemainders',
+                                moreInfoLink: `/user/task/?edit-task-id=${doc.taskReminderInfo._id}`,
+                            },
+                        });
+                    } else if (doc.fromCollection === 'taskDueDateRemainders' && doc.taskReminderInfo) {
+                        const reminderDate = new Date(doc.taskReminderInfo.reminderTime);
+                        tempArr.push({
+                            title: `Due-date reminder: ${doc.taskReminderInfo.title}`,
+                            start: reminderDate,
+                            allDay: true,
+                            extendedProps: {
+                                recordId: doc.taskReminderInfo._id,
+                                fromCollection: 'taskDueDateRemainders',
+                                moreInfoLink: `/user/task/?edit-task-id=${doc.taskReminderInfo._id}`,
                             },
                         });
                     }
@@ -374,6 +422,10 @@ const CalendarWrapper = () => {
 
     const renderRightList = () => {
         const taskCount = events.filter((e) => e.extendedProps?.fromCollection === 'tasks').length;
+        const taskRemainderCount = events.filter((e) => e.extendedProps?.fromCollection === 'taskRemainders').length;
+        const taskDueDateRemainderCount = events.filter(
+            (e) => e.extendedProps?.fromCollection === 'taskDueDateRemainders'
+        ).length;
         const lifeEventCount = events.filter((e) => e.extendedProps?.fromCollection === 'lifeEvents').length;
         const staticDateCount = events.filter(
             (e) => e.extendedProps?.fromCollection === 'infoVaultSignificantDate'
@@ -400,6 +452,16 @@ const CalendarWrapper = () => {
                         {taskCount > 0 && (
                             <span className={`${chip} border-indigo-200 bg-indigo-50 text-indigo-900`}>
                                 Tasks {taskCount}
+                            </span>
+                        )}
+                        {taskRemainderCount > 0 && (
+                            <span className={`${chip} border-amber-200 bg-amber-50 text-amber-900`}>
+                                Task remainder {taskRemainderCount}
+                            </span>
+                        )}
+                        {taskDueDateRemainderCount > 0 && (
+                            <span className={`${chip} border-cyan-200 bg-cyan-50 text-cyan-900`}>
+                                Due reminders {taskDueDateRemainderCount}
                             </span>
                         )}
                         {lifeEventCount > 0 && (
@@ -435,6 +497,8 @@ const CalendarWrapper = () => {
                             >
                                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-zinc-200 bg-white text-sm">
                                     {event.extendedProps?.fromCollection === 'tasks' && '📝'}
+                                    {event.extendedProps?.fromCollection === 'taskRemainders' && '🔔'}
+                                    {event.extendedProps?.fromCollection === 'taskDueDateRemainders' && '⏳'}
                                     {event.extendedProps?.fromCollection === 'lifeEvents' && '🎉'}
                                     {event.extendedProps?.fromCollection === 'infoVaultSignificantDate' && '📌'}
                                     {event.extendedProps?.fromCollection === 'infoVaultSignificantDateRepeat' && '⭐'}
@@ -456,10 +520,12 @@ const CalendarWrapper = () => {
                                     </div>
                                     <div className="text-[10px] text-zinc-500">
                                         {event.start instanceof Date
-                                            ? event.start.toLocaleDateString(undefined, {
+                                            ? event.start.toLocaleString(undefined, {
                                                   year: 'numeric',
                                                   month: 'short',
                                                   day: 'numeric',
+                                                  hour: '2-digit',
+                                                  minute: '2-digit',
                                               })
                                             : ''}
                                     </div>
@@ -556,10 +622,13 @@ function renderEventContent(eventInfo: {
     timeText: string;
     event: {
         title: string;
+        start: Date | null;
         extendedProps: {
             recordId: string;
             fromCollection:
                 | 'tasks'
+                | 'taskRemainders'
+                | 'taskDueDateRemainders'
                 | 'lifeEvents'
                 | 'taskSchedules'
                 | 'infoVaultSignificantDate'
@@ -568,9 +637,15 @@ function renderEventContent(eventInfo: {
         };
     };
 }) {
+    const fallbackTime =
+        eventInfo.event.start instanceof Date
+            ? eventInfo.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : '';
+    const timeLabel = eventInfo.timeText || fallbackTime;
+
     return (
         <div className="p-0.5">
-            <b className="text-[10px] text-zinc-600">{eventInfo.timeText}</b>
+            <b className="text-[10px] text-zinc-600">{timeLabel}</b>
             <i className={`block text-[11px] font-medium text-zinc-900 ${calendarScss.calendarTitleLink}`} title={eventInfo.event.title}>
                 {eventInfo.event.title}
             </i>

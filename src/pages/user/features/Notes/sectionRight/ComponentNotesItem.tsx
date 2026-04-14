@@ -9,8 +9,10 @@ const chip =
 
 const ComponentNotesItem = ({
     noteObj,
+    viewMode = 'list',
 }: {
-    noteObj: INotes
+    noteObj: INotes;
+    viewMode?: 'list' | 'grid';
 }) => {
     const [isDeleted, setIsDeleted] = useState(false);
     const [isExpandedDescription, setIsExpandedDescription] = useState(false);
@@ -129,7 +131,13 @@ const ComponentNotesItem = ({
     }
 
     return (
-        <div className="my-0 rounded-xl border border-zinc-200/60 bg-white px-2 py-1.5 shadow-sm sm:my-0.5 sm:px-2.5 sm:py-2">
+        <div
+            className={
+                viewMode === 'grid'
+                    ? 'my-0 h-full rounded-xl border border-zinc-200/60 bg-white px-2 py-1.5 shadow-sm sm:my-0.5 sm:px-2.5 sm:py-2'
+                    : 'my-0 rounded-xl border border-zinc-200/60 bg-white px-2 py-1.5 shadow-sm sm:my-0.5 sm:px-2.5 sm:py-2'
+            }
+        >
             {isDeleted && (
                 <div className="rounded-lg border border-red-200/80 bg-red-50 p-1.5 text-xs text-red-700">Deleted.</div>
             )}
