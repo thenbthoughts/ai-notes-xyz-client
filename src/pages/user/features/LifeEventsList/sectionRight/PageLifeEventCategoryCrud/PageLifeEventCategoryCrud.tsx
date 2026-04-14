@@ -43,7 +43,7 @@ function CategoryDropdown({
 
   return (
     <select
-      className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition bg-white text-gray-800"
+      className="w-full rounded-lg border border-zinc-200/90 bg-white px-3 py-2.5 text-sm text-zinc-900 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:py-2"
       value={value}
       onChange={onChange}
       disabled={disabled}
@@ -99,12 +99,12 @@ function AddCategory({ onAdd }: { onAdd: () => void }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 mb-8 shadow border border-gray-100">
-      <div className="flex flex-col gap-4 mb-4">
+    <div className="mb-6 rounded-xl border border-zinc-200/80 bg-white p-4 shadow-sm sm:mb-8 sm:rounded-2xl sm:p-6">
+      <div className="mb-4 flex flex-col gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Level</label>
+          <label className="mb-1 block text-sm font-medium text-zinc-700">Level</label>
           <select
-            className="w-full rounded-sm border border-gray-300 px-3 py-2 bg-white text-gray-800"
+            className="w-full rounded-lg border border-zinc-200/90 bg-white px-3 py-2.5 text-sm text-zinc-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:py-2"
             value={level}
             onChange={(e) => setLevel(e.target.value as "main" | "sub")}
           >
@@ -114,14 +114,14 @@ function AddCategory({ onAdd }: { onAdd: () => void }) {
         </div>
         {level === "sub" && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Parent</label>
+            <label className="mb-1 block text-sm font-medium text-zinc-700">Parent</label>
             <CategoryDropdown value={parentId} onChange={(e) => setParentId(e.target.value)} />
           </div>
         )}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <label className="mb-1 block text-sm font-medium text-zinc-700">Name</label>
           <input
-            className="w-full rounded-sm border border-gray-300 px-3 py-2 bg-white text-gray-800"
+            className="w-full rounded-lg border border-zinc-200/90 bg-white px-3 py-2.5 text-sm text-zinc-900 shadow-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:py-2"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Category name"
@@ -129,7 +129,7 @@ function AddCategory({ onAdd }: { onAdd: () => void }) {
         </div>
       </div>
       <button
-        className="w-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white font-semibold px-6 py-2 rounded-sm shadow hover:scale-105 transition disabled:opacity-60"
+        className="w-full rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 active:scale-[0.99] disabled:opacity-60 sm:py-2"
         onClick={handleAdd}
         disabled={loading}
       >
@@ -176,26 +176,26 @@ function EditCategory({
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 mb-6 shadow border border-indigo-100">
+    <div className="mb-6 rounded-xl border border-indigo-200/60 bg-indigo-50/40 p-4 shadow-sm sm:rounded-2xl sm:p-6">
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Edit Name</label>
+        <label className="mb-1 block text-sm font-medium text-zinc-700">Edit Name</label>
         <input
-          className="w-full rounded-sm border border-gray-300 px-3 py-2 bg-white text-gray-800"
+          className="w-full rounded-lg border border-zinc-200/90 bg-white px-3 py-2.5 text-sm text-zinc-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:py-2"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Category name"
         />
       </div>
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
         <button
-          className="bg-indigo-500 text-white px-4 py-2 rounded-sm font-semibold hover:bg-indigo-600 transition"
+          className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 sm:py-2"
           onClick={handleEdit}
           disabled={loading}
         >
           {loading ? "Saving..." : "Save"}
         </button>
         <button
-          className="bg-gray-100 text-gray-700 px-4 py-2 rounded-sm font-semibold hover:bg-gray-200 transition"
+          className="rounded-lg border border-zinc-200 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-50 sm:py-2"
           onClick={onCancel}
         >
           Cancel
@@ -237,28 +237,28 @@ function Subcategories({
     // eslint-disable-next-line
   }, [parentId]);
 
-  if (loading) return <div className="ml-6 text-xs text-gray-400">Loading subcategories...</div>;
+  if (loading) return <div className="ml-4 text-xs text-zinc-500 sm:ml-6">Loading subcategories...</div>;
   if (!subs.length) return null;
 
   return (
-    <ul className="ml-4 mt-1 space-y-1">
+    <ul className="ml-2 mt-2 space-y-2 sm:ml-4">
       {subs.map((sub) => (
         <li
           key={sub._id}
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 rounded-sm px-3 py-1 hover:bg-indigo-50 transition"
+          className="flex flex-col gap-2 rounded-lg border border-zinc-100 bg-zinc-50/80 px-3 py-2 transition hover:border-zinc-200 sm:flex-row sm:items-center sm:justify-between sm:py-1.5"
         >
-          <span className="text-sm text-gray-700 flex items-center gap-1 mb-2 sm:mb-0">
-            <span className="text-indigo-400">↳</span> {sub.name}
+          <span className="flex items-center gap-1 text-sm text-zinc-700">
+            <span className="text-indigo-500">↳</span> {sub.name}
           </span>
-          <div className="flex flex-col gap-1 sm:flex-row">
+          <div className="flex flex-col gap-1.5 sm:flex-row sm:gap-2">
             <button
-              className="bg-yellow-400 text-white px-2 py-1 rounded-sm hover:bg-yellow-500 text-xs"
+              className="min-h-9 rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-zinc-50 sm:min-h-0"
               onClick={() => onEdit(sub)}
             >
               Edit
             </button>
             <button
-              className="bg-red-500 text-white px-2 py-1 rounded-sm hover:bg-red-600 text-xs"
+              className="min-h-9 rounded-md border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-700 transition hover:bg-red-50 sm:min-h-0"
               onClick={() => onDelete(sub._id)}
             >
               Delete
@@ -310,21 +310,20 @@ function CategoryCrud() {
 
   // Responsive grid for categories
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-gradient-to-br from-indigo-50 to-fuchsia-50 rounded-3xl shadow-lg border border-gray-100">
-      <h2 className="text-3xl font-extrabold mb-8 text-indigo-700 text-center tracking-tight">
-        Category Management
-
-
-      <div className="flex justify-center mb-4">
-        <Link
-          to="/user/life-events"
-          className="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold px-2 py-1 rounded-sm shadow transition flex items-center text-sm mt-2"
-        >
-          ← Back
-        </Link>
+    <div className="mx-auto max-w-2xl rounded-2xl border border-zinc-200/80 bg-zinc-50/90 p-4 shadow-sm sm:rounded-3xl sm:p-6">
+      <div className="mb-6 text-center sm:mb-8">
+        <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
+          Category Management
+        </h2>
+        <div className="mt-4 flex justify-center">
+          <Link
+            to="/user/life-events"
+            className="inline-flex items-center gap-1 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-50"
+          >
+            ← Back
+          </Link>
+        </div>
       </div>
-
-      </h2>
       <AddCategory onAdd={() => setRefreshKey((k) => k + 1)} />
       {editCat && (
         <EditCategory
@@ -337,27 +336,27 @@ function CategoryCrud() {
         />
       )}
       {loading ? (
-        <div className="text-center text-gray-400 py-8">Loading categories...</div>
+        <div className="py-8 text-center text-sm text-zinc-500">Loading categories...</div>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-3 sm:space-y-4">
           {categories
             .filter((cat) => !cat.isSubCategory)
             .map((cat) => (
               <li
                 key={cat._id}
-                className="bg-gradient-to-r from-indigo-100 to-fuchsia-100 rounded-2xl px-5 py-4 flex flex-col gap-2 shadow hover:shadow-md border border-indigo-50 transition"
+                className="flex flex-col gap-3 rounded-xl border border-zinc-200/80 bg-white px-4 py-3 shadow-sm transition hover:border-zinc-300 sm:gap-2 sm:px-5 sm:py-4"
               >
-                <div className="flex flex-col gap-2">
-                  <span className="font-semibold text-lg text-indigo-800">{cat.name}</span>
+                <div className="flex flex-col gap-3">
+                  <span className="text-lg font-semibold text-zinc-900">{cat.name}</span>
                   <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
                     <button
-                      className="bg-yellow-400 text-white px-4 py-1 rounded-sm font-semibold hover:bg-yellow-500 transition"
+                      className="min-h-10 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-50 sm:min-h-0"
                       onClick={() => setEditCat(cat)}
                     >
                       Edit
                     </button>
                     <button
-                      className="bg-red-500 text-white px-4 py-1 rounded-sm font-semibold hover:bg-red-600 transition"
+                      className="min-h-10 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-700 shadow-sm transition hover:bg-red-50 sm:min-h-0"
                       onClick={() => handleDelete(cat._id)}
                     >
                       Delete

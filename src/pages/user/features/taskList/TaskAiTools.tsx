@@ -86,17 +86,17 @@ const TaskListComponentSuggestAiGeneratedTask = ({
         <div>
             {loading && (
                 <div className="flex justify-center py-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-violet-200 border-t-fuchsia-500 border-r-amber-400" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-200 border-t-indigo-600" />
                 </div>
             )}
 
-            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
                 {tasks.map((task, index) => (
                     <div
                         key={index}
-                        className="rounded-xl border border-violet-200/60 bg-gradient-to-br from-white via-violet-50/40 to-amber-50/30 p-2 text-left shadow-md shadow-violet-200/15 transition-all hover:-translate-y-0.5 hover:border-fuchsia-300/70 hover:shadow-lg hover:shadow-fuchsia-200/20"
+                        className="rounded-xl border border-zinc-200/60 bg-white p-2 text-left shadow-sm transition-shadow hover:shadow-md sm:p-2.5"
                     >
-                        <h3 className="text-sm font-semibold leading-tight text-violet-950">{task.taskTitle}</h3>
+                        <h3 className="text-sm font-semibold leading-tight text-zinc-900">{task.taskTitle}</h3>
                         <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-zinc-600">{task.taskDescription}</p>
                         <p className="mt-0.5 text-[10px] text-zinc-500">
                             Priority:{' '}
@@ -125,7 +125,7 @@ const TaskListComponentSuggestAiGeneratedTask = ({
                         <button
                             type="button"
                             onClick={() => addTask(task)}
-                            className="mt-1.5 inline-flex w-full items-center justify-center gap-1 rounded-lg bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 py-1.5 text-[11px] font-bold text-white shadow-md shadow-teal-500/20 transition hover:from-cyan-400 hover:via-teal-400 hover:to-emerald-400"
+                            className="mt-1.5 inline-flex w-full items-center justify-center gap-1 rounded-lg bg-emerald-600 py-1.5 text-[11px] font-medium text-white shadow-sm transition-colors hover:bg-emerald-500"
                         >
                             <Plus className="h-3 w-3" strokeWidth={2} aria-hidden />
                             Add
@@ -227,26 +227,25 @@ const TaskAiTools = ({
     const workspaceId = useAtomValue(jotaiStateTaskWorkspaceId);
 
     return (
-        <div className="pb-2">
-            <div className="rounded-xl border-2 border-transparent bg-gradient-to-r from-violet-300 via-fuchsia-300 to-amber-300 p-[2px] shadow-lg shadow-fuchsia-500/10">
-                <div className="rounded-[10px] bg-gradient-to-br from-violet-50/95 via-white to-amber-50/50 p-2 backdrop-blur-sm">
-                <div className="mb-1.5 flex items-center gap-1.5">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-600 shadow-md shadow-fuchsia-500/30">
-                        <Sparkles className="h-3.5 w-3.5 text-amber-200" strokeWidth={2} aria-hidden />
+        <div className="pb-2 sm:pb-3">
+            <div className="rounded-xl border border-zinc-200/60 bg-white p-2.5 shadow-sm sm:p-3">
+                <div className="mb-2 flex items-center gap-1.5 sm:mb-2.5">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-900 text-amber-200 shadow-sm">
+                        <Sparkles className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
                     </span>
                     <div className="min-w-0">
-                        <h2 className="bg-gradient-to-r from-violet-700 to-fuchsia-600 bg-clip-text text-sm font-bold leading-tight text-transparent">
+                        <h2 className="text-sm font-semibold leading-tight text-zinc-900">
                             AI tools
                         </h2>
-                        <p className="text-[11px] leading-tight text-fuchsia-600/80">Generate · workspace chat</p>
+                        <p className="text-[11px] leading-tight text-zinc-500">Generate · workspace chat</p>
                     </div>
                 </div>
 
-                <div className="mb-2 flex flex-wrap gap-1.5">
+                <div className="mb-2 flex flex-wrap gap-1.5 sm:gap-2">
                     <button
                         type="button"
                         onClick={() => setCallGenerateAiTaskListRandomNum(Math.floor(Math.random() * 1_000_000))}
-                        className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 px-2 py-1.5 text-xs font-bold text-white shadow-md shadow-violet-500/25 transition hover:from-violet-500 hover:to-fuchsia-500"
+                        className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm transition-colors hover:bg-indigo-500"
                     >
                         <Sparkles className="h-3 w-3 text-amber-200" strokeWidth={2} aria-hidden />
                         Generate
@@ -254,7 +253,7 @@ const TaskAiTools = ({
                     <button
                         type="button"
                         onClick={() => taskWorkspaceChatWithAi({ taskWorkspaceId: workspaceId })}
-                        className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-sky-600 to-cyan-600 px-2 py-1.5 text-xs font-bold text-white shadow-md shadow-cyan-500/25 transition hover:from-sky-500 hover:to-cyan-500"
+                        className="inline-flex items-center gap-1 rounded-lg border border-zinc-200/80 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-800 shadow-sm transition-colors hover:bg-zinc-50"
                     >
                         <MessageSquare className="h-3 w-3" strokeWidth={2} aria-hidden />
                         Chat
@@ -265,7 +264,6 @@ const TaskAiTools = ({
                     setRefreshParentRandomNum={setRefreshParentRandomNum}
                     callGenerateAiTaskListRandomNum={callGenerateAiTaskListRandomNum}
                 />
-                </div>
             </div>
         </div>
     );

@@ -40,7 +40,7 @@ const LifeEventWrapper = () => {
     };
 
     return (
-        <div className="flex w-full bg-[#f4f4f5]">
+        <div className="flex w-full bg-zinc-100/80">
             <div className="min-w-0 w-[calc(100vw-50px)]">
                 <div className="mx-auto w-full max-w-none px-0">
                     <div className="flex flex-row">

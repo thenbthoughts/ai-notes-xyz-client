@@ -256,17 +256,17 @@ const ComponentScheduleSendMyselfEmail = ({
             : null);
 
     return (
-        <div className="py-2 border border-gray-200 rounded-sm p-4">
+        <div className="rounded-xl border border-zinc-200/80 bg-zinc-50/50 p-3 sm:p-4">
 
-            <h1 className="text-2xl font-bold text-gray-800 my-4">Send Myself Email</h1>
+            <h2 className="my-2 text-lg font-semibold tracking-tight text-zinc-900 sm:my-3 sm:text-xl">Send Myself Email</h2>
 
-            <div className="py-2 space-y-3 border-b border-gray-100 mb-4">
+            <div className="mb-3 space-y-3 border-b border-zinc-100 py-2 sm:mb-4">
                 <div className="flex items-center">
                     <input
                         type="checkbox"
                         id="sendMailEnabled"
                         checked={formDataSendMyselfEmail.sendMailEnabled}
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        className="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/25"
                         onChange={(e) =>
                             setFormDataSendMyselfEmail({
                                 ...formDataSendMyselfEmail,
@@ -274,7 +274,7 @@ const ComponentScheduleSendMyselfEmail = ({
                             })
                         }
                     />
-                    <label htmlFor="sendMailEnabled" className="ml-2 text-sm text-gray-700">
+                    <label htmlFor="sendMailEnabled" className="ml-2 text-sm text-zinc-800">
                         Send email (SMTP must be valid in API keys)
                     </label>
                 </div>
@@ -286,7 +286,7 @@ const ComponentScheduleSendMyselfEmail = ({
                                 type="checkbox"
                                 id="sendTelegramEnabled"
                                 checked={formDataSendMyselfEmail.sendTelegramEnabled}
-                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                className="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/25"
                                 onChange={(e) => {
                                     const on = e.target.checked;
                                     setFormDataSendMyselfEmail({
@@ -304,7 +304,7 @@ const ComponentScheduleSendMyselfEmail = ({
                             />
                             <label
                                 htmlFor="sendTelegramEnabled"
-                                className="ml-2 text-sm text-gray-700"
+                                className="ml-2 text-sm text-zinc-800"
                             >
                                 Send Telegram (same bot token as in settings; pick chat below)
                             </label>
@@ -316,15 +316,15 @@ const ComponentScheduleSendMyselfEmail = ({
                                     <button
                                         type="button"
                                         onClick={() => void refreshTelegramChatsFromBot()}
-                                        className="text-xs px-2 py-1 rounded-sm border border-gray-300 bg-white hover:bg-gray-50 text-gray-800"
+                                        className="text-xs px-2 py-1 rounded-lg border border-zinc-200/90 bg-white hover:bg-zinc-50 text-zinc-900"
                                     >
                                         Refresh chat list from bot
                                     </button>
-                                    <span className="text-xs text-gray-500">
+                                    <span className="text-xs text-zinc-500">
                                         Uses recent updates Telegram sent to your bot — say hi in the chat if the list is empty.
                                     </span>
                                 </div>
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-zinc-800">
                                     Telegram chat / topic
                                 </label>
                                 <Select<{ value: string; label: string }>
@@ -357,7 +357,7 @@ const ComponentScheduleSendMyselfEmail = ({
                 )}
 
                 {!authState.telegramValid && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-zinc-500">
                         Configure and verify Telegram under Settings → API keys to enable Telegram delivery here.
                     </p>
                 )}
@@ -365,11 +365,11 @@ const ComponentScheduleSendMyselfEmail = ({
 
             {/* field -> email subject */}
             <div className="py-2">
-                <label className="block text-sm font-medium text-gray-700">Email Subject *</label>
+                <label className="block text-sm font-medium text-zinc-800">Email Subject *</label>
                 <input
                     type="text"
                     value={formDataSendMyselfEmail.emailSubject}
-                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2"
+                    className="mt-1 block w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-sm text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                     onChange={(e) => setFormDataSendMyselfEmail({ ...formDataSendMyselfEmail, emailSubject: e.target.value })}
                     placeholder="Enter email subject"
                 />
@@ -377,10 +377,10 @@ const ComponentScheduleSendMyselfEmail = ({
 
             {/* field -> email content */}
             <div className="py-2">
-                <label className="block text-sm font-medium text-gray-700">Email Content</label>
+                <label className="block text-sm font-medium text-zinc-800">Email Content</label>
                 <textarea
                     value={formDataSendMyselfEmail.emailContent}
-                    className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2 min-h-[100px] resize-vertical"
+                    className="mt-1 block min-h-[100px] w-full resize-y rounded-lg border border-zinc-200/90 bg-white p-2 text-sm text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                     onChange={(e) => setFormDataSendMyselfEmail({ ...formDataSendMyselfEmail, emailContent: e.target.value })}
                     placeholder="Enter email content..."
                 />
@@ -388,15 +388,15 @@ const ComponentScheduleSendMyselfEmail = ({
 
             {/* field -> ai enabled */}
             <div className="py-2">
-                <label className="block text-sm font-medium text-gray-700">AI Enabled</label>
+                <label className="block text-sm font-medium text-zinc-800">AI Enabled</label>
                 <input
                     type="checkbox"
                     id="aiEnabled"
                     checked={formDataSendMyselfEmail.aiEnabled}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/25"
                     onChange={(e) => setFormDataSendMyselfEmail({ ...formDataSendMyselfEmail, aiEnabled: e.target.checked })}
                 />
-                <label htmlFor="aiEnabled" className="ml-2 text-sm text-gray-600">
+                <label htmlFor="aiEnabled" className="ml-2 text-sm text-zinc-600">
                     Enable AI for email generation
                 </label>
             </div>
@@ -408,15 +408,15 @@ const ComponentScheduleSendMyselfEmail = ({
                     {/*
                     // TODO future feature
                     <div className="py-2">
-                        <label className="block text-sm font-medium text-gray-700">Pass AI Context</label>
+                        <label className="block text-sm font-medium text-zinc-800">Pass AI Context</label>
                         <input
                             type="checkbox"
                             id="passAiContextEnabled"
                             checked={formDataSendMyselfEmail.passAiContextEnabled}
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            className="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/25"
                             onChange={(e) => setFormDataSendMyselfEmail({ ...formDataSendMyselfEmail, passAiContextEnabled: e.target.checked })}
                         />
-                        <label htmlFor="passAiContextEnabled" className="ml-2 text-sm text-gray-600">
+                        <label htmlFor="passAiContextEnabled" className="ml-2 text-sm text-zinc-600">
                             Pass AI context to the model
                         </label>
                     </div>
@@ -424,10 +424,10 @@ const ComponentScheduleSendMyselfEmail = ({
 
                     {/* field -> system prompt */}
                     <div className="py-2">
-                        <label className="block text-sm font-medium text-gray-700">System Prompt</label>
+                        <label className="block text-sm font-medium text-zinc-800">System Prompt</label>
                         <textarea
                             value={formDataSendMyselfEmail.systemPrompt}
-                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2 min-h-[80px] resize-vertical"
+                            className="mt-1 block min-h-[80px] w-full resize-y rounded-lg border border-zinc-200/90 bg-white p-2 text-sm text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                             onChange={(e) => setFormDataSendMyselfEmail({ ...formDataSendMyselfEmail, systemPrompt: e.target.value })}
                             placeholder="Enter system prompt for AI..."
                         />
@@ -435,10 +435,10 @@ const ComponentScheduleSendMyselfEmail = ({
 
                     {/* field -> user prompt */}
                     <div className="py-2">
-                        <label className="block text-sm font-medium text-gray-700">User Prompt</label>
+                        <label className="block text-sm font-medium text-zinc-800">User Prompt</label>
                         <textarea
                             value={formDataSendMyselfEmail.userPrompt}
-                            className="mt-1 block w-full border border-gray-300 rounded-sm shadow-sm p-2 min-h-[80px] resize-vertical"
+                            className="mt-1 block min-h-[80px] w-full resize-y rounded-lg border border-zinc-200/90 bg-white p-2 text-sm text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                             onChange={(e) => setFormDataSendMyselfEmail({ ...formDataSendMyselfEmail, userPrompt: e.target.value })}
                             placeholder="Enter user prompt for AI..."
                         />
@@ -446,9 +446,9 @@ const ComponentScheduleSendMyselfEmail = ({
 
                     {/* field -> modelProvider */}
                     <div className="py-2">
-                        <label className="block text-sm font-medium text-gray-700">Provider</label>
+                        <label className="block text-sm font-medium text-zinc-800">Provider</label>
                         <select
-                            className="w-full border border-gray-300 rounded-sm shadow-sm p-2 text-sm"
+                            className="w-full rounded-lg border border-zinc-200/90 bg-white p-2 text-sm text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                             value={formDataSendMyselfEmail.aiModelProvider}
                             onChange={(e) => {
                                 setFormDataSendMyselfEmail({ 
@@ -467,7 +467,7 @@ const ComponentScheduleSendMyselfEmail = ({
                     {/* field -> select model -> openrouter */}
                     {formDataSendMyselfEmail.aiModelProvider === 'openrouter' && (
                         <div className="py-2">
-                            <label className="block text-sm font-medium text-gray-700">Model</label>
+                            <label className="block text-sm font-medium text-zinc-800">Model</label>
                             <SelectAiModelOpenrouter
                                 aiModelName={formDataSendMyselfEmail.aiModelName}
                                 setAiModelName={handleAiModelNameChange}
@@ -480,7 +480,7 @@ const ComponentScheduleSendMyselfEmail = ({
                     {/* field -> select model -> groq */}
                     {formDataSendMyselfEmail.aiModelProvider === 'groq' && (
                         <div className="py-2">
-                            <label className="block text-sm font-medium text-gray-700">Model</label>
+                            <label className="block text-sm font-medium text-zinc-800">Model</label>
                             <SelectAiModelGroq
                                 aiModelName={formDataSendMyselfEmail.aiModelName}
                                 setAiModelName={handleAiModelNameChange}
@@ -496,7 +496,7 @@ const ComponentScheduleSendMyselfEmail = ({
                             onClick={() => {
                                 setSelectRandomModel(selectRandomModel + 1);
                             }}
-                            className="text-sm text-blue-500 hover:text-blue-700 inline-block"
+                            className="inline-block text-sm text-indigo-600 hover:text-indigo-500"
                         >
                             <span className="mr-1">🎲</span>
                             Random LLM

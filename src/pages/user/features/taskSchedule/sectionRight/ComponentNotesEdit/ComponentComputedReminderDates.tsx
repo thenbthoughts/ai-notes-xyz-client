@@ -21,16 +21,16 @@ const ComponentComputedReminderDates = ({
 
     return (
         <div className="mt-3">
-            <div className="text-sm font-medium text-gray-700 mb-2">Computed reminder dates</div>
-            <div className="max-h-[160px] overflow-y-auto rounded-sm border border-gray-200 bg-white p-2">
+            <div className="mb-1.5 text-sm font-medium text-zinc-800 sm:mb-2">Computed reminder dates</div>
+            <div className="max-h-[160px] overflow-y-auto rounded-xl border border-zinc-200/80 bg-white p-2 text-xs sm:p-2.5 [scrollbar-width:thin]">
                 {computedDueReminderDates.length === 0 ? (
-                    <div className="text-xs italic text-gray-500">
+                    <div className="italic text-zinc-500">
                         Select due date and reminder presets to see computed dates.
                     </div>
                 ) : (
                     <div className="space-y-1">
                         {computedDueReminderDates.map((time, index) => (
-                            <div key={time} className="text-xs text-gray-700">
+                            <div key={time} className="text-zinc-700">
                                 {index + 1}: {new Date(time).toLocaleString()}
                             </div>
                         ))}
@@ -42,4 +42,3 @@ const ComponentComputedReminderDates = ({
 };
 
 export default ComponentComputedReminderDates;
-

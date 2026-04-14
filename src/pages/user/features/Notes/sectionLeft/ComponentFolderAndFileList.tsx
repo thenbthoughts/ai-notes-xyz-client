@@ -239,7 +239,7 @@ const ComponentFolderAndFileList = () => {
                                 // if (hasChildren) toggleExpanded(item._id);
                             }}
                             className={
-                                `${leftAccent} block w-full rounded-none border-l-2 border-t-0 border-b-0 border-r-0 text-left py-0.5 pl-1.5 pr-1 text-[11px] font-medium text-zinc-800 overflow-hidden min-w-0`
+                                `${leftAccent} block w-full rounded-r-md border-l-2 border-t-0 border-b-0 border-r-0 py-0.5 pl-1.5 pr-1 text-left text-[11px] font-medium text-zinc-800 overflow-hidden min-w-0 transition-colors`
                             }
                             style={{
                                 fontSize: level === 0 ? '12px' : '11px',
@@ -280,8 +280,8 @@ const ComponentFolderAndFileList = () => {
     };
 
     return (
-        <div className="rounded-none border border-zinc-300/80 bg-white text-zinc-900 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.6)]">
-            <nav className="flex flex-col divide-y divide-zinc-100">
+        <div className="rounded-xl border border-zinc-200/60 bg-white text-zinc-900 shadow-sm">
+            <nav className="flex flex-col divide-y divide-zinc-100/80">
                 {hierarchicalItems.map(item => renderMenuItem(item))}
             </nav>
         </div>

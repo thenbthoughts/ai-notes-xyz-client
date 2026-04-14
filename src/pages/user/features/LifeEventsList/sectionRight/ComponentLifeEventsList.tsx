@@ -160,32 +160,32 @@ const ComponentLifeEventsList = () => {
     };
 
     const toggleBtn =
-        'inline-flex h-7 items-center justify-center rounded-md border px-2 text-zinc-600 transition-colors';
+        'inline-flex h-8 items-center justify-center rounded-lg border px-2 text-zinc-600 transition-colors sm:h-7';
 
     return (
         <div>
             <div id="messagesScrollUp" />
 
-            <div className="mb-1 flex flex-wrap items-center justify-between gap-1.5 rounded-md border border-zinc-200/90 bg-white px-1.5 py-1 shadow-sm">
-                <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-zinc-200/80 bg-white px-2 py-1.5 shadow-sm sm:mb-2.5 sm:px-2.5 sm:py-2">
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
                     <button
                         type="button"
                         onClick={() => void lifeEventAddAxiosLocal()}
-                        className="inline-flex h-7 shrink-0 items-center gap-1 rounded-md border border-emerald-700/25 bg-emerald-600 px-2 text-[11px] font-medium text-white shadow-sm hover:bg-emerald-700"
+                        className="inline-flex h-8 shrink-0 items-center gap-1 rounded-lg border border-indigo-600/20 bg-indigo-600 px-2.5 text-[11px] font-medium text-white shadow-sm hover:bg-indigo-500 sm:h-7"
                     >
                         <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
                         Add
                     </button>
                     <span className="text-[11px] text-zinc-600">
-                        <span className="font-semibold text-zinc-900">{totalCount}</span> events
+                        <span className="font-semibold tabular-nums text-zinc-900">{totalCount}</span> events
                     </span>
                     {totalCount === 0 && (
-                        <span className="text-[11px] font-medium text-amber-700">No results</span>
+                        <span className="text-[11px] font-medium text-zinc-500">No results</span>
                     )}
                 </div>
 
                 <div
-                    className="flex shrink-0 rounded-md border border-zinc-200 bg-zinc-50/80 p-0.5"
+                    className="flex shrink-0 rounded-lg border border-zinc-200/80 bg-zinc-50/90 p-0.5"
                     role="group"
                     aria-label="Layout"
                 >
@@ -219,7 +219,7 @@ const ComponentLifeEventsList = () => {
             </div>
 
             {viewMode === 'grid' ? (
-                <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-2.5 xl:grid-cols-3 2xl:grid-cols-4">
                     {list.map((lifeEventObj) => (
                         <ComponentLifeEventItem
                             key={lifeEventObj._id}
@@ -229,7 +229,7 @@ const ComponentLifeEventsList = () => {
                     ))}
                 </div>
             ) : (
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-2 sm:gap-1.5">
                     {list.map((lifeEventObj) => (
                         <ComponentLifeEventItem
                             key={lifeEventObj._id}
@@ -241,7 +241,7 @@ const ComponentLifeEventsList = () => {
             )}
 
             {totalCount >= 1 && (
-                <div className="mt-2 flex w-full items-center justify-center">
+                <div className="mt-3 flex w-full items-center justify-center px-1 pb-2 sm:mt-4">
                     <ReactPaginate
                         breakLabel="…"
                         nextLabel="›"
@@ -255,12 +255,12 @@ const ComponentLifeEventsList = () => {
                         previousLabel="‹"
                         renderOnZeroPageCount={null}
                         forcePage={page - 1}
-                        containerClassName="flex flex-wrap items-center justify-center gap-1"
-                        pageLinkClassName="min-w-[1.75rem] rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-center text-[11px] text-zinc-700 hover:bg-zinc-50"
-                        previousLinkClassName="rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-[11px] text-zinc-700 hover:bg-zinc-50"
-                        nextLinkClassName="rounded-sm border border-zinc-200 bg-white px-2 py-0.5 text-[11px] text-zinc-700 hover:bg-zinc-50"
+                        containerClassName="flex max-w-full flex-wrap items-center justify-center gap-1"
+                        pageLinkClassName="min-w-[2rem] rounded-lg border border-zinc-200/80 bg-white px-2 py-1 text-center text-[11px] font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 sm:min-w-[1.75rem] sm:py-0.5"
+                        previousLinkClassName="rounded-lg border border-zinc-200/80 bg-white px-2.5 py-1 text-[11px] font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 sm:py-0.5"
+                        nextLinkClassName="rounded-lg border border-zinc-200/80 bg-white px-2.5 py-1 text-[11px] font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 sm:py-0.5"
                         breakLinkClassName="px-1 text-[11px] text-zinc-400"
-                        activeLinkClassName="border-indigo-600 bg-indigo-600 text-white hover:bg-indigo-600"
+                        activeLinkClassName="!border-indigo-600 !bg-indigo-600 text-white hover:!bg-indigo-500"
                     />
                 </div>
             )}

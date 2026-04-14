@@ -74,7 +74,7 @@ const ComponentSelectTaskStatus = ({
                 </select>
             )}
             {listArr.length === 0 && (
-                <div className={`${taskEditSelectClass} text-slate-500`}>
+                <div className={`${taskEditSelectClass} text-zinc-500`}>
                     No task status found
                 </div>
             )}

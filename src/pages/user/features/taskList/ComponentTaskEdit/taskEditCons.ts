@@ -3,9 +3,9 @@ import { REMINDER_LABEL_TO_MS, type ReminderLabelToMsItem } from '../../../../..
 export type IReminderLabelToMsArr = ReminderLabelToMsItem;
 export const reminderLabelToMsArr: IReminderLabelToMsArr[] = REMINDER_LABEL_TO_MS;
 
-/** Compact selects — very light cool blue */
+/** Compact selects — neutral chrome, indigo focus */
 const taskEditSelectBase =
-    'rounded-lg border border-sky-100/95 bg-gradient-to-br from-white to-sky-50/50 py-1.5 px-2 text-xs leading-tight text-slate-700 shadow-sm backdrop-blur-sm focus:border-sky-300 focus:outline-none focus:ring-1 focus:ring-sky-200/60';
+    'rounded-lg border border-zinc-200/90 bg-white py-1.5 pl-2 pr-1.5 text-xs leading-tight text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 sm:py-2 sm:pl-2.5 sm:pr-2';
 
 export const taskEditSelectClass = `w-full min-w-0 ${taskEditSelectBase}`;
 
@@ -13,4 +13,4 @@ export const taskEditSelectClass = `w-full min-w-0 ${taskEditSelectBase}`;
 export const taskEditSelectInlineClass = `w-auto min-w-[7rem] ${taskEditSelectBase}`;
 
 export const taskEditInputClass =
-    'w-full rounded-lg border border-slate-200/80 bg-white py-1.5 px-2 text-xs text-slate-700 shadow-sm transition placeholder:text-slate-400 focus:border-sky-300 focus:outline-none focus:ring-1 focus:ring-sky-200/50';
+    'w-full rounded-lg border border-zinc-200/90 bg-white py-1.5 px-2 text-xs text-zinc-900 shadow-sm transition placeholder:text-zinc-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 sm:py-2 sm:px-2.5';

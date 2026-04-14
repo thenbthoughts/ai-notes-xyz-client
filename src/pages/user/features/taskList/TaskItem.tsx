@@ -281,7 +281,7 @@ const TaskItem = ({
             value={task.taskStatusId}
             onChange={(e) => axiosChangeTaskList(e.target.value)}
             className={
-                'min-w-0 rounded-md border border-violet-200/70 bg-white/90 py-1 pl-1.5 pr-6 text-xs leading-tight text-zinc-900 shadow-sm focus:border-fuchsia-400 focus:outline-none focus:ring-1 focus:ring-fuchsia-200/50 ' +
+                'min-w-0 rounded-md border border-zinc-200/80 bg-white py-1 pl-1.5 pr-6 text-xs leading-tight text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 ' +
                 (isList ? 'w-full max-w-full sm:w-auto sm:max-w-[160px]' : 'max-w-full flex-1 sm:max-w-[132px]')
             }
         >
@@ -339,7 +339,7 @@ const TaskItem = ({
                 <button
                     type="button"
                     onClick={() => taskChatWithAi(task._id)}
-                    className="rounded-md bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 p-1 text-white shadow-md shadow-fuchsia-500/20 transition-transform hover:scale-105 active:scale-95"
+                    className="rounded-md border border-zinc-200/80 bg-indigo-600 p-1 text-white shadow-sm transition-colors hover:bg-indigo-500"
                     title="AI chat"
                     aria-label="AI chat"
                 >
@@ -351,19 +351,19 @@ const TaskItem = ({
 
     const shellClass =
         (isUpdatedNow
-            ? 'ring-2 ring-fuchsia-400/50 ring-offset-1 ring-offset-amber-50/80 '
+            ? 'ring-2 ring-indigo-400/40 ring-offset-1 ring-offset-zinc-50 '
             : '') +
-        'group overflow-hidden border border-violet-200/60 bg-gradient-to-br from-white via-fuchsia-50/20 to-cyan-50/25 shadow-md shadow-violet-200/20 transition-all hover:border-fuchsia-300/70 hover:shadow-lg hover:shadow-fuchsia-200/25 ' +
+        'group overflow-hidden border border-zinc-200/60 bg-white shadow-sm transition-shadow hover:border-zinc-300 hover:shadow-md ' +
         (isList
             ? 'rounded-lg p-1.5 sm:p-2'
-            : 'h-full rounded-xl p-2');
+            : 'h-full rounded-xl p-2 sm:p-2.5');
 
     if (isList) {
         return (
             <div className={shellClass}>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
                     <div className="min-w-0 flex-1">
-                        <h3 className="min-w-0 bg-gradient-to-r from-zinc-900 to-violet-900 bg-clip-text text-sm font-semibold leading-snug text-transparent">
+                        <h3 className="min-w-0 text-sm font-semibold leading-snug text-zinc-900">
                             {task.title}
                         </h3>
                         {chips}
@@ -381,7 +381,7 @@ const TaskItem = ({
     return (
         <div className={shellClass}>
             <div className="flex items-start justify-between gap-1">
-                <h3 className="min-w-0 bg-gradient-to-r from-zinc-900 to-violet-900 bg-clip-text text-sm font-semibold leading-snug text-transparent">
+                <h3 className="min-w-0 text-sm font-semibold leading-snug text-zinc-900">
                     {task.title}
                 </h3>
             </div>
@@ -397,7 +397,7 @@ const TaskItem = ({
             <button
                 type="button"
                 onClick={() => taskChatWithAi(task._id)}
-                className="mt-1.5 inline-flex w-full items-center justify-center gap-1 rounded-lg bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 py-1.5 text-[11px] font-bold text-white shadow-md shadow-fuchsia-500/25 transition-transform hover:scale-[1.02] hover:shadow-lg hover:shadow-fuchsia-400/30 active:scale-[0.98]"
+                className="mt-1.5 inline-flex w-full items-center justify-center gap-1 rounded-lg border border-indigo-600/20 bg-indigo-600 py-1.5 text-[11px] font-medium text-white shadow-sm transition-colors hover:bg-indigo-500"
             >
                 <LucideMessageCircle className="h-3.5 w-3.5 text-white/95" strokeWidth={2} />
                 AI chat

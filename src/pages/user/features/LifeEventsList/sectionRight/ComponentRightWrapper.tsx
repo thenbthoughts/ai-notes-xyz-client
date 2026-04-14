@@ -50,15 +50,15 @@ const ComponentRightWrapper = ({
 
     return (
         <div
-            className="min-h-0 overflow-y-auto bg-[#f4f4f5] px-1.5 py-1 md:px-2"
+            className="min-h-0 overflow-y-auto bg-zinc-100/80 px-2 py-1.5 sm:px-3 sm:py-2"
             style={{ height: 'calc(100vh - 60px)' }}
         >
-            <div className="mb-1.5 flex flex-wrap items-center justify-between gap-1.5 rounded-md border border-zinc-200/90 bg-white px-2 py-1.5 shadow-sm">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-zinc-200/80 bg-white px-2.5 py-1.5 shadow-sm sm:mb-2.5 sm:px-3 sm:py-2">
                 <div className="min-w-0">
-                    <h1 className="text-xs font-semibold tracking-tight text-zinc-900 md:text-sm">
+                    <h1 className="text-sm font-semibold tracking-tight text-zinc-900 md:text-base">
                         Life events
                     </h1>
-                    <p className="text-[10px] text-zinc-500 md:text-[11px]">{subtitle}</p>
+                    <p className="text-[11px] text-zinc-500 md:text-xs">{subtitle}</p>
                 </div>
             </div>
 
