@@ -32,6 +32,7 @@ import ComponentCurrentDateTime from './ComponentCurrentDateTime';
 import ComponentApiKeySet from './ComponentApiKeySet';
 import ComponentQuickActions from './ComponentQuickActions';
 import ComponentHomepageSummary from './ComponentHomepageSummary';
+import ComponentUpcomingCalendar from './ComponentUpcomingCalendar';
 
 function NavTile({
     to,
@@ -179,6 +180,7 @@ const UserHomepage = () => {
                             <Fragment>
                                 <ComponentCurrentDateTime />
                                 <ComponentQuickActions />
+                                <ComponentUpcomingCalendar />
                                 <ComponentFromBrithdayToToday />
                                 <ComponentPinnedTask />
                                 <ComponentHomepageSummary />
