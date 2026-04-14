@@ -4,5 +4,12 @@
     :global(.ql-editor) {
         max-height: calc(70vh - 60px);
         overflow-y: auto;
+
+        /* Let the page scroll on narrow viewports — avoids a nested scrollbar in the editor. */
+        @media (max-width: 1023px) {
+            max-height: none;
+            min-height: 12rem;
+            overflow-y: visible;
+        }
     }
 }

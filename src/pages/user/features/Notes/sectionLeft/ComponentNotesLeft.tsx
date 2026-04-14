@@ -297,7 +297,7 @@ const ComponentNotesLeftRender = () => {
 const ComponentNotesLeftModelRender = () => {
     return (
         <div
-            className="fixed left-0 top-[60px] z-[1001] w-[300px] max-w-[calc(100%-50px)]"
+            className="fixed left-0 top-[60px] z-[1001] w-[min(100vw-1rem,300px)] max-w-[calc(100vw-1rem)]"
         >
             <div className="border-y border-r border-zinc-200 border-l-0 bg-[linear-gradient(180deg,#fafafa_0%,#f4f4f5_100%)] shadow-[4px_0_24px_-4px_rgba(0,0,0,0.12)]">
                 <div className="h-[calc(100vh-60px)] overflow-y-auto overscroll-contain">

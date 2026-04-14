@@ -48,8 +48,8 @@ const ComponentRightWrapper = ({
         <div
             className={
                 pageName.actionType === 'edit'
-                    ? 'h-[calc(100vh-60px)] overflow-y-auto bg-[#f6f6f4]'
-                    : 'h-[calc(100vh-60px)] overflow-y-auto px-2 py-1 bg-zinc-50/80'
+                    ? 'h-full min-h-0 min-w-0 max-w-full overflow-y-auto overflow-x-hidden bg-[#f6f6f4] px-3 sm:px-0'
+                    : 'h-full min-h-0 min-w-0 max-w-full overflow-y-auto px-2 py-1 bg-zinc-50/80'
             }
         >
             {pageName.actionType === 'list' && (

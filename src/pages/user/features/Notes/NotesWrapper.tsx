@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import {
     LucideList,
     LucideMoveDown,
@@ -32,6 +32,113 @@ import {
 
 const railBtnClass =
     'flex items-center justify-center py-1.5 rounded-md bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white active:bg-zinc-600 transition-colors';
+
+/** Shared tool actions: vertical strip on desktop, horizontal dock on small screens (full-width content). */
+const NotesToolbar = ({
+    layout,
+    notesAddAxiosLocal,
+    setRefreshRandomNum,
+    stateDisplayChatHistory,
+    setStateDisplayChatHistory,
+}: {
+    layout: 'vertical' | 'horizontal';
+    notesAddAxiosLocal: () => void;
+    setRefreshRandomNum: Dispatch<SetStateAction<number>>;
+    stateDisplayChatHistory: boolean;
+    setStateDisplayChatHistory: (value: boolean | ((prev: boolean) => boolean)) => void;
+}) => {
+    const isDock = layout === 'horizontal';
+    const wrapClass = isDock
+        ? 'fixed bottom-0 left-0 right-0 z-[90] flex border-t border-zinc-800 bg-zinc-900 px-1 pt-1 pb-[max(0.25rem,env(safe-area-inset-bottom,0px))] shadow-[0_-4px_20px_-2px_rgba(0,0,0,0.15)]'
+        : 'w-[50px] shrink-0 flex flex-col items-stretch bg-zinc-900 border-l border-zinc-800 py-0.5';
+    const innerClass = isDock
+        ? 'flex w-full flex-row items-stretch justify-around gap-0.5'
+        : 'flex flex-col gap-0.5 px-0.5 w-full';
+
+    return (
+        <div className={wrapClass} role="toolbar" aria-label="Notes quick actions">
+            <div className={innerClass}>
+                <div className={isDock ? 'min-w-0 flex-1' : ''}>
+                    <Link
+                        to={'/user/setting'}
+                        className={`block ${railBtnClass} ${isDock ? 'h-11 w-full' : ''}`}
+                        title="Settings"
+                    >
+                        <LucideSettings className="w-4 h-4" strokeWidth={1.75} />
+                    </Link>
+                </div>
+
+                <button
+                    type="button"
+                    className={`${isDock ? 'h-11 min-w-0 flex-1' : 'w-full'} cursor-pointer border-0 ${railBtnClass}`}
+                    onClick={() => {
+                        notesAddAxiosLocal();
+                    }}
+                    title="New note"
+                >
+                    <LucidePlus className="w-4 h-4" strokeWidth={1.75} />
+                </button>
+
+                <button
+                    type="button"
+                    className={`${isDock ? 'h-11 min-w-0 flex-1' : 'w-full'} cursor-pointer border-0 ${railBtnClass}`}
+                    onClick={() => {
+                        const messagesScrollUp = document.getElementById('messagesScrollUp');
+                        if (messagesScrollUp) {
+                            messagesScrollUp?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }}
+                    title="Scroll to top"
+                >
+                    <LucideMoveUp className="w-4 h-4" strokeWidth={1.75} />
+                </button>
+
+                <button
+                    type="button"
+                    className={`${isDock ? 'h-11 min-w-0 flex-1' : 'w-full'} cursor-pointer border-0 ${railBtnClass}`}
+                    onClick={() => {
+                        const messagesScrollDown = document.getElementById('messagesScrollDown');
+                        if (messagesScrollDown) {
+                            messagesScrollDown?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }}
+                    title="Scroll to bottom"
+                >
+                    <LucideMoveDown className="w-4 h-4" strokeWidth={1.75} />
+                </button>
+
+                <button
+                    type="button"
+                    className={`${isDock ? 'h-11 min-w-0 flex-1' : 'w-full'} cursor-pointer border-0 ${railBtnClass}`}
+                    onClick={() => {
+                        toast.success('Refreshing...');
+                        setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
+                    }}
+                    title="Refresh"
+                >
+                    <LucideRefreshCcw className="w-4 h-4" strokeWidth={1.75} />
+                </button>
+
+                {isDock && (
+                    <button
+                        type="button"
+                        className={`h-11 min-w-0 flex-1 cursor-pointer border-0 py-1.5 rounded-md transition-colors ${
+                            stateDisplayChatHistory
+                                ? 'bg-indigo-600 text-white hover:bg-indigo-500'
+                                : 'bg-zinc-800 text-zinc-200 hover:bg-zinc-700'
+                        }`}
+                        onClick={() => {
+                            setStateDisplayChatHistory(!stateDisplayChatHistory);
+                        }}
+                        title="Notes sidebar"
+                    >
+                        <LucideList className="w-4 h-4 mx-auto" strokeWidth={1.75} />
+                    </button>
+                )}
+            </div>
+        </div>
+    );
+};
 
 const NotesWrapper = () => {
 
@@ -103,9 +210,17 @@ const NotesWrapper = () => {
         }
     }
 
+    const isSmall = screenWidth === screenList.sm;
+
     return (
-        <div className="flex w-full">
-            <div className="w-[calc(100vw-50px)] min-w-0">
+        <div className="relative flex w-full min-w-0 max-w-full overflow-x-hidden">
+            <div
+                className={
+                    isSmall
+                        ? 'w-full min-w-0 max-w-full flex-1'
+                        : 'w-[calc(100vw-50px)] min-w-0 max-w-full flex-1'
+                }
+            >
                 <div className="w-full max-w-none px-0">
                     <div className="flex flex-row">
                         {/* part 1 -> 25% */}
@@ -121,11 +236,19 @@ const NotesWrapper = () => {
                                 screenWidth === screenList.lg ? 'w-[75%] min-w-0' : 'w-full min-w-0'
                             }
                         >
-                            <div className="w-full max-w-none mx-0">
-                                <div className="h-[calc(100vh-60px)]">
-                                    <ComponentRightWrapper
-                                        refreshRandomNumParent={refreshRandomNum}
-                                    />
+                            <div className="mx-0 w-full max-w-none">
+                                <div
+                                    className={
+                                        isSmall
+                                            ? 'box-border flex h-[calc(100vh-60px)] max-h-[calc(100vh-60px)] flex-col pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]'
+                                            : 'flex h-[calc(100vh-60px)] flex-col'
+                                    }
+                                >
+                                    <div className="min-h-0 flex-1 overflow-hidden">
+                                        <ComponentRightWrapper
+                                            refreshRandomNumParent={refreshRandomNum}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -133,94 +256,23 @@ const NotesWrapper = () => {
                 </div>
             </div>
 
-            {/* part 3 -> 50px tool rail */}
-            <div
-                className="w-[50px] shrink-0 flex flex-col items-stretch bg-zinc-900 border-l border-zinc-800 py-0.5"
-            >
-                <div className="flex flex-col gap-0.5 px-0.5 w-full">
-                    <div className="cursor-pointer">
-                        <Link
-                            to={'/user/setting'}
-                            className={`block ${railBtnClass}`}
-                            title="Settings"
-                        >
-                            <LucideSettings className="w-4 h-4" strokeWidth={1.75} />
-                        </Link>
-                    </div>
-
-                    <button
-                        type="button"
-                        className={`w-full cursor-pointer border-0 ${railBtnClass}`}
-                        onClick={() => {
-                            notesAddAxiosLocal();
-                        }}
-                        title="New note"
-                    >
-                        <LucidePlus className="w-4 h-4" strokeWidth={1.75} />
-                    </button>
-
-                    <button
-                        type="button"
-                        className={`w-full cursor-pointer border-0 ${railBtnClass}`}
-                        onClick={() => {
-                            const messagesScrollUp = document.getElementById('messagesScrollUp');
-                            if (messagesScrollUp) {
-                                messagesScrollUp?.scrollIntoView({ behavior: 'smooth' });
-                            }
-                        }}
-                        title="Scroll to top"
-                    >
-                        <LucideMoveUp className="w-4 h-4" strokeWidth={1.75} />
-                    </button>
-
-                    <button
-                        type="button"
-                        className={`w-full cursor-pointer border-0 ${railBtnClass}`}
-                        onClick={() => {
-                            const messagesScrollDown = document.getElementById('messagesScrollDown');
-                            if (messagesScrollDown) {
-                                messagesScrollDown?.scrollIntoView({ behavior: 'smooth' });
-                            }
-                        }}
-                        title="Scroll to bottom"
-                    >
-                        <LucideMoveDown className="w-4 h-4" strokeWidth={1.75} />
-                    </button>
-
-                    <button
-                        type="button"
-                        className={`w-full cursor-pointer border-0 ${railBtnClass}`}
-                        onClick={() => {
-                            toast.success('Refreshing...');
-                            setRefreshRandomNum(
-                                Math.floor(
-                                    Math.random() * 1_000_000
-                                )
-                            );
-                        }}
-                        title="Refresh"
-                    >
-                        <LucideRefreshCcw className="w-4 h-4" strokeWidth={1.75} />
-                    </button>
-
-                    {screenWidth === screenList.sm && (
-                        <button
-                            type="button"
-                            className={`w-full cursor-pointer border-0 py-1.5 rounded-md transition-colors ${
-                                stateDisplayChatHistory
-                                    ? 'bg-indigo-600 text-white hover:bg-indigo-500'
-                                    : 'bg-zinc-800 text-zinc-200 hover:bg-zinc-700'
-                            }`}
-                            onClick={() => {
-                                setStateDisplayChatHistory(!stateDisplayChatHistory);
-                            }}
-                            title="Sidebar"
-                        >
-                            <LucideList className="w-4 h-4 mx-auto" strokeWidth={1.75} />
-                        </button>
-                    )}
-                </div>
-            </div>
+            {screenWidth === screenList.lg ? (
+                <NotesToolbar
+                    layout="vertical"
+                    notesAddAxiosLocal={notesAddAxiosLocal}
+                    setRefreshRandomNum={setRefreshRandomNum}
+                    stateDisplayChatHistory={stateDisplayChatHistory}
+                    setStateDisplayChatHistory={setStateDisplayChatHistory}
+                />
+            ) : (
+                <NotesToolbar
+                    layout="horizontal"
+                    notesAddAxiosLocal={notesAddAxiosLocal}
+                    setRefreshRandomNum={setRefreshRandomNum}
+                    stateDisplayChatHistory={stateDisplayChatHistory}
+                    setStateDisplayChatHistory={setStateDisplayChatHistory}
+                />
+            )}
 
             {screenWidth === screenList.sm && (
                 <div>

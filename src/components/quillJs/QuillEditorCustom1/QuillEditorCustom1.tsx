@@ -271,7 +271,7 @@ const QuillEditorCustom1 = ({
             </div>
 
             {/* download button */}
-            <div className="flex justify-end mt-2">
+            <div className="mt-2 flex min-w-0 flex-wrap items-center justify-end gap-2">
                 {parentEntityId && (
                     <span className='px-2 py-1'>
                         <SpeechToTextComponent

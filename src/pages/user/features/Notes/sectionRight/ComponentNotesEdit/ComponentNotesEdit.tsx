@@ -168,55 +168,60 @@ const ComponentNotesEdit = ({
     const shortId = notesObj._id.slice(-6);
 
     return (
-        <div className="flex min-h-[calc(100vh-60px)] flex-col bg-[#f6f6f4] text-zinc-900">
-            {/* Command bar */}
-            <header className="sticky top-0 z-30 flex flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-[#fdfdfc]/95 px-3 py-2 backdrop-blur-md">
-                <Link
-                    to={`/user/notes?workspace=${formData.notesWorkspaceId}`}
-                    className="inline-flex h-9 items-center gap-1.5 rounded-none border border-zinc-300 bg-white px-2.5 text-xs font-medium text-zinc-800 shadow-[2px_2px_0_0_rgb(24_24_27)] hover:bg-zinc-50 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
-                >
-                    <LucideArrowLeft className="h-4 w-4" strokeWidth={2} />
-                    Notes
-                </Link>
+        <div className="flex min-h-0 min-w-0 max-w-full flex-col overflow-x-hidden bg-[#f6f6f4] text-zinc-900">
+            {/* Command bar: stack on narrow viewports so actions don’t overflow */}
+            <header className="sticky top-0 z-30 flex flex-col gap-2 border-b border-zinc-200/90 bg-[#fdfdfc]/95 px-2 py-2 backdrop-blur-md sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2 sm:px-3">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                    <Link
+                        to={`/user/notes?workspace=${formData.notesWorkspaceId}`}
+                        className="inline-flex h-9 min-w-0 shrink-0 items-center gap-1.5 rounded-none border border-zinc-300 bg-white px-2 sm:px-2.5 text-xs font-medium text-zinc-800 shadow-[2px_2px_0_0_rgb(24_24_27)] hover:bg-zinc-50 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                    >
+                        <LucideArrowLeft className="h-4 w-4 shrink-0" strokeWidth={2} />
+                        Notes
+                    </Link>
 
-                <span className="hidden font-mono text-[10px] text-zinc-400 sm:inline md:hidden lg:inline">
-                    · {shortId}
-                </span>
+                    <span className="hidden min-w-0 truncate font-mono text-[10px] text-zinc-400 sm:inline md:hidden lg:inline">
+                        · {shortId}
+                    </span>
+                </div>
 
-                <div className="ml-auto flex flex-wrap items-center gap-1.5">
+                <div className="flex w-full min-w-0 flex-wrap items-center justify-end gap-1.5 sm:ml-auto sm:w-auto sm:justify-end">
                     <button
                         type="button"
                         onClick={openAiChatWithNote}
-                        className="inline-flex h-9 items-center gap-1 rounded-none border border-violet-500 bg-violet-500 px-2.5 text-xs font-semibold text-white shadow-[2px_2px_0_0_rgb(91_33_182)] hover:bg-violet-600 active:translate-x-px active:translate-y-px active:shadow-none"
+                        title="AI chat"
+                        className="inline-flex h-9 shrink-0 items-center gap-1 rounded-none border border-violet-500 bg-violet-500 px-2 text-xs font-semibold text-white shadow-[2px_2px_0_0_rgb(91_33_182)] hover:bg-violet-600 active:translate-x-px active:translate-y-px active:shadow-none sm:px-2.5"
                     >
                         <LucideMessageSquare className="h-3.5 w-3.5" strokeWidth={2} />
-                        AI chat
+                        <span className="hidden sm:inline">AI chat</span>
                     </button>
                     <button
                         type="button"
                         onClick={() => deleteRecord()}
-                        className="inline-flex h-9 items-center gap-1 rounded-none border border-red-300 bg-white px-2.5 text-xs font-medium text-red-700 hover:bg-red-50"
+                        title="Delete note"
+                        className="inline-flex h-9 shrink-0 items-center gap-1 rounded-none border border-red-300 bg-white px-2 text-xs font-medium text-red-700 hover:bg-red-50 sm:px-2.5"
                     >
                         <LucideTrash2 className="h-3.5 w-3.5" strokeWidth={2} />
-                        Delete
+                        <span className="hidden sm:inline">Delete</span>
                     </button>
                     <button
                         type="button"
                         disabled={requestEdit.loading}
                         onClick={() => editRecord()}
-                        className="inline-flex h-9 items-center gap-1.5 rounded-none border border-emerald-700 bg-emerald-600 px-3 text-xs font-bold uppercase tracking-wide text-white shadow-[2px_2px_0_0_rgb(6_95_70)] hover:bg-emerald-500 disabled:opacity-50 active:translate-x-px active:translate-y-px active:shadow-none"
+                        title={requestEdit.loading ? 'Saving…' : 'Save'}
+                        className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-none border border-emerald-700 bg-emerald-600 px-2.5 text-xs font-bold uppercase tracking-wide text-white shadow-[2px_2px_0_0_rgb(6_95_70)] hover:bg-emerald-500 disabled:opacity-50 active:translate-x-px active:translate-y-px active:shadow-none sm:px-3"
                     >
                         <LucideSave className="h-3.5 w-3.5" strokeWidth={2} />
-                        {requestEdit.loading ? 'Saving…' : 'Save'}
+                        <span className="max-[380px]:hidden">{requestEdit.loading ? 'Saving…' : 'Save'}</span>
                     </button>
                 </div>
             </header>
 
             {/* Body: editor + sidebar */}
-            <div className="flex flex-1 flex-col xl:flex-row xl:items-stretch">
+            <div className="flex min-w-0 flex-1 flex-col xl:flex-row xl:items-stretch">
                 {/* Main column */}
-                <main className="min-w-0 flex-1 border-zinc-200 xl:border-r">
-                    <div className="border-b border-zinc-200 bg-white px-4 py-4 sm:px-6 sm:py-5">
+                <main className="min-w-0 max-w-full flex-1 border-zinc-200 xl:border-r">
+                    <div className="border-b border-zinc-200 bg-white px-3 py-4 sm:px-6 sm:py-5">
                         <div className="mb-3 flex flex-wrap items-center gap-2">
                             <button
                                 type="button"
@@ -350,9 +355,11 @@ const ComponentNotesEdit = ({
                         </div>
                     </div>
 
-                    <div className="bg-white px-4 py-3 sm:px-6">
+                    <div className="bg-white px-3 py-3 sm:px-6">
                         <label className={panelTitle + ' mb-2 block'}>Body</label>
-                        <div className="rounded-none border border-zinc-200 bg-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)]">
+                        <div
+                            className="max-w-full min-w-0 overflow-x-auto rounded-none border border-zinc-200 bg-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)] [&_.ql-container]:max-w-full [&_.ql-snow]:max-w-full [&_.ql-toolbar.ql-snow]:flex [&_.ql-toolbar.ql-snow]:flex-wrap [&_.ql-toolbar.ql-snow]:justify-start [&_.ql-toolbar.ql-snow]:gap-y-1 [&_.ql-toolbar.ql-snow]:py-2"
+                        >
                             <QuillEditorCustom1
                                 value={formData.description}
                                 setValue={(value) => setFormData({ ...formData, description: value })}
@@ -363,7 +370,7 @@ const ComponentNotesEdit = ({
                         </div>
                     </div>
 
-                    <section className="border-t border-zinc-200 bg-[#fafaf8] px-4 py-4 sm:px-6">
+                    <section className="border-t border-zinc-200 bg-[#fafaf8] px-3 py-4 sm:px-6">
                         <h3 className={panelTitle + ' mb-2'}>Comments</h3>
                         <div className="rounded-none border border-zinc-200 bg-white p-2 text-sm [&_*]:text-sm">
                             <CommentCommonComponent commentType="note" recordId={notesObj._id} />
@@ -372,8 +379,8 @@ const ComponentNotesEdit = ({
                 </main>
 
                 {/* Sidebar */}
-                <aside className="w-full shrink-0 border-zinc-200 bg-[#eef0ec] xl:w-[340px] xl:border-t-0 xl:border-l">
-                    <div className="sticky top-[52px] max-h-[calc(100vh-120px)] overflow-y-auto overscroll-contain px-3 py-4">
+                <aside className="w-full min-w-0 max-w-full shrink-0 border-zinc-200 bg-[#eef0ec] xl:w-[340px] xl:border-t-0 xl:border-l">
+                    <div className="px-3 py-4 xl:sticky xl:top-[52px] xl:max-h-[calc(100vh-120px)] xl:overflow-y-auto xl:overscroll-contain">
                         <div className="mb-4 rounded-none border border-zinc-300/80 bg-white p-3 shadow-[3px_3px_0_0_rgb(228_228_231)]">
                             <NotesWorkspacePicker
                                 selectedId={formData.notesWorkspaceId}
