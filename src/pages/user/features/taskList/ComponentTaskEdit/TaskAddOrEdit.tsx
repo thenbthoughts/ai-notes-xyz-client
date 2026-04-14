@@ -339,16 +339,16 @@ const TaskAddOrEdit: React.FC<{
     return (
         <div>
             {isTaskAddModalIsOpen.openStatus && (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-white/10 p-1 backdrop-blur-lg sm:p-2">
-                    <div className="custom-scrollbar mx-auto w-full max-w-3xl">
-                        <div className="relative w-full overflow-hidden rounded-xl border border-sky-100/90 bg-white">
-                            <div className="custom-scrollbar max-h-[85vh] overflow-y-auto bg-gradient-to-b from-white/95 via-sky-50/35 to-blue-50/25 p-2 sm:p-3 [scrollbar-width:thin] [scrollbar-color:rgb(186_230_253)_rgb(248_250_252)]">
-                                <h2 className="mb-2 bg-gradient-to-r from-slate-600 via-sky-600 to-blue-600 bg-clip-text text-center text-sm font-semibold tracking-tight text-transparent">
+                <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-zinc-950/40 p-0 backdrop-blur-sm sm:items-center sm:p-3">
+                    <div className="custom-scrollbar mx-auto w-full max-w-3xl sm:max-h-[90vh]">
+                        <div className="relative w-full overflow-hidden rounded-t-xl border border-zinc-200/60 bg-white shadow-xl sm:rounded-xl">
+                            <div className="custom-scrollbar max-h-[90vh] overflow-y-auto bg-zinc-50/40 p-2 sm:max-h-[85vh] sm:p-4 [scrollbar-width:thin] [scrollbar-color:rgb(228_228_231)_rgb(250_250_250)]">
+                                <h2 className="mb-1 text-center text-sm font-semibold tracking-tight text-zinc-900 sm:mb-3 sm:text-base">
                                     {isTaskAddModalIsOpen.modalType === 'add' ? 'Add Task' : 'Edit Task'}
                                 </h2>
 
                                 {/* title */}
-                                <div className="py-1">
+                                <div className="py-0.5 sm:py-1">
                                     <input
                                         type="text"
                                         className={taskEditInputClass}
@@ -358,12 +358,12 @@ const TaskAddOrEdit: React.FC<{
                                     />
 
                                     {/* set current date */}
-                                    <div className='mt-0.5 flex flex-wrap items-center gap-1'>
+                                    <div className='mt-0.5 flex flex-wrap items-center gap-0.5 sm:gap-1'>
                                         <button
                                             onClick={() => {
                                                 setTaskTitle(new Date().toISOString().split('T')[0])
                                             }}
-                                            className="rounded-md bg-gradient-to-r from-sky-600 to-blue-700 px-2 py-1 text-[11px] font-semibold text-white shadow-sm shadow-sky-500/15 transition hover:from-sky-500 hover:to-blue-600"
+                                            className="rounded-lg border border-zinc-200/80 bg-white px-1.5 py-0.5 text-[11px] font-medium text-zinc-800 shadow-sm transition-colors hover:bg-zinc-50 sm:px-2 sm:py-1"
                                         >
                                             Today
                                         </button>
@@ -376,7 +376,7 @@ const TaskAddOrEdit: React.FC<{
                                                 );
                                                 setTaskTitle(tomorrow.toISOString().split('T')[0])
                                             }}
-                                            className="rounded-md bg-gradient-to-r from-sky-600 to-blue-700 px-2 py-1 text-[11px] font-semibold text-white shadow-sm shadow-sky-500/15 transition hover:from-sky-500 hover:to-blue-600"
+                                            className="rounded-lg border border-zinc-200/80 bg-white px-1.5 py-0.5 text-[11px] font-medium text-zinc-800 shadow-sm transition-colors hover:bg-zinc-50 sm:px-2 sm:py-1"
                                         >
                                             Tomorrow
                                         </button>
@@ -393,9 +393,9 @@ const TaskAddOrEdit: React.FC<{
                                     </div>
 
                                     {taskAiSuggestion.display && (
-                                        <div className='mt-1'>
-                                            <div className="mt-1 rounded-lg border border-sky-200/70 bg-gradient-to-br from-sky-50/90 via-blue-50/50 to-slate-50/40 p-2 shadow-sm">
-                                                <span className="text-[11px] font-bold text-sky-900">AI</span>
+                                        <div className='mt-0.5 sm:mt-1'>
+                                            <div className="mt-0.5 rounded-xl border border-zinc-200/60 bg-white p-1.5 shadow-sm sm:mt-1 sm:p-2">
+                                                <span className="text-[11px] font-medium text-zinc-600">AI</span>
                                                 <textarea
                                                     className={`mt-1 ${taskEditInputClass} min-h-[2.5rem]`}
                                                     value={taskAiSuggestion.newTaskTitle}
@@ -403,7 +403,7 @@ const TaskAddOrEdit: React.FC<{
                                                 />
                                                 <button
                                                     type="button"
-                                                    className="mt-1 rounded-md bg-gradient-to-r from-sky-600 to-blue-600 px-2 py-1 text-[11px] font-bold text-white shadow-sm shadow-sky-500/20 transition hover:from-sky-500 hover:to-blue-500"
+                                                    className="mt-0.5 rounded-lg bg-indigo-600 px-1.5 py-0.5 text-[11px] font-medium text-white shadow-sm transition-colors hover:bg-indigo-500 sm:mt-1 sm:px-2 sm:py-1"
                                                     onClick={() => {
                                                         setTaskTitle(taskAiSuggestion.newTaskTitle);
                                                     }}
@@ -416,7 +416,7 @@ const TaskAddOrEdit: React.FC<{
                                 </div>
 
                                 {isTaskAddModalIsOpen.modalType === 'edit' && (
-                                    <div className="mb-2 flex flex-wrap gap-1">
+                                    <div className="mb-1.5 flex flex-wrap gap-0.5 sm:mb-2 sm:gap-1">
                                         <button
                                             type="button"
                                             onClick={() => {
@@ -424,12 +424,12 @@ const TaskAddOrEdit: React.FC<{
                                                     axiosGetTaskAiSuggestionById();
                                                 }
                                             }}
-                                            className="rounded-md bg-gradient-to-r from-sky-500 to-blue-600 px-2 py-1 text-[11px] font-bold text-white shadow-md shadow-sky-500/25 transition hover:from-sky-400 hover:to-blue-500 disabled:opacity-60"
+                                            className="rounded-lg bg-indigo-600 px-1.5 py-0.5 text-[11px] font-medium text-white shadow-sm transition-colors hover:bg-indigo-500 disabled:opacity-60 sm:px-2 sm:py-1"
                                             disabled={taskAiSuggestionLoading}
                                         >
                                             {taskAiSuggestionLoading ? 'Loading…' : 'AI suggest'}
                                         </button>
-                                        <span className="rounded-md border border-sky-200/80 bg-sky-100/80 px-1.5 py-0.5 text-[11px] font-semibold text-slate-800">
+                                        <span className="rounded-md border border-zinc-200/80 bg-zinc-100/80 px-1.5 py-0.5 text-[11px] font-medium text-zinc-800">
                                             Status: {status}
                                         </span>
                                         {formData.isCompleted && (
@@ -443,19 +443,19 @@ const TaskAddOrEdit: React.FC<{
                                             </span>
                                         )}
                                         {formData.priority && (
-                                            <span className="rounded-md border border-sky-200/75 bg-blue-50/90 px-1.5 py-0.5 text-[11px] font-semibold text-slate-800">
+                                            <span className="rounded-md border border-zinc-200/80 bg-zinc-50 px-1.5 py-0.5 text-[11px] font-medium text-zinc-800">
                                                 Priority: {formData.priority.replace(' ', '-')}
                                             </span>
                                         )}
                                         {labels.map((label, index) => (
                                             <span
                                                 key={index}
-                                                className="mr-0.5 inline-flex items-center gap-0.5 rounded-md border border-sky-200/70 bg-sky-50/90 px-1.5 py-0.5 text-[11px] font-semibold text-slate-800"
+                                                className="mr-0.5 inline-flex items-center gap-0.5 rounded-md border border-zinc-200/70 bg-zinc-50 px-1.5 py-0.5 text-[11px] font-medium text-zinc-800"
                                             >
                                                 <span>{label}</span>
                                                 <button
                                                     type="button"
-                                                    className="inline-flex rounded-md p-0.5 text-slate-500 transition hover:bg-sky-100 hover:text-slate-700"
+                                                    className="inline-flex rounded-md p-0.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800"
                                                     onClick={() => {
                                                         setLabels(labels.filter((_, i) => i !== index));
                                                     }}
@@ -469,7 +469,7 @@ const TaskAddOrEdit: React.FC<{
                                             <button
                                                 key={index}
                                                 type="button"
-                                                className="mr-0.5 rounded-md border border-sky-200/80 bg-gradient-to-r from-sky-50 to-blue-50/80 px-1.5 py-0.5 text-[11px] font-semibold text-slate-800 shadow-sm transition hover:border-sky-400/60"
+                                                className="mr-0.5 rounded-md border border-zinc-200/80 bg-white px-1.5 py-0.5 text-[11px] font-medium text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50"
                                                 onClick={() => {
                                                     setLabels([...labels, label.trim()]);
                                                     setTaskAiSuggestion(prev => ({
@@ -484,7 +484,7 @@ const TaskAddOrEdit: React.FC<{
                                         <button
                                             type="button"
                                             onClick={() => setIsAddingLabel(!isAddingLabel)}
-                                            className="rounded-md bg-gradient-to-r from-sky-600 to-blue-600 px-2 py-1 text-[11px] font-bold text-white shadow-sm shadow-sky-500/20 transition hover:from-sky-500 hover:to-blue-500"
+                                            className="rounded-lg bg-zinc-900 px-1.5 py-0.5 text-[11px] font-medium text-white shadow-sm transition-colors hover:bg-zinc-800 sm:px-2 sm:py-1"
                                         >
                                             Add label
                                         </button>
@@ -492,13 +492,13 @@ const TaskAddOrEdit: React.FC<{
                                 )}
 
                                 {/* status */}
-                                <div className="mt-1 flex flex-wrap gap-1">
+                                <div className="mt-0.5 flex flex-wrap gap-0.5 sm:mt-1 sm:gap-1">
                                     {isTaskAddModalIsOpen.modalType === 'edit' && (
                                         <Fragment>
-                                            <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-emerald-200/60 bg-gradient-to-r from-emerald-50/70 to-sky-50/30 px-2 py-1 shadow-sm transition hover:border-emerald-300/80">
+                                            <label className="flex cursor-pointer items-center gap-1 rounded-lg border border-zinc-200/80 bg-white px-1.5 py-0.5 shadow-sm transition hover:border-zinc-300 sm:gap-1.5 sm:px-2 sm:py-1">
                                                 <input
                                                     type="checkbox"
-                                                    className="h-3.5 w-3.5 rounded border-sky-300 text-sky-600 focus:ring-sky-400/45"
+                                                    className="h-3.5 w-3.5 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/30"
                                                     checked={formData.isCompleted}
                                                     onChange={(e) =>
                                                         setFormData({ ...formData, isCompleted: e.target.checked })
@@ -508,10 +508,10 @@ const TaskAddOrEdit: React.FC<{
                                             </label>
 
                                             {/* archived */}
-                                            <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200/80 bg-gradient-to-r from-slate-50/90 to-sky-50/35 px-2 py-1 shadow-sm transition hover:border-slate-300">
+                                            <label className="flex cursor-pointer items-center gap-1 rounded-lg border border-zinc-200/80 bg-white px-1.5 py-0.5 shadow-sm transition hover:border-zinc-300 sm:gap-1.5 sm:px-2 sm:py-1">
                                                 <input
                                                     type="checkbox"
-                                                    className="h-3.5 w-3.5 rounded border-sky-300 text-sky-600 focus:ring-sky-400/45"
+                                                    className="h-3.5 w-3.5 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/30"
                                                     checked={formData.isArchived}
                                                     onChange={(e) =>
                                                         setFormData({ ...formData, isArchived: e.target.checked })
@@ -521,8 +521,8 @@ const TaskAddOrEdit: React.FC<{
                                             </label>
 
                                             {/* priority */}
-                                            <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-sky-200/70 bg-gradient-to-r from-slate-50/90 to-sky-50/45 px-2 py-1 shadow-sm">
-                                                <label className="text-xs font-medium text-slate-700">Priority</label>
+                                            <div className="flex flex-wrap items-center gap-1 rounded-lg border border-zinc-200/70 bg-zinc-50/80 px-1.5 py-1 shadow-sm sm:gap-1.5 sm:px-2 sm:py-1.5">
+                                                <label className="text-xs font-medium text-zinc-700">Priority</label>
                                                 <select
                                                     className={taskEditSelectInlineClass}
                                                     value={formData.priority}
@@ -540,8 +540,8 @@ const TaskAddOrEdit: React.FC<{
                                     )}
 
                                     {/* workspace */}
-                                    <div className="flex min-w-0 flex-[1_1_12rem] flex-wrap items-center gap-1.5 rounded-lg border border-sky-200/65 bg-gradient-to-r from-sky-50/55 to-blue-50/40 px-2 py-1 shadow-sm">
-                                        <label className="shrink-0 text-xs font-medium text-slate-700">Workspace</label>
+                                    <div className="flex min-w-0 flex-[1_1_12rem] flex-wrap items-center gap-1 rounded-lg border border-zinc-200/70 bg-white px-1.5 py-1 shadow-sm sm:gap-1.5 sm:px-2 sm:py-1.5">
+                                        <label className="shrink-0 text-xs font-medium text-zinc-700">Workspace</label>
                                         <ComponentSelectWorkspace
                                             workspaceId={workspaceId}
                                             setWorkspaceIdFunc={(workspaceId: string) => {
@@ -552,8 +552,8 @@ const TaskAddOrEdit: React.FC<{
                                     </div>
 
                                     {/* status */}
-                                    <div className="flex min-w-0 flex-[1_1_12rem] flex-wrap items-center gap-1.5 rounded-lg border border-sky-200/65 bg-gradient-to-r from-slate-50/85 to-sky-50/45 px-2 py-1 shadow-sm">
-                                        <label className="shrink-0 text-xs font-medium text-slate-700">List status</label>
+                                    <div className="flex min-w-0 flex-[1_1_12rem] flex-wrap items-center gap-1 rounded-lg border border-zinc-200/70 bg-white px-1.5 py-1 shadow-sm sm:gap-1.5 sm:px-2 sm:py-1.5">
+                                        <label className="shrink-0 text-xs font-medium text-zinc-700">List status</label>
                                         {workspaceId.length === 24 && (
                                             <ComponentSelectTaskStatus
                                                 workspaceId={workspaceId}
@@ -568,11 +568,11 @@ const TaskAddOrEdit: React.FC<{
 
                                     {/* due date — add flow only; edit uses Due & email reminders panel */}
                                     {isTaskAddModalIsOpen.modalType === 'add' && (
-                                        <div className="flex min-w-0 flex-wrap items-center gap-1.5 rounded-lg border border-sky-200/70 bg-gradient-to-r from-slate-50/90 to-sky-50/45 px-2 py-1 shadow-sm">
-                                            <label className="shrink-0 text-xs font-medium text-slate-700">Due date</label>
+                                        <div className="flex min-w-0 flex-wrap items-center gap-1 rounded-lg border border-zinc-200/70 bg-zinc-50/80 px-1.5 py-1 shadow-sm sm:gap-1.5 sm:px-2 sm:py-1.5">
+                                            <label className="shrink-0 text-xs font-medium text-zinc-700">Due date</label>
                                             <input
                                                 type="datetime-local"
-                                                className="min-w-0 flex-1 rounded-lg border border-slate-200/80 bg-white py-1 px-1.5 text-xs text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-300/40"
+                                                className="min-w-0 flex-1 rounded-lg border border-zinc-200/90 bg-white py-0.5 px-1 text-xs text-zinc-900 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 sm:py-1 sm:px-1.5"
                                                 value={getDateTimeForInputTypeDateTimeLocal(dueDate)}
                                                 onChange={(e) => {
                                                     const newDueDate = new Date(`${e.target.value}`);
@@ -583,7 +583,7 @@ const TaskAddOrEdit: React.FC<{
                                                 <button
                                                     type="button"
                                                     onClick={() => setDueDate('')}
-                                                    className="shrink-0 rounded-md border border-slate-200/90 bg-gradient-to-r from-slate-500 to-slate-600 px-2 py-1 text-[11px] font-semibold text-white shadow-sm transition hover:from-slate-400 hover:to-slate-500"
+                                                    className="shrink-0 rounded-lg border border-zinc-300 bg-zinc-800 px-1.5 py-0.5 text-[11px] font-medium text-white shadow-sm transition-colors hover:bg-zinc-700 sm:px-2 sm:py-1"
                                                 >
                                                     Clear
                                                 </button>
@@ -616,7 +616,7 @@ const TaskAddOrEdit: React.FC<{
                                 )}
 
                                 {isAddingLabel && (
-                                    <div className="mt-1 rounded-lg border border-sky-200/65 bg-gradient-to-br from-sky-50/50 via-blue-50/35 to-slate-50/40 p-2">
+                                    <div className="mt-0.5 rounded-xl border border-zinc-200/60 bg-white p-1.5 shadow-sm sm:mt-1 sm:p-2">
                                         <input
                                             type="text"
                                             className={taskEditInputClass}
@@ -627,17 +627,17 @@ const TaskAddOrEdit: React.FC<{
                                         <button
                                             type="button"
                                             onClick={handleAddLabel}
-                                            className="mt-1 rounded-md bg-gradient-to-r from-sky-600 to-blue-600 px-2 py-1 text-[11px] font-bold text-white shadow-sm shadow-sky-500/20 transition hover:from-sky-500 hover:to-blue-500"
+                                            className="mt-0.5 rounded-lg bg-indigo-600 px-1.5 py-0.5 text-[11px] font-medium text-white shadow-sm transition-colors hover:bg-indigo-500 sm:mt-1 sm:px-2 sm:py-1"
                                         >
                                             Add
                                         </button>
                                     </div>
                                 )}
 
-                                <div className="py-1">
-                                    <label className="mb-1 block text-xs font-semibold text-slate-700">Description</label>
+                                <div className="py-0.5 sm:py-1">
+                                    <label className="mb-0.5 block text-xs font-medium text-zinc-600 sm:mb-1">Description</label>
                                     <textarea
-                                        className={`${taskEditInputClass} min-h-[5rem] p-2`}
+                                        className={`${taskEditInputClass} min-h-[5rem] p-1.5 sm:p-2`}
                                         placeholder="Enter task description"
                                         value={taskDescription}
                                         onChange={(e) => setTaskDescription(e.target.value)}
@@ -654,11 +654,11 @@ const TaskAddOrEdit: React.FC<{
                                     </span>
 
                                     {taskAiSuggestion.display && (
-                                        <div className="mt-1.5">
-                                            <div className="rounded-lg border border-sky-200/70 bg-gradient-to-br from-sky-50/90 via-blue-50/45 to-slate-50/40 p-2 shadow-sm">
-                                                <span className="text-[11px] font-bold text-sky-900">AI suggestion</span>
+                                        <div className="mt-1 sm:mt-1.5">
+                                            <div className="rounded-xl border border-zinc-200/60 bg-white p-1.5 shadow-sm sm:p-2">
+                                                <span className="text-[11px] font-medium text-zinc-600">AI suggestion</span>
                                                 <textarea
-                                                    className={`mt-1 ${taskEditInputClass} min-h-[5rem] p-2`}
+                                                    className={`mt-0.5 sm:mt-1 ${taskEditInputClass} min-h-[5rem] p-1.5 sm:p-2`}
                                                     value={taskAiSuggestion.newTaskDescription}
                                                     onChange={(e) =>
                                                         setTaskAiSuggestion((prev) => ({
@@ -670,7 +670,7 @@ const TaskAddOrEdit: React.FC<{
                                                 />
                                                 <button
                                                     type="button"
-                                                    className="mt-1 rounded-md bg-gradient-to-r from-sky-600 to-blue-600 px-2 py-1 text-[11px] font-bold text-white shadow-sm shadow-sky-500/20 transition hover:from-sky-500 hover:to-blue-500"
+                                                    className="mt-0.5 rounded-lg bg-indigo-600 px-1.5 py-0.5 text-[11px] font-medium text-white shadow-sm transition-colors hover:bg-indigo-500 sm:mt-1 sm:px-2 sm:py-1"
                                                     onClick={() => {
                                                         setTaskDescription(taskAiSuggestion.newTaskDescription);
                                                     }}
@@ -701,32 +701,36 @@ const TaskAddOrEdit: React.FC<{
 
                                 {/* ai faq */}
                                 {isTaskAddModalIsOpen.modalType === 'edit' && (
+                                    <div className="[&_.rounded-sm]:rounded-xl">
                                     <CommonComponentAiFaq
                                         sourceId={isTaskAddModalIsOpen.recordId}
                                     />
+                                    </div>
                                 )}
 
                                 {/* ai keyword */}
                                 {isTaskAddModalIsOpen.modalType === 'edit' && (
+                                    <div className="[&_.rounded-sm]:rounded-xl">
                                     <CommonComponentAiKeywords
                                         sourceId={isTaskAddModalIsOpen.recordId}
                                         metadataSourceType="tasks"
                                     />
+                                    </div>
                                 )}
                             </div>
 
-                            <div className="flex justify-end gap-1 border-t border-sky-100/90 bg-gradient-to-r from-sky-50/70 via-white/92 to-blue-50/50 px-2 py-2 backdrop-blur-[1px]">
+                            <div className="flex justify-end gap-1 border-t border-zinc-100 bg-white px-2 py-2 sm:gap-1.5 sm:px-4 sm:py-2.5">
                                 <button
                                     type="button"
                                     onClick={toggleModal}
-                                    className="rounded-md border border-sky-200/80 bg-white/95 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-sky-50"
+                                    className="rounded-lg border border-zinc-200/80 bg-white px-2 py-1 text-xs font-medium text-zinc-700 shadow-sm transition-colors hover:bg-zinc-50 sm:px-3 sm:py-1.5"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="button"
                                     onClick={handleSubmit}
-                                    className="rounded-md bg-gradient-to-r from-sky-600 to-blue-600 px-3 py-1.5 text-xs font-bold text-white shadow-md shadow-sky-500/25 transition hover:from-sky-500 hover:to-blue-500"
+                                    className="rounded-lg bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500 sm:px-3 sm:py-1.5"
                                 >
                                     {isTaskAddModalIsOpen.modalType === 'add' ? 'Add task' : 'Save'}
                                 </button>

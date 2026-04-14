@@ -63,24 +63,24 @@ const ComponentTaskListLabels = ({
 
     return (
         <div>
-            <h2 className="mb-1 flex items-center gap-1 text-xs font-semibold text-pink-900">
-                <span className="rounded bg-pink-100 p-0.5">
-                    <LucideTag className="h-3 w-3 text-pink-600" strokeWidth={2} aria-hidden />
+            <h2 className="mb-1 flex items-center gap-1 text-xs font-medium text-zinc-700">
+                <span className="rounded-md bg-zinc-100 p-0.5">
+                    <LucideTag className="h-3 w-3 text-zinc-600" strokeWidth={2} aria-hidden />
                 </span>
                 Labels
             </h2>
             <input
                 type="text"
                 placeholder="Filter labels…"
-                className="mb-1.5 w-full rounded-lg border border-pink-200/80 bg-pink-50/40 py-1.5 px-2 text-xs text-pink-950 shadow-sm backdrop-blur-sm focus:border-fuchsia-400 focus:outline-none focus:ring-1 focus:ring-fuchsia-200/40"
+                className="mb-1.5 w-full rounded-lg border border-zinc-200/90 bg-zinc-50/80 py-1.5 px-2 text-xs text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
             />
 
             {selectedLabels.length > 0 && (
-                <div className="mb-1.5 rounded-lg border border-fuchsia-200/70 bg-gradient-to-r from-fuchsia-50/80 to-pink-50/60 p-1.5 shadow-sm backdrop-blur-sm">
+                <div className="mb-1.5 rounded-lg border border-zinc-200/70 bg-zinc-50/80 p-1.5 shadow-sm">
                     <div className="mb-0.5 flex items-center justify-between gap-1">
-                        <span className="text-[11px] font-semibold text-fuchsia-900">Selected</span>
+                        <span className="text-[11px] font-medium text-zinc-700">Selected</span>
                         <button
                             type="button"
                             onClick={() => setSelectedLabels([])}
@@ -94,7 +94,7 @@ const ComponentTaskListLabels = ({
                         {selectedLabels.map((label) => (
                             <span
                                 key={label}
-                                className="inline-flex items-center gap-0.5 rounded border border-fuchsia-300/70 bg-white/95 px-1.5 py-0.5 text-[10px] font-medium leading-tight text-fuchsia-900 shadow-sm"
+                                className="inline-flex items-center gap-0.5 rounded-md border border-zinc-200/80 bg-white px-1.5 py-0.5 text-[10px] font-medium leading-tight text-zinc-800 shadow-sm"
                             >
                                 {label}
                                 <button
@@ -114,7 +114,7 @@ const ComponentTaskListLabels = ({
             <div>
                 {loading ? (
                     <div className="flex justify-center py-2">
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-pink-200 border-t-fuchsia-500 border-r-amber-400" />
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-200 border-t-indigo-600" />
                     </div>
                 ) : (
                     <div className="flex max-h-32 flex-wrap gap-0.5 overflow-y-auto">
@@ -131,13 +131,13 @@ const ComponentTaskListLabels = ({
                                             onClick={() => handleLabelClick(label._id)}
                                             className={
                                                 (on
-                                                    ? 'border-fuchsia-600 bg-gradient-to-r from-fuchsia-600 to-pink-500 text-white shadow-md shadow-fuchsia-500/20 '
-                                                    : 'border-violet-200/80 bg-gradient-to-r from-violet-50/90 to-white text-violet-950 shadow-sm hover:border-fuchsia-300 ') +
-                                                'inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-medium leading-tight transition-colors'
+                                                    ? 'border-indigo-600 bg-indigo-600 text-white shadow-sm '
+                                                    : 'border-zinc-200/80 bg-white text-zinc-800 shadow-sm hover:border-zinc-300 hover:bg-zinc-50 ') +
+                                                'inline-flex items-center gap-0.5 rounded-md border px-1.5 py-0.5 text-[10px] font-medium leading-tight transition-colors'
                                             }
                                         >
                                             {label._id}
-                                            <span className={on ? 'rounded bg-white/25 px-0.5 text-[9px] tabular-nums' : 'rounded bg-violet-200/80 px-0.5 text-[9px] tabular-nums text-violet-900'}>
+                                            <span className={on ? 'rounded bg-white/20 px-0.5 text-[9px] tabular-nums' : 'rounded bg-zinc-200/80 px-0.5 text-[9px] tabular-nums text-zinc-700'}>
                                                 {label.count}
                                             </span>
                                         </button>

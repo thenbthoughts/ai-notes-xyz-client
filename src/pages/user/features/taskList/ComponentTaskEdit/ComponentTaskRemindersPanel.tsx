@@ -269,7 +269,7 @@ const ComponentTaskRemindersPanel = ({
         <div className="mt-2 space-y-2">
             {/* —— Due date & relative-to-due reminders —— */}
             <section
-                className="rounded-lg border border-sky-200/80 bg-gradient-to-br from-sky-50/90 via-white to-slate-50/40 shadow-sm"
+                className="rounded-xl border border-zinc-200/60 bg-white shadow-sm"
                 aria-labelledby="due-date-reminders-heading"
             >
                 <button
@@ -281,23 +281,23 @@ const ComponentTaskRemindersPanel = ({
                 >
                     <div className="flex min-w-0 items-center gap-1">
                         {expandedDue ? (
-                            <LucideChevronDown className="h-3.5 w-3.5 shrink-0 text-sky-900/80" strokeWidth={2} />
+                            <LucideChevronDown className="h-3.5 w-3.5 shrink-0 text-zinc-500" strokeWidth={2} />
                         ) : (
-                            <LucideChevronRight className="h-3.5 w-3.5 shrink-0 text-sky-900/80" strokeWidth={2} />
+                            <LucideChevronRight className="h-3.5 w-3.5 shrink-0 text-zinc-500" strokeWidth={2} />
                         )}
-                        <LucideCalendarClock className="h-3.5 w-3.5 shrink-0 text-sky-800/90" strokeWidth={2} />
-                        <span className="text-xs font-semibold tracking-tight text-sky-950 sm:text-sm">
+                        <LucideCalendarClock className="h-3.5 w-3.5 shrink-0 text-zinc-500" strokeWidth={2} />
+                        <span className="text-xs font-semibold tracking-tight text-zinc-900 sm:text-sm">
                             Due date reminders
                         </span>
                     </div>
-                    <span className="max-w-[min(100%,16rem)] truncate text-right text-[10px] text-slate-500 sm:text-[11px]">
+                    <span className="max-w-[min(100%,16rem)] truncate text-right text-[10px] text-zinc-500 sm:text-[11px]">
                         {dueSummaryShort ? (
                             <>
-                                <span className="font-medium text-slate-700">{dueSummaryShort}</span>
-                                <span className="text-slate-400"> · </span>
+                                <span className="font-medium text-zinc-700">{dueSummaryShort}</span>
+                                <span className="text-zinc-400"> · </span>
                             </>
                         ) : (
-                            <span className="text-slate-500">No due date · </span>
+                            <span className="text-zinc-500">No due date · </span>
                         )}
                         {dueDateReminderCount > 0
                             ? `${dueDateReminderCount} due reminder${dueDateReminderCount === 1 ? '' : 's'}`
@@ -306,17 +306,17 @@ const ComponentTaskRemindersPanel = ({
                 </button>
 
                 {expandedDue && (
-                    <div className="border-t border-sky-100/90 px-2 pb-2 pt-1 sm:px-2.5 sm:pb-2.5">
-                        <p className="mb-1.5 text-[10px] leading-snug text-slate-600 sm:text-[11px]">
+                    <div className="border-t border-zinc-100 px-2 pb-2 pt-1 sm:px-2.5 sm:pb-2.5">
+                        <p className="mb-1.5 text-[10px] leading-snug text-zinc-600 sm:text-[11px]">
                             Presets relative to due, plus optional exact times and cron (all require a task due date).
                         </p>
-                        <div className="mb-2 flex min-w-0 flex-wrap items-center gap-1.5 rounded-md border border-sky-200/70 bg-white/90 px-2 py-1.5">
-                            <label className="shrink-0 text-[10px] font-medium text-slate-700 sm:text-xs">
+                        <div className="mb-2 flex min-w-0 flex-wrap items-center gap-1.5 rounded-lg border border-zinc-200/70 bg-zinc-50/50 px-2 py-1.5">
+                            <label className="shrink-0 text-[10px] font-medium text-zinc-700 sm:text-xs">
                                 Task due date
                             </label>
                             <input
                                 type="datetime-local"
-                                className="min-w-0 flex-1 rounded-lg border border-slate-200/80 bg-white py-0.5 px-1.5 text-[10px] text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-300/40 sm:py-1 sm:text-xs"
+                                className="min-w-0 flex-1 rounded-lg border border-zinc-200/90 bg-white py-0.5 px-1.5 text-[10px] text-zinc-900 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 sm:py-1 sm:text-xs"
                                 value={getDateTimeForInputTypeDateTimeLocal(dueDate)}
                                 onChange={(e) => {
                                     const next = new Date(`${e.target.value}`);
@@ -327,7 +327,7 @@ const ComponentTaskRemindersPanel = ({
                                 <button
                                     type="button"
                                     onClick={onDueDateClear}
-                                    className="shrink-0 rounded-md border border-slate-200/90 bg-gradient-to-r from-slate-500 to-slate-600 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm transition hover:from-slate-400 hover:to-slate-500 sm:py-1 sm:text-[11px]"
+                                    className="shrink-0 rounded-md border border-zinc-300/90 bg-zinc-800 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm transition hover:bg-zinc-700 sm:py-1 sm:text-[11px]"
                                 >
                                     Clear due
                                 </button>
@@ -350,10 +350,10 @@ const ComponentTaskRemindersPanel = ({
                                     {presetRows.map((row) => (
                                         <div
                                             key={`p-${row.name}`}
-                                            className="flex items-start justify-between gap-1 rounded border border-sky-100 bg-sky-50/80 px-1.5 py-1 text-[10px] sm:text-[11px]"
+                                            className="flex items-start justify-between gap-1 rounded border border-zinc-200/70 bg-zinc-50/80 px-1.5 py-1 text-[10px] sm:text-[11px]"
                                         >
                                             <div className="min-w-0">
-                                                <span className="font-medium text-sky-950">Before due</span>
+                                                <span className="font-medium text-zinc-900">Before due</span>
                                                 <span className="block truncate text-zinc-700">{row.labelStr}</span>
                                                 <span className="flex items-center gap-0.5 text-zinc-600">
                                                     <LucideClock className="h-3 w-3 shrink-0" strokeWidth={2} />
@@ -365,7 +365,7 @@ const ComponentTaskRemindersPanel = ({
                                             </div>
                                             <button
                                                 type="button"
-                                                className="shrink-0 rounded p-0.5 text-zinc-400 hover:bg-sky-100 hover:text-red-600"
+                                                className="shrink-0 rounded p-0.5 text-zinc-400 hover:bg-zinc-100 hover:text-red-600"
                                                 aria-label={`Remove ${row.labelStr}`}
                                                 onClick={() =>
                                                     onDueDateReminderPresetLabelsChange(
@@ -380,10 +380,10 @@ const ComponentTaskRemindersPanel = ({
                                     {dueDateReminderAbsoluteTimesIso.map((iso) => (
                                         <div
                                             key={`da-${iso}`}
-                                            className="flex items-start justify-between gap-1 rounded border border-violet-100 bg-violet-50/80 px-1.5 py-1 text-[10px] sm:text-[11px]"
+                                            className="flex items-start justify-between gap-1 rounded border border-indigo-200/60 bg-indigo-50/50 px-1.5 py-1 text-[10px] sm:text-[11px]"
                                         >
                                             <div className="min-w-0">
-                                                <span className="font-medium text-violet-950">Exact (due section)</span>
+                                                <span className="font-medium text-indigo-950">Exact (due section)</span>
                                                 <span className="flex items-center gap-0.5 text-zinc-700">
                                                     <LucideClock className="h-3 w-3 shrink-0" strokeWidth={2} />
                                                     {fmtWhen(iso)}
@@ -391,7 +391,7 @@ const ComponentTaskRemindersPanel = ({
                                             </div>
                                             <button
                                                 type="button"
-                                                className="shrink-0 rounded p-0.5 text-zinc-400 hover:bg-violet-100 hover:text-red-600"
+                                                className="shrink-0 rounded p-0.5 text-zinc-400 hover:bg-indigo-100 hover:text-red-600"
                                                 aria-label="Remove exact time"
                                                 onClick={() =>
                                                     onDueDateReminderAbsoluteTimesIsoChange(
@@ -406,17 +406,17 @@ const ComponentTaskRemindersPanel = ({
                                     {dueDateReminderCronExpressions.map((expr) => (
                                         <div
                                             key={`dc-${expr}`}
-                                            className="flex items-start justify-between gap-1 rounded border border-teal-100 bg-teal-50/75 px-1.5 py-1 text-[10px] sm:text-[11px]"
+                                            className="flex items-start justify-between gap-1 rounded border border-zinc-200/70 bg-zinc-50/70 px-1.5 py-1 text-[10px] sm:text-[11px]"
                                         >
-                                            <div className="min-w-0 font-mono text-[10px] leading-snug text-teal-950 sm:text-[11px]">
-                                                <span className="mr-1 font-sans font-medium text-teal-900">
+                                            <div className="min-w-0 font-mono text-[10px] leading-snug text-zinc-900 sm:text-[11px]">
+                                                <span className="mr-1 font-sans font-medium text-zinc-700">
                                                     Cron (due section)
                                                 </span>
                                                 {expr}
                                             </div>
                                             <button
                                                 type="button"
-                                                className="shrink-0 rounded p-0.5 text-zinc-400 hover:bg-teal-100 hover:text-red-600"
+                                                className="shrink-0 rounded p-0.5 text-zinc-400 hover:bg-zinc-100 hover:text-red-600"
                                                 aria-label="Remove cron"
                                                 onClick={() =>
                                                     onDueDateReminderCronExpressionsChange(
@@ -438,7 +438,7 @@ const ComponentTaskRemindersPanel = ({
                                 {dueValid ? (
                                     <>
                                         <div className="space-y-1 border-b border-zinc-100 pb-2">
-                                            <label className="text-[10px] font-medium text-sky-900 sm:text-[11px]">
+                                            <label className="text-[10px] font-medium text-zinc-800 sm:text-[11px]">
                                                 Before-due presets
                                             </label>
                                             <div className="flex max-h-28 flex-wrap gap-1 overflow-y-auto [scrollbar-width:thin]">
@@ -449,11 +449,11 @@ const ComponentTaskRemindersPanel = ({
                                                     return (
                                                         <label
                                                             key={label.labelName}
-                                                            className="flex cursor-pointer items-center gap-0.5 rounded border border-sky-100 bg-sky-50/90 px-1 py-0.5 text-[10px] text-zinc-800 sm:text-[11px]"
+                                                            className="flex cursor-pointer items-center gap-0.5 rounded border border-zinc-200/80 bg-zinc-50/80 px-1 py-0.5 text-[10px] text-zinc-800 sm:text-[11px]"
                                                         >
                                                             <input
                                                                 type="checkbox"
-                                                                className="h-3 w-3 rounded border-sky-300 text-sky-600"
+                                                                className="h-3 w-3 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/20"
                                                                 checked={checked}
                                                                 onChange={() => {
                                                                     onDueDateReminderPresetLabelsChange(
@@ -487,7 +487,7 @@ const ComponentTaskRemindersPanel = ({
                                                 />
                                                 <button
                                                     type="button"
-                                                    className="inline-flex shrink-0 items-center gap-0.5 rounded border border-violet-200 bg-violet-600 px-1.5 py-0.5 text-[10px] font-medium text-white hover:bg-violet-500 sm:text-[11px]"
+                                                    className="inline-flex shrink-0 items-center gap-0.5 rounded border border-indigo-200 bg-indigo-600 px-1.5 py-0.5 text-[10px] font-medium text-white hover:bg-indigo-500 sm:text-[11px]"
                                                     onClick={addExactDue}
                                                 >
                                                     <LucidePlus className="h-3 w-3" strokeWidth={2} />
@@ -507,7 +507,7 @@ const ComponentTaskRemindersPanel = ({
                                                 />
                                                 <button
                                                     type="button"
-                                                    className="inline-flex shrink-0 items-center gap-0.5 rounded border border-teal-200 bg-teal-700 px-1.5 py-0.5 text-[10px] font-medium text-white hover:bg-teal-600 sm:text-[11px]"
+                                                    className="inline-flex shrink-0 items-center gap-0.5 rounded border border-indigo-200 bg-indigo-600 px-1.5 py-0.5 text-[10px] font-medium text-white hover:bg-indigo-500 sm:text-[11px]"
                                                     onClick={addCronDue}
                                                 >
                                                     <LucidePlus className="h-3 w-3" strokeWidth={2} />
@@ -531,8 +531,8 @@ const ComponentTaskRemindersPanel = ({
                             heading="Email send queue (due-date reminders)"
                             pending={dueDateReminderScheduledTimes}
                             completed={dueDateReminderScheduledTimesCompleted}
-                            pendingBorderClass="border-sky-200/80 bg-sky-50/90"
-                            completedBorderClass="border-slate-200/80 bg-slate-100/80"
+                            pendingBorderClass="border-zinc-200/80 bg-zinc-50/90"
+                            completedBorderClass="border-zinc-200/80 bg-zinc-100/80"
                         />
                     </div>
                 )}
@@ -540,7 +540,7 @@ const ComponentTaskRemindersPanel = ({
 
             {/* —— Task remainder (exact / cron, no due required) —— */}
             <section
-                className="rounded-lg border border-amber-200/70 bg-gradient-to-br from-amber-50/80 via-white to-indigo-50/20 shadow-sm"
+                className="rounded-xl border border-zinc-200/60 bg-white shadow-sm"
                 aria-labelledby="task-remainder-heading"
             >
                 <button
@@ -552,16 +552,16 @@ const ComponentTaskRemindersPanel = ({
                 >
                     <div className="flex min-w-0 items-center gap-1">
                         {expandedRemainder ? (
-                            <LucideChevronDown className="h-3.5 w-3.5 shrink-0 text-amber-900/80" strokeWidth={2} />
+                            <LucideChevronDown className="h-3.5 w-3.5 shrink-0 text-zinc-500" strokeWidth={2} />
                         ) : (
-                            <LucideChevronRight className="h-3.5 w-3.5 shrink-0 text-amber-900/80" strokeWidth={2} />
+                            <LucideChevronRight className="h-3.5 w-3.5 shrink-0 text-zinc-500" strokeWidth={2} />
                         )}
-                        <LucideBell className="h-3.5 w-3.5 shrink-0 text-amber-800/90" strokeWidth={2} />
-                        <span className="text-xs font-semibold tracking-tight text-amber-950 sm:text-sm">
+                        <LucideBell className="h-3.5 w-3.5 shrink-0 text-zinc-500" strokeWidth={2} />
+                        <span className="text-xs font-semibold tracking-tight text-zinc-900 sm:text-sm">
                             Task remainder
                         </span>
                     </div>
-                    <span className="text-[10px] text-slate-500 sm:text-[11px]">
+                    <span className="text-[10px] text-zinc-500 sm:text-[11px]">
                         {remainderCount > 0
                             ? `${remainderCount} scheduled (exact / cron)`
                             : 'none — optional'}
@@ -569,8 +569,8 @@ const ComponentTaskRemindersPanel = ({
                 </button>
 
                 {expandedRemainder && (
-                    <div className="border-t border-amber-100/90 px-2 pb-2 pt-1 sm:px-2.5 sm:pb-2.5">
-                        <p className="mb-2 text-[10px] leading-snug text-slate-600 sm:text-[11px]">
+                    <div className="border-t border-zinc-100 px-2 pb-2 pt-1 sm:px-2.5 sm:pb-2.5">
+                        <p className="mb-2 text-[10px] leading-snug text-zinc-600 sm:text-[11px]">
                             Email reminders at fixed times or on a schedule. Does not require a task due date.
                         </p>
                         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-2">
@@ -613,17 +613,17 @@ const ComponentTaskRemindersPanel = ({
                                     {remainderCronExpressions.map((expr) => (
                                         <div
                                             key={expr}
-                                            className="flex items-start justify-between gap-1 rounded border border-emerald-100 bg-emerald-50/70 px-1.5 py-1 text-[10px] sm:text-[11px]"
+                                            className="flex items-start justify-between gap-1 rounded border border-zinc-200/70 bg-zinc-50/70 px-1.5 py-1 text-[10px] sm:text-[11px]"
                                         >
-                                            <div className="min-w-0 font-mono text-[10px] leading-snug text-emerald-950 sm:text-[11px]">
-                                                <span className="mr-1 font-sans font-medium text-emerald-900">
+                                            <div className="min-w-0 font-mono text-[10px] leading-snug text-zinc-900 sm:text-[11px]">
+                                                <span className="mr-1 font-sans font-medium text-zinc-700">
                                                     Cron (UTC)
                                                 </span>
                                                 {expr}
                                             </div>
                                             <button
                                                 type="button"
-                                                className="shrink-0 rounded p-0.5 text-zinc-400 hover:bg-emerald-100 hover:text-red-600"
+                                                className="shrink-0 rounded p-0.5 text-zinc-400 hover:bg-zinc-100 hover:text-red-600"
                                                 aria-label="Remove cron"
                                                 onClick={() =>
                                                     onRemainderCronExpressionsChange(
@@ -673,7 +673,7 @@ const ComponentTaskRemindersPanel = ({
                                         />
                                         <button
                                             type="button"
-                                            className="inline-flex shrink-0 items-center gap-0.5 rounded border border-emerald-200 bg-emerald-700 px-1.5 py-0.5 text-[10px] font-medium text-white hover:bg-emerald-600 sm:text-[11px]"
+                                            className="inline-flex shrink-0 items-center gap-0.5 rounded border border-indigo-200 bg-indigo-600 px-1.5 py-0.5 text-[10px] font-medium text-white hover:bg-indigo-500 sm:text-[11px]"
                                             onClick={addCron}
                                         >
                                             <LucidePlus className="h-3 w-3" strokeWidth={2} />
@@ -691,8 +691,8 @@ const ComponentTaskRemindersPanel = ({
                             heading="Email send queue (task remainder)"
                             pending={remainderScheduledTimes}
                             completed={remainderScheduledTimesCompleted}
-                            pendingBorderClass="border-amber-200/80 bg-amber-50/90"
-                            completedBorderClass="border-slate-200/80 bg-slate-100/80"
+                            pendingBorderClass="border-zinc-200/80 bg-zinc-50/90"
+                            completedBorderClass="border-zinc-200/80 bg-zinc-100/80"
                         />
                     </div>
                 )}
