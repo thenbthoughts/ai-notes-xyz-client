@@ -109,14 +109,28 @@ interface InfoVaultInfo {
     fromCollection: string;
 }
 
+interface MemoInfo {
+    _id: string;
+    username: string;
+    title: string;
+    body: string;
+    labelIds?: string[];
+    pinned?: boolean;
+    archived?: boolean;
+    trashed?: boolean;
+    createdAtUtc?: string;
+    updatedAtUtc?: string;
+}
+
 interface SearchResultItem {
     _id: string;
-    collectionName: 'tasks' | 'notes' | 'lifeEvents' | 'infoVault' | 'chatLlmThread';
+    collectionName: 'tasks' | 'notes' | 'lifeEvents' | 'infoVault' | 'chatLlmThread' | 'memoNotes';
     taskInfo?: TaskInfo;
     notesInfo?: NotesInfo;
     lifeEventInfo?: LifeEventInfo;
     infoVaultInfo?: InfoVaultInfo;
     chatLlmThreadInfo?: ChatLlmThreadInfo;
+    memoInfo?: MemoInfo;
 }
 
 interface ITaskWorkspace {
@@ -254,6 +268,7 @@ const Search = () => {
         filterEventTypeNotes: true,
         filterEventTypeInfoVault: true,
         filterEventTypeChatLlm: true,
+        filterEventTypeMemo: true,
     });
 
     // filter -> task
@@ -316,6 +331,7 @@ const Search = () => {
                     filterEventTypeNotes: filters.filterEventTypeNotes,
                     filterEventTypeInfoVault: filters.filterEventTypeInfoVault,
                     filterEventTypeChatLlm: filters.filterEventTypeChatLlm,
+                    filterEventTypeMemo: filters.filterEventTypeMemo,
 
                     // filter -> task
                     filterTaskIsCompleted: filterTaskIsCompleted,
@@ -431,6 +447,15 @@ const Search = () => {
                                         className="rounded"
                                     />
                                     <span className="text-sm">Chat LLM</span>
+                                </label>
+                                <label className="flex items-center space-x-2 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={filters.filterEventTypeMemo}
+                                        onChange={(e) => setFilters({ ...filters, filterEventTypeMemo: e.target.checked })}
+                                        className="rounded"
+                                    />
+                                    <span className="text-sm">Memo</span>
                                 </label>
                             </div>
                         </div>
@@ -632,6 +657,15 @@ const Search = () => {
             eventTypeColor = 'bg-orange-100 text-orange-800';
         }
 
+        if (item.collectionName === 'memoNotes' && item.memoInfo) {
+            title = item.memoInfo.title || 'Untitled';
+            description = item.memoInfo.body || '';
+            itemDate = item.memoInfo.updatedAtUtc || item.memoInfo.createdAtUtc || '';
+            itemLink = '/user/memo';
+            eventTypeLabel = 'Memo';
+            eventTypeColor = 'bg-amber-100 text-amber-900';
+        }
+
         return (
             <div
                 key={item._id}
@@ -696,6 +730,16 @@ const Search = () => {
                                         </span>
                                     )}
                                 </Fragment>
+                            )}
+                            {item.collectionName === 'memoNotes' && item.memoInfo?.pinned && (
+                                <span className="px-2 py-0.5 rounded-sm bg-amber-50 text-amber-800">
+                                    Pinned
+                                </span>
+                            )}
+                            {item.collectionName === 'memoNotes' && item.memoInfo?.archived && (
+                                <span className="px-2 py-0.5 rounded-sm bg-gray-200 text-gray-600">
+                                    Archived
+                                </span>
                             )}
                             {/* Event Impact */}
                             {eventImpact && (
@@ -762,7 +806,7 @@ const Search = () => {
                 <div className="mb-6 flex items-start justify-between">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">Search</h1>
-                        <p className="text-gray-600">Search across all your tasks, notes, life events, and more</p>
+                        <p className="text-gray-600">Search across tasks, notes, memos, life events, chats, and more</p>
                     </div>
                     <button
                         onClick={handleReindexAll}
@@ -822,7 +866,7 @@ const Search = () => {
                         <p className="text-gray-600">
                             {search
                                 ? 'Try adjusting your filters or search terms'
-                                : 'Enter a search query to find tasks, notes, life events, and more'
+                                : 'Enter a search query to find tasks, notes, memos, life events, and more'
                             }
                         </p>
                     </div>

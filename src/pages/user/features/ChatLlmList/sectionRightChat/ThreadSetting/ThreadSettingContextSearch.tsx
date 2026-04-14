@@ -60,6 +60,21 @@ interface NotesInfo {
     fromCollection: string;
 }
 
+interface MemoInfo {
+    _id: string;
+    username: string;
+    title: string;
+    body: string;
+    labelIds?: string[];
+    memoLabelDocs?: { _id?: string; name?: string }[];
+    pinned?: boolean;
+    archived?: boolean;
+    noteColor?: string;
+    createdAtUtc?: string;
+    updatedAtUtc?: string;
+    fromCollection?: string;
+}
+
 interface LifeEventInfo {
     _id: string;
     username: string;
@@ -90,10 +105,11 @@ interface LifeEventInfo {
 
 interface ContextItem {
     _id: string;
-    fromCollection: 'tasks' | 'notes' | 'lifeEvents' | 'chatLlm' | 'infoVault';
+    fromCollection: 'tasks' | 'notes' | 'lifeEvents' | 'chatLlm' | 'infoVault' | 'memo';
     taskInfo?: TaskInfo;
     notesInfo?: NotesInfo;
     lifeEventInfo?: LifeEventInfo;
+    memoInfo?: MemoInfo;
 
     // for context selected
     contextSelectedId: string;
@@ -234,6 +250,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
         filterEventTypeLifeEvents: true,
         filterEventTypeNotes: true,
         filterEventTypeDiary: true,
+        filterEventTypeMemo: true,
     });
 
     // filter -> task
@@ -296,6 +313,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                     filterEventTypeLifeEvents: filters.filterEventTypeLifeEvents,
                     filterEventTypeNotes: filters.filterEventTypeNotes,
                     filterEventTypeDiary: filters.filterEventTypeDiary,
+                    filterEventTypeMemo: filters.filterEventTypeMemo,
                     filterIsContextSelected: filterIsContextSelected,
 
                     // filter -> task
@@ -326,7 +344,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
         referenceId,
         shouldLoad,
     }: {
-        referenceFrom: 'notes' | 'tasks' | 'chatLlm' | 'lifeEvents' | 'infoVault';
+        referenceFrom: 'notes' | 'tasks' | 'chatLlm' | 'lifeEvents' | 'infoVault' | 'memo';
         referenceId: string;
         shouldLoad: boolean;
     }) => {
@@ -377,6 +395,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                 filterEventTypeLifeEvents: filters.filterEventTypeLifeEvents,
                 filterEventTypeNotes: filters.filterEventTypeNotes,
                 filterEventTypeDiary: filters.filterEventTypeDiary,
+                filterEventTypeMemo: filters.filterEventTypeMemo,
                 filterIsContextSelected: filterIsContextSelected,
 
                 // filter -> task
@@ -428,6 +447,7 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                 filterEventTypeLifeEvents: filters.filterEventTypeLifeEvents,
                 filterEventTypeNotes: filters.filterEventTypeNotes,
                 filterEventTypeDiary: filters.filterEventTypeDiary,
+                filterEventTypeMemo: filters.filterEventTypeMemo,
                 filterIsContextSelected: 'added',
 
                 // filter -> task
@@ -558,6 +578,15 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                             className="rounded"
                         />
                         <span className="text-sm">Diary</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={filters.filterEventTypeMemo}
+                            onChange={(e) => setFilters({ ...filters, filterEventTypeMemo: e.target.checked })}
+                            className="rounded"
+                        />
+                        <span className="text-sm">Memo</span>
                     </label>
                 </div>
 
@@ -746,6 +775,18 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                         tags = item.lifeEventInfo.tags || [];
                     }
 
+                    // Memo (/user/memo)
+                    if (item.fromCollection === 'memo' && item.memoInfo) {
+                        title = item.memoInfo.title || 'Untitled';
+                        description = item.memoInfo.body || '';
+                        itemDate = item.memoInfo.updatedAtUtc || item.memoInfo.createdAtUtc || '';
+                        itemLink = '/user/memo';
+                        eventTypeLabel = 'Memo';
+                        eventTypeColor = 'bg-amber-100 text-amber-900';
+                        const memoLabels = item.memoInfo.memoLabelDocs?.map((l) => l.name).filter(Boolean) as string[];
+                        tags = memoLabels?.length ? memoLabels : [];
+                    }
+
                     // Extract data from diary collection
                     return (
                         <div
@@ -822,6 +863,16 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                                 )}
                                             </Fragment>
                                         )}
+                                        {item.fromCollection === 'memo' && item.memoInfo?.pinned && (
+                                            <span className="px-2 py-0.5 rounded-sm bg-amber-50 text-amber-800">
+                                                Pinned
+                                            </span>
+                                        )}
+                                        {item.fromCollection === 'memo' && item.memoInfo?.archived && (
+                                            <span className="px-2 py-0.5 rounded-sm bg-gray-200 text-gray-600">
+                                                Archived
+                                            </span>
+                                        )}
                                         {/* Event Impact */}
                                         {eventImpact && (
                                             <span className="px-2 py-0.5 bg-gray-100 rounded">
@@ -862,9 +913,10 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                                 item.fromCollection === 'notes' ||
                                                 item.fromCollection === 'lifeEvents' ||
                                                 item.fromCollection === 'chatLlm' ||
-                                                item.fromCollection === 'infoVault'
+                                                item.fromCollection === 'infoVault' ||
+                                                item.fromCollection === 'memo'
                                             ) {
-                                                let tempReferenceFrom = '' as 'tasks' | 'notes' | 'chatLlm' | 'lifeEvents' | 'infoVault';
+                                                let tempReferenceFrom = '' as 'tasks' | 'notes' | 'chatLlm' | 'lifeEvents' | 'infoVault' | 'memo';
                                                 if (item.fromCollection === 'tasks') {
                                                     tempReferenceFrom = 'tasks';
                                                 } else if (item.fromCollection === 'notes') {
@@ -875,6 +927,8 @@ const ThreadSettingContextSearch = ({ threadId }: { threadId: string }) => {
                                                     tempReferenceFrom = 'chatLlm';
                                                 } else if (item.fromCollection === 'infoVault') {
                                                     tempReferenceFrom = 'infoVault';
+                                                } else if (item.fromCollection === 'memo') {
+                                                    tempReferenceFrom = 'memo';
                                                 }
                                                 handleAddContext({
                                                     referenceFrom: tempReferenceFrom,
