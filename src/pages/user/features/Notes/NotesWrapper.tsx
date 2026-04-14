@@ -31,7 +31,7 @@ import {
 } from './stateJotai/notesStateJotai.ts';
 
 const railBtnClass =
-    'flex items-center justify-center py-1.5 rounded-md bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white active:bg-zinc-600 transition-colors';
+    'flex items-center justify-center py-1.5 rounded-lg bg-zinc-800/90 text-zinc-200 transition-colors hover:bg-zinc-700 hover:text-white active:bg-zinc-600';
 
 /** Shared tool actions: vertical strip on desktop, horizontal dock on small screens (full-width content). */
 const NotesToolbar = ({
@@ -49,8 +49,8 @@ const NotesToolbar = ({
 }) => {
     const isDock = layout === 'horizontal';
     const wrapClass = isDock
-        ? 'fixed bottom-0 left-0 right-0 z-[90] flex border-t border-zinc-800 bg-zinc-900 px-1 pt-1 pb-[max(0.25rem,env(safe-area-inset-bottom,0px))] shadow-[0_-4px_20px_-2px_rgba(0,0,0,0.15)]'
-        : 'w-[50px] shrink-0 flex flex-col items-stretch bg-zinc-900 border-l border-zinc-800 py-0.5';
+        ? 'fixed bottom-0 left-0 right-0 z-[90] flex border-t border-zinc-800/80 bg-zinc-950/95 px-1 pt-1 pb-[max(0.25rem,env(safe-area-inset-bottom,0px))] shadow-[0_-8px_32px_-8px_rgba(0,0,0,0.12)] backdrop-blur-sm'
+        : 'w-[50px] shrink-0 flex flex-col items-stretch border-l border-zinc-800/80 bg-zinc-950 py-0.5';
     const innerClass = isDock
         ? 'flex w-full flex-row items-stretch justify-around gap-0.5'
         : 'flex flex-col gap-0.5 px-0.5 w-full';
@@ -122,10 +122,10 @@ const NotesToolbar = ({
                 {isDock && (
                     <button
                         type="button"
-                        className={`h-11 min-w-0 flex-1 cursor-pointer border-0 py-1.5 rounded-md transition-colors ${
+                        className={`h-11 min-w-0 flex-1 cursor-pointer border-0 py-1.5 rounded-lg transition-colors ${
                             stateDisplayChatHistory
                                 ? 'bg-indigo-600 text-white hover:bg-indigo-500'
-                                : 'bg-zinc-800 text-zinc-200 hover:bg-zinc-700'
+                                : 'bg-zinc-800/90 text-zinc-200 hover:bg-zinc-700'
                         }`}
                         onClick={() => {
                             setStateDisplayChatHistory(!stateDisplayChatHistory);
@@ -240,7 +240,7 @@ const NotesWrapper = () => {
                                 <div
                                     className={
                                         isSmall
-                                            ? 'box-border flex h-[calc(100vh-60px)] max-h-[calc(100vh-60px)] flex-col pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]'
+                                            ? 'box-border flex h-[calc(100vh-60px)] max-h-[calc(100vh-60px)] flex-col pb-[calc(3rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]'
                                             : 'flex h-[calc(100vh-60px)] flex-col'
                                     }
                                 >

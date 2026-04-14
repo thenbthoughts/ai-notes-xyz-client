@@ -48,16 +48,16 @@ const ComponentRightWrapper = ({
         <div
             className={
                 pageName.actionType === 'edit'
-                    ? 'h-full min-h-0 min-w-0 max-w-full overflow-y-auto overflow-x-hidden bg-[#f6f6f4] px-3 sm:px-0'
-                    : 'h-full min-h-0 min-w-0 max-w-full overflow-y-auto px-2 py-1 bg-zinc-50/80'
+                    ? 'h-full min-h-0 min-w-0 max-w-full overflow-y-auto overflow-x-hidden bg-zinc-50 px-2 sm:px-0'
+                    : 'h-full min-h-0 min-w-0 max-w-full overflow-y-auto bg-zinc-50 px-2 py-1.5 sm:py-2'
             }
         >
             {pageName.actionType === 'list' && (
-                <div className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-md border border-zinc-200/80 bg-white px-2 py-1.5 text-xs text-zinc-600">
-                    <span className="font-medium text-zinc-800">Notes</span>
+                <div className="mb-1.5 flex flex-wrap items-center justify-between gap-1.5 rounded-xl border border-zinc-200/60 bg-white px-2.5 py-1.5 text-xs text-zinc-600 shadow-sm sm:mb-2 sm:gap-2 sm:px-3 sm:py-2">
+                    <span className="font-medium text-zinc-700">Notes</span>
                     <button
                         type="button"
-                        className="inline-flex items-center gap-1 rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 text-[11px] font-medium text-zinc-800 hover:bg-zinc-100"
+                        className="inline-flex items-center gap-1 rounded-lg border border-zinc-200/80 bg-zinc-50 px-2 py-1 text-[11px] font-medium text-zinc-700 transition-colors hover:bg-zinc-100"
                         onClick={async () => {
                             const result = await notesQuickDailyNotesAddAxios();
                             if (result.success.length > 0) {

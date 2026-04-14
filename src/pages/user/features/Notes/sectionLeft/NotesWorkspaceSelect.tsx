@@ -7,7 +7,7 @@ import axiosCustom from '../../../../../config/axiosCustom.ts';
 type SelectOption = { value: string; label: string };
 
 const notesChromeSelectClass =
-    'w-full rounded-none border border-zinc-300 bg-white py-1.5 pl-2 pr-2 text-[11px] font-medium text-zinc-950 shadow-[3px_3px_0_0_rgb(228_228_231)] focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 disabled:cursor-not-allowed disabled:opacity-50';
+    'w-full rounded-lg border border-zinc-200/90 bg-white py-2 pl-3 pr-2 text-[13px] font-normal text-zinc-900 shadow-sm transition-shadow focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-50';
 
 /** Styled native &lt;select&gt; for notes chrome — reusable within this module. */
 const NotesChromeSelect = forwardRef<
@@ -65,7 +65,7 @@ export function NotesWorkspaceSelect({ selectedId, onSelect }: NotesWorkspaceSel
 
     if (loading) {
         return (
-            <div className="rounded-none border border-dashed border-zinc-300 bg-zinc-50/80 px-2 py-3 text-center font-mono text-[10px] text-zinc-500">
+            <div className="rounded-lg border border-dashed border-zinc-200/80 bg-zinc-50 px-2 py-3 text-center font-mono text-[10px] text-zinc-400">
                 Loading workspaces…
             </div>
         );
@@ -73,7 +73,7 @@ export function NotesWorkspaceSelect({ selectedId, onSelect }: NotesWorkspaceSel
 
     if (workspaces.length === 0) {
         return (
-            <div className="rounded-none border border-zinc-300 bg-white px-2 py-2 text-[11px] text-zinc-600">
+            <div className="rounded-lg border border-zinc-200/80 bg-white px-2 py-2 text-[11px] text-zinc-600 shadow-sm">
                 No workspaces.{' '}
                 <Link to="/user/notes-workspace" className="font-medium text-indigo-600 hover:underline">
                     Create one

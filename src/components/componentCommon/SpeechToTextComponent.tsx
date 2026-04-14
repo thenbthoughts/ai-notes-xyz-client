@@ -4,7 +4,13 @@ import { Fragment, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import axiosCustom from "../../config/axiosCustom";
 import { useAudioRecorder } from 'react-audio-voice-recorder';
-import { LucideMic, LucidePause, LucidePlay, LucideMicOff } from "lucide-react";
+import {
+    LucideAudioLines,
+    LucideLoader2,
+    LucideMicOff,
+    LucidePause,
+    LucidePlay,
+} from 'lucide-react';
 import { uploadFeatureFile } from "../../utils/featureFileUpload";
 import envKeys from "../../config/envKeys";
 
@@ -92,23 +98,23 @@ const SpeechToText = ({
         togglePauseResume();
     };
 
+    const btnIcon =
+        'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border text-zinc-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:opacity-50';
+
     return (
         <Fragment>
             {!isRecording && !isTranscribing && (
                 <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                    style={{
-                        height: '40px',
-                    }}
+                    type="button"
+                    className={
+                        btnIcon +
+                        ' border-zinc-200/80 bg-white shadow-sm hover:bg-zinc-50 hover:text-zinc-900'
+                    }
                     onClick={handleStartRecording}
                     disabled={isTranscribing}
-                    title="Start recording"
+                    title="Dictate to title (speech to text)"
                 >
-                    <LucideMic
-                        style={{
-                            height: '25px',
-                        }}
-                    />
+                    <LucideAudioLines className="h-4 w-4" strokeWidth={2} aria-hidden />
                 </button>
             )}
 
@@ -116,50 +122,41 @@ const SpeechToText = ({
                 <Fragment>
                     {isPaused && (
                         <button
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                            style={{
-                                height: '40px',
-                            }}
+                            type="button"
+                            className={
+                                btnIcon +
+                                ' border-emerald-200/80 bg-emerald-50 text-emerald-800 hover:bg-emerald-100/90'
+                            }
                             onClick={handleTogglePauseResume}
                             title="Resume recording"
                         >
-                            <LucidePlay
-                                style={{
-                                    height: '25px',
-                                }}
-                            />
+                            <LucidePlay className="h-4 w-4" strokeWidth={2} aria-hidden />
                         </button>
                     )}
                     {!isPaused && (
                         <Fragment>
                             <button
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                                style={{
-                                    height: '40px',
-                                }}
+                                type="button"
+                                className={
+                                    btnIcon +
+                                    ' border-red-200/80 bg-red-50 text-red-800 hover:bg-red-100/90'
+                                }
                                 onClick={handleStopRecording}
-                                title="Stop recording"
+                                title="Stop and transcribe"
                             >
-                                <LucideMicOff
-                                    style={{
-                                        height: '25px',
-                                    }}
-                                />
+                                <LucideMicOff className="h-4 w-4" strokeWidth={2} aria-hidden />
                             </button>
 
                             <button
-                                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded"
-                                style={{
-                                    height: '40px',
-                                }}
+                                type="button"
+                                className={
+                                    btnIcon +
+                                    ' border-amber-200/80 bg-amber-50 text-amber-900 hover:bg-amber-100/90'
+                                }
                                 onClick={handleTogglePauseResume}
                                 title="Pause recording"
                             >
-                                <LucidePause
-                                    style={{
-                                        height: '25px',
-                                    }}
-                                />
+                                <LucidePause className="h-4 w-4" strokeWidth={2} aria-hidden />
                             </button>
                         </Fragment>
                     )}
@@ -168,14 +165,15 @@ const SpeechToText = ({
 
             {isTranscribing && (
                 <button
-                    className="bg-gray-500 text-white font-bold px-4 focus:outline-none focus:shadow-outline mr-2 rounded cursor-wait"
-                    style={{
-                        height: '40px',
-                    }}
+                    type="button"
+                    className={
+                        btnIcon +
+                        ' cursor-wait border-zinc-200/80 bg-zinc-50 text-zinc-500'
+                    }
                     disabled
-                    title="Converting speech to text..."
+                    title="Converting speech to text…"
                 >
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <LucideLoader2 className="h-4 w-4 animate-spin" strokeWidth={2} aria-hidden />
                 </button>
             )}
         </Fragment>

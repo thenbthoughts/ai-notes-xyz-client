@@ -23,7 +23,7 @@ import toast from 'react-hot-toast';
 import { notesWorkspaceChatWithAi } from '../utils/notesListAxios.ts';
 
 const btnPrimary =
-    'inline-flex items-center gap-0.5 rounded-none border border-indigo-500 bg-indigo-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide leading-tight text-white shadow-[2px_2px_0_0_rgb(67_56_202)] hover:bg-indigo-500 active:translate-x-px active:translate-y-px active:shadow-none transition-colors';
+    'inline-flex items-center gap-0.5 rounded-lg border border-indigo-500/20 bg-indigo-600 px-2 py-1 text-[10px] font-medium uppercase tracking-wide leading-tight text-white shadow-sm transition-colors hover:bg-indigo-500';
 
 const notesWorkspaceChatWithAiLocal = async ({
     notesWorkspaceId,
@@ -130,14 +130,14 @@ const ComponentNotesLeft = () => {
     };
 
     return (
-        <div className="px-2.5 py-2 space-y-2.5">
+        <div className="space-y-2 px-2 py-2 sm:space-y-3 sm:px-3 sm:py-3">
 
-            <header className="border-b border-zinc-200 pb-2">
+            <header className="border-b border-zinc-100 pb-2 sm:pb-3">
                 <div className="flex items-center gap-2">
-                    <span className="h-7 w-1 shrink-0 bg-indigo-600" aria-hidden />
+                    <span className="h-7 w-0.5 shrink-0 rounded-full bg-indigo-500" aria-hidden />
                     <div className="min-w-0">
-                        <h1 className="text-xs font-bold uppercase tracking-[0.12em] text-zinc-900">Notes</h1>
-                        <p className="text-[10px] text-zinc-500 leading-tight mt-0.5 font-mono">workspace · filters</p>
+                        <h1 className="text-xs font-semibold uppercase tracking-wider text-zinc-800">Notes</h1>
+                        <p className="mt-0.5 font-mono text-[10px] leading-tight text-zinc-400">workspace · filters</p>
                     </div>
                 </div>
             </header>
@@ -172,18 +172,18 @@ const ComponentNotesLeft = () => {
             <ComponentNotesWorkspace />
 
             <div className="space-y-1">
-                <h2 className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">In workspace</h2>
+                <h2 className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">In workspace</h2>
                 {workspaceId.length === 24 && (
                     <ComponentFolderAndFileList />
                 )}
             </div>
 
             <section
-                className="rounded-none border border-zinc-300 bg-white p-2.5 shadow-[3px_3px_0_0_rgb(228_228_231)]"
+                className="rounded-xl border border-zinc-200/60 bg-white p-2 shadow-sm sm:p-3"
                 aria-label="List filters"
             >
-                <div className="mb-2 flex items-center justify-between gap-2">
-                    <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">
+                <div className="mb-1.5 flex items-center justify-between gap-2 sm:mb-2">
+                    <h2 className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">
                         List filters
                     </h2>
                     {(searchTerm.trim() !== '' || isStar !== '') && (
@@ -193,7 +193,7 @@ const ComponentNotesLeft = () => {
                     )}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5 sm:space-y-2">
                     <div>
                         <label htmlFor="notes-search" className="sr-only">
                             Search notes
@@ -209,7 +209,7 @@ const ComponentNotesLeft = () => {
                                 debounceTimeout={500}
                                 type="search"
                                 placeholder="Search titles & content…"
-                                className="w-full rounded-none border border-zinc-300 bg-zinc-50 py-1.5 pl-8 pr-7 text-[11px] text-zinc-900 placeholder:text-zinc-400 focus:border-indigo-600 focus:bg-white focus:outline-none"
+                                className="w-full rounded-lg border border-zinc-200/90 bg-zinc-50/80 py-2 pl-8 pr-7 text-[11px] text-zinc-900 placeholder:text-zinc-400 transition-shadow focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/15"
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 value={searchTerm}
                                 autoComplete="off"
@@ -217,7 +217,7 @@ const ComponentNotesLeft = () => {
                             {searchTerm.length > 0 && (
                                 <button
                                     type="button"
-                                    className="absolute right-1 flex h-6 w-6 items-center justify-center rounded-none text-zinc-500 hover:bg-zinc-200 hover:text-zinc-800"
+                                    className="absolute right-1 flex h-6 w-6 items-center justify-center rounded-md text-zinc-400 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
                                     onClick={() => setSearchTerm('')}
                                     aria-label="Clear search"
                                 >
@@ -228,11 +228,11 @@ const ComponentNotesLeft = () => {
                     </div>
 
                     <div>
-                        <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                        <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
                             Starred
                         </p>
                         <div
-                            className="flex w-full border border-zinc-300 bg-zinc-100 p-0.5"
+                            className="flex w-full rounded-lg border border-zinc-200/80 bg-zinc-100/80 p-0.5"
                             role="group"
                             aria-label="Filter by starred"
                         >
@@ -253,9 +253,9 @@ const ComponentNotesLeft = () => {
                                         onClick={() => setIsStar(value)}
                                         className={
                                             (active
-                                                ? 'border-indigo-600 bg-indigo-600 text-white shadow-[1px_1px_0_0_rgb(49_46_129)]'
+                                                ? 'border-indigo-600 bg-indigo-600 text-white shadow-sm'
                                                 : 'border-transparent bg-transparent text-zinc-600 hover:bg-white hover:text-zinc-900') +
-                                            ' flex flex-1 items-center justify-center gap-0.5 rounded-none border py-1 text-[10px] font-bold uppercase tracking-wide transition-colors'
+                                            ' flex flex-1 items-center justify-center gap-0.5 rounded-md border py-1 text-[10px] font-medium uppercase tracking-wide transition-colors'
                                         }
                                     >
                                         {Icon && (
@@ -274,7 +274,7 @@ const ComponentNotesLeft = () => {
                         </div>
                     </div>
 
-                    <p className="text-[10px] leading-snug text-zinc-500">
+                    <p className="text-[10px] leading-snug text-zinc-400">
                         Applies to the paginated list on the right. Tree above is unchanged.
                     </p>
                 </div>
@@ -286,7 +286,7 @@ const ComponentNotesLeft = () => {
 
 const ComponentNotesLeftRender = () => {
     return (
-        <div className="h-full min-h-0 border-r border-zinc-200 bg-[linear-gradient(180deg,#fafafa_0%,#f4f4f5_100%)]">
+        <div className="h-full min-h-0 border-r border-zinc-100 bg-zinc-50/90">
             <div className="h-[calc(100vh-72px)] overflow-y-auto overscroll-contain">
                 <ComponentNotesLeft />
             </div>
@@ -299,7 +299,7 @@ const ComponentNotesLeftModelRender = () => {
         <div
             className="fixed left-0 top-[60px] z-[1001] w-[min(100vw-1rem,300px)] max-w-[calc(100vw-1rem)]"
         >
-            <div className="border-y border-r border-zinc-200 border-l-0 bg-[linear-gradient(180deg,#fafafa_0%,#f4f4f5_100%)] shadow-[4px_0_24px_-4px_rgba(0,0,0,0.12)]">
+            <div className="border-y border-r border-zinc-100 border-l-0 bg-zinc-50/95 shadow-[4px_0_24px_-8px_rgba(0,0,0,0.08)] backdrop-blur-sm">
                 <div className="h-[calc(100vh-60px)] overflow-y-auto overscroll-contain">
                     <ComponentNotesLeft />
                 </div>
