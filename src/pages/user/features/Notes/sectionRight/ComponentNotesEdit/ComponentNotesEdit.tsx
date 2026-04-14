@@ -217,10 +217,9 @@ const ComponentNotesEdit = ({
                 </div>
             </header>
 
-            {/* Body: editor + sidebar */}
-            <div className="flex min-w-0 flex-1 flex-col xl:flex-row xl:items-stretch">
-                {/* Main column */}
-                <main className="min-w-0 max-w-full flex-1 border-zinc-100 xl:border-r">
+            {/* Body */}
+            <div className="flex min-w-0 flex-1 flex-col">
+                <main className="min-w-0 max-w-full flex-1">
                     <div className="border-b border-zinc-100 bg-white px-3 py-3 sm:px-8 sm:py-6">
                         <div className="mb-2 flex flex-wrap items-center gap-1.5 sm:mb-3 sm:gap-2">
                             <button
@@ -279,80 +278,14 @@ const ComponentNotesEdit = ({
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         />
 
-                        <div className="mt-3 sm:mt-4">
-                            <label className={panelTitle + ' mb-1.5 block sm:mb-2'}>Tags</label>
-                            <div className="mb-1.5 flex flex-wrap gap-1.5 sm:mb-2">
-                                {formData.tags.map((tag, idx) => (
-                                    <span
-                                        key={idx}
-                                        className="inline-flex items-center gap-1 rounded-md border border-zinc-200/80 bg-zinc-100/80 px-2 py-0.5 text-[11px] font-medium text-zinc-800"
-                                    >
-                                        {tag}
-                                        <button
-                                            type="button"
-                                            className="text-zinc-500 hover:text-red-600"
-                                            onClick={() =>
-                                                setFormData({
-                                                    ...formData,
-                                                    tags: formData.tags.filter((_, i) => i !== idx),
-                                                })}
-                                            aria-label={`Remove ${tag}`}
-                                        >
-                                            ×
-                                        </button>
-                                    </span>
-                                ))}
-                            </div>
-                            <div className="flex gap-1">
-                                <input
-                                    type="text"
-                                    value={formData.tagsInput || ''}
-                                    className="min-w-0 flex-1 rounded-lg border border-zinc-200/90 bg-white py-2 px-3 text-sm shadow-sm transition-shadow focus:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/15"
-                                    placeholder="Add tag, Enter"
-                                    onChange={(e) => setFormData({ ...formData, tagsInput: e.target.value })}
-                                    onKeyDown={(e) => {
-                                        if (
-                                            (e.key === 'Enter' || e.key === ',') &&
-                                            formData.tagsInput &&
-                                            formData.tagsInput.trim() !== ''
-                                        ) {
-                                            e.preventDefault();
-                                            const newTag = formData.tagsInput.trim();
-                                            if (!formData.tags.includes(newTag)) {
-                                                setFormData({
-                                                    ...formData,
-                                                    tags: [...formData.tags, newTag],
-                                                    tagsInput: '',
-                                                });
-                                            } else {
-                                                setFormData({ ...formData, tagsInput: '' });
-                                            }
-                                        }
-                                    }}
-                                />
-                                <button
-                                    type="button"
-                                    className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-white shadow-sm transition-colors hover:bg-zinc-800"
-                                    onClick={() => {
-                                        if (formData.tagsInput && formData.tagsInput.trim() !== '') {
-                                            const newTag = formData.tagsInput.trim();
-                                            if (!formData.tags.includes(newTag)) {
-                                                setFormData({
-                                                    ...formData,
-                                                    tags: [...formData.tags, newTag],
-                                                    tagsInput: '',
-                                                });
-                                            } else {
-                                                setFormData({ ...formData, tagsInput: '' });
-                                            }
-                                        }
-                                    }}
-                                    aria-label="Add tag"
-                                >
-                                    <LucidePlus className="h-4 w-4" strokeWidth={2} />
-                                </button>
-                            </div>
+                        <div className="mt-3 rounded-xl border border-zinc-200/60 bg-white p-2.5 shadow-sm sm:mt-4 sm:p-3">
+                            <NotesWorkspacePicker
+                                selectedId={formData.notesWorkspaceId}
+                                onSelect={(workspaceId: string) =>
+                                    setFormData({ ...formData, notesWorkspaceId: workspaceId })}
+                            />
                         </div>
+
                     </div>
 
                     <div className="bg-white px-3 py-3 sm:px-8 sm:py-5">
@@ -371,32 +304,96 @@ const ComponentNotesEdit = ({
                     </div>
 
                     <section className="border-t border-zinc-100 bg-zinc-50/80 px-3 py-4 sm:px-8 sm:py-5">
+                        <label className={panelTitle + ' mb-1.5 block sm:mb-2'}>Tags</label>
+                        <div className="mb-1.5 flex flex-wrap gap-1.5 sm:mb-2">
+                            {formData.tags.map((tag, idx) => (
+                                <span
+                                    key={idx}
+                                    className="inline-flex items-center gap-1 rounded-md border border-zinc-200/80 bg-zinc-100/80 px-2 py-0.5 text-[11px] font-medium text-zinc-800"
+                                >
+                                    {tag}
+                                    <button
+                                        type="button"
+                                        className="text-zinc-500 hover:text-red-600"
+                                        onClick={() =>
+                                            setFormData({
+                                                ...formData,
+                                                tags: formData.tags.filter((_, i) => i !== idx),
+                                            })}
+                                        aria-label={`Remove ${tag}`}
+                                    >
+                                        ×
+                                    </button>
+                                </span>
+                            ))}
+                        </div>
+                        <div className="flex gap-1">
+                            <input
+                                type="text"
+                                value={formData.tagsInput || ''}
+                                className="min-w-0 flex-1 rounded-lg border border-zinc-200/90 bg-white py-2 px-3 text-sm shadow-sm transition-shadow focus:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/15"
+                                placeholder="Add tag, Enter"
+                                onChange={(e) => setFormData({ ...formData, tagsInput: e.target.value })}
+                                onKeyDown={(e) => {
+                                    if (
+                                        (e.key === 'Enter' || e.key === ',') &&
+                                        formData.tagsInput &&
+                                        formData.tagsInput.trim() !== ''
+                                    ) {
+                                        e.preventDefault();
+                                        const newTag = formData.tagsInput.trim();
+                                        if (!formData.tags.includes(newTag)) {
+                                            setFormData({
+                                                ...formData,
+                                                tags: [...formData.tags, newTag],
+                                                tagsInput: '',
+                                            });
+                                        } else {
+                                            setFormData({ ...formData, tagsInput: '' });
+                                        }
+                                    }
+                                }}
+                            />
+                            <button
+                                type="button"
+                                className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-white shadow-sm transition-colors hover:bg-zinc-800"
+                                onClick={() => {
+                                    if (formData.tagsInput && formData.tagsInput.trim() !== '') {
+                                        const newTag = formData.tagsInput.trim();
+                                        if (!formData.tags.includes(newTag)) {
+                                            setFormData({
+                                                ...formData,
+                                                tags: [...formData.tags, newTag],
+                                                tagsInput: '',
+                                            });
+                                        } else {
+                                            setFormData({ ...formData, tagsInput: '' });
+                                        }
+                                    }
+                                }}
+                                aria-label="Add tag"
+                            >
+                                <LucidePlus className="h-4 w-4" strokeWidth={2} />
+                            </button>
+                        </div>
+                    </section>
+
+                    <section className="border-t border-zinc-100 bg-zinc-50/80 px-3 py-4 sm:px-8 sm:py-5">
                         <h3 className={panelTitle + ' mb-1.5 sm:mb-2'}>Comments</h3>
                         <div className="rounded-xl border border-zinc-200/60 bg-white p-2.5 text-sm shadow-sm sm:p-3 [&_*]:text-sm">
                             <CommentCommonComponent commentType="note" recordId={notesObj._id} />
                         </div>
                     </section>
-                </main>
 
-                {/* Sidebar */}
-                <aside className="w-full min-w-0 max-w-full shrink-0 border-zinc-100 bg-zinc-100/40 xl:w-[340px] xl:border-t-0 xl:border-l">
-                    <div className="px-3 py-3 sm:px-4 sm:py-5 xl:sticky xl:top-[52px] xl:max-h-[calc(100vh-120px)] xl:overflow-y-auto xl:overscroll-contain">
-                        <div className="mb-3 rounded-xl border border-zinc-200/60 bg-white p-2.5 shadow-sm sm:mb-4 sm:p-3">
-                            <NotesWorkspacePicker
-                                selectedId={formData.notesWorkspaceId}
-                                onSelect={(workspaceId: string) =>
-                                    setFormData({ ...formData, notesWorkspaceId: workspaceId })}
-                            />
-                        </div>
-
-                        {(formData.aiTags.length > 0 ||
-                            formData.aiSummary.length > 0 ||
-                            formData.aiSuggestions.length > 0) && (
-                            <div className="mb-3 space-y-1.5 sm:mb-4 sm:space-y-2">
-                                <h3 className={`${panelTitle} flex items-center gap-1 text-zinc-600`}>
-                                    <LucideSparkles className="h-3 w-3" />
-                                    From AI
-                                </h3>
+                    {(formData.aiTags.length > 0 ||
+                        formData.aiSummary.length > 0 ||
+                        formData.aiSuggestions.length > 0) && (
+                        <section className="border-t border-zinc-100 bg-zinc-50/80 px-3 py-4 sm:px-8 sm:py-5">
+                            <h3 className={`${panelTitle} mb-1.5 flex items-center gap-1 text-zinc-600 sm:mb-2`}>
+                                <LucideSparkles className="h-3 w-3" />
+                                From AI
+                            </h3>
+                            <div className="space-y-1.5 sm:space-y-2">
                                 {formData.aiTags.length > 0 && (
                                     <div className="rounded-xl border border-zinc-200/60 bg-white p-2 shadow-sm sm:p-2.5">
                                         <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-zinc-400">Tags</p>
@@ -436,19 +433,24 @@ const ComponentNotesEdit = ({
                                     </details>
                                 )}
                             </div>
-                        )}
+                        </section>
+                    )}
 
+                    <section className="border-t border-zinc-100 bg-zinc-50/80 px-3 py-4 sm:px-8 sm:py-5">
+                        <h3 className={panelTitle + ' mb-1.5 sm:mb-2'}>AI Generated FAQs</h3>
                         <div className="mb-3 space-y-2 sm:mb-4 sm:space-y-3 [&_.rounded-sm]:rounded-xl">
                             <CommonComponentAiFaq sourceId={notesObj._id} />
                         </div>
+                        <h3 className={panelTitle + ' mb-1.5 sm:mb-2'}>AI Generated Keywords</h3>
                         <div className="[&_.rounded-sm]:rounded-xl">
                             <CommonComponentAiKeywords
                                 sourceId={notesObj._id}
                                 metadataSourceType="notes"
                             />
                         </div>
-                    </div>
-                </aside>
+                    </section>
+
+                </main>
             </div>
         </div>
     );

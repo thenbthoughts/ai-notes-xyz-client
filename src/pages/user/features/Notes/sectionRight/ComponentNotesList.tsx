@@ -4,7 +4,7 @@ import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { INotes } from '../../../../../types/pages/tsNotes.ts';
 import ComponentNotesItem from './ComponentNotesItem.tsx';
 import ReactPaginate from 'react-paginate';
-import { MessageCircle, Plus } from 'lucide-react';
+import { LayoutGrid, List, MessageCircle, Plus } from 'lucide-react';
 import { notesAddAxios } from '../utils/notesListAxios.ts';
 import { useNavigate } from 'react-router-dom';
 import { jotaiStateNotesIsStar, jotaiStateNotesSearch, jotaiStateNotesWorkspaceId } from '../stateJotai/notesStateJotai.ts';
@@ -53,6 +53,7 @@ const ComponentNotesList = () => {
     const [page, setPage] = useState(1);
     const workspaceId = useAtomValue(jotaiStateNotesWorkspaceId);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
+    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
 
     const searchTerm = useAtomValue(jotaiStateNotesSearch);
     const isStar = useAtomValue(jotaiStateNotesIsStar);
@@ -127,6 +128,32 @@ const ComponentNotesList = () => {
                     <span className="text-amber-700">No results</span>
                 )}
                 <div className="ml-auto flex items-center gap-0.5">
+                    <div className="mr-1 inline-flex items-center rounded-lg border border-zinc-200/80 bg-zinc-50 p-0.5">
+                        <button
+                            type="button"
+                            title="List view"
+                            className={`inline-flex h-5 w-5 items-center justify-center rounded-md transition-colors ${
+                                viewMode === 'list'
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'text-zinc-600 hover:bg-zinc-100'
+                            }`}
+                            onClick={() => setViewMode('list')}
+                        >
+                            <List className="h-3 w-3" strokeWidth={2} />
+                        </button>
+                        <button
+                            type="button"
+                            title="Grid view"
+                            className={`inline-flex h-5 w-5 items-center justify-center rounded-md transition-colors ${
+                                viewMode === 'grid'
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'text-zinc-600 hover:bg-zinc-100'
+                            }`}
+                            onClick={() => setViewMode('grid')}
+                        >
+                            <LayoutGrid className="h-3 w-3" strokeWidth={2} />
+                        </button>
+                    </div>
                     <button
                         type="button"
                         title="New note"
@@ -153,11 +180,19 @@ const ComponentNotesList = () => {
         <div>
             <div id='messagesScrollUp' />
             {renderCount()}
-            {list.map((noteObj) => (
-                <div key={noteObj._id}>
-                    <ComponentNotesItem noteObj={noteObj} />
-                </div>
-            ))}
+            <div
+                className={
+                    viewMode === 'grid'
+                        ? 'grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-3'
+                        : 'space-y-0.5'
+                }
+            >
+                {list.map((noteObj) => (
+                    <div key={noteObj._id} className={viewMode === 'grid' ? 'h-full' : ''}>
+                        <ComponentNotesItem noteObj={noteObj} viewMode={viewMode} />
+                    </div>
+                ))}
+            </div>
             {totalCount >= 1 && (
                 <div className="mt-1.5 flex w-full justify-center sm:mt-2">
                     <ReactPaginate

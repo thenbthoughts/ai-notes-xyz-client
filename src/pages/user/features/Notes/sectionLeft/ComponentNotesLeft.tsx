@@ -287,7 +287,7 @@ const ComponentNotesLeft = () => {
 const ComponentNotesLeftRender = () => {
     return (
         <div className="h-full min-h-0 border-r border-zinc-100 bg-zinc-50/90">
-            <div className="h-[calc(100vh-72px)] overflow-y-auto overscroll-contain">
+            <div className="h-full overflow-y-auto overscroll-contain">
                 <ComponentNotesLeft />
             </div>
         </div>
