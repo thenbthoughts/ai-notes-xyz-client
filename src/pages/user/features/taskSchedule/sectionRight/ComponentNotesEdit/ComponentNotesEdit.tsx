@@ -17,6 +17,15 @@ const timeZoneArr = getAllTimezones();
 
 const DUE_DATE_PRESET_OPTIONS = REMINDER_LABEL_TO_MS;
 
+/** ISO UTC string → user’s local date/time (e.g. 04/14/2026, 5:27:00 PM) */
+const formatScheduleTimeLocalDisplay = (isoUtc: string): string => {
+    const d = new Date(isoUtc);
+    if (Number.isNaN(d.getTime())) {
+        return isoUtc;
+    }
+    return d.toLocaleString();
+};
+
 const ScheduleTimeArr = ({
     scheduleTimeArr,
     setScheduleTimeArr,
@@ -39,7 +48,7 @@ const ScheduleTimeArr = ({
             <div className="flex flex-wrap gap-2 mb-4">
                 {scheduleTimeArr.map((scheduleTime, idx) => (
                     <span key={idx} className="inline-flex items-center bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-sm shadow-sm border border-blue-200">
-                        {new Date(scheduleTime).toISOString()}
+                        {formatScheduleTimeLocalDisplay(scheduleTime)}
                         <button
                             type="button"
                             className="ml-1 text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 rounded-sm px-1"
@@ -47,7 +56,7 @@ const ScheduleTimeArr = ({
                             onClick={() => {
                                 setScheduleTimeArr(scheduleTimeArr.filter((_, i) => i !== idx));
                             }}
-                            aria-label={`Remove schedule time ${new Date(scheduleTime).toISOString()}`}
+                            aria-label={`Remove schedule time ${formatScheduleTimeLocalDisplay(scheduleTime)}`}
                         >
                             X
                         </button>
@@ -74,11 +83,11 @@ const ScheduleTimeArr = ({
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition font-medium"
                     onClick={() => {
                         if (scheduleTimeInput && scheduleTimeInput.trim() !== '') {
-                            const newScheduleTime = new Date(`${scheduleTimeInput}:00.000Z`);
+                            // datetime-local is interpreted as local wall time; store UTC ISO on the server
+                            const newScheduleTime = new Date(scheduleTimeInput);
 
                             if (!isNaN(newScheduleTime.getTime())) {
-                                // Adjust for timezone offset (convert to UTC)
-                                const utcTime = new Date(newScheduleTime.valueOf()).toISOString();
+                                const utcTime = newScheduleTime.toISOString();
                                 setScheduleTimeArr([...scheduleTimeArr, utcTime]);
                                 setScheduleTimeInput('');
                                 toast.success('Schedule time added successfully!');
