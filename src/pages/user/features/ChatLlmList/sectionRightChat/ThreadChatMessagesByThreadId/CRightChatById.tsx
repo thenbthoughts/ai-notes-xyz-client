@@ -172,7 +172,7 @@ const CRightChatById = ({
                 },
                 data: {
                     threadId: threadId,
-                    limit: currentLimit,
+                    limit: Math.max(LIMIT_MESSAGES, currentLimit),
                     testing: {
                         mode: mode,
                     }
@@ -249,8 +249,15 @@ const CRightChatById = ({
                     if (
                         messagesContainerRef.current.scrollTop <= 100
                     ) {
-                        const newLimit = Math.min(currentLimit + LIMIT_MESSAGES, totalCount);
-                        setCurrentLimit(newLimit);
+                        // Never shrink currentLimit below totalCount edge cases (e.g. totalCount 5 vs initial 10);
+                        // always grow by LIMIT_MESSAGES up to totalCount so we keep min LIMIT_MESSAGES per request.
+                        const newLimit = Math.min(
+                            currentLimit + LIMIT_MESSAGES,
+                            Math.max(totalCount, currentLimit),
+                        );
+                        if (newLimit > currentLimit) {
+                            setCurrentLimit(newLimit);
+                        }
                     }
                 }
             }
