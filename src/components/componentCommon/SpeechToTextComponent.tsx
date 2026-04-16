@@ -14,6 +14,9 @@ import {
 import { uploadFeatureFile } from "../../utils/featureFileUpload";
 import envKeys from "../../config/envKeys";
 
+/** Stable toast id so loading can be replaced or cleared on every path (react-hot-toast). */
+const SPEECH_TO_TEXT_TOAST_ID = 'speech-to-text-loading';
+
 const SpeechToText = ({
     onTranscriptionComplete,
     parentEntityId,
@@ -53,7 +56,7 @@ const SpeechToText = ({
         try {
             setIsTranscribing(true);
 
-            const toastDismissId = toast.loading('Converting speech to text...');
+            toast.loading('Converting speech to text...', { id: SPEECH_TO_TEXT_TOAST_ID });
 
             // Create file from blob
             const audioFile = new File([blob], 'speech.webm', { type: 'audio/webm' });
@@ -68,19 +71,23 @@ const SpeechToText = ({
             // Convert to text
             const transcribedText = await convertAudioToText(fileUrl);
 
-            toast.dismiss(toastDismissId);
-
             if (transcribedText && transcribedText.trim() !== '') {
-                toast.success('Speech converted to text successfully!');
+                toast.success('Speech converted to text successfully!', {
+                    id: SPEECH_TO_TEXT_TOAST_ID,
+                });
                 onTranscriptionComplete?.(transcribedText);
             } else {
-                toast.error('No speech detected in the recording');
+                toast.error('No speech detected in the recording', {
+                    id: SPEECH_TO_TEXT_TOAST_ID,
+                });
                 onTranscriptionComplete?.('');
             }
 
         } catch (error) {
             console.error("Error in speech transcription:", error);
-            toast.error('Failed to convert speech to text. Please try again.');
+            toast.error('Failed to convert speech to text. Please try again.', {
+                id: SPEECH_TO_TEXT_TOAST_ID,
+            });
         } finally {
             setIsTranscribing(false);
         }
