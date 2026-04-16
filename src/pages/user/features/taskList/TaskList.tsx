@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useAtom } from 'jotai';
 import { DebounceInput } from 'react-debounce-input';
 import {
@@ -105,10 +106,6 @@ const TaskList: React.FC = () => {
     const [taskLayoutMode, setTaskLayoutMode] = useAtom(taskListLayoutModeAtom);
 
     useEffect(() => {
-        fetchTasks();
-    }, [refreshRandomNum]);
-
-    useEffect(() => {
         setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
     }, [
         isTaskAddModalIsOpen,
@@ -148,7 +145,7 @@ const TaskList: React.FC = () => {
         }
     }, []);
 
-    const fetchTasks = async () => {
+    const fetchTasks = async (signal?: AbortSignal) => {
         setLoading(true);
         const config = {
             method: 'post',
@@ -163,19 +160,32 @@ const TaskList: React.FC = () => {
                 isCompleted: isCompleted || '',
                 taskWorkspaceId: workspaceId || '',
                 labelArr: selectedLabels || []
-            }
+            },
+            signal,
         };
 
         try {
             const response = await axiosCustom.request(config);
+            if (signal?.aborted) return;
             const tempTaskArr = response.data.docs;
             setTasks(tempTaskArr);
         } catch (error) {
+            if (axios.isCancel(error) || (error as { code?: string })?.code === 'ERR_CANCELED') {
+                return;
+            }
             console.error('Error fetching tasks:', error);
         } finally {
-            setLoading(false);
+            if (!signal?.aborted) {
+                setLoading(false);
+            }
         }
     };
+
+    useEffect(() => {
+        const controller = new AbortController();
+        fetchTasks(controller.signal);
+        return () => controller.abort();
+    }, [refreshRandomNum]);
 
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -320,7 +330,12 @@ const TaskList: React.FC = () => {
                 {!loading && workspaceId.length === 24 && (
                     <div className="space-y-2 sm:space-y-3">
                         <div className="mb-1 flex flex-wrap items-center justify-between gap-1.5 rounded-lg border border-zinc-200/70 bg-zinc-50/80 px-2 py-1.5 sm:gap-2 sm:px-2.5">
-                            <span className="text-[11px] font-medium text-zinc-700">Task layout</span>
+                            <div className="flex min-w-0 flex-wrap items-center gap-1.5 sm:gap-2">
+                                <span className="text-[11px] font-medium text-zinc-700">Task layout</span>
+                                <span className="text-[11px] tabular-nums text-zinc-500">
+                                    {tasks.length === 1 ? '1 task' : `${tasks.length} tasks`}
+                                </span>
+                            </div>
                             <div
                                 className="inline-flex rounded-lg border border-zinc-200/80 bg-white p-0.5 shadow-sm"
                                 role="group"
