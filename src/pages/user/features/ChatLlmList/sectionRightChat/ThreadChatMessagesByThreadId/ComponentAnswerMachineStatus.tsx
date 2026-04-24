@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import {
     LucideLoader2,
     LucideCheckCircle2,
@@ -9,8 +10,17 @@ import {
     LucideHelpCircle,
     LucideRefreshCw,
     LucideCoins,
+    LucideTerminal,
+    LucideFile,
 } from 'lucide-react';
 import { pollAnswerMachineStatus, AnswerMachinePollingResponse } from '../../utils/answerMachinePollingAxios';
+import {
+    collectUniqueOpencodeOutputFiles,
+    openOpencodeOutputFileInNewTab,
+    formatOpencodeFileSize,
+    getOpencodeTaskExecutionLabel,
+    OpencodeTaskFileRef,
+} from '../../utils/opencodeTasksAxios';
 
 const POLLING_INTERVAL = 10000;
 
@@ -108,6 +118,12 @@ const ComponentAnswerMachineStatus = ({
         };
     }, [threadId]);
 
+    const [opencodeTickNow, setOpencodeTickNow] = useState(() => Date.now());
+    useEffect(() => {
+        const id = window.setInterval(() => setOpencodeTickNow(Date.now()), 1000);
+        return () => window.clearInterval(id);
+    }, []);
+
     const toggleJobExpanded = (jobId: string) => {
         setExpandedJobIds((prev) => {
             const next = new Set(prev);
@@ -132,6 +148,23 @@ const ComponentAnswerMachineStatus = ({
 
     const latestJob = status.jobs[0];
     const subQuestions = latestJob?.subQuestions ?? [];
+    const opencodeSummary = latestJob?.opencodeExecutionSummary?.trim() || '';
+    const opencodeRequestList = Array.isArray(latestJob?.opencodeExecutionRequestList)
+        ? latestJob.opencodeExecutionRequestList.filter((item) => typeof item === 'string' && item.trim().length > 0)
+        : [];
+    const opencodeConversation = typeof latestJob?.opencodeExecutionConversation === 'string'
+        ? latestJob.opencodeExecutionConversation.trim()
+        : '';
+    const opencodeTasks = Array.isArray((latestJob as any)?.opencodeTasks) ? (latestJob as any).opencodeTasks : [];
+    const opencodeGeneratedFiles = collectUniqueOpencodeOutputFiles(opencodeTasks);
+
+    const openOpencodeOutputFile = async (f: OpencodeTaskFileRef) => {
+        try {
+            await openOpencodeOutputFileInNewTab(f);
+        } catch (e) {
+            toast.error(e instanceof Error ? e.message : 'Could not open file');
+        }
+    };
 
     if (status.status === 'answered' && !status.isProcessing && subQuestionsStatus.total === 0) {
         return null;
@@ -379,6 +412,188 @@ const ComponentAnswerMachineStatus = ({
                                     })}
                                 </div>
                             )}
+                        </div>
+                    )}
+
+                    {/* OpenCode Execution */}
+                    {status.jobs.length > 0 && (
+                        <div className="mt-3 border-t border-blue-200 pt-3">
+                            <div className="w-full flex items-center justify-between text-sm font-medium text-blue-900 mb-2">
+                                <div className="flex items-center gap-2">
+                                    <LucideTerminal className="w-4 h-4" />
+                                    <span>OpenCode Execution</span>
+                                </div>
+                                <span
+                                    className={`text-xs font-medium px-2 py-1 rounded ${
+                                        latestJob?.usedOpencode
+                                            ? 'bg-green-100 text-green-700'
+                                            : 'bg-gray-100 text-gray-700'
+                                    }`}
+                                >
+                                    {latestJob?.usedOpencode ? 'enabled' : 'disabled'}
+                                </span>
+                            </div>
+                            <div className="bg-white rounded-sm border border-blue-100 p-3">
+                                {opencodeSummary.length > 0 && (
+                                    <div className="mb-3">
+                                        <div className="text-[11px] font-semibold text-blue-900 mb-1">Summary</div>
+                                        <div className="text-xs text-gray-800 whitespace-pre-wrap">{opencodeSummary}</div>
+                                    </div>
+                                )}
+
+                                {opencodeRequestList.length > 0 && (
+                                    <div className="mb-3">
+                                        <div className="text-[11px] font-semibold text-blue-900 mb-1">Request List</div>
+                                        <ol className="list-decimal pl-4 space-y-1 text-xs text-gray-800">
+                                            {opencodeRequestList.map((request, idx) => (
+                                                <li key={`opencode-request-${idx}`} className="whitespace-pre-wrap">
+                                                    {request}
+                                                </li>
+                                            ))}
+                                        </ol>
+                                    </div>
+                                )}
+
+                                {opencodeConversation.length > 0 && (
+                                    <div>
+                                        <div className="text-[11px] font-semibold text-blue-900 mb-1">Complete Conversation</div>
+                                        <div className="max-h-40 overflow-y-auto rounded border border-blue-100 bg-blue-50/40 p-2 text-xs text-gray-800 whitespace-pre-wrap">
+                                            {opencodeConversation}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {opencodeGeneratedFiles.length > 0 && (
+                                    <div className={opencodeConversation.length > 0 ? 'mt-3' : ''}>
+                                        <div className="flex items-center gap-2 text-[11px] font-semibold text-blue-900 mb-2">
+                                            <LucideFile className="w-3.5 h-3.5 shrink-0" />
+                                            <span>Generated files ({opencodeGeneratedFiles.length})</span>
+                                        </div>
+                                        <ul className="space-y-1.5 rounded border border-blue-100 bg-blue-50/30 p-2">
+                                            {opencodeGeneratedFiles.map((f) => (
+                                                <li
+                                                    key={f.filePath}
+                                                    className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-xs"
+                                                >
+                                                    <button
+                                                        type="button"
+                                                        className="text-blue-700 hover:underline font-medium break-all text-left bg-transparent border-0 p-0 cursor-pointer"
+                                                        onClick={() => void openOpencodeOutputFile(f)}
+                                                    >
+                                                        {f.fileName || f.filePath}
+                                                    </button>
+                                                    <span className="text-gray-500 shrink-0">
+                                                        {formatOpencodeFileSize(f.size)}
+                                                        {f.contentType ? ` · ${f.contentType}` : ''}
+                                                    </span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {opencodeTasks.length > 0 && (
+                                    <div className={opencodeConversation.length > 0 ? "mt-3" : ""}>
+                                        <div className="text-[11px] font-semibold text-blue-900 mb-1">Tasks</div>
+                                        <div className="space-y-2">
+                                            {opencodeTasks.map((t: any) => (
+                                                <div key={`opencode-task-${t.id}`} className="rounded border border-blue-100 bg-blue-50/30 p-2">
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <div className="text-xs font-medium text-gray-900">{t.title || 'Task'}</div>
+                                                        <div className="text-[11px] text-gray-600 text-right leading-tight">
+                                                            <div className="capitalize">{t.status}</div>
+                                                            {(() => {
+                                                                const exec = getOpencodeTaskExecutionLabel(t, opencodeTickNow);
+                                                                return exec ? (
+                                                                    <div className="text-[10px] text-gray-500 font-normal">
+                                                                        {exec}
+                                                                    </div>
+                                                                ) : null;
+                                                            })()}
+                                                        </div>
+                                                    </div>
+                                                    {(t.summary || t.errorReason) && (
+                                                        <div className="mt-1 text-xs text-gray-800 whitespace-pre-wrap">
+                                                            {t.errorReason ? t.errorReason : t.summary}
+                                                        </div>
+                                                    )}
+                                                    {((typeof t.instruction === 'string' && t.instruction.trim().length > 0) ||
+                                                        (typeof t.agentTranscript === 'string' &&
+                                                            t.agentTranscript.trim().length > 0)) && (
+                                                        <details className="mt-2 group rounded border border-blue-100/80 bg-white/60 open:bg-white">
+                                                            <summary className="cursor-pointer list-none px-2 py-1.5 text-[11px] font-medium text-blue-800 hover:bg-blue-50/60 rounded [&::-webkit-details-marker]:hidden flex items-center gap-1.5">
+                                                                <span className="inline-block w-0 h-0 border-l-[5px] border-l-blue-700 border-y-[3.5px] border-y-transparent group-open:rotate-90 transition-transform" />
+                                                                Instruction & agent messages
+                                                            </summary>
+                                                            <div className="px-2 pb-2 pt-0 space-y-2 border-t border-blue-100/60">
+                                                                {typeof t.instruction === 'string' && t.instruction.trim().length > 0 && (
+                                                                    <div>
+                                                                        <div className="text-[10px] font-semibold text-gray-600 mt-2 mb-0.5">
+                                                                            Instruction
+                                                                        </div>
+                                                                        <pre className="text-[10px] text-gray-800 whitespace-pre-wrap font-mono leading-snug max-h-48 overflow-y-auto">
+                                                                            {t.instruction}
+                                                                        </pre>
+                                                                    </div>
+                                                                )}
+                                                                {typeof t.agentTranscript === 'string' &&
+                                                                t.agentTranscript.trim().length > 0 ? (
+                                                                    <div>
+                                                                        <div className="text-[10px] font-semibold text-gray-600 mb-0.5">
+                                                                            Agent (OpenCode)
+                                                                        </div>
+                                                                        <pre className="text-[10px] text-gray-800 whitespace-pre-wrap font-mono leading-snug max-h-64 overflow-y-auto">
+                                                                            {t.agentTranscript}
+                                                                        </pre>
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className="text-[10px] text-gray-500 italic pt-1">
+                                                                        Agent message log appears here after this task
+                                                                        completes.
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </details>
+                                                    )}
+                                                    {Array.isArray(t.outputFileRefs) && t.outputFileRefs.length > 0 && (
+                                                        <div className="mt-2 space-y-1">
+                                                            <div className="text-[11px] font-medium text-gray-600">Output</div>
+                                                            {t.outputFileRefs.map((f: OpencodeTaskFileRef) => (
+                                                                <div
+                                                                    key={`${t.id}-${f.filePath}`}
+                                                                    className="text-xs pl-1 border-l-2 border-blue-100"
+                                                                >
+                                                                    <button
+                                                                        type="button"
+                                                                        className="text-blue-700 hover:underline break-all text-left bg-transparent border-0 p-0 cursor-pointer"
+                                                                        onClick={() => void openOpencodeOutputFile(f)}
+                                                                    >
+                                                                        {f.fileName || f.filePath}
+                                                                    </button>
+                                                                    {typeof f.size === 'number' && (
+                                                                        <span className="text-gray-500 ml-1">
+                                                                            ({formatOpencodeFileSize(f.size)})
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {opencodeSummary.length === 0 &&
+                                    opencodeRequestList.length === 0 &&
+                                    opencodeConversation.length === 0 &&
+                                    opencodeTasks.length === 0 && (
+                                    <div className="text-xs text-gray-500">
+                                        No OpenCode execution details available yet.
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
 

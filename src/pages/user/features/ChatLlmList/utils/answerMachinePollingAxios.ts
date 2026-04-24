@@ -4,6 +4,29 @@ import { AxiosRequestConfig } from 'axios';
 export interface AnswerMachineJob {
     id: string;
     status: string;
+    usedOpencode: boolean;
+    opencodeExecutionSummary: string;
+    opencodeExecutionRequestList: string[];
+    opencodeExecutionConversation: string;
+    opencodeTasks: Array<{
+        id: string;
+        sortIndex: number;
+        title: string;
+        instruction: string;
+        status: string;
+        summary: string;
+        errorReason: string;
+        agentTranscript: string;
+        runStartedAtUtc?: string | null;
+        runFinishedAtUtc?: string | null;
+        executionDurationMs?: number | null;
+        outputFileRefs: Array<{
+            fileName: string;
+            filePath: string;
+            contentType: string;
+            size: number;
+        }>;
+    }>;
     currentIteration: number;
     maxNumberOfIterations: number;
     subQuestions: Array<{

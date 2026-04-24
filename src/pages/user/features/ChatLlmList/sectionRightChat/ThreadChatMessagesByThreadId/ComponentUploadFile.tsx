@@ -2,7 +2,7 @@ import { Fragment } from "react/jsx-runtime";
 import toast from "react-hot-toast";
 import { ChangeEvent, useRef } from "react";
 import { LucidePaperclip } from "lucide-react";
-import { uploadFeatureFile } from "../../../../../../utils/featureFileUpload";
+import { uploadFeatureFile, UPLOAD_PATH_LAYOUT_THREAD_OPENCODE_INPUTFILES } from "../../../../../../utils/featureFileUpload";
 import envKeys from "../../../../../../config/envKeys";
 
 const ComponentUploadFile = ({
@@ -26,6 +26,7 @@ const ComponentUploadFile = ({
             file,
             parentEntityId: threadId,
             apiUrl: envKeys.API_URL,
+            pathLayout: UPLOAD_PATH_LAYOUT_THREAD_OPENCODE_INPUTFILES,
         });
     };
 

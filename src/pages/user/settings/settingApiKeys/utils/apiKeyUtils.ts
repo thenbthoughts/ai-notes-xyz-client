@@ -3,6 +3,7 @@ import axiosCustom from "../../../../../config/axiosCustom";
 export type ApiKeyType =
   | 'groq'
   | 'openrouter'
+  | 'opencode'
   | 's3'
   | 'ollama'
   | 'qdrant'

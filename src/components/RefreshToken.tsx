@@ -29,6 +29,7 @@ const RefreshToken = () => {
             isLoggedIn: 'true' as "pending" | "true" | "false",
             apiKeyGroqValid: false,
             apiKeyOpenrouterValid: false,
+            apiKeyOpencodeValid: false,
             fileStorageType: 'gridfs' as 'gridfs' | 's3',
             apiKeyS3Valid: false,
             apiKeyOllamaValid: false,
@@ -62,6 +63,9 @@ const RefreshToken = () => {
                 }
                 if (typeof userInfoFromApi?.apiKeyOpenrouterValid === 'boolean') {
                     tempData.apiKeyOpenrouterValid = userInfoFromApi?.apiKeyOpenrouterValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyOpencodeValid === 'boolean') {
+                    tempData.apiKeyOpencodeValid = userInfoFromApi?.apiKeyOpencodeValid;
                 }
                 if (typeof userInfoFromApi?.apiKeyS3Valid === 'boolean') {
                     tempData.apiKeyS3Valid = userInfoFromApi?.apiKeyS3Valid;
@@ -103,6 +107,7 @@ const RefreshToken = () => {
                 fileStorageType: 'gridfs',
                 apiKeyGroqValid: false,
                 apiKeyOpenrouterValid: false,
+                apiKeyOpencodeValid: false,
                 apiKeyS3Valid: false,
                 apiKeyOllamaValid: false,
                 apiKeyQdrantValid: false,

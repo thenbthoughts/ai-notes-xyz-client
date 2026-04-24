@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { LucideMic, LucidePause, LucidePlay, LucideSquare } from "lucide-react";
-import { uploadFeatureFile } from "../../../../../../utils/featureFileUpload";
+import { uploadFeatureFile, UPLOAD_PATH_LAYOUT_THREAD_OPENCODE_INPUTFILES } from "../../../../../../utils/featureFileUpload";
 
 const btnIdle =
     'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200/90 bg-white text-zinc-600 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/40';
@@ -127,6 +127,7 @@ const ComponentRecordAudio = ({
                 file: tempFile,
                 parentEntityId: threadId,
                 apiUrl: envKeys.API_URL,
+                pathLayout: UPLOAD_PATH_LAYOUT_THREAD_OPENCODE_INPUTFILES,
             });
 
             // add to chat thread

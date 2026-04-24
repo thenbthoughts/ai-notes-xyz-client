@@ -14,6 +14,7 @@ import {
 import ComponentAiGeneratedQuestionList from './ComponentAiGeneratedQuestionList.tsx';
 import ThreadSettingWrapper from '../ThreadSetting/ThreadSettingWrapper.tsx';
 import ComponentAnswerMachineStatus from './ComponentAnswerMachineStatus.tsx';
+import ComponentOpencodeTaskPanel from './ComponentOpencodeTaskPanel.tsx';
 
 const LIMIT_MESSAGES = 10;
 
@@ -45,6 +46,7 @@ const CRightChatById = ({
     const [messages, setMessages] = useState<tsMessageItem[]>([]);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
     const [isAnswerMachineEnabled, setIsAnswerMachineEnabled] = useState(false);
+    const [isConciseOpencodeEnabled, setIsConciseOpencodeEnabled] = useState(false);
     const [hasMore, setHasMore] = useState(false);
     const [currentLimit, setCurrentLimit] = useState(LIMIT_MESSAGES);
     const [totalCount, setTotalCount] = useState(0);
@@ -117,6 +119,9 @@ const CRightChatById = ({
                 if (responseThread.data && responseThread.data.docs && responseThread.data.docs.length > 0) {
                     const threadInfo = responseThread.data.docs[0];
                     setIsAnswerMachineEnabled(threadInfo.answerEngine === 'answerMachine');
+                    setIsConciseOpencodeEnabled(
+                        threadInfo.answerEngine === 'conciseAnswer' && threadInfo.conciseUsedOpencode === true
+                    );
                 }
             } catch (error) {
                 console.error('Error checking Answer Machine status:', error);
@@ -366,6 +371,10 @@ const CRightChatById = ({
                                     setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
                                 }}
                             />
+                        )}
+
+                        {!isAnswerMachineEnabled && isConciseOpencodeEnabled && (
+                            <ComponentOpencodeTaskPanel threadId={threadId} />
                         )}
 
                         <div>

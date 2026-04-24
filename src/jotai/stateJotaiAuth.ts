@@ -6,6 +6,7 @@ export type AuthState = {
     fileStorageType: 'gridfs' | 's3';
     apiKeyGroqValid: boolean;
     apiKeyOpenrouterValid: boolean;
+    apiKeyOpencodeValid: boolean;
     apiKeyS3Valid: boolean;
     apiKeyOllamaValid: boolean;
     apiKeyQdrantValid: boolean;
@@ -25,6 +26,7 @@ const stateJotaiAuthAtom = atom<AuthState>({
     fileStorageType: 'gridfs',
     apiKeyGroqValid: false,
     apiKeyOpenrouterValid: false,
+    apiKeyOpencodeValid: false,
     apiKeyS3Valid: false,
     apiKeyOllamaValid: false,
     apiKeyQdrantValid: false,

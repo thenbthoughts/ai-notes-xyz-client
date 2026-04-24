@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { ChangeEvent, useRef } from "react";
 import { LucideImagePlus } from "lucide-react";
 import envKeys from "../../../../../../config/envKeys";
-import { uploadFeatureFile } from "../../../../../../utils/featureFileUpload";
+import { uploadFeatureFile, UPLOAD_PATH_LAYOUT_THREAD_OPENCODE_INPUTFILES } from "../../../../../../utils/featureFileUpload";
 
 const ComponentUploadImage = ({
     setFiles,
@@ -23,6 +23,7 @@ const ComponentUploadImage = ({
             file,
             parentEntityId: threadId,
             apiUrl: envKeys.API_URL,
+            pathLayout: UPLOAD_PATH_LAYOUT_THREAD_OPENCODE_INPUTFILES,
         });
     };
 

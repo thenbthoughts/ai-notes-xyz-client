@@ -263,6 +263,7 @@ const ComponentMessageItem = ({
     const renderDocument = () => {
         const body = 'text-zinc-800';
         const meta = 'text-zinc-500';
+        const hasFileUrl = typeof itemMessage.fileUrl === 'string' && itemMessage.fileUrl.length > 0;
         return (
             <div className={`text-sm ${body}`}>
                 <span className="mr-2" aria-hidden>
@@ -273,6 +274,17 @@ const ComponentMessageItem = ({
                 <span className={`ml-2 text-xs ${meta}`}>
                     ({typeof itemMessage.fileContentText === 'string' ? itemMessage.fileContentText.length : 0} chars)
                 </span>
+                {hasFileUrl && (
+                    <a
+                        href={`${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${encodeURIComponent(itemMessage.fileUrl)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                        className="ml-2 text-xs text-teal-700 underline underline-offset-2 hover:text-teal-900"
+                    >
+                        Download
+                    </a>
+                )}
                 {showExtractedText && (
                     <div
                         className={`mt-2 max-h-[min(300px,80vh)] overflow-y-auto whitespace-pre-wrap rounded-lg border border-zinc-200/40 p-2 text-xs ${meta}`}

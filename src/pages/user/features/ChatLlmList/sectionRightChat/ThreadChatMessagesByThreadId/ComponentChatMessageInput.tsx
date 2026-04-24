@@ -10,7 +10,7 @@ import cssNoteAdvanceList from './scss/noteAdvanceList.module.scss';
 import ComponentUploadFile from './ComponentUploadFile.tsx';
 import ComponentRecordAudio from './ComponentRecordAudio.tsx';
 import { handleAutoSelectContextFirstMessage, handleAutoSelectContext } from '../../utils/chatLlmThreadAxios.ts';
-import { uploadFeatureFile } from '../../../../../../utils/featureFileUpload.ts';
+import { uploadFeatureFile, UPLOAD_PATH_LAYOUT_THREAD_OPENCODE_INPUTFILES } from '../../../../../../utils/featureFileUpload.ts';
 
 import { useSetAtom } from 'jotai';
 import ComponentUploadImage from './ComponentUploadImage.tsx';
@@ -47,6 +47,7 @@ const TextAndFileInput = ({
                 file,
                 parentEntityId: threadId,
                 apiUrl: envKeys.API_URL,
+                pathLayout: UPLOAD_PATH_LAYOUT_THREAD_OPENCODE_INPUTFILES,
             });
             setFiles(prev => [...prev, filePath]);
             toast.success(`File "${file.name}" uploaded successfully!`);

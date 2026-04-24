@@ -7,6 +7,7 @@ import ComponentApiKeySet from "../../userhomepage/ComponentApiKeySet";
 // API Key Components
 import GroqApiKey from "./GroqApiKey";
 import OpenrouterApiKey from "./OpenrouterApiKey";
+import OpencodeApiKey from "./OpencodeApiKey";
 import S3ApiKey from "./S3ApiKey";
 import OllamaApiKey from "./OllamaApiKey";
 import QdrantApiKey from "./QdrantApiKey";
@@ -19,7 +20,7 @@ import TelegramSettings from "./TelegramSettings";
 import FileStorageType from "./FileStorageType";
 import ClientFrontendUrl from "./ClientFrontendUrl";
 
-type SelectionType = 'groq' | 'openrouter' | 's3' | 'ollama' | 'qdrant' | 'replicate' | 'runpod' | 'openai' | 'localai' | 'smtp' | 'telegram' | 'fileStorage' | 'clientUrl' | null;
+type SelectionType = 'groq' | 'openrouter' | 'opencode' | 's3' | 'ollama' | 'qdrant' | 'replicate' | 'runpod' | 'openai' | 'localai' | 'smtp' | 'telegram' | 'fileStorage' | 'clientUrl' | null;
 
 const SettingApiKey = () => {
     const [selectedOption, setSelectedOption] = useState<SelectionType>(null);
@@ -32,6 +33,7 @@ const SettingApiKey = () => {
         { key: 'localai' as const, label: 'LocalAI', type: 'api' },
         { key: 'ollama' as const, label: 'Ollama', type: 'api' },
         { key: 'openai' as const, label: 'OpenAI', type: 'api' },
+        { key: 'opencode' as const, label: 'OpenCode', type: 'api' },
         { key: 'openrouter' as const, label: 'OpenRouter', type: 'api' },
         { key: 'qdrant' as const, label: 'Qdrant', type: 'api' },
         { key: 'replicate' as const, label: 'Replicate', type: 'api' },
@@ -63,6 +65,8 @@ const SettingApiKey = () => {
                                     isValid = authState.apiKeyGroqValid;
                                 } else if (option.key === 'openrouter') {
                                     isValid = authState.apiKeyOpenrouterValid;
+                                } else if (option.key === 'opencode') {
+                                    isValid = authState.apiKeyOpencodeValid;
                                 } else if (option.key === 's3') {
                                     isValid = authState.apiKeyS3Valid;
                                 } else if (option.key === 'ollama') {
@@ -113,6 +117,7 @@ const SettingApiKey = () => {
                 <div className="mt-6">
                     {selectedOption === 'groq' && <GroqApiKey />}
                     {selectedOption === 'openrouter' && <OpenrouterApiKey />}
+                    {selectedOption === 'opencode' && <OpencodeApiKey />}
                     {(selectedOption === 'fileStorage' || selectedOption === 's3') && <FileStorageType />}
                     {(selectedOption === 'fileStorage' || selectedOption === 's3') && <S3ApiKey />}
                     {selectedOption === 'ollama' && <OllamaApiKey />}

@@ -28,6 +28,8 @@ const ThreadSetting = ({
         systemPrompt: threadSetting.systemPrompt,
 
         answerEngine: threadSetting.answerEngine,
+        conciseUsedOpencode: threadSetting.conciseUsedOpencode === true,
+        answerMachineUsedOpencode: threadSetting.answerMachineUsedOpencode === true,
     });
 
     const [requestEdit, setRequestEdit] = useState({
@@ -105,6 +107,7 @@ const ThreadSetting = ({
 
                     // answer engine
                     answerEngine: formData?.answerEngine || 'conciseAnswer',
+                    conciseUsedOpencode: formData.conciseUsedOpencode,
 
                     // model parameters
                     chatLlmTemperature: temperature,
@@ -114,6 +117,7 @@ const ThreadSetting = ({
                     // answer machine settings
                     answerMachineMinNumberOfIterations: answerMachineMinNumberOfIterations,
                     answerMachineMaxNumberOfIterations: answerMachineMaxNumberOfIterations,
+                    answerMachineUsedOpencode: formData.answerMachineUsedOpencode,
                 },
             } as AxiosRequestConfig;
 
@@ -338,9 +342,56 @@ const ThreadSetting = ({
                                 </div>
                             </div>
                             
+                            {formData.answerEngine === "conciseAnswer" && (
+                                <div className="mt-3 space-y-3">
+                                    <div>
+                                        <label className="inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded-sm mr-2"
+                                                checked={formData.conciseUsedOpencode}
+                                                onChange={() =>
+                                                    setFormData({
+                                                        ...formData,
+                                                        conciseUsedOpencode: !formData.conciseUsedOpencode,
+                                                    })
+                                                }
+                                            />
+                                            <span className="text-sm text-gray-700">
+                                                Use OpenCode task execution (optional)
+                                            </span>
+                                        </label>
+                                        <p className="mt-1 text-xs text-gray-500">
+                                            Plans and executes a short list of tasks and feeds results into the concise answer.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Answer Machine Iterations Setting */}
                             {formData.answerEngine === "answerMachine" && (
                                 <div className="mt-3 space-y-3">
+                                    <div>
+                                        <label className="inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded-sm mr-2"
+                                                checked={formData.answerMachineUsedOpencode}
+                                                onChange={() =>
+                                                    setFormData({
+                                                        ...formData,
+                                                        answerMachineUsedOpencode: !formData.answerMachineUsedOpencode,
+                                                    })
+                                                }
+                                            />
+                                            <span className="text-sm text-gray-700">
+                                                Use OpenCode for coding queries (optional)
+                                            </span>
+                                        </label>
+                                        <p className="mt-1 text-xs text-gray-500">
+                                            When enabled, Answer Machine runs optional code/math/line execution and feeds results into the final answer.
+                                        </p>
+                                    </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">
                                             Min Iterations

@@ -59,6 +59,15 @@ const ComponentApiKeySet = () => {
             required: true,
         },
         {
+            name: 'OpenCode API',
+            key: 'apiKeyOpencodeValid',
+            valid: authState.apiKeyOpencodeValid,
+            icon: LucideKey,
+            description: 'OpenCode runtime for coding workflows',
+            color: 'emerald',
+            required: false,
+        },
+        {
             name: 'S3 Storage',
             key: 'apiKeyS3Valid',
             valid: authState.apiKeyS3Valid,

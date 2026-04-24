@@ -480,6 +480,8 @@ const ComponentThreadAdd = () => {
 
         // answer type
         answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine',
+        conciseUsedOpencode: false,
+        answerMachineUsedOpencode: false,
     });
 
     const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(3);
@@ -551,10 +553,12 @@ const ComponentThreadAdd = () => {
 
                     // answer engine
                     answerEngine: formData.answerEngine,
+                    conciseUsedOpencode: formData.conciseUsedOpencode,
 
                     // answer machine settings
                     answerMachineMinNumberOfIterations: answerMachineMinNumberOfIterations,
                     answerMachineMaxNumberOfIterations: answerMachineMaxNumberOfIterations,
+                    answerMachineUsedOpencode: formData.answerMachineUsedOpencode,
 
                     // selected model
                     aiModelProvider: aiModelProvider,
@@ -852,9 +856,56 @@ const ComponentThreadAdd = () => {
                         </div>
                     </div>
 
+                    {formData.answerEngine === "conciseAnswer" && (
+                        <div className="mt-3 space-y-3">
+                            <div>
+                                <label className="inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        className="rounded-sm mr-2"
+                                        checked={formData.conciseUsedOpencode}
+                                        onChange={() =>
+                                            setFormData({
+                                                ...formData,
+                                                conciseUsedOpencode: !formData.conciseUsedOpencode,
+                                            })
+                                        }
+                                    />
+                                    <span className="text-sm text-gray-700">
+                                        Use OpenCode task execution (optional)
+                                    </span>
+                                </label>
+                                <p className="mt-1 text-xs text-gray-500">
+                                    Plans and executes a short list of tasks (e.g. terminal/file generation) and feeds results into the concise answer.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Answer Machine Iterations Setting */}
                     {formData.answerEngine === "answerMachine" && (
                         <div className="mt-3 space-y-3">
+                            <div>
+                                <label className="inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        className="rounded-sm mr-2"
+                                        checked={formData.answerMachineUsedOpencode}
+                                        onChange={() =>
+                                            setFormData({
+                                                ...formData,
+                                                answerMachineUsedOpencode: !formData.answerMachineUsedOpencode,
+                                            })
+                                        }
+                                    />
+                                    <span className="text-sm text-gray-700">
+                                        Use OpenCode for coding queries (optional)
+                                    </span>
+                                </label>
+                                <p className="mt-1 text-xs text-gray-500">
+                                    Runs optional execution for coding/math/line-debug style questions before generating the answer.
+                                </p>
+                            </div>
                             <div>
                                 <label className="block text-sm text-gray-700 mb-1 lg:mb-2">
                                     Min Iterations
