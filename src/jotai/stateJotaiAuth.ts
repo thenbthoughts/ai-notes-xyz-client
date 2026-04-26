@@ -15,6 +15,7 @@ export type AuthState = {
     apiKeyLocalaiValid: boolean;
     smtpValid: boolean;
     telegramValid: boolean;
+    shellEngineValid: boolean;
 
     clientFrontendUrl: string;
 };
@@ -34,6 +35,7 @@ const stateJotaiAuthAtom = atom<AuthState>({
     apiKeyLocalaiValid: false,
     smtpValid: false,
     telegramValid: false,
+    shellEngineValid: false,
 
     clientFrontendUrl: '',
 });

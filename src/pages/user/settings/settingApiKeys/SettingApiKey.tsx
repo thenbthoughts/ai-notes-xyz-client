@@ -18,8 +18,9 @@ import SmtpSettings from "./SmtpSettings";
 import TelegramSettings from "./TelegramSettings";
 import FileStorageType from "./FileStorageType";
 import ClientFrontendUrl from "./ClientFrontendUrl";
+import ShellEngineApiKey from "./ShellEngineApiKey";
 
-type SelectionType = 'groq' | 'openrouter' | 's3' | 'ollama' | 'qdrant' | 'replicate' | 'runpod' | 'openai' | 'localai' | 'smtp' | 'telegram' | 'fileStorage' | 'clientUrl' | null;
+type SelectionType = 'groq' | 'openrouter' | 's3' | 'ollama' | 'qdrant' | 'replicate' | 'runpod' | 'openai' | 'localai' | 'smtp' | 'telegram' | 'shellEngine' | 'fileStorage' | 'clientUrl' | null;
 
 const SettingApiKey = () => {
     const [selectedOption, setSelectedOption] = useState<SelectionType>(null);
@@ -39,6 +40,7 @@ const SettingApiKey = () => {
         { key: 's3' as const, label: 'S3 Storage', type: 'api' },
         { key: 'smtp' as const, label: 'SMTP', type: 'api' },
         { key: 'telegram' as const, label: 'Telegram', type: 'api' },
+        { key: 'shellEngine' as const, label: 'Shell execute', type: 'api' },
     ];
 
     const renderApiKeys = () => {
@@ -81,6 +83,8 @@ const SettingApiKey = () => {
                                     isValid = authState.smtpValid;
                                 } else if (option.key === 'telegram') {
                                     isValid = authState.telegramValid;
+                                } else if (option.key === 'shellEngine') {
+                                    isValid = authState.shellEngineValid;
                                 } else {
                                     isValid = false;
                                 }
@@ -123,6 +127,7 @@ const SettingApiKey = () => {
                     {selectedOption === 'localai' && <LocalaiApiKey />}
                     {selectedOption === 'smtp' && <SmtpSettings />}
                     {selectedOption === 'telegram' && <TelegramSettings />}
+                    {selectedOption === 'shellEngine' && <ShellEngineApiKey />}
                     {selectedOption === 'clientUrl' && <ClientFrontendUrl />}
                     {selectedOption === null && (
                         <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 my-6">
