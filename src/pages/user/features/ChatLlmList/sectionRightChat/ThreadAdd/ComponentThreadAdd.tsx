@@ -9,8 +9,9 @@ import Select from "react-select";
 import { tsSchemaAiModelListGroq } from "../../../../../../types/pages/settings/dataModelGroq";
 import { tsSchemaAiModelListOpenrouter } from "../../../../../../types/pages/settings/dataModelOpenrouter";
 import { jotaiChatThreadRefreshRandomNum } from "../../jotai/jotaiChatLlmThreadSetting";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import Tooltip from '@rc-component/tooltip';
+import stateJotaiAuthAtom from "../../../../../../jotai/stateJotaiAuth";
 
 const SelectAiModelOpenrouter = ({
     aiModelName,
@@ -473,6 +474,7 @@ const LastUsedLlmModel = ({
 const ComponentThreadAdd = () => {
     const navigate = useNavigate();
     const setJotaiChatThreadRefreshRandomNum = useSetAtom(jotaiChatThreadRefreshRandomNum);
+    const authState = useAtomValue(stateJotaiAuthAtom);
     const [formData, setFormData] = useState({
         isPersonalContextEnabled: false,
         isAutoAiContextSelectEnabled: false,
@@ -480,6 +482,7 @@ const ComponentThreadAdd = () => {
 
         // answer type
         answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine',
+        executeShell: false,
     });
 
     const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(3);
@@ -551,6 +554,7 @@ const ComponentThreadAdd = () => {
 
                     // answer engine
                     answerEngine: formData.answerEngine,
+                    executeShell: formData.executeShell,
 
                     // answer machine settings
                     answerMachineMinNumberOfIterations: answerMachineMinNumberOfIterations,
@@ -850,6 +854,33 @@ const ComponentThreadAdd = () => {
                                 </label>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-col gap-1">
+                        <label className="inline-flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                className="rounded border-zinc-300 text-teal-600 focus:ring-teal-500"
+                                checked={formData.executeShell}
+                                disabled={!authState.shellEngineValid}
+                                onChange={(e) => setFormData({ ...formData, executeShell: e.target.checked })}
+                            />
+                            <span className="text-sm text-zinc-800">Execute shell</span>
+                        </label>
+                        {!authState.shellEngineValid && (
+                            <p className="text-xs text-zinc-500">
+                                Configure Shell execute in{' '}
+                                <Link to="/user/setting/api-key" className="text-teal-600 underline">
+                                    API Keys
+                                </Link>{' '}
+                                to enable.
+                            </p>
+                        )}
+                        {formData.answerEngine === 'answerMachine' && formData.executeShell && (
+                            <p className="text-xs text-zinc-500">
+                                Shell runs before Answer Machine starts, using the same shell service as Concise.
+                            </p>
+                        )}
                     </div>
 
                     {/* Answer Machine Iterations Setting */}

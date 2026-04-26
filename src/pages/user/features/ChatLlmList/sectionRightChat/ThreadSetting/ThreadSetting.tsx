@@ -1,6 +1,9 @@
 import { LucideLoader, LucideSave, LucideSettings, LucideX, LucideInfo } from "lucide-react";
 import { Fragment, useState } from "react";
+import { Link } from "react-router-dom";
+import { useAtomValue } from "jotai";
 import axiosCustom from "../../../../../../config/axiosCustom";
+import stateJotaiAuthAtom from "../../../../../../jotai/stateJotaiAuth";
 import { AxiosRequestConfig } from "axios";
 import { toast } from "react-hot-toast";
 import Tooltip from '@rc-component/tooltip';
@@ -20,6 +23,8 @@ const ThreadSetting = ({
     doesThreadExist: boolean;
 }) => {
 
+    const authState = useAtomValue(stateJotaiAuthAtom);
+
     const [formData, setFormData] = useState({
         threadTitle: threadSetting.threadTitle,
         isAutoAiContextSelectEnabled: threadSetting.isAutoAiContextSelectEnabled,
@@ -28,6 +33,7 @@ const ThreadSetting = ({
         systemPrompt: threadSetting.systemPrompt,
 
         answerEngine: threadSetting.answerEngine,
+        executeShell: Boolean(threadSetting.executeShell),
     });
 
     const [requestEdit, setRequestEdit] = useState({
@@ -336,6 +342,33 @@ const ThreadSetting = ({
                                         </label>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="mt-3 flex flex-col gap-1">
+                                <label className="inline-flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        checked={formData.executeShell}
+                                        disabled={!authState.shellEngineValid}
+                                        onChange={(e) => setFormData({ ...formData, executeShell: e.target.checked })}
+                                    />
+                                    <span className="text-sm text-gray-800">Execute shell</span>
+                                </label>
+                                {!authState.shellEngineValid && (
+                                    <p className="text-xs text-gray-500">
+                                        Configure Shell execute in{' '}
+                                        <Link to="/user/setting/api-key" className="text-blue-600 underline">
+                                            API Keys
+                                        </Link>{' '}
+                                        to enable.
+                                    </p>
+                                )}
+                                {formData.answerEngine === 'answerMachine' && formData.executeShell && (
+                                    <p className="text-xs text-gray-500">
+                                        Shell runs before Answer Machine starts, using the same shell service as Concise.
+                                    </p>
+                                )}
                             </div>
                             
                             {/* Answer Machine Iterations Setting */}
