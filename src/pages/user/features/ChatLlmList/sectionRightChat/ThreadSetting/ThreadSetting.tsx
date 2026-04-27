@@ -71,9 +71,26 @@ const ThreadSetting = ({
     const [minIterationsInput, setMinIterationsInput] = useState<string>(validatedMin.toString());
     const [maxIterationsInput, setMaxIterationsInput] = useState<string>(validatedMax.toString());
 
+    const loadedShellMinRaw = Math.round(Number(threadSetting.shellExecuteMinAttempts) || 1);
+    const loadedShellMaxRaw = Math.round(Number(threadSetting.shellExecuteMaxAttempts) || 3);
+    const loadedShellMin = Math.min(10, Math.max(1, loadedShellMinRaw));
+    const loadedShellMax = Math.min(10, Math.max(1, loadedShellMaxRaw));
+    const validatedShellMin = Math.min(loadedShellMin, loadedShellMax);
+    const validatedShellMax = Math.max(loadedShellMin, loadedShellMax);
+
+    const [shellExecuteMinAttempts, setShellExecuteMinAttempts] = useState<number>(validatedShellMin);
+    const [shellExecuteMaxAttempts, setShellExecuteMaxAttempts] = useState<number>(validatedShellMax);
+    const [shellMinAttemptsInput, setShellMinAttemptsInput] = useState<string>(validatedShellMin.toString());
+    const [shellMaxAttemptsInput, setShellMaxAttemptsInput] = useState<string>(validatedShellMax.toString());
+
     const editRecord = async () => {
         if (answerMachineMinNumberOfIterations > answerMachineMaxNumberOfIterations) {
             toast.error('Minimum iterations cannot be greater than maximum iterations');
+            return;
+        }
+
+        if (formData.executeShell && shellExecuteMinAttempts > shellExecuteMaxAttempts) {
+            toast.error('Shell min retries cannot be greater than shell max retries');
             return;
         }
 
@@ -120,6 +137,9 @@ const ThreadSetting = ({
                     // answer machine settings
                     answerMachineMinNumberOfIterations: answerMachineMinNumberOfIterations,
                     answerMachineMaxNumberOfIterations: answerMachineMaxNumberOfIterations,
+
+                    shellExecuteMinAttempts,
+                    shellExecuteMaxAttempts,
                 },
             } as AxiosRequestConfig;
 
@@ -368,6 +388,94 @@ const ThreadSetting = ({
                                     <p className="text-xs text-gray-500">
                                         Shell runs before Answer Machine starts, using the same shell service as Concise.
                                     </p>
+                                )}
+                                {formData.executeShell && authState.shellEngineValid && (
+                                    <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                Min shell retries
+                                                <Tooltip
+                                                    placement="top"
+                                                    trigger={['hover', 'click']}
+                                                    overlay={
+                                                        <span className="text-black bg-white rounded-md p-2 inline-block max-w-xs">
+                                                            First attempt index for each shell todo’s primary command
+                                                            (inclusive). Usually 1. Range 1–10.
+                                                        </span>
+                                                    }
+                                                >
+                                                    <LucideInfo
+                                                        className="w-4 h-4 ml-1 inline-block"
+                                                        style={{ position: 'relative', top: '-0.5px', left: '1px' }}
+                                                    />
+                                                </Tooltip>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                inputMode="numeric"
+                                                value={shellMinAttemptsInput}
+                                                onChange={(e) => {
+                                                    const v = e.target.value;
+                                                    setShellMinAttemptsInput(v);
+                                                    if (v !== '') {
+                                                        const n = parseInt(v, 10);
+                                                        if (!Number.isNaN(n)) {
+                                                            setShellExecuteMinAttempts(Math.max(1, Math.min(10, n)));
+                                                        }
+                                                    }
+                                                }}
+                                                onBlur={() => {
+                                                    if (shellMinAttemptsInput === '') {
+                                                        setShellMinAttemptsInput('1');
+                                                        setShellExecuteMinAttempts(1);
+                                                    }
+                                                }}
+                                                className="mt-1 block w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                Max shell retries
+                                                <Tooltip
+                                                    placement="top"
+                                                    trigger={['hover', 'click']}
+                                                    overlay={
+                                                        <span className="text-black bg-white rounded-md p-2 inline-block max-w-xs">
+                                                            Maximum attempt index for each shell todo’s primary command
+                                                            (inclusive). Range 1–10.
+                                                        </span>
+                                                    }
+                                                >
+                                                    <LucideInfo
+                                                        className="w-4 h-4 ml-1 inline-block"
+                                                        style={{ position: 'relative', top: '-0.5px', left: '1px' }}
+                                                    />
+                                                </Tooltip>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                inputMode="numeric"
+                                                value={shellMaxAttemptsInput}
+                                                onChange={(e) => {
+                                                    const v = e.target.value;
+                                                    setShellMaxAttemptsInput(v);
+                                                    if (v !== '') {
+                                                        const n = parseInt(v, 10);
+                                                        if (!Number.isNaN(n)) {
+                                                            setShellExecuteMaxAttempts(Math.max(1, Math.min(10, n)));
+                                                        }
+                                                    }
+                                                }}
+                                                onBlur={() => {
+                                                    if (shellMaxAttemptsInput === '') {
+                                                        setShellMaxAttemptsInput('3');
+                                                        setShellExecuteMaxAttempts(3);
+                                                    }
+                                                }}
+                                                className="mt-1 block w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                             

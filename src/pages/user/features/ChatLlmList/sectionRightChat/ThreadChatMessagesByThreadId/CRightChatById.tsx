@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, type DragEvent } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
 import { Loader2 } from 'lucide-react';
 
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
-import ComponentNotesAdd from './ComponentChatMessageInput.tsx';
+import ComponentNotesAdd, { type ChatMessageInputHandle } from './ComponentChatMessageInput.tsx';
 
 import ComponentMessageItem from './ComponentMessageItem.tsx';
 
@@ -36,6 +36,7 @@ const CRightChatById = ({
     ] = useState(false);
 
     const sectionChatMessageInputRef = useRef<HTMLDivElement>(null);
+    const chatMessageInputRef = useRef<ChatMessageInputHandle>(null);
 
     const [chatLlmFooterHeight, setChatLlmFooterHeight] = useState(0);
 
@@ -282,10 +283,26 @@ const CRightChatById = ({
         totalCount,
     ]);
 
+    const handleMessagesDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+    }, []);
+
+    const handleMessagesDrop = useCallback(async (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const list = e.dataTransfer.files;
+        if (!list || list.length === 0) {
+            return;
+        }
+        await chatMessageInputRef.current?.ingestDroppedFiles(Array.from(list));
+    }, []);
+
     return (
         <div className="relative min-h-0 bg-[radial-gradient(ellipse_120%_80%_at_50%_-20%,rgba(45,212,191,0.08),transparent_50%),radial-gradient(ellipse_80%_50%_at_100%_50%,rgba(139,92,246,0.05),transparent_45%),linear-gradient(to_bottom,#f8fafc_0%,#f4f4f5_100%)]">
             <div
                 ref={messagesContainerRef}
+                onDragOver={handleMessagesDragOver}
+                onDrop={handleMessagesDrop}
                 style={{
                     height: `${getCssHeightForMessages()}`,
                     overflowY: 'scroll',
@@ -385,6 +402,7 @@ const CRightChatById = ({
                 ref={sectionChatMessageInputRef}
             >
                 <ComponentNotesAdd
+                    ref={chatMessageInputRef}
                     setRefreshParentRandomNum={setRefreshRandomNum}
                     threadId={threadId}
                 />

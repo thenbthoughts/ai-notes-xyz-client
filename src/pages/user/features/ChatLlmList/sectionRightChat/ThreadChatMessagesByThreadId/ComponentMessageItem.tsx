@@ -11,6 +11,97 @@ import { useSetAtom } from 'jotai';
 import { tsMessageItem } from '../../../../../../types/pages/tsNotesAdvanceList';
 import MarkdownRenderer from '../../../../../../components/markdown/MarkdownRenderer';
 
+function getFileDownloadUrl(storedFileUrl: string, opts?: { inlinePreview?: boolean }): string {
+    const base = `${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${encodeURIComponent(storedFileUrl)}`;
+    return opts?.inlinePreview ? `${base}&inline=1` : base;
+}
+
+function ShellRunImportedFilePreviews({
+    files,
+}: {
+    files: NonNullable<NonNullable<tsMessageItem['shellRunArtifactV1']>['importedFiles']>;
+}) {
+    if (!files.length) {
+        return null;
+    }
+    return (
+        <div className="mt-4 space-y-4 border-t border-zinc-200/70 pt-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Preview</p>
+            {files.map((f, index) => {
+                const previewUrl = getFileDownloadUrl(f.storedFileUrl, { inlinePreview: true });
+                const downloadUrl = getFileDownloadUrl(f.storedFileUrl);
+                const name = f.fileName || f.storedFileUrl.split('/').pop() || 'file';
+                const mime = (f.mimeType || '').toLowerCase();
+                const lower = name.toLowerCase();
+                const isPdf = mime.includes('pdf') || lower.endsWith('.pdf');
+                const isHtml = mime.includes('html') || lower.endsWith('.html') || lower.endsWith('.htm');
+                const isImage = mime.startsWith('image/');
+
+                if (isPdf || isHtml) {
+                    return (
+                        <div
+                            key={`${f.storedFileUrl}-${index}`}
+                            className="overflow-hidden rounded-xl border border-zinc-200/80 bg-zinc-50/60"
+                        >
+                            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200/60 bg-white/80 px-2 py-1.5">
+                                <span className="truncate text-xs font-medium text-zinc-700">{name}</span>
+                                <a
+                                    href={previewUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="shrink-0 text-xs font-medium text-teal-700 hover:text-teal-800 hover:underline"
+                                >
+                                    Open in new tab
+                                </a>
+                                <a
+                                    href={downloadUrl}
+                                    download
+                                    className="shrink-0 text-xs font-medium text-zinc-600 hover:text-zinc-800 hover:underline"
+                                >
+                                    Download
+                                </a>
+                            </div>
+                            <iframe
+                                title={name}
+                                src={previewUrl}
+                                className="block h-[min(70vh,560px)] w-full bg-white"
+                                sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox"
+                            />
+                        </div>
+                    );
+                }
+
+                if (isImage) {
+                    return (
+                        <div key={`${f.storedFileUrl}-${index}`} className="rounded-xl border border-zinc-200/80 p-2">
+                            <p className="mb-1 truncate text-xs text-zinc-600">{name}</p>
+                            <img
+                                src={previewUrl}
+                                alt={name}
+                                className="max-h-[50vh] max-w-full rounded-lg object-contain"
+                                loading="lazy"
+                            />
+                        </div>
+                    );
+                }
+
+                return (
+                    <div key={`${f.storedFileUrl}-${index}`} className="rounded-lg border border-zinc-200/70 bg-zinc-50/80 px-3 py-2">
+                        <a
+                            href={downloadUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-medium text-teal-700 hover:underline"
+                        >
+                            Download: {name}
+                        </a>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
 const ComponentAiTaskByNotesId = ({
     itemMessageId,
     callGenerateAiTaskListRandomNum,
@@ -307,6 +398,10 @@ const ComponentMessageItem = ({
                     </div>
                 )}
                 <MarkdownRenderer content={mdContent} />
+                {itemMessage.shellRunArtifactV1?.importedFiles &&
+                    itemMessage.shellRunArtifactV1.importedFiles.length > 0 && (
+                        <ShellRunImportedFilePreviews files={itemMessage.shellRunArtifactV1.importedFiles} />
+                    )}
             </div>
         );
     };

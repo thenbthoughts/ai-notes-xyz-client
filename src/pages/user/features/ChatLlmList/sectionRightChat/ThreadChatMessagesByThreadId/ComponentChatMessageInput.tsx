@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
@@ -20,14 +20,11 @@ import { jotaiHideRightSidebar } from '../../jotai/jotaiChatLlmThreadSetting.ts'
 const TextAndFileInput = ({
     value,
     setValue,
-    setFiles,
-    threadId,
+    uploadFilesFromFileList,
 }: {
     value: string;
     setValue: React.Dispatch<React.SetStateAction<string>>;
-    files: string[];
-    setFiles: React.Dispatch<React.SetStateAction<string[]>>;
-    threadId: string;
+    uploadFilesFromFileList: (files: File[]) => Promise<void>;
 }) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -41,29 +38,12 @@ const TextAndFileInput = ({
         }
     }, [value]);
 
-    const uploadFileToStorage = async (file: File) => {
-        try {
-            const filePath = await uploadFeatureFile({
-                file,
-                parentEntityId: threadId,
-                apiUrl: envKeys.API_URL,
-            });
-            setFiles(prev => [...prev, filePath]);
-            toast.success(`File "${file.name}" uploaded successfully!`);
-        } catch (error) {
-            console.error('Error uploading file:', error);
-            toast.error(`Failed to upload "${file.name}"`);
-        }
-    };
-
-    const uploadFilesToStorage = async (files: File[]) => {
-        await Promise.all(Array.from(files).map(uploadFileToStorage));
-    };
-
     const handleFileDrop = async (event: React.DragEvent<HTMLTextAreaElement>): Promise<void> => {
         event.preventDefault();
         const droppedFiles = event.dataTransfer.files;
-        await uploadFilesToStorage(Array.from(droppedFiles));
+        if (droppedFiles.length > 0) {
+            await uploadFilesFromFileList(Array.from(droppedFiles));
+        }
     };
 
     const handlePaste = async (event: React.ClipboardEvent<HTMLTextAreaElement>): Promise<void> => {
@@ -76,7 +56,9 @@ const TextAndFileInput = ({
                 if (file) pastedFiles.push(file);
             }
         }
-        await uploadFilesToStorage(pastedFiles);
+        if (pastedFiles.length > 0) {
+            await uploadFilesFromFileList(pastedFiles);
+        }
     };
 
     const handleDragOver = (event: React.DragEvent<HTMLTextAreaElement>): void => {
@@ -269,13 +251,15 @@ function isSubmitRequestCancelled(err: unknown): boolean {
     return axios.isCancel(err) || (err as { code?: string })?.code === 'ERR_CANCELED';
 }
 
-const ComponentChatMessageInput = ({
-    setRefreshParentRandomNum,
-    threadId,
-}: {
+export type ChatMessageInputHandle = {
+    /** Upload dropped / external files into the composer attachment list (same as textarea drop). */
+    ingestDroppedFiles: (files: File[]) => Promise<void>;
+};
+
+const ComponentChatMessageInput = forwardRef<ChatMessageInputHandle, {
     setRefreshParentRandomNum: React.Dispatch<React.SetStateAction<number>>;
     threadId: string;
-}) => {
+}>(function ComponentChatMessageInput({ setRefreshParentRandomNum, threadId }, ref) {
     const actionContainerRef = useRef<HTMLDivElement>(null);
     const screenWidth = useResponsiveScreen();
     const setHideRightSidebar = useSetAtom(jotaiHideRightSidebar);
@@ -303,6 +287,34 @@ const ComponentChatMessageInput = ({
     const cancelOngoingSubmit = () => {
         submitAbortRef.current?.abort();
     };
+
+    const uploadFilesFromFileList = useCallback(
+        async (files: File[]) => {
+            for (const file of files) {
+                try {
+                    const filePath = await uploadFeatureFile({
+                        file,
+                        parentEntityId: threadId,
+                        apiUrl: envKeys.API_URL,
+                    });
+                    setFiles((prev) => [...prev, filePath]);
+                    toast.success(`File "${file.name}" uploaded successfully!`);
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                    toast.error(`Failed to upload "${file.name}"`);
+                }
+            }
+        },
+        [threadId],
+    );
+
+    useImperativeHandle(
+        ref,
+        () => ({
+            ingestDroppedFiles: uploadFilesFromFileList,
+        }),
+        [uploadFilesFromFileList],
+    );
 
     const handleAddNote = async () => {
         submitAbortRef.current?.abort();
@@ -519,9 +531,7 @@ const ComponentChatMessageInput = ({
                 <TextAndFileInput
                     value={newNote}
                     setValue={setNewNote}
-                    files={files}
-                    setFiles={setFiles}
-                    threadId={threadId}
+                    uploadFilesFromFileList={uploadFilesFromFileList}
                 />
 
                 <div className="flex items-stretch gap-0">
@@ -632,6 +642,6 @@ const ComponentChatMessageInput = ({
 
         </>
     );
-};
+});
 
 export default ComponentChatMessageInput;
