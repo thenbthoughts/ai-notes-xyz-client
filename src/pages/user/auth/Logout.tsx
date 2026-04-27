@@ -46,6 +46,7 @@ export default function Component() {
                 apiKeyLocalaiValid: false,
                 smtpValid: false,
                 telegramValid: false,
+                shellEngineValid: false,
                 clientFrontendUrl: '',
             });
 
@@ -75,6 +76,7 @@ export default function Component() {
                 apiKeyLocalaiValid: false,
                 smtpValid: false,
                 telegramValid: false,
+                shellEngineValid: false,
                 clientFrontendUrl: '',
             });
         } finally {

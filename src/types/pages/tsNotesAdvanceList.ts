@@ -53,4 +53,13 @@ export interface tsMessageItem {
     reasoningTokens: number;
     totalTokens: number;
     costInUsd: number;
+
+    /** Present on shell-run assistant messages; used to preview imported binaries (PDF, HTML, …). */
+    shellRunArtifactV1?: {
+        importedFiles?: Array<{
+            fileName: string;
+            mimeType?: string;
+            storedFileUrl: string;
+        }>;
+    };
 }

@@ -12,6 +12,7 @@ import {
     LucideChevronDown,
     LucideChevronUp,
     LucideSettings,
+    LucideTerminal,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -137,6 +138,15 @@ const ComponentApiKeySet = () => {
             icon: LucideBot,
             description: 'Local models via LocalAI (optional)',
             color: 'emerald',
+            required: false,
+        },
+        {
+            name: 'Shell execute',
+            key: 'shellEngineValid',
+            valid: authState.shellEngineValid,
+            icon: LucideTerminal,
+            description: 'ai-notes-xyz-shell commands & files (optional)',
+            color: 'indigo',
             required: false,
         },
     ];

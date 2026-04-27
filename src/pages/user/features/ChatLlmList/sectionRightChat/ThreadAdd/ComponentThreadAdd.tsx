@@ -9,8 +9,9 @@ import Select from "react-select";
 import { tsSchemaAiModelListGroq } from "../../../../../../types/pages/settings/dataModelGroq";
 import { tsSchemaAiModelListOpenrouter } from "../../../../../../types/pages/settings/dataModelOpenrouter";
 import { jotaiChatThreadRefreshRandomNum } from "../../jotai/jotaiChatLlmThreadSetting";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import Tooltip from '@rc-component/tooltip';
+import stateJotaiAuthAtom from "../../../../../../jotai/stateJotaiAuth";
 
 const SelectAiModelOpenrouter = ({
     aiModelName,
@@ -473,6 +474,7 @@ const LastUsedLlmModel = ({
 const ComponentThreadAdd = () => {
     const navigate = useNavigate();
     const setJotaiChatThreadRefreshRandomNum = useSetAtom(jotaiChatThreadRefreshRandomNum);
+    const authState = useAtomValue(stateJotaiAuthAtom);
     const [formData, setFormData] = useState({
         isPersonalContextEnabled: false,
         isAutoAiContextSelectEnabled: false,
@@ -480,10 +482,16 @@ const ComponentThreadAdd = () => {
 
         // answer type
         answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine',
+        executeShell: false,
     });
 
     const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(3);
     const [answerMachineMaxNumberOfIterations, setAnswerMachineMaxNumberOfIterations] = useState<number>(7);
+
+    const [shellExecuteMinAttempts, setShellExecuteMinAttempts] = useState<number>(1);
+    const [shellExecuteMaxAttempts, setShellExecuteMaxAttempts] = useState<number>(3);
+    const [shellMinAttemptsInput, setShellMinAttemptsInput] = useState<string>('1');
+    const [shellMaxAttemptsInput, setShellMaxAttemptsInput] = useState<string>('3');
 
     // Input display states (strings) to allow empty inputs
     const [minIterationsInput, setMinIterationsInput] = useState<string>('3');
@@ -540,6 +548,11 @@ const ComponentThreadAdd = () => {
             return;
         }
 
+        if (formData.executeShell && shellExecuteMinAttempts > shellExecuteMaxAttempts) {
+            toast.error('Shell min retries cannot be greater than shell max retries');
+            return;
+        }
+
         setIsAddThreadLoading(true);
         try {
             const result = await axiosCustom.post(
@@ -551,6 +564,9 @@ const ComponentThreadAdd = () => {
 
                     // answer engine
                     answerEngine: formData.answerEngine,
+                    executeShell: formData.executeShell,
+                    shellExecuteMinAttempts,
+                    shellExecuteMaxAttempts,
 
                     // answer machine settings
                     answerMachineMinNumberOfIterations: answerMachineMinNumberOfIterations,
@@ -850,6 +866,121 @@ const ComponentThreadAdd = () => {
                                 </label>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-col gap-1">
+                        <label className="inline-flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                className="rounded border-zinc-300 text-teal-600 focus:ring-teal-500"
+                                checked={formData.executeShell}
+                                disabled={!authState.shellEngineValid}
+                                onChange={(e) => setFormData({ ...formData, executeShell: e.target.checked })}
+                            />
+                            <span className="text-sm text-zinc-800">Execute shell</span>
+                        </label>
+                        {!authState.shellEngineValid && (
+                            <p className="text-xs text-zinc-500">
+                                Configure Shell execute in{' '}
+                                <Link to="/user/setting/api-key" className="text-teal-600 underline">
+                                    API Keys
+                                </Link>{' '}
+                                to enable.
+                            </p>
+                        )}
+                        {formData.answerEngine === 'answerMachine' && formData.executeShell && (
+                            <p className="text-xs text-zinc-500">
+                                Shell runs before Answer Machine starts, using the same shell service as Concise.
+                            </p>
+                        )}
+                        {formData.executeShell && authState.shellEngineValid && (
+                            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div>
+                                    <label className="block text-sm text-zinc-700 mb-1">
+                                        Min shell retries
+                                        <Tooltip
+                                            placement="top"
+                                            trigger={['hover', 'click']}
+                                            overlay={
+                                                <span className="text-black bg-white rounded-md p-2 inline-block max-w-xs">
+                                                    First attempt index for each shell todo’s primary command (inclusive).
+                                                    Usually 1. Range 1–10.
+                                                </span>
+                                            }
+                                        >
+                                            <LucideInfo
+                                                className="w-4 h-4 ml-1 inline-block"
+                                                style={{ position: 'relative', top: '-0.5px', left: '1px' }}
+                                            />
+                                        </Tooltip>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        value={shellMinAttemptsInput}
+                                        onChange={(e) => {
+                                            const v = e.target.value;
+                                            setShellMinAttemptsInput(v);
+                                            if (v !== '') {
+                                                const n = parseInt(v, 10);
+                                                if (!Number.isNaN(n)) {
+                                                    setShellExecuteMinAttempts(Math.max(1, Math.min(10, n)));
+                                                }
+                                            }
+                                        }}
+                                        onBlur={() => {
+                                            if (shellMinAttemptsInput === '') {
+                                                setShellMinAttemptsInput('1');
+                                                setShellExecuteMinAttempts(1);
+                                            }
+                                        }}
+                                        className="mt-1 block w-full rounded-md border border-zinc-300 px-2 py-1.5 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-zinc-700 mb-1">
+                                        Max shell retries
+                                        <Tooltip
+                                            placement="top"
+                                            trigger={['hover', 'click']}
+                                            overlay={
+                                                <span className="text-black bg-white rounded-md p-2 inline-block max-w-xs">
+                                                    Maximum attempt index for each shell todo’s primary command
+                                                    (inclusive). Retries on failure until this cap. Range 1–10.
+                                                </span>
+                                            }
+                                        >
+                                            <LucideInfo
+                                                className="w-4 h-4 ml-1 inline-block"
+                                                style={{ position: 'relative', top: '-0.5px', left: '1px' }}
+                                            />
+                                        </Tooltip>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        value={shellMaxAttemptsInput}
+                                        onChange={(e) => {
+                                            const v = e.target.value;
+                                            setShellMaxAttemptsInput(v);
+                                            if (v !== '') {
+                                                const n = parseInt(v, 10);
+                                                if (!Number.isNaN(n)) {
+                                                    setShellExecuteMaxAttempts(Math.max(1, Math.min(10, n)));
+                                                }
+                                            }
+                                        }}
+                                        onBlur={() => {
+                                            if (shellMaxAttemptsInput === '') {
+                                                setShellMaxAttemptsInput('3');
+                                                setShellExecuteMaxAttempts(3);
+                                            }
+                                        }}
+                                        className="mt-1 block w-full rounded-md border border-zinc-300 px-2 py-1.5 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Answer Machine Iterations Setting */}
