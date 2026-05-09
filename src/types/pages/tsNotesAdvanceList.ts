@@ -1,3 +1,74 @@
+export type AnswerMachineV3StreamPayload =
+    | {
+          kind: 'iteration';
+          /**
+           * Groups steps for one outer request iteration. Server uses `synth-{requestId}-{iterationNumber}`.
+           * Legacy rows may still carry a Mongo ObjectId string from older APIs.
+           */
+          iterationDocId?: string;
+          requestId?: string;
+          iterationNumber: number;
+          status: string;
+          errorReason: string;
+          /** Optional; merged from `answerMachinePipelineVisualV3` on the server. */
+          inputImageStoredFileUrl?: string;
+          outputImageStoredFileUrl?: string;
+          /** From previous outer iteration: evaluator reason (merged from `answerMachineEvaluateAnswerV3`). */
+          priorIterationEvaluationReason?: string;
+          /** Truncated prior-iteration final draft (`answerMachineRequestV3.intermediateAnswers`). */
+          priorIterationDraftExcerpt?: string;
+          /** Whether the evaluator marked the prior iteration’s answer satisfactory (still continued if min/max iterations). */
+          priorIterationWasSatisfactory?: boolean | null;
+          /** Truncated request-level global task (merged from `answerMachineRequestV3`). */
+          globalTaskDescriptionExcerpt?: string;
+          outerIterationMax?: number;
+          /** Further outer iterations allowed after this pass completes. */
+          outerIterationsRemaining?: number;
+      }
+    | {
+          kind: 'sub_question';
+          /** Same grouping key as the parent iteration row (synthetic or legacy). */
+          iterationDocId?: string;
+          requestId?: string;
+          iterationNumber?: number;
+          question: string;
+          answer: string;
+          status: string;
+          subKind: string;
+          stepIndex?: number;
+          attemptNumber?: number;
+          verificationVerdict?: string;
+          verificationReason?: string;
+          verificationAllImpliedSubtasksDone?: boolean;
+          verificationFinalAnswerDeliverable?: boolean;
+          verificationGlobalTaskChecklist?: string;
+          executedShellCommand?: string;
+          shellExecutionSuccess?: boolean;
+          shellExecutionExitCode?: number | null;
+          shellExecutionTimedOut?: boolean;
+          shellExecutionStderrPreview?: string;
+          shellRetryGuidance?: string;
+      }
+    | {
+          kind: 'final_answer';
+          requestId: string;
+          answerText: string;
+      }
+    | {
+          kind: 'file_artifact';
+          requestId: string;
+          fileDocId: string;
+          /** Synthetic `synth-…` key, legacy ObjectId, or empty when only subQuestionDocId is set. */
+          iterationDocId?: string;
+          subQuestionDocId: string;
+          storedFileUrl: string;
+          mimeType: string;
+          originalName: string;
+          purpose: string;
+          description: string;
+          fileType: string;
+      };
+
 export interface tsMessageItem {
     _id: string;
     
@@ -62,4 +133,7 @@ export interface tsMessageItem {
             storedFileUrl: string;
         }>;
     };
+
+    /** Synthetic notesGet row for Answer Machine V3 pipeline (not a stored chat LLM doc). */
+    streamPayload?: AnswerMachineV3StreamPayload;
 }

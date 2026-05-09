@@ -481,7 +481,7 @@ const ComponentThreadAdd = () => {
         isMemoryEnabled: false,
 
         // answer type
-        answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine',
+        answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine' | 'answerMachine3',
         executeShell: false,
     });
 
@@ -548,13 +548,17 @@ const ComponentThreadAdd = () => {
             return;
         }
 
-        if (formData.executeShell && shellExecuteMinAttempts > shellExecuteMaxAttempts) {
+        if (formData.executeShell && formData.answerEngine !== 'answerMachine3' && shellExecuteMinAttempts > shellExecuteMaxAttempts) {
             toast.error('Shell min retries cannot be greater than shell max retries');
             return;
         }
 
         setIsAddThreadLoading(true);
         try {
+            const effShellMin =
+                formData.answerEngine === 'answerMachine3' && formData.executeShell ? 1 : shellExecuteMinAttempts;
+            const effShellMax =
+                formData.answerEngine === 'answerMachine3' && formData.executeShell ? 1 : shellExecuteMaxAttempts;
             const result = await axiosCustom.post(
                 '/api/chat-llm/threads-crud/threadsAdd',
                 {
@@ -565,8 +569,8 @@ const ComponentThreadAdd = () => {
                     // answer engine
                     answerEngine: formData.answerEngine,
                     executeShell: formData.executeShell,
-                    shellExecuteMinAttempts,
-                    shellExecuteMaxAttempts,
+                    shellExecuteMinAttempts: effShellMin,
+                    shellExecuteMaxAttempts: effShellMax,
 
                     // answer machine settings
                     answerMachineMinNumberOfIterations: answerMachineMinNumberOfIterations,
@@ -801,7 +805,7 @@ const ComponentThreadAdd = () => {
                     <div className="flex flex-col lg:flex-row lg:space-x-8 space-y-4 lg:space-y-0">
                         <div className="flex-1">
                             <div className="text-sm text-gray-700 mb-2">Answer Engine</div>
-                            <div className="flex flex-row space-x-6">
+                            <div className="flex flex-row flex-wrap gap-x-6 gap-y-2">
                                 <label className="inline-flex items-center cursor-pointer">
                                     <input
                                         type="radio"
@@ -864,6 +868,38 @@ const ComponentThreadAdd = () => {
                                         </Tooltip>
                                     </span>
                                 </label>
+                                <label className="inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        className="form-radio text-blue-500"
+                                        name="answerEngine"
+                                        value="answerMachine3"
+                                        checked={formData.answerEngine === "answerMachine3"}
+                                        onChange={() => setFormData({ ...formData, answerEngine: "answerMachine3" })}
+                                    />
+                                    <span className="ml-2 text-sm text-gray-700 flex items-center">
+                                        <Tooltip
+                                            placement="top"
+                                            trigger={['hover', 'click']}
+                                            overlay={<span
+                                                className="text-black bg-white rounded-md p-2 inline-block max-w-xs"
+                                            >
+                                                Answer Machine 3: KB / shell / web sub-questions, final synthesis, and evaluation.
+                                            </span>}
+                                        >
+                                            <span className="inline-block">
+                                                Answer Machine 3
+                                                <LucideInfo className="w-4 h-4 ml-1 inline-block"
+                                                    style={{
+                                                        position: 'relative',
+                                                        top: '-0.5px',
+                                                        left: '1px',
+                                                    }}
+                                                />
+                                            </span>
+                                        </Tooltip>
+                                    </span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -893,7 +929,15 @@ const ComponentThreadAdd = () => {
                                 Shell runs before Answer Machine starts, using the same shell service as Concise.
                             </p>
                         )}
-                        {formData.executeShell && authState.shellEngineValid && (
+                        {formData.answerEngine === 'answerMachine3' && formData.executeShell && (
+                            <p className="text-xs text-zinc-500">
+                                Pre-run shell todos use a single attempt. Each Answer Machine 3 <strong>shell</strong>{' '}
+                                sub-question runs one shell command (use <code className="rounded bg-zinc-100 px-0.5">bash -c &apos;…&apos;</code> for long / multi-step scripts); KB and web steps still use verifier retries.
+                            </p>
+                        )}
+                        {formData.executeShell &&
+                            authState.shellEngineValid &&
+                            formData.answerEngine !== 'answerMachine3' && (
                             <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 <div>
                                     <label className="block text-sm text-zinc-700 mb-1">
@@ -984,7 +1028,7 @@ const ComponentThreadAdd = () => {
                     </div>
 
                     {/* Answer Machine Iterations Setting */}
-                    {formData.answerEngine === "answerMachine" && (
+                    {(formData.answerEngine === "answerMachine" || formData.answerEngine === "answerMachine3") && (
                         <div className="mt-3 space-y-3">
                             <div>
                                 <label className="block text-sm text-gray-700 mb-1 lg:mb-2">
