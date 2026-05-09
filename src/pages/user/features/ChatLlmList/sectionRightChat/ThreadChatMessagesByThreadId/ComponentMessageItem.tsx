@@ -13,11 +13,6 @@ import MarkdownRenderer from '../../../../../../components/markdown/MarkdownRend
 
 import AuthenticatedStoredArtifactRow from './AuthenticatedStoredArtifactRow';
 
-function getFileDownloadUrl(storedFileUrl: string, opts?: { inlinePreview?: boolean }): string {
-    const base = `${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${encodeURIComponent(storedFileUrl)}`;
-    return opts?.inlinePreview ? `${base}&inline=1` : base;
-}
-
 function ShellRunImportedFilePreviews({
     files,
 }: {

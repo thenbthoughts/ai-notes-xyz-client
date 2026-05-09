@@ -259,7 +259,7 @@ const CRightChatById = ({
             } as AxiosRequestConfig;
 
             const response = await axiosCustom.request(config);
-            const resMessages = response.data.docs.map((doc: { _id: string; content: string; createdAt: string; type: string }) => ({
+            const resMessages = response.data.docs.map((doc: { _id: string; content: string; createdAt: string; createdAtUtc?: string; type: string }) => ({
                 ...doc,
                 id: doc._id,
                 content: doc.content,
