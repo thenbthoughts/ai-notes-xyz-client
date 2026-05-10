@@ -147,7 +147,7 @@ function AnswerMachineV3IterationPipelineImages({
     );
 }
 
-function AnswerMachineV3PriorIterationCallout({
+export function AnswerMachineV3PriorIterationCallout({
     payload,
 }: {
     payload: Extract<AnswerMachineV3StreamPayload, { kind: 'iteration' }>;
@@ -224,7 +224,7 @@ function renderStepDate(item: tsMessageItem) {
 
 /** Iteration header only (nested inside an iteration card). */
 export function AnswerMachineV3IterationHeader({ item }: { item: tsMessageItem }) {
-    const sp = item.streamPayload;
+    const sp = item.streamPayload as AnswerMachineV3StreamPayload | undefined;
     if (!sp || sp.kind !== 'iteration') {
         return (
             <div>
@@ -281,7 +281,7 @@ export function AnswerMachineV3IterationCollapsible({
     onManualRefresh?: () => void;
 }) {
     const [open, setOpen] = useState(false);
-    const sp = iteration.streamPayload;
+    const sp = iteration.streamPayload as AnswerMachineV3StreamPayload | undefined;
 
     if (!sp || sp.kind !== 'iteration') {
         return (
@@ -432,7 +432,7 @@ export function AnswerMachineV3SubQuestionCollapsible({
     relatedFiles?: tsMessageItem[];
 }) {
     const [open, setOpen] = useState(false);
-    const sp = item.streamPayload;
+    const sp = item.streamPayload as AnswerMachineV3StreamPayload | undefined;
 
     if (!sp || sp.kind !== 'sub_question') {
         return (
@@ -510,7 +510,7 @@ export function AnswerMachineV3SubQuestionBody({
     hideMetaRow?: boolean;
     className?: string;
 }) {
-    const sp = item.streamPayload;
+    const sp = item.streamPayload as AnswerMachineV3StreamPayload | undefined;
     if (!sp || sp.kind !== 'sub_question') {
         return (
             <div className="py-2">
@@ -644,7 +644,7 @@ export function AnswerMachineV3FinalAnswerRow({
     item: tsMessageItem;
     attachments?: tsMessageItem[];
 }) {
-    const sp = item.streamPayload;
+    const sp = item.streamPayload as AnswerMachineV3StreamPayload | undefined;
     const text =
         sp?.kind === 'final_answer' ? sp.answerText : (item.content || '').trim() || '(No final answer text.)';
 
@@ -666,7 +666,7 @@ export function AnswerMachineV3FinalAnswerRow({
 
 /** Single flat row (legacy / fallback when not using grouped layout). */
 export function AnswerMachineV3StreamStep({ item }: { item: tsMessageItem }) {
-    const sp = item.streamPayload;
+    const sp = item.streamPayload as AnswerMachineV3StreamPayload | undefined;
     if (!sp) {
         return (
             <div className="py-2">

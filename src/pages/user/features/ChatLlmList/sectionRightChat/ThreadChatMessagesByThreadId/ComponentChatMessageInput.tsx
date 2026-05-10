@@ -407,10 +407,12 @@ const ComponentChatMessageInput = forwardRef<ChatMessageInputHandle, {
                     { signal },
                 );
                 const threadInfo = responseThread.data.docs[0];
-                if (threadInfo.answerEngine === 'answerMachine' || threadInfo.answerEngine === 'answerMachine3') {
+                if (threadInfo.answerEngine === 'answerMachine' || threadInfo.answerEngine === 'answerMachine3' || threadInfo.answerEngine === 'answerMachine4') {
                     const answerMachineUrl =
                         threadInfo.answerEngine === 'answerMachine3'
                             ? '/api/chat-llm/add-auto-next-message/answerMachineV3'
+                            : threadInfo.answerEngine === 'answerMachine4'
+                              ? '/api/chat-llm/add-auto-next-message/answerMachineV4'
                             : '/api/chat-llm/add-auto-next-message/answerMachine';
                     await axiosCustom.post(answerMachineUrl, {
                         threadId: threadId,
@@ -419,6 +421,8 @@ const ComponentChatMessageInput = forwardRef<ChatMessageInputHandle, {
                     toast.success(
                         threadInfo.answerEngine === 'answerMachine3'
                             ? 'Answer Machine 3 started processing...'
+                            : threadInfo.answerEngine === 'answerMachine4'
+                              ? 'Answer Machine 4 started processing...'
                             : 'Answer Machine started processing...'
                     );
                     // Don't refresh immediately - polling will handle it when complete
@@ -475,10 +479,12 @@ const ComponentChatMessageInput = forwardRef<ChatMessageInputHandle, {
                 { signal },
             );
             const threadInfo = responseThread.data.docs[0];
-            if (threadInfo.answerEngine === 'answerMachine' || threadInfo.answerEngine === 'answerMachine3') {
+            if (threadInfo.answerEngine === 'answerMachine' || threadInfo.answerEngine === 'answerMachine3' || threadInfo.answerEngine === 'answerMachine4') {
                 const answerMachineUrl =
                     threadInfo.answerEngine === 'answerMachine3'
                         ? '/api/chat-llm/add-auto-next-message/answerMachineV3'
+                        : threadInfo.answerEngine === 'answerMachine4'
+                          ? '/api/chat-llm/add-auto-next-message/answerMachineV4'
                         : '/api/chat-llm/add-auto-next-message/answerMachine';
                 await axiosCustom.post(answerMachineUrl, {
                     threadId: threadId,
@@ -487,6 +493,8 @@ const ComponentChatMessageInput = forwardRef<ChatMessageInputHandle, {
                 toast.success(
                     threadInfo.answerEngine === 'answerMachine3'
                         ? 'Answer Machine 3 started processing...'
+                        : threadInfo.answerEngine === 'answerMachine4'
+                          ? 'Answer Machine 4 started processing...'
                         : 'Answer Machine started processing...'
                 );
                 // Don't refresh immediately - polling will handle it when complete

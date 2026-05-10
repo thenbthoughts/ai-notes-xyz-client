@@ -396,6 +396,39 @@ const ThreadSetting = ({
                                                 </Tooltip>
                                             </span>
                                         </label>
+                                        <label className="inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                className="form-radio text-blue-500"
+                                                name="answerEngine"
+                                                value="answerMachine4"
+                                                checked={formData.answerEngine === 'answerMachine4'}
+                                                onChange={() => setFormData({ ...formData, answerEngine: 'answerMachine4' })}
+                                            />
+                                            <span className="ml-2 text-sm text-gray-700 flex items-center">
+                                                <Tooltip
+                                                    placement="top"
+                                                    trigger={['hover', 'click']}
+                                                    overlay={
+                                                        <span className="text-black bg-white rounded-md p-2 inline-block max-w-xs">
+                                                            Answer Machine 4: OpenCode-only reasoning. Large files are written to the Shell workspace and injected as container paths (no shell command execution in the loop).
+                                                        </span>
+                                                    }
+                                                >
+                                                    <span className="inline-block">
+                                                        Answer Machine 4
+                                                        <LucideInfo
+                                                            className="w-4 h-4 ml-1 inline-block"
+                                                            style={{
+                                                                position: 'relative',
+                                                                top: '-0.5px',
+                                                                left: '1px',
+                                                            }}
+                                                        />
+                                                    </span>
+                                                </Tooltip>
+                                            </span>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -522,7 +555,9 @@ const ThreadSetting = ({
                             </div>
                             
                             {/* Answer Machine Iterations Setting */}
-                            {(formData.answerEngine === "answerMachine" || formData.answerEngine === "answerMachine3") && (
+                            {(formData.answerEngine === "answerMachine" ||
+                                formData.answerEngine === "answerMachine3" ||
+                                formData.answerEngine === 'answerMachine4') && (
                                 <div className="mt-3 space-y-3">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">

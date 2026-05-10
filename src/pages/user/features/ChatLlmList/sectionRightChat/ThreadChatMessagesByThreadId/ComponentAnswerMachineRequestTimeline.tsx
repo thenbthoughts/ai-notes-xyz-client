@@ -40,7 +40,7 @@ function mergeThreadAndRequests(
 
 function answerEngineLabel(engine: string): string {
     const map: Record<string, string> = {
-        answerMachine3: 'Answer Machine 3',
+        answerMachine4: 'Answer Machine 4',
         answerMachine: 'Answer Machine',
         conciseAnswer: 'Standard chat',
     };

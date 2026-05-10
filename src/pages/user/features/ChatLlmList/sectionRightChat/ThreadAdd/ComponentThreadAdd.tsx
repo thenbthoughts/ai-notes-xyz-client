@@ -481,7 +481,7 @@ const ComponentThreadAdd = () => {
         isMemoryEnabled: false,
 
         // answer type
-        answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine' | 'answerMachine3',
+        answerEngine: 'conciseAnswer' as 'conciseAnswer' | 'answerMachine' | 'answerMachine3' | 'answerMachine4',
         executeShell: false,
     });
 
@@ -900,6 +900,39 @@ const ComponentThreadAdd = () => {
                                         </Tooltip>
                                     </span>
                                 </label>
+                                <label className="inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        className="form-radio text-blue-500"
+                                        name="answerEngine"
+                                        value="answerMachine4"
+                                        checked={formData.answerEngine === 'answerMachine4'}
+                                        onChange={() => setFormData({ ...formData, answerEngine: 'answerMachine4' })}
+                                    />
+                                    <span className="ml-2 text-sm text-gray-700 flex items-center">
+                                        <Tooltip
+                                            placement="top"
+                                            trigger={['hover', 'click']}
+                                            overlay={
+                                                <span className="text-black bg-white rounded-md p-2 inline-block max-w-xs">
+                                                    Answer Machine 4: OpenCode-only reasoning. Large attachments are written to the Shell workspace and passed as container paths (no shell steps in the AM4 loop).
+                                                </span>
+                                            }
+                                        >
+                                            <span className="inline-block">
+                                                Answer Machine 4
+                                                <LucideInfo
+                                                    className="w-4 h-4 ml-1 inline-block"
+                                                    style={{
+                                                        position: 'relative',
+                                                        top: '-0.5px',
+                                                        left: '1px',
+                                                    }}
+                                                />
+                                            </span>
+                                        </Tooltip>
+                                    </span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -933,6 +966,11 @@ const ComponentThreadAdd = () => {
                             <p className="text-xs text-zinc-500">
                                 Pre-run shell todos use a single attempt. Each Answer Machine 3 <strong>shell</strong>{' '}
                                 sub-question runs one shell command (use <code className="rounded bg-zinc-100 px-0.5">bash -c &apos;…&apos;</code> for long / multi-step scripts); KB and web steps still use verifier retries.
+                            </p>
+                        )}
+                        {formData.answerEngine === 'answerMachine4' && formData.executeShell && (
+                            <p className="text-xs text-zinc-500">
+                                Optional pre-run shell (same as Answer Machine). AM4 reasoning uses OpenCode only; file uploads still use the Shell file API when you attach files in the pipeline.
                             </p>
                         )}
                         {formData.executeShell &&
@@ -1028,7 +1066,9 @@ const ComponentThreadAdd = () => {
                     </div>
 
                     {/* Answer Machine Iterations Setting */}
-                    {(formData.answerEngine === "answerMachine" || formData.answerEngine === "answerMachine3") && (
+                    {(formData.answerEngine === "answerMachine" ||
+                        formData.answerEngine === "answerMachine3" ||
+                        formData.answerEngine === 'answerMachine4') && (
                         <div className="mt-3 space-y-3">
                             <div>
                                 <label className="block text-sm text-gray-700 mb-1 lg:mb-2">

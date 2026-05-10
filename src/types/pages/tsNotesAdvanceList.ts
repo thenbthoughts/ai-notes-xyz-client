@@ -69,6 +69,75 @@ export type AnswerMachineV3StreamPayload =
           fileType: string;
       };
 
+/** AM4 merged stream payloads (`answer_machine_v4_stream`). */
+export type AnswerMachineV4StreamPayload =
+    | {
+          kind: 'iteration';
+          iterationDocId?: string;
+          requestId?: string;
+          iterationNumber: number;
+          status: string;
+          errorReason?: string;
+          priorIterationEvaluationReason?: string;
+          priorIterationDraftExcerpt?: string;
+          priorIterationWasSatisfactory?: boolean | null;
+          globalTaskDescriptionExcerpt?: string;
+          outerIterationMax?: number;
+          outerIterationsRemaining?: number;
+          /** OpenCode session id for this AM4 run (from request). */
+          opencodeSessionId?: string;
+          attachedFiles?: Array<{
+              fileDocId: string;
+              fileName: string;
+              mimeType: string;
+              containerPath: string;
+              shellRelativePath: string;
+              uploadStatus: string;
+              fileRole: string;
+              storedFileUrl: string;
+          }>;
+      }
+    | {
+          kind: 'sub_question';
+          iterationDocId?: string;
+          requestId?: string;
+          iterationNumber?: number;
+          question: string;
+          answer: string;
+          status: string;
+          subKind: string;
+          stepIndex?: number;
+          attemptNumber?: number;
+          verificationVerdict?: string;
+          verificationReason?: string;
+          verificationAllImpliedSubtasksDone?: boolean;
+          verificationFinalAnswerDeliverable?: boolean;
+          verificationGlobalTaskChecklist?: string;
+          contextFilesUsed?: string[];
+      }
+    | {
+          kind: 'final_answer';
+          requestId: string;
+          answerText: string;
+      }
+    | {
+          kind: 'file_artifact';
+          requestId: string;
+          fileDocId: string;
+          iterationDocId?: string;
+          subQuestionDocId: string;
+          storedFileUrl: string;
+          mimeType: string;
+          originalName: string;
+          purpose: string;
+          description: string;
+          fileType: string;
+          containerPath?: string;
+          shellRelativePath?: string;
+          uploadStatus?: string;
+          fileRole?: string;
+      };
+
 export interface tsMessageItem {
     _id: string;
     
@@ -134,6 +203,6 @@ export interface tsMessageItem {
         }>;
     };
 
-    /** Synthetic notesGet row for Answer Machine V3 pipeline (not a stored chat LLM doc). */
-    streamPayload?: AnswerMachineV3StreamPayload;
+    /** Synthetic notesGet row for Answer Machine V3/V4 pipeline (not a stored chat LLM doc). */
+    streamPayload?: AnswerMachineV3StreamPayload | AnswerMachineV4StreamPayload;
 }

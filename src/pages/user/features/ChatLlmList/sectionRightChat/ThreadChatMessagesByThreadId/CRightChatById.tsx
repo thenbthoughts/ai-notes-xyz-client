@@ -8,11 +8,13 @@ import ComponentNotesAdd, { type ChatMessageInputHandle } from './ComponentChatM
 
 import ComponentMessageItem from './ComponentMessageItem.tsx';
 import ComponentAnswerMachineV3StreamGroup from './ComponentAnswerMachineV3StreamGroup.tsx';
+import ComponentAnswerMachineV4StreamGroup from './ComponentAnswerMachineV4StreamGroup.tsx';
 import { chunkMessagesForChatRender } from './chunkMessagesForChatRender.ts';
 
 import {
     tsMessageItem,
     type AnswerMachineV3StreamPayload,
+    type AnswerMachineV4StreamPayload,
 } from '../../../../../../types/pages/tsNotesAdvanceList.ts'
 
 import ComponentAiGeneratedQuestionList from './ComponentAiGeneratedQuestionList.tsx';
@@ -24,6 +26,7 @@ import type { AnswerMachineRequestV3UnionThreadItem } from '../../utils/answerMa
 const LIMIT_MESSAGES = 10;
 
 const AM3_PIPELINE_REFRESH_MS = 10_000;
+const AM4_PIPELINE_REFRESH_MS = 10_000;
 
 const CRightChatById = ({
     threadId,
@@ -53,7 +56,9 @@ const CRightChatById = ({
     // useState - old
     const [messages, setMessages] = useState<tsMessageItem[]>([]);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
-    const [answerEngineKind, setAnswerEngineKind] = useState<'none' | 'answerMachine' | 'answerMachine3'>('none');
+    const [answerEngineKind, setAnswerEngineKind] = useState<
+        'none' | 'answerMachine' | 'answerMachine3' | 'answerMachine4'
+    >('none');
     const [hasMore, setHasMore] = useState(false);
     const [currentLimit, setCurrentLimit] = useState(LIMIT_MESSAGES);
     const [totalCount, setTotalCount] = useState(0);
@@ -70,6 +75,25 @@ const CRightChatById = ({
                 continue;
             }
             const sp = m.streamPayload as AnswerMachineV3StreamPayload | undefined;
+            if (!sp) {
+                continue;
+            }
+            if (sp.kind === 'iteration' && sp.status === 'in_progress') {
+                return true;
+            }
+            if (sp.kind === 'sub_question' && sp.status === 'pending') {
+                return true;
+            }
+        }
+        return false;
+    }, []);
+
+    const am4MessagesIndicateLivePipeline = useCallback((): boolean => {
+        for (const m of messagesRef.current) {
+            if (m.type !== 'answer_machine_v4_stream') {
+                continue;
+            }
+            const sp = m.streamPayload as AnswerMachineV4StreamPayload | undefined;
             if (!sp) {
                 continue;
             }
@@ -158,6 +182,8 @@ const CRightChatById = ({
                     const eng = threadInfo.answerEngine;
                     if (eng === 'answerMachine3') {
                         setAnswerEngineKind('answerMachine3');
+                    } else if (eng === 'answerMachine4') {
+                        setAnswerEngineKind('answerMachine4');
                     } else if (eng === 'answerMachine') {
                         setAnswerEngineKind('answerMachine');
                     } else {
@@ -205,6 +231,36 @@ const CRightChatById = ({
             clearInterval(id);
         };
     }, [threadId, answerEngineKind, am3MessagesIndicateLivePipeline]);
+
+    /** AM4: refresh merged stream notes on an interval while a step is in progress. */
+    useEffect(() => {
+        if (!threadId || answerEngineKind !== 'answerMachine4') {
+            return;
+        }
+        let cancelled = false;
+        const tick = async () => {
+            let shouldRefresh = am4MessagesIndicateLivePipeline();
+            if (!shouldRefresh) {
+                try {
+                    const r = await pollAnswerMachineStatus(threadId);
+                    if (!cancelled && (r.isProcessing || r.status === 'pending')) {
+                        shouldRefresh = true;
+                    }
+                } catch {
+                    /* ignore */
+                }
+            }
+            if (!cancelled && shouldRefresh) {
+                setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
+            }
+        };
+        void tick();
+        const id = setInterval(tick, AM4_PIPELINE_REFRESH_MS);
+        return () => {
+            cancelled = true;
+            clearInterval(id);
+        };
+    }, [threadId, answerEngineKind, am4MessagesIndicateLivePipeline]);
 
     // functions
     const getCssHeightForMessages = () => {
@@ -442,6 +498,18 @@ const CRightChatById = ({
                                     const key = `am3-pipeline-${g[0]._id}-${g[g.length - 1]._id}`;
                                     return (
                                         <ComponentAnswerMachineV3StreamGroup
+                                            key={key}
+                                            items={g}
+                                            threadId={threadId}
+                                            onManualRefresh={refreshChatMessages}
+                                        />
+                                    );
+                                }
+                                if (chunk.kind === 'am4_pipeline_group') {
+                                    const g = chunk.messages;
+                                    const key = `am4-pipeline-${g[0]._id}-${g[g.length - 1]._id}`;
+                                    return (
+                                        <ComponentAnswerMachineV4StreamGroup
                                             key={key}
                                             items={g}
                                             threadId={threadId}
