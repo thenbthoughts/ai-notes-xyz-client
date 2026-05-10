@@ -10,27 +10,7 @@ import {
     AnswerMachineV4SubQuestionCollapsible,
 } from './AnswerMachineV4StreamStep';
 import { groupAnswerMachineV4PipelineItems } from './groupAnswerMachineV4PipelineItems';
-
-function inferAm4UploadTarget(items: tsMessageItem[]): { requestId: string; iteration: number } | null {
-    let requestId: string | null = null;
-    let maxIter = 0;
-    for (const m of items) {
-        const sp = m.streamPayload as AnswerMachineV4StreamPayload | undefined;
-        if (!sp) {
-            continue;
-        }
-        if ('requestId' in sp && typeof sp.requestId === 'string' && sp.requestId) {
-            requestId = sp.requestId;
-        }
-        if (sp.kind === 'iteration' && typeof sp.iterationNumber === 'number') {
-            maxIter = Math.max(maxIter, sp.iterationNumber);
-        }
-    }
-    if (!requestId) {
-        return null;
-    }
-    return { requestId, iteration: maxIter > 0 ? maxIter : 1 };
-}
+import { inferAm4UploadTarget } from './am4MessagesUtils';
 
 function AnswerMachineV4AttachFileBar({
     threadId,

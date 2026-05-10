@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, type DragEvent } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo, type DragEvent } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
 import { Loader2 } from 'lucide-react';
 
@@ -10,6 +10,11 @@ import ComponentMessageItem from './ComponentMessageItem.tsx';
 import ComponentAnswerMachineV3StreamGroup from './ComponentAnswerMachineV3StreamGroup.tsx';
 import ComponentAnswerMachineV4StreamGroup from './ComponentAnswerMachineV4StreamGroup.tsx';
 import { chunkMessagesForChatRender } from './chunkMessagesForChatRender.ts';
+import {
+    collectAm4DownloadableFilesFromMessages,
+    inferAm4UploadTarget,
+    type Am4ThreadToolsContext,
+} from './am4MessagesUtils.ts';
 
 import {
     tsMessageItem,
@@ -110,6 +115,18 @@ const CRightChatById = ({
     const refreshChatMessages = useCallback(() => {
         setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
     }, []);
+
+    const am4ThreadTools: Am4ThreadToolsContext | null = useMemo(() => {
+        if (answerEngineKind !== 'answerMachine4') {
+            return null;
+        }
+        return {
+            threadId,
+            downloadableFiles: collectAm4DownloadableFilesFromMessages(messages),
+            uploadTarget: inferAm4UploadTarget(messages),
+            onUploaded: refreshChatMessages,
+        };
+    }, [answerEngineKind, threadId, messages, refreshChatMessages]);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -524,7 +541,7 @@ const CRightChatById = ({
                                         className="w-full min-w-0"
                                         id={`key-message-${itemMessage._id}`}
                                     >
-                                        <ComponentMessageItem itemMessage={itemMessage} />
+                                        <ComponentMessageItem itemMessage={itemMessage} am4ThreadTools={am4ThreadTools} />
                                     </div>
                                 );
                             })}

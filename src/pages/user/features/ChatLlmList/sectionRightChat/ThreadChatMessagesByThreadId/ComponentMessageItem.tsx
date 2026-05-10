@@ -1,17 +1,196 @@
 import { DateTime } from "luxon";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import envKeys from "../../../../../../config/envKeys";
 import axiosCustom from "../../../../../../config/axiosCustom";
-import { LucideAudioLines, LucideClipboard, LucideInfo, LucideTrash, LucideEyeOff, LucideGauge } from "lucide-react";
+import { LucideAudioLines, LucideClipboard, LucideInfo, LucideTrash, LucideEyeOff, LucideGauge, LucideDownload, LucideUpload } from "lucide-react";
 import { jotaiTtsModalOpenStatus } from '../../../../../../jotai/stateJotaiTextToSpeechModal';
 import { useSetAtom } from 'jotai';
 import { tsMessageItem } from '../../../../../../types/pages/tsNotesAdvanceList';
 import MarkdownRenderer from '../../../../../../components/markdown/MarkdownRenderer';
 
 import AuthenticatedStoredArtifactRow from './AuthenticatedStoredArtifactRow';
+import {
+    type Am4ThreadToolsContext,
+    extractLikelyFilenamesFromText,
+    type Am4DownloadableFileRow,
+} from './am4MessagesUtils';
+import { downloadStoredUserFile } from '../../../../../../utils/authenticatedGetFile';
+
+function Am4WorkspaceToolsStrip({
+    threadId,
+    downloadableFiles,
+    uploadTarget,
+    onUploaded,
+    messageTextForHints,
+}: Am4ThreadToolsContext & { messageTextForHints: string }) {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [busyId, setBusyId] = useState<string | null>(null);
+    const [uploadBusy, setUploadBusy] = useState(false);
+
+    const mentioned = extractLikelyFilenamesFromText(messageTextForHints);
+    const rowBasename = (label: string) => {
+        const p = label.split(/[/\\]/).pop() || label;
+        return p.toLowerCase();
+    };
+    const rowMatchesMention = (row: Am4DownloadableFileRow) =>
+        mentioned.some(
+            (m) => m === rowBasename(row.label) || row.label.toLowerCase().endsWith(m) || row.label.toLowerCase() === m,
+        );
+    const sortedFiles = [...downloadableFiles].sort((a, b) => {
+        const am = rowMatchesMention(a) ? 0 : 1;
+        const bm = rowMatchesMention(b) ? 0 : 1;
+        return am - bm || a.label.localeCompare(b.label);
+    });
+
+    const downloadShell = async (row: Am4DownloadableFileRow) => {
+        setBusyId(row.fileDocId);
+        try {
+            const res = await axiosCustom.post(
+                '/api/chat-llm/crud/answerMachineFileV4Download',
+                { fileDocId: row.fileDocId, threadId },
+                { responseType: 'blob' },
+            );
+            const blob = res.data as Blob;
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = row.label || 'download';
+            a.click();
+            URL.revokeObjectURL(url);
+            toast.success('Download started');
+        } catch {
+            toast.error('Download failed');
+        } finally {
+            setBusyId(null);
+        }
+    };
+
+    const onPickFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        e.target.value = '';
+        if (!file) {
+            return;
+        }
+        setUploadBusy(true);
+        try {
+            const fd = new FormData();
+            fd.append('file', file);
+            fd.append('threadId', threadId);
+            if (uploadTarget?.requestId) {
+                fd.append('answerMachineRequestV4Id', uploadTarget.requestId);
+            }
+            await axiosCustom.post('/api/chat-llm/crud/answerMachineFileV4Upload', fd);
+            toast.success('File uploaded to workspace');
+            onUploaded?.();
+        } catch {
+            toast.error('Upload failed');
+        } finally {
+            setUploadBusy(false);
+        }
+    };
+
+    const unmatchedMentions = mentioned.filter(
+        (name) => !downloadableFiles.some((f) => rowBasename(f.label) === name || f.label.toLowerCase() === name),
+    );
+
+    return (
+        <div className="not-prose mt-3 rounded-xl border border-fuchsia-200/80 bg-fuchsia-50/35 px-3 py-2.5">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-fuchsia-900">
+                Answer Machine 4 · workspace files
+            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    onChange={(ev) => void onPickFile(ev)}
+                />
+                <button
+                    type="button"
+                    disabled={uploadBusy || !uploadTarget}
+                    title={
+                        uploadTarget
+                            ? 'Upload into the Shell workspace for OpenCode'
+                            : 'Start or refresh an AM4 run to attach files'
+                    }
+                    onClick={() => fileInputRef.current?.click()}
+                    className="inline-flex items-center gap-1 rounded-lg border border-fuchsia-300/80 bg-white/90 px-2.5 py-1 text-[11px] font-medium text-fuchsia-950 shadow-sm hover:bg-fuchsia-50/90 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    <LucideUpload className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    {uploadBusy ? 'Uploading…' : 'Upload to workspace'}
+                </button>
+            </div>
+            {sortedFiles.length > 0 ? (
+                <ul className="mt-2 space-y-1.5">
+                    {sortedFiles.map((row) => {
+                        const hi = rowMatchesMention(row);
+                        return (
+                            <li
+                                key={row.fileDocId}
+                                className={`flex flex-wrap items-center justify-between gap-2 rounded-lg border px-2 py-1.5 text-[11px] ${
+                                    hi
+                                        ? 'border-teal-300/80 bg-teal-50/80 text-teal-950'
+                                        : 'border-fuchsia-200/70 bg-white/80 text-zinc-800'
+                                }`}
+                            >
+                                <span className="min-w-0 flex-1 truncate font-medium" title={row.label}>
+                                    {row.label}
+                                    {hi ? ' · mentioned in reply' : ''}
+                                </span>
+                                <div className="flex shrink-0 items-center gap-1">
+                                    {row.storedFileUrl ? (
+                                        <button
+                                            type="button"
+                                            disabled={busyId === row.fileDocId}
+                                            className="inline-flex items-center gap-0.5 rounded-md border border-zinc-200/80 bg-white px-2 py-0.5 text-[10px] font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+                                            onClick={() =>
+                                                void downloadStoredUserFile(row.storedFileUrl, row.label).catch(() =>
+                                                    toast.error('Download failed'),
+                                                )
+                                            }
+                                        >
+                                            <LucideDownload className="h-3 w-3" aria-hidden />
+                                            Stored
+                                        </button>
+                                    ) : null}
+                                    {row.canShellDownload ? (
+                                        <button
+                                            type="button"
+                                            disabled={busyId === row.fileDocId}
+                                            className="inline-flex items-center gap-0.5 rounded-md border border-fuchsia-300/80 bg-fuchsia-50 px-2 py-0.5 text-[10px] font-medium text-fuchsia-950 hover:bg-fuchsia-100/80 disabled:opacity-50"
+                                            onClick={() => void downloadShell(row)}
+                                        >
+                                            <LucideDownload className="h-3 w-3" aria-hidden />
+                                            {busyId === row.fileDocId ? '…' : 'Workspace'}
+                                        </button>
+                                    ) : null}
+                                    {!row.storedFileUrl && !row.canShellDownload ? (
+                                        <span className="text-[10px] text-zinc-500">No download path</span>
+                                    ) : null}
+                                </div>
+                            </li>
+                        );
+                    })}
+                </ul>
+            ) : (
+                <p className="mt-2 text-[11px] leading-snug text-zinc-600">
+                    No workspace files are registered for this thread yet. After OpenCode creates outputs, they appear
+                    here once the server links them to the run (or upload a file above).
+                </p>
+            )}
+            {unmatchedMentions.length > 0 ? (
+                <p className="mt-2 text-[10px] leading-snug text-amber-900/90">
+                    Mentioned in text but not linked yet: {unmatchedMentions.join(', ')}. If the tool only wrote inside
+                    the container, the pipeline may need to register that path—try refreshing chat or re-run with shell
+                    registration enabled.
+                </p>
+            ) : null}
+        </div>
+    );
+}
 
 function ShellRunImportedFilePreviews({
     files,
@@ -197,9 +376,12 @@ const messageIsAssistant = (m: tsMessageItem) =>
         m.content.trimStart().startsWith('AI:'));
 
 const ComponentMessageItem = ({
-    itemMessage
+    itemMessage,
+    am4ThreadTools,
 }: {
     itemMessage: tsMessageItem;
+    /** When set (AM4 threads), assistant text bubbles can upload/download workspace files. */
+    am4ThreadTools?: Am4ThreadToolsContext | null;
 }) => {
     const isAssistant = messageIsAssistant(itemMessage);
     const [isDeleted, setIsDeleted] = useState(false);
@@ -332,6 +514,9 @@ const ComponentMessageItem = ({
                     </div>
                 )}
                 <MarkdownRenderer content={mdContent} />
+                {isAssistant && am4ThreadTools && itemMessage.type === 'text' ? (
+                    <Am4WorkspaceToolsStrip {...am4ThreadTools} messageTextForHints={mdContent} />
+                ) : null}
                 {itemMessage.shellRunArtifactV1?.importedFiles &&
                     itemMessage.shellRunArtifactV1.importedFiles.length > 0 && (
                         <ShellRunImportedFilePreviews files={itemMessage.shellRunArtifactV1.importedFiles} />
