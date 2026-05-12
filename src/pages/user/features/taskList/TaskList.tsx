@@ -145,6 +145,51 @@ const TaskList: React.FC = () => {
         }
     }, []);
 
+    const [openActiveTaskCountByStatusId, setOpenActiveTaskCountByStatusId] = useState<
+        Record<string, number>
+    >({});
+
+    const fetchOpenTaskCountsByTaskStatus = async (signal?: AbortSignal) => {
+        if (workspaceId.length !== 24) {
+            setOpenActiveTaskCountByStatusId({});
+            return;
+        }
+        const config = {
+            method: 'post',
+            url: '/api/task/crud/taskGetOpenCountsByTaskStatus',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: {
+                taskWorkspaceId: workspaceId,
+            },
+            signal,
+        };
+
+        try {
+            const response = await axiosCustom.request(config);
+            if (signal?.aborted) return;
+            const rows = response.data.docs as { taskStatusId: string; count: number }[] | undefined;
+            if (!Array.isArray(rows)) {
+                setOpenActiveTaskCountByStatusId({});
+                return;
+            }
+            const next: Record<string, number> = {};
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                if (typeof row.taskStatusId === 'string') {
+                    next[row.taskStatusId] = typeof row.count === 'number' ? row.count : 0;
+                }
+            }
+            setOpenActiveTaskCountByStatusId(next);
+        } catch (error) {
+            if (axios.isCancel(error) || (error as { code?: string })?.code === 'ERR_CANCELED') {
+                return;
+            }
+            console.error('Error fetching open task counts by status:', error);
+        }
+    };
+
     const fetchTasks = async (signal?: AbortSignal) => {
         setLoading(true);
         const config = {
@@ -183,7 +228,8 @@ const TaskList: React.FC = () => {
 
     useEffect(() => {
         const controller = new AbortController();
-        fetchTasks(controller.signal);
+        void fetchOpenTaskCountsByTaskStatus(controller.signal);
+        void fetchTasks(controller.signal);
         return () => controller.abort();
     }, [refreshRandomNum]);
 
@@ -221,6 +267,7 @@ const TaskList: React.FC = () => {
                         <ComponentTaskStatusListNames
                             workspaceId={workspaceId}
                             setTaskStatusList={setTaskStatusList}
+                            openActiveTaskCountByStatusId={openActiveTaskCountByStatusId}
                         />
                     </div>
                 )}
