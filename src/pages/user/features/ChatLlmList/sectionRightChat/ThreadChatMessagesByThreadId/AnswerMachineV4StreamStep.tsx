@@ -3,14 +3,12 @@ import { DateTime } from 'luxon';
 import { LucideChevronDown, LucideChevronRight, LucideDownload, LucideRefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import MarkdownRenderer from '../../../../../../components/markdown/MarkdownRenderer';
-import type {
-    AnswerMachineV3StreamPayload,
-    AnswerMachineV4StreamPayload,
-    tsMessageItem,
-} from '../../../../../../types/pages/tsNotesAdvanceList';
+import type { AnswerMachineV4StreamPayload, tsMessageItem } from '../../../../../../types/pages/tsNotesAdvanceList';
 import axiosCustom from '../../../../../../config/axiosCustom';
-import { AnswerMachineV3PriorIterationCallout } from './AnswerMachineV3StreamStep';
-import AnswerMachineV3FileArtifacts from './AnswerMachineV3FileArtifacts';
+import AnswerMachineStoredFileArtifacts, {
+    AnswerMachineIterationPriorIterationCallout,
+    type AnswerMachineIterationPriorPayload,
+} from './answerMachineStreamShared';
 import { downloadStoredUserFile } from '../../../../../../utils/authenticatedGetFile';
 
 function statusPill(s: string) {
@@ -153,7 +151,7 @@ export function AnswerMachineV4FileArtifacts({ items, threadId }: { items: tsMes
 
     return (
         <div className="mt-3 space-y-3 border-t border-zinc-200/60 pt-3">
-            {v3Style.length > 0 ? <AnswerMachineV3FileArtifacts items={v3Style} /> : null}
+            {v3Style.length > 0 ? <AnswerMachineStoredFileArtifacts items={v3Style} /> : null}
             {shellOnly.length > 0 ? (
                 <div className="space-y-2">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Shell workspace files</p>
@@ -229,7 +227,7 @@ export function AnswerMachineV4IterationCollapsible({
         );
     }
 
-    const priorPayload = sp as unknown as Extract<AnswerMachineV3StreamPayload, { kind: 'iteration' }>;
+    const priorPayload = sp as AnswerMachineIterationPriorPayload;
 
     const subLabel =
         subQuestions.length === 0
@@ -323,7 +321,7 @@ export function AnswerMachineV4IterationCollapsible({
             </div>
 
             <div className="px-2 pb-2 sm:px-3">
-                <AnswerMachineV3PriorIterationCallout payload={priorPayload} />
+                <AnswerMachineIterationPriorIterationCallout payload={priorPayload} />
                 {sp.attachedFiles?.length ? <Am4AttachedFilesSection threadId={threadId} files={sp.attachedFiles} /> : null}
             </div>
 
