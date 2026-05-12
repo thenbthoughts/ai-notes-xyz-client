@@ -10,7 +10,7 @@ import {
   LucideX,
 } from 'lucide-react';
 import type { Dispatch, SetStateAction } from 'react';
-import { useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { DebounceInput } from 'react-debounce-input';
 import envKeys from '../../../../config/envKeys';
@@ -230,6 +230,20 @@ function MemoCardEditableBody({
   uploadImagesForCard,
 }: EditableBodyProps) {
   const atImageLimit = note.imageDataUrls.length >= MEMO_MAX_IMAGES_PER_NOTE;
+  const bodyTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const resizeBodyTextarea = useCallback(() => {
+    const el = bodyTextareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    const maxPx = parseFloat(getComputedStyle(el).maxHeight);
+    const cap = Number.isFinite(maxPx) ? maxPx : Number.POSITIVE_INFINITY;
+    el.style.height = `${Math.min(el.scrollHeight, cap)}px`;
+  }, []);
+
+  useLayoutEffect(() => {
+    resizeBodyTextarea();
+  }, [note.body, resizeBodyTextarea]);
 
   return (
     <>
@@ -294,8 +308,13 @@ function MemoCardEditableBody({
         element="textarea"
         debounceTimeout={500}
         placeholder="Take a note..."
-        className="mb-1 min-h-[44px] w-full resize-y border-0 bg-transparent text-sm text-[#3c4043] outline-none placeholder:text-[#5f6368] sm:min-h-[40px]"
+        rows={1}
+        className="mb-1 max-h-[50vh] min-h-[44px] w-full resize-none overflow-y-auto border-0 bg-transparent text-sm text-[#3c4043] outline-none placeholder:text-[#5f6368] sm:min-h-[40px]"
         value={note.body}
+        inputRef={(el) => {
+          bodyTextareaRef.current = el as HTMLTextAreaElement | null;
+        }}
+        onInput={resizeBodyTextarea}
         onChange={(e) => onChange(note.id, { body: e.target.value })}
       />
 
