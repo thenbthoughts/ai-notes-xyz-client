@@ -5,6 +5,7 @@ import { Kanban, LucideMoveDown, LucideMoveUp, LucidePlus, LucideRefreshCcw, Luc
 const componentTaskStatusListNames = ({
     workspaceId,
     setTaskStatusList,
+    openActiveTaskCountByStatusId,
 }: {
     workspaceId: string;
     setTaskStatusList: React.Dispatch<React.SetStateAction<{
@@ -12,6 +13,8 @@ const componentTaskStatusListNames = ({
         statusTitle: string;
         listPosition: number;
     }[]>>;
+    /** Count of tasks that are not completed and not archived, keyed by task status list id */
+    openActiveTaskCountByStatusId: Record<string, number>;
 }) => {
     const [listArr, setListArr] = useState<{
         _id: string;
@@ -143,13 +146,25 @@ const componentTaskStatusListNames = ({
                 </button>
             </div>
             <div className="mb-1.5 flex max-h-36 flex-col gap-px overflow-y-auto">
-                {listArr.map((list) => (
-                    <div
-                        key={list._id}
-                        className="flex items-center justify-between gap-1 rounded-lg border border-zinc-200/70 bg-white px-1.5 py-1 text-xs leading-tight text-zinc-800 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50/80"
-                    >
-                        <span className="min-w-0 truncate font-medium text-zinc-800">{list.statusTitle}</span>
-                        <div className="flex shrink-0 items-center">
+                {listArr.map((list) => {
+                    const openCount = openActiveTaskCountByStatusId[list._id] ?? 0;
+                    return (
+                        <div
+                            key={list._id}
+                            className="flex items-start justify-between gap-1 rounded-lg border border-zinc-200/70 bg-white px-1.5 py-1 text-xs leading-tight text-zinc-800 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50/80"
+                        >
+                            <div className="flex min-w-0 flex-1 items-start gap-1.5">
+                                <span className="min-w-0 flex-1 break-words font-medium text-zinc-800">
+                                    {list.statusTitle}
+                                </span>
+                                <span
+                                    className="shrink-0 rounded-md border border-zinc-200/70 bg-zinc-100 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums leading-none text-zinc-800"
+                                    title="Open tasks (not completed, not archived)"
+                                >
+                                    {openCount}
+                                </span>
+                            </div>
+                            <div className="flex shrink-0 items-start">
                             {list.statusTitle !== 'Uncategorized' && (
                                 <Fragment>
                                     <button
@@ -182,9 +197,10 @@ const componentTaskStatusListNames = ({
                                     </button>
                                 </Fragment>
                             )}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
             <div className="flex gap-1">
                 <input
