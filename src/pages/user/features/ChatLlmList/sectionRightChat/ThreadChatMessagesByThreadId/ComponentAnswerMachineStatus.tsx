@@ -137,6 +137,18 @@ const ComponentAnswerMachineStatus = ({
         return null;
     }
 
+    const getPillClassByStatus = (statusText: string) => {
+        const map: Record<string, string> = {
+            answered: 'bg-green-100 text-green-700',
+            pending: 'bg-yellow-100 text-yellow-700',
+            error: 'bg-red-100 text-red-700',
+            skipped: 'bg-gray-100 text-gray-700',
+            in_progress: 'bg-amber-100 text-amber-800',
+            completed: 'bg-green-100 text-green-700',
+        };
+        return map[statusText] ?? 'bg-gray-100 text-gray-700';
+    };
+
     const getStatusIcon = () => {
         if (status.status === 'answered') {
             return (
@@ -181,16 +193,6 @@ const ComponentAnswerMachineStatus = ({
         const subQuestionProgress = (subQuestionsStatus.answered / subQuestionsStatus.total) * 80;
         const finalAnswerProgress = status.status === 'answered' ? 20 : 0;
         return Math.min(100, subQuestionProgress + finalAnswerProgress);
-    };
-
-    const getPillClassByStatus = (statusText: string) => {
-        const map: Record<string, string> = {
-            answered: 'bg-green-100 text-green-700',
-            pending: 'bg-yellow-100 text-yellow-700',
-            error: 'bg-red-100 text-red-700',
-            skipped: 'bg-gray-100 text-gray-700',
-        };
-        return map[statusText] ?? 'bg-gray-100 text-gray-700';
     };
 
     const typeLabels: Record<string, string> = {

@@ -13,6 +13,7 @@ import {
     LucideChevronUp,
     LucideSettings,
     LucideTerminal,
+    Braces,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -137,6 +138,24 @@ const ComponentApiKeySet = () => {
             valid: authState.apiKeyLocalaiValid,
             icon: LucideBot,
             description: 'Local models via LocalAI (optional)',
+            color: 'emerald',
+            required: false,
+        },
+        {
+            name: 'OpenCode',
+            key: 'apiKeyOpencodeValid',
+            valid: authState.apiKeyOpencodeValid,
+            icon: Braces,
+            description: 'OpenCode HTTP API (Basic auth + health)',
+            color: 'indigo',
+            required: false,
+        },
+        {
+            name: 'OpenCode with Shell',
+            key: 'apiKeyOpencodeWithShellValid',
+            valid: authState.apiKeyOpencodeWithShellValid,
+            icon: Braces,
+            description: 'OpenCode + ai-notes-xyz-shell (optional)',
             color: 'emerald',
             required: false,
         },

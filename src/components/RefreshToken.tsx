@@ -40,6 +40,8 @@ const RefreshToken = () => {
             smtpValid: false,
             telegramValid: false,
             shellEngineValid: false,
+            apiKeyOpencodeValid: false,
+            apiKeyOpencodeWithShellValid: false,
             clientFrontendUrl: '',
         };
 
@@ -94,6 +96,12 @@ const RefreshToken = () => {
                 if (typeof userInfoFromApi?.shellEngineValid === 'boolean') {
                     tempData.shellEngineValid = userInfoFromApi?.shellEngineValid;
                 }
+                if (typeof userInfoFromApi?.apiKeyOpencodeValid === 'boolean') {
+                    tempData.apiKeyOpencodeValid = userInfoFromApi?.apiKeyOpencodeValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyOpencodeWithShellValid === 'boolean') {
+                    tempData.apiKeyOpencodeWithShellValid = userInfoFromApi?.apiKeyOpencodeWithShellValid;
+                }
                 if (typeof userInfoFromApi?.clientFrontendUrl === 'string') {
                     tempData.clientFrontendUrl = userInfoFromApi?.clientFrontendUrl;
                 }
@@ -117,6 +125,8 @@ const RefreshToken = () => {
                 smtpValid: false,
                 telegramValid: false,
                 shellEngineValid: false,
+                apiKeyOpencodeValid: false,
+                apiKeyOpencodeWithShellValid: false,
                 clientFrontendUrl: '',
             });
         }

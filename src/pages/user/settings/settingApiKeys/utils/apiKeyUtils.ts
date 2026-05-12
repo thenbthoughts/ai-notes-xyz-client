@@ -12,7 +12,9 @@ export type ApiKeyType =
   | 'localai'
   | 'smtp'
   | 'telegram'
-  | 'shellEngine';
+  | 'shellEngine'
+  | 'opencode'
+  | 'opencodeWithShell';
 
 /**
  * Clears an API key for the specified service

@@ -1,21 +1,37 @@
-import { useState, useRef, useEffect, useCallback, type DragEvent } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo, type DragEvent } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
 import { Loader2 } from 'lucide-react';
 
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
+import { pollAnswerMachineStatus } from '../../utils/answerMachinePollingAxios';
 import ComponentNotesAdd, { type ChatMessageInputHandle } from './ComponentChatMessageInput.tsx';
 
 import ComponentMessageItem from './ComponentMessageItem.tsx';
+import ComponentAnswerMachineV3StreamGroup from './ComponentAnswerMachineV3StreamGroup.tsx';
+import ComponentAnswerMachineV4StreamGroup from './ComponentAnswerMachineV4StreamGroup.tsx';
+import { chunkMessagesForChatRender } from './chunkMessagesForChatRender.ts';
+import {
+    collectAm4DownloadableFilesFromMessages,
+    inferAm4UploadTarget,
+    type Am4ThreadToolsContext,
+} from './am4MessagesUtils.ts';
 
 import {
-    tsMessageItem
+    tsMessageItem,
+    type AnswerMachineV3StreamPayload,
+    type AnswerMachineV4StreamPayload,
 } from '../../../../../../types/pages/tsNotesAdvanceList.ts'
 
 import ComponentAiGeneratedQuestionList from './ComponentAiGeneratedQuestionList.tsx';
 import ThreadSettingWrapper from '../ThreadSetting/ThreadSettingWrapper.tsx';
 import ComponentAnswerMachineStatus from './ComponentAnswerMachineStatus.tsx';
+import ComponentAnswerMachineRequestTimeline from './ComponentAnswerMachineRequestTimeline.tsx';
+import type { AnswerMachineRequestV3UnionThreadItem } from '../../utils/answerMachineRequestV3TimelineAxios';
 
 const LIMIT_MESSAGES = 10;
+
+const AM3_PIPELINE_REFRESH_MS = 10_000;
+const AM4_PIPELINE_REFRESH_MS = 10_000;
 
 const CRightChatById = ({
     threadId,
@@ -45,10 +61,72 @@ const CRightChatById = ({
     // useState - old
     const [messages, setMessages] = useState<tsMessageItem[]>([]);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
-    const [isAnswerMachineEnabled, setIsAnswerMachineEnabled] = useState(false);
+    const [answerEngineKind, setAnswerEngineKind] = useState<
+        'none' | 'answerMachine' | 'answerMachine3' | 'answerMachine4'
+    >('none');
     const [hasMore, setHasMore] = useState(false);
     const [currentLimit, setCurrentLimit] = useState(LIMIT_MESSAGES);
     const [totalCount, setTotalCount] = useState(0);
+    const [threadAm3UnionTimeline, setThreadAm3UnionTimeline] = useState<AnswerMachineRequestV3UnionThreadItem[] | null>(
+        null
+    );
+
+    const messagesRef = useRef(messages);
+    messagesRef.current = messages;
+
+    const am3MessagesIndicateLivePipeline = useCallback((): boolean => {
+        for (const m of messagesRef.current) {
+            if (m.type !== 'answer_machine_v3_stream') {
+                continue;
+            }
+            const sp = m.streamPayload as AnswerMachineV3StreamPayload | undefined;
+            if (!sp) {
+                continue;
+            }
+            if (sp.kind === 'iteration' && sp.status === 'in_progress') {
+                return true;
+            }
+            if (sp.kind === 'sub_question' && sp.status === 'pending') {
+                return true;
+            }
+        }
+        return false;
+    }, []);
+
+    const am4MessagesIndicateLivePipeline = useCallback((): boolean => {
+        for (const m of messagesRef.current) {
+            if (m.type !== 'answer_machine_v4_stream') {
+                continue;
+            }
+            const sp = m.streamPayload as AnswerMachineV4StreamPayload | undefined;
+            if (!sp) {
+                continue;
+            }
+            if (sp.kind === 'iteration' && sp.status === 'in_progress') {
+                return true;
+            }
+            if (sp.kind === 'sub_question' && sp.status === 'pending') {
+                return true;
+            }
+        }
+        return false;
+    }, []);
+
+    const refreshChatMessages = useCallback(() => {
+        setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
+    }, []);
+
+    const am4ThreadTools: Am4ThreadToolsContext | null = useMemo(() => {
+        if (answerEngineKind !== 'answerMachine4') {
+            return null;
+        }
+        return {
+            threadId,
+            downloadableFiles: collectAm4DownloadableFilesFromMessages(messages),
+            uploadTarget: inferAm4UploadTarget(messages),
+            onUploaded: refreshChatMessages,
+        };
+    }, [answerEngineKind, threadId, messages, refreshChatMessages]);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -96,6 +174,7 @@ const CRightChatById = ({
         setTotalCount(0);
         setHasMore(true);
         useEffectOneTimeMessagesScrollDownRef.current = false;
+        setThreadAm3UnionTimeline(null);
     }, [threadId])
 
     useEffect(() => {
@@ -117,7 +196,18 @@ const CRightChatById = ({
                 );
                 if (responseThread.data && responseThread.data.docs && responseThread.data.docs.length > 0) {
                     const threadInfo = responseThread.data.docs[0];
-                    setIsAnswerMachineEnabled(threadInfo.answerEngine === 'answerMachine');
+                    const eng = threadInfo.answerEngine;
+                    if (eng === 'answerMachine3') {
+                        setAnswerEngineKind('answerMachine3');
+                    } else if (eng === 'answerMachine4') {
+                        setAnswerEngineKind('answerMachine4');
+                    } else if (eng === 'answerMachine') {
+                        setAnswerEngineKind('answerMachine');
+                    } else {
+                        setAnswerEngineKind('none');
+                    }
+                } else {
+                    setAnswerEngineKind('none');
                 }
             } catch (error) {
                 console.error('Error checking Answer Machine status:', error);
@@ -128,6 +218,66 @@ const CRightChatById = ({
             checkAnswerMachineEnabled();
         }
     }, [threadId, refreshRandomNum])
+
+    /** AM3: refresh merged stream notes on an interval while a step is in progress (UI + polling). */
+    useEffect(() => {
+        if (!threadId || answerEngineKind !== 'answerMachine3') {
+            return;
+        }
+        let cancelled = false;
+        const tick = async () => {
+            let shouldRefresh = am3MessagesIndicateLivePipeline();
+            if (!shouldRefresh) {
+                try {
+                    const r = await pollAnswerMachineStatus(threadId);
+                    if (!cancelled && (r.isProcessing || r.status === 'pending')) {
+                        shouldRefresh = true;
+                    }
+                } catch {
+                    /* ignore */
+                }
+            }
+            if (!cancelled && shouldRefresh) {
+                setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
+            }
+        };
+        void tick();
+        const id = setInterval(tick, AM3_PIPELINE_REFRESH_MS);
+        return () => {
+            cancelled = true;
+            clearInterval(id);
+        };
+    }, [threadId, answerEngineKind, am3MessagesIndicateLivePipeline]);
+
+    /** AM4: refresh merged stream notes on an interval while a step is in progress. */
+    useEffect(() => {
+        if (!threadId || answerEngineKind !== 'answerMachine4') {
+            return;
+        }
+        let cancelled = false;
+        const tick = async () => {
+            let shouldRefresh = am4MessagesIndicateLivePipeline();
+            if (!shouldRefresh) {
+                try {
+                    const r = await pollAnswerMachineStatus(threadId);
+                    if (!cancelled && (r.isProcessing || r.status === 'pending')) {
+                        shouldRefresh = true;
+                    }
+                } catch {
+                    /* ignore */
+                }
+            }
+            if (!cancelled && shouldRefresh) {
+                setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
+            }
+        };
+        void tick();
+        const id = setInterval(tick, AM4_PIPELINE_REFRESH_MS);
+        return () => {
+            cancelled = true;
+            clearInterval(id);
+        };
+    }, [threadId, answerEngineKind, am4MessagesIndicateLivePipeline]);
 
     // functions
     const getCssHeightForMessages = () => {
@@ -182,17 +332,21 @@ const CRightChatById = ({
             } as AxiosRequestConfig;
 
             const response = await axiosCustom.request(config);
-            const resMessages = response.data.docs.map((doc: { _id: string; content: string; createdAt: string; type: string }) => ({
+            const resMessages = response.data.docs.map((doc: { _id: string; content: string; createdAt: string; createdAtUtc?: string; type: string }) => ({
                 ...doc,
                 id: doc._id,
                 content: doc.content,
-                time: new Date(doc.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                time: new Date(doc.createdAtUtc ?? doc.createdAt ?? 0).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 type: doc.type,
             }));
 
             // Always replace messages (not prepend) since we're getting the full set
             setMessages(resMessages);
             setTotalCount(response.data.totalCount);
+
+            setThreadAm3UnionTimeline(
+                Array.isArray(response.data.threadAm3UnionTimeline) ? response.data.threadAm3UnionTimeline : null
+            );
 
             if (mode === 'initial') {
                 // go down to the bottom of the messages
@@ -355,31 +509,62 @@ const CRightChatById = ({
 
                         {/* section render messages */}
                         <div className="w-full min-w-0">
-                            {messages.map((itemMessage) => {
+                            {chunkMessagesForChatRender(messages).map((chunk) => {
+                                if (chunk.kind === 'am3_pipeline_group') {
+                                    const g = chunk.messages;
+                                    const key = `am3-pipeline-${g[0]._id}-${g[g.length - 1]._id}`;
+                                    return (
+                                        <ComponentAnswerMachineV3StreamGroup
+                                            key={key}
+                                            items={g}
+                                            threadId={threadId}
+                                            onManualRefresh={refreshChatMessages}
+                                        />
+                                    );
+                                }
+                                if (chunk.kind === 'am4_pipeline_group') {
+                                    const g = chunk.messages;
+                                    const key = `am4-pipeline-${g[0]._id}-${g[g.length - 1]._id}`;
+                                    return (
+                                        <ComponentAnswerMachineV4StreamGroup
+                                            key={key}
+                                            items={g}
+                                            threadId={threadId}
+                                            onManualRefresh={refreshChatMessages}
+                                        />
+                                    );
+                                }
+                                const itemMessage = chunk.message;
                                 return (
                                     <div
                                         key={`key-message-${itemMessage._id}`}
                                         className="w-full min-w-0"
                                         id={`key-message-${itemMessage._id}`}
                                     >
-                                        <ComponentMessageItem
-                                            itemMessage={itemMessage}
-                                        />
+                                        <ComponentMessageItem itemMessage={itemMessage} am4ThreadTools={am4ThreadTools} />
                                     </div>
-                                )
+                                );
                             })}
                         </div>
 
-                        {/* Answer Machine Status Component */}
-                        {isAnswerMachineEnabled && (
+                        {answerEngineKind === 'answerMachine3' && (
+                            <ComponentAnswerMachineRequestTimeline
+                                threadId={threadId}
+                                unionFromNotes={threadAm3UnionTimeline}
+                                onNotesRefresh={() =>
+                                    setRefreshRandomNum(Math.floor(Math.random() * 1_000_000))
+                                }
+                            />
+                        )}
+
+                        {/* Answer Machine V2 status only; AM3 merges pipeline into messages via notesGet */}
+                        {answerEngineKind === 'answerMachine' && (
                             <ComponentAnswerMachineStatus
                                 threadId={threadId}
                                 onComplete={() => {
-                                    // Refresh messages when Answer Machine completes
                                     setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
                                 }}
                                 onStatusUpdate={() => {
-                                    // Refresh messages periodically while processing to show updates
                                     setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
                                 }}
                             />
