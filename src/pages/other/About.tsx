@@ -1,4 +1,36 @@
+import { useEffect, useState } from 'react'
+import { getDefaultStore, useAtomValue } from 'jotai'
+import { DateTime } from 'luxon'
+
+import { jotaiDeployDateStampAtom } from '../../jotai/stateJotaiDeployDate'
+import { forceReloadPwa, syncDeployStamp } from '../../pwa/deployVersion'
+import { shouldEnablePwa } from '../../pwa/isPwaHost'
+
 const About = () => {
+    const deployStampIso = useAtomValue(jotaiDeployDateStampAtom)
+    const [reloadPending, setReloadPending] = useState(false)
+
+    useEffect(() => {
+        if (!import.meta.env.PROD) return
+        const store = getDefaultStore()
+        void syncDeployStamp(store)
+    }, [])
+
+    const deployDisplay =
+        deployStampIso.length > 0
+            ? (() => {
+                const dt = DateTime.fromISO(deployStampIso, { zone: 'utc' })
+                return dt.isValid
+                    ? dt.toLocal().toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS)
+                    : deployStampIso
+            })()
+            : null
+
+    const handleForceReloadPwa = () => {
+        setReloadPending(true)
+        void forceReloadPwa().catch(() => setReloadPending(false))
+    }
+
     return (
         <div className="p-2 lg:p-10">
             <div
@@ -32,6 +64,30 @@ const About = () => {
                             We welcome contributions! If you have ideas or suggestions, feel free to reach out
                             or submit a pull request on our GitHub repository.
                         </p>
+                        <h2 className="text-2xl font-semibold mt-6 mb-2 text-blue-600">Last deployed</h2>
+                        <p className="mb-4 text-gray-700">
+                            {deployDisplay ??
+                                'No deploy stamp yet (development build, or the server did not publish DEPLOY_DATE.txt).'}
+                        </p>
+
+                        {shouldEnablePwa() ? (
+                            <>
+                                <h2 className="text-2xl font-semibold mt-6 mb-2 text-blue-600">PWA cache</h2>
+                                <p className="mb-3 text-gray-700">
+                                    If the app looks outdated after an update, clear cached files and reload. Your login
+                                    session stays in cookies unless you clear site data fully.
+                                </p>
+                                <button
+                                    type="button"
+                                    disabled={reloadPending}
+                                    onClick={handleForceReloadPwa}
+                                    className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                    {reloadPending ? 'Reloading…' : 'Clear cache & reload app'}
+                                </button>
+                            </>
+                        ) : null}
+
                         <h2 className="text-2xl font-semibold mt-6 mb-2 text-blue-600">Created By</h2>
                         <p className="mb-4">This app was created by NB.</p>
                     </div>
