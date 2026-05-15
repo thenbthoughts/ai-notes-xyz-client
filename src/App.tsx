@@ -18,6 +18,9 @@ import AuthorizedRoute from "./components/AuthorizedRoute.tsx";
 import TextToSpeechModal from "./components/textToSpeechModalComponent/TextToSpeechModal.tsx";
 import SettingsLayout from "./pages/user/settings/SettingsLayout.tsx";
 
+// page -> homepage
+import UserHomepage from "./pages/user/userhomepage/UserHomepage.tsx";
+
 // pages -> auth
 const UserLogin = lazy(() => import('./pages/user/auth/Login.tsx'));
 const UserRegister = lazy(() => import('./pages/user/auth/Register.tsx'));
@@ -25,7 +28,6 @@ const UserLogout = lazy(() => import('./pages/user/auth/Logout.tsx'));
 
 // pages -> other
 const About = lazy(() => import("./pages/other/About.tsx"));
-const UserHomepage = lazy(() => import("./pages/user/userhomepage/UserHomepage.tsx"));
 
 // pages -> setting
 const SettingProfile = lazy(() => import("./pages/user/settings/settingProfile/SettingProfile.tsx"));
