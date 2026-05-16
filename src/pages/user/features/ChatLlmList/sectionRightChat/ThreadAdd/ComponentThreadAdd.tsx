@@ -485,16 +485,16 @@ const ComponentThreadAdd = () => {
         executeShell: false,
     });
 
-    const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(3);
+    const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(1);
     const [answerMachineMaxNumberOfIterations, setAnswerMachineMaxNumberOfIterations] = useState<number>(7);
 
     const [shellExecuteMinAttempts, setShellExecuteMinAttempts] = useState<number>(1);
-    const [shellExecuteMaxAttempts, setShellExecuteMaxAttempts] = useState<number>(3);
+    const [shellExecuteMaxAttempts, setShellExecuteMaxAttempts] = useState<number>(1);
     const [shellMinAttemptsInput, setShellMinAttemptsInput] = useState<string>('1');
-    const [shellMaxAttemptsInput, setShellMaxAttemptsInput] = useState<string>('3');
+    const [shellMaxAttemptsInput, setShellMaxAttemptsInput] = useState<string>('1');
 
     // Input display states (strings) to allow empty inputs
-    const [minIterationsInput, setMinIterationsInput] = useState<string>('3');
+    const [minIterationsInput, setMinIterationsInput] = useState<string>('1');
     const [maxIterationsInput, setMaxIterationsInput] = useState<string>('7');
 
     const [aiModelProvider, setAiModelProvider] = useState("openrouter" as "openrouter" | "groq" | "ollama" | "localai" | "openai-compatible");
@@ -976,8 +976,8 @@ const ComponentThreadAdd = () => {
                                         }}
                                         onBlur={() => {
                                             if (shellMaxAttemptsInput === '') {
-                                                setShellMaxAttemptsInput('3');
-                                                setShellExecuteMaxAttempts(3);
+                                                setShellMaxAttemptsInput('1');
+                                                setShellExecuteMaxAttempts(1);
                                             }
                                         }}
                                         className="mt-1 block w-full rounded-md border border-zinc-300 px-2 py-1.5 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500"
