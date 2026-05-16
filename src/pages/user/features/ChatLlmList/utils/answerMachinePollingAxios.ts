@@ -32,6 +32,30 @@ export interface AnswerMachinePollingResponse {
     }>;
 }
 
+/** True while AM4 may still mutate thread notes (cron queue, iterations, pending sub-steps). */
+export const answerMachinePollIndicatesActiveNotesWork = (
+    r: AnswerMachinePollingResponse
+): boolean => {
+    if (r.isProcessing || r.status === 'pending') {
+        return true;
+    }
+    const latest = r.jobs[0];
+    if (latest?.status === 'pending') {
+        return true;
+    }
+    return latest?.subQuestions?.some((sq) => sq.status === 'pending') ?? false;
+};
+
+export const cancelAnswerMachineV4RunByThreadId = async (threadId: string): Promise<void> => {
+    const config: AxiosRequestConfig = {
+        method: 'post',
+        url: '/api/chat-llm/polling/answerMachineV4Cancel',
+        headers: { 'Content-Type': 'application/json' },
+        data: { threadId },
+    };
+    await axiosCustom.request(config);
+};
+
 export const pollAnswerMachineStatus = async (
     threadId: string
 ): Promise<AnswerMachinePollingResponse> => {

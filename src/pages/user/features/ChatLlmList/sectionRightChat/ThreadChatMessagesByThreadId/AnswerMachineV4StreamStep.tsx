@@ -18,6 +18,7 @@ function statusPill(s: string) {
         error: 'bg-red-100 text-red-700',
         skipped: 'bg-gray-100 text-gray-700',
         in_progress: 'bg-amber-100 text-amber-800',
+        queued: 'bg-indigo-100 text-indigo-800',
         completed: 'bg-green-100 text-green-700',
     };
     const cls = map[s] ?? 'bg-zinc-100 text-zinc-700';
@@ -240,6 +241,7 @@ export function AnswerMachineV4IterationCollapsible({
 
     const hasLiveWork =
         sp.status === 'in_progress' ||
+        sp.status === 'queued' ||
         subQuestions.some((sq) => {
             const p = sq.streamPayload as AnswerMachineV4StreamPayload | undefined;
             return p?.kind === 'sub_question' && p.status === 'pending';

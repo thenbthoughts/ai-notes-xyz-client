@@ -1,6 +1,8 @@
 import { useMemo, useRef, useState } from 'react';
-import { LucideChevronDown, LucideChevronRight, LucideCopy, LucideRefreshCw } from 'lucide-react';
+import { DateTime } from 'luxon';
+import { LucideBan, LucideChevronDown, LucideChevronRight, LucideCopy, LucideRefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
+import MarkdownRenderer from '../../../../../../components/markdown/MarkdownRenderer';
 import axiosCustom from '../../../../../../config/axiosCustom';
 import type { AnswerMachineV4StreamPayload, tsMessageItem } from '../../../../../../types/pages/tsNotesAdvanceList';
 import {
@@ -111,35 +113,86 @@ function Am4OpencodeSessionBanner({ sessionId }: { sessionId: string }) {
 const bubbleClass =
     'border border-zinc-200/90 bg-white/95 shadow-lg shadow-zinc-900/[0.04] ring-1 ring-black/[0.03] backdrop-blur-sm';
 
+/** Final-only merged notes: show answer text like a normal assistant bubble (no AM4 final-answer chrome). */
+function PlainAm4FinalAnswerBubble({
+    item,
+    attachments,
+    threadId,
+}: {
+    item: tsMessageItem;
+    attachments: tsMessageItem[];
+    threadId: string;
+}) {
+    const sp = item.streamPayload as AnswerMachineV4StreamPayload | undefined;
+    const text =
+        sp?.kind === 'final_answer'
+            ? sp.answerText
+            : (item.content || '').trim() || '(No final answer text.)';
+    const u = item.updatedAtUtc;
+    return (
+        <div
+            id={`message-id-${item._id}`}
+            className={`w-full rounded-2xl rounded-tl-md px-3.5 py-3 sm:px-4 ${bubbleClass}`}
+        >
+            <div className="not-prose text-sm leading-relaxed text-zinc-800">
+                <MarkdownRenderer content={text} />
+            </div>
+            {attachments.length > 0 ? (
+                <div className="mt-3">
+                    <AnswerMachineV4FileArtifacts threadId={threadId} items={attachments} />
+                </div>
+            ) : null}
+            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-zinc-400">
+                <span>{new Date(u).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                <span>{new Date(u).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                <span>{DateTime.fromJSDate(new Date(u)).toRelative()}</span>
+            </div>
+        </div>
+    );
+}
+
 export default function ComponentAnswerMachineV4StreamGroup({
     items,
     onManualRefresh,
     threadId,
+    cancelLatestRunActive = false,
+    onCancelAnswerMachineRun,
 }: {
     items: tsMessageItem[];
     onManualRefresh?: () => void;
     threadId?: string;
+    /** Latest AM4 bubble + server/pipeline considers the run cancellable */
+    cancelLatestRunActive?: boolean;
+    onCancelAnswerMachineRun?: () => void | Promise<void>;
 }) {
     const [expanded, setExpanded] = useState(false);
+    const [cancelBusy, setCancelBusy] = useState(false);
 
     if (items.length === 0) {
         return null;
     }
 
-    const livePipeline = useMemo(() => {
+    const livePipelineKind = useMemo((): null | 'running' | 'queued' => {
+        let queuedIteration = false;
         for (const m of items) {
             const sp = m.streamPayload as AnswerMachineV4StreamPayload | undefined;
             if (!sp) {
                 continue;
             }
-            if (sp.kind === 'iteration' && sp.status === 'in_progress') {
-                return true;
-            }
             if (sp.kind === 'sub_question' && sp.status === 'pending') {
-                return true;
+                return 'running';
+            }
+            if (sp.kind === 'iteration' && sp.status === 'in_progress') {
+                return 'running';
+            }
+            if (sp.kind === 'iteration' && sp.status === 'queued') {
+                queuedIteration = true;
             }
         }
-        return false;
+        if (queuedIteration) {
+            return 'queued';
+        }
+        return null;
     }, [items]);
 
     const opencodeSessionId = useMemo(() => {
@@ -156,6 +209,65 @@ export default function ComponentAnswerMachineV4StreamGroup({
     const anchorId = first._id;
     const grouped = useMemo(() => groupAnswerMachineV4PipelineItems(items), [items]);
     const iterationCount = grouped.filter((b) => b.type === 'iteration_block').length;
+
+    /** No iteration/sub-question rows — only final answer, files, or orphans; skip the pipeline shell. */
+    const hasIterationOrSubQuestion = useMemo(
+        () =>
+            items.some((m) => {
+                const sp = m.streamPayload as AnswerMachineV4StreamPayload | undefined;
+                return sp?.kind === 'iteration' || sp?.kind === 'sub_question';
+            }),
+        [items],
+    );
+
+    if (!hasIterationOrSubQuestion) {
+        return (
+            <div className="flex w-full min-w-0 justify-start py-1.5" id={`key-message-${anchorId}`}>
+                <div className="w-full max-w-[min(100%,42rem)] space-y-3">
+                    <Am4OpencodeSessionBanner sessionId={opencodeSessionId} />
+                    {grouped.map((block) => {
+                        if (block.type === 'iteration_block') {
+                            return null;
+                        }
+                        if (block.type === 'final_answer' && threadId) {
+                            return (
+                                <PlainAm4FinalAnswerBubble
+                                    key={block.item._id}
+                                    item={block.item}
+                                    attachments={block.attachments}
+                                    threadId={threadId}
+                                />
+                            );
+                        }
+                        if (block.type === 'final_answer') {
+                            return null;
+                        }
+                        if (block.type === 'orphan_files') {
+                            return threadId ? (
+                                <div
+                                    key={`orphan-am4-files-${block.items[0]?._id ?? 'none'}`}
+                                    className="rounded-xl border border-sky-200/70 bg-sky-50/40 p-3"
+                                >
+                                    <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-sky-900">
+                                        Answer Machine 4 files (unattached in this view)
+                                    </p>
+                                    <AnswerMachineV4FileArtifacts threadId={threadId} items={block.items} />
+                                </div>
+                            ) : null;
+                        }
+                        return threadId ? (
+                            <div key={block.item._id} className="rounded-xl border border-amber-200/60 bg-amber-50/30 p-3">
+                                <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+                                    Unattached sub-question
+                                </p>
+                                <AnswerMachineV4SubQuestionCollapsible item={block.item} threadId={threadId} />
+                            </div>
+                        ) : null;
+                    })}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex w-full min-w-0 justify-start py-1.5" id={`key-message-${anchorId}`}>
@@ -179,9 +291,11 @@ export default function ComponentAnswerMachineV4StreamGroup({
                                     ? `${iterationCount} ${iterationCount === 1 ? 'iteration' : 'iterations'}`
                                     : `${items.length} steps`}
                             </span>
-                            {livePipeline ? (
+                            {livePipelineKind ? (
                                 <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-900">
-                                    In progress · ~10s refresh
+                                    {livePipelineKind === 'queued'
+                                        ? 'Queued · ~5s refresh'
+                                        : 'In progress · ~5s refresh'}
                                 </span>
                             ) : null}
                         </div>
@@ -198,13 +312,39 @@ export default function ComponentAnswerMachineV4StreamGroup({
                     </span>
                 </button>
 
+                {cancelLatestRunActive && threadId && onCancelAnswerMachineRun ? (
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                        <button
+                            type="button"
+                            disabled={cancelBusy}
+                            onClick={async () => {
+                                setCancelBusy(true);
+                                try {
+                                    await onCancelAnswerMachineRun();
+                                } finally {
+                                    setCancelBusy(false);
+                                }
+                            }}
+                            className="inline-flex shrink-0 items-center gap-1 rounded-md border border-red-200/95 bg-white px-2.5 py-1 text-[11px] font-semibold text-red-800 shadow-sm hover:bg-red-50 disabled:opacity-50"
+                            title="Stop queued and future AM4 iterations for this run"
+                        >
+                            <LucideBan className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                            {cancelBusy ? 'Stopping…' : 'Cancel run'}
+                        </button>
+                        <span className="text-[10px] text-zinc-500">
+                            In-flight steps may finish; no new iterations run after cancellation.
+                        </span>
+                    </div>
+                ) : null}
+
                 {expanded ? (
                     <>
-                        {livePipeline && onManualRefresh ? (
+                        {livePipelineKind && onManualRefresh ? (
                             <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200/70 bg-amber-50/55 px-2.5 py-2 text-[11px] text-amber-950">
                                 <span>
-                                    A reasoning step is running (OpenCode or verifier). Updates merge into chat about
-                                    every 10 seconds.
+                                    {livePipelineKind === 'queued'
+                                        ? 'Your run will start shortly. This thread refreshes about every five seconds until steps appear.'
+                                        : 'A reasoning step is running (OpenCode or verifier). Updates merge into chat every few seconds.'}
                                 </span>
                                 <button
                                     type="button"
