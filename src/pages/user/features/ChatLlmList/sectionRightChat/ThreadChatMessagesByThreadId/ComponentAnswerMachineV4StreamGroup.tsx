@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { LucideChevronDown, LucideChevronRight, LucideCopy, LucideRefreshCw } from 'lucide-react';
+import { LucideBan, LucideChevronDown, LucideChevronRight, LucideCopy, LucideRefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axiosCustom from '../../../../../../config/axiosCustom';
 import type { AnswerMachineV4StreamPayload, tsMessageItem } from '../../../../../../types/pages/tsNotesAdvanceList';
@@ -115,31 +115,44 @@ export default function ComponentAnswerMachineV4StreamGroup({
     items,
     onManualRefresh,
     threadId,
+    cancelLatestRunActive = false,
+    onCancelAnswerMachineRun,
 }: {
     items: tsMessageItem[];
     onManualRefresh?: () => void;
     threadId?: string;
+    /** Latest AM4 bubble + server/pipeline considers the run cancellable */
+    cancelLatestRunActive?: boolean;
+    onCancelAnswerMachineRun?: () => void | Promise<void>;
 }) {
     const [expanded, setExpanded] = useState(false);
+    const [cancelBusy, setCancelBusy] = useState(false);
 
     if (items.length === 0) {
         return null;
     }
 
-    const livePipeline = useMemo(() => {
+    const livePipelineKind = useMemo((): null | 'running' | 'queued' => {
+        let queuedIteration = false;
         for (const m of items) {
             const sp = m.streamPayload as AnswerMachineV4StreamPayload | undefined;
             if (!sp) {
                 continue;
             }
-            if (sp.kind === 'iteration' && sp.status === 'in_progress') {
-                return true;
-            }
             if (sp.kind === 'sub_question' && sp.status === 'pending') {
-                return true;
+                return 'running';
+            }
+            if (sp.kind === 'iteration' && sp.status === 'in_progress') {
+                return 'running';
+            }
+            if (sp.kind === 'iteration' && sp.status === 'queued') {
+                queuedIteration = true;
             }
         }
-        return false;
+        if (queuedIteration) {
+            return 'queued';
+        }
+        return null;
     }, [items]);
 
     const opencodeSessionId = useMemo(() => {
@@ -179,9 +192,11 @@ export default function ComponentAnswerMachineV4StreamGroup({
                                     ? `${iterationCount} ${iterationCount === 1 ? 'iteration' : 'iterations'}`
                                     : `${items.length} steps`}
                             </span>
-                            {livePipeline ? (
+                            {livePipelineKind ? (
                                 <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-900">
-                                    In progress · ~10s refresh
+                                    {livePipelineKind === 'queued'
+                                        ? 'Queued · ~5s refresh'
+                                        : 'In progress · ~5s refresh'}
                                 </span>
                             ) : null}
                         </div>
@@ -198,13 +213,39 @@ export default function ComponentAnswerMachineV4StreamGroup({
                     </span>
                 </button>
 
+                {cancelLatestRunActive && threadId && onCancelAnswerMachineRun ? (
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                        <button
+                            type="button"
+                            disabled={cancelBusy}
+                            onClick={async () => {
+                                setCancelBusy(true);
+                                try {
+                                    await onCancelAnswerMachineRun();
+                                } finally {
+                                    setCancelBusy(false);
+                                }
+                            }}
+                            className="inline-flex shrink-0 items-center gap-1 rounded-md border border-red-200/95 bg-white px-2.5 py-1 text-[11px] font-semibold text-red-800 shadow-sm hover:bg-red-50 disabled:opacity-50"
+                            title="Stop queued and future AM4 iterations for this run"
+                        >
+                            <LucideBan className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                            {cancelBusy ? 'Stopping…' : 'Cancel run'}
+                        </button>
+                        <span className="text-[10px] text-zinc-500">
+                            In-flight steps may finish; no new iterations run after cancellation.
+                        </span>
+                    </div>
+                ) : null}
+
                 {expanded ? (
                     <>
-                        {livePipeline && onManualRefresh ? (
+                        {livePipelineKind && onManualRefresh ? (
                             <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200/70 bg-amber-50/55 px-2.5 py-2 text-[11px] text-amber-950">
                                 <span>
-                                    A reasoning step is running (OpenCode or verifier). Updates merge into chat about
-                                    every 10 seconds.
+                                    {livePipelineKind === 'queued'
+                                        ? 'Your run will start shortly. This thread refreshes about every five seconds until steps appear.'
+                                        : 'A reasoning step is running (OpenCode or verifier). Updates merge into chat every few seconds.'}
                                 </span>
                                 <button
                                     type="button"

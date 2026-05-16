@@ -1,9 +1,14 @@
 import { useState, useRef, useEffect, useCallback, useMemo, type DragEvent } from 'react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
 import { Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 import axiosCustom from '../../../../../../config/axiosCustom.ts';
-import { pollAnswerMachineStatus } from '../../utils/answerMachinePollingAxios';
+import {
+    pollAnswerMachineStatus,
+    answerMachinePollIndicatesActiveNotesWork,
+    cancelAnswerMachineV4RunByThreadId,
+} from '../../utils/answerMachinePollingAxios';
 import ComponentNotesAdd, { type ChatMessageInputHandle } from './ComponentChatMessageInput.tsx';
 
 import ComponentMessageItem from './ComponentMessageItem.tsx';
@@ -25,7 +30,28 @@ import ThreadSettingWrapper from '../ThreadSetting/ThreadSettingWrapper.tsx';
 
 const LIMIT_MESSAGES = 10;
 
-const AM4_PIPELINE_REFRESH_MS = 10_000;
+/** Faster than conciseAnswer refresh so cron-backed AM4 steps show within ~ one worker tick. */
+const AM4_PIPELINE_REFRESH_MS = 5_000;
+
+/** Visible AM4 stream rows imply the pipeline UI is still merging steps. */
+const am4StreamingLooksLiveFromList = (msgList: tsMessageItem[]): boolean => {
+    for (const m of msgList) {
+        if (m.type !== 'answer_machine_v4_stream') {
+            continue;
+        }
+        const sp = m.streamPayload as AnswerMachineV4StreamPayload | undefined;
+        if (!sp) {
+            continue;
+        }
+        if (sp.kind === 'iteration' && (sp.status === 'in_progress' || sp.status === 'queued')) {
+            return true;
+        }
+        if (sp.kind === 'sub_question' && sp.status === 'pending') {
+            return true;
+        }
+    }
+    return false;
+};
 
 const CRightChatById = ({
     threadId,
@@ -56,6 +82,7 @@ const CRightChatById = ({
     const [messages, setMessages] = useState<tsMessageItem[]>([]);
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
     const [answerEngineKind, setAnswerEngineKind] = useState<'none' | 'answerMachine4'>('none');
+    const [am4RemoteActivePoll, setAm4RemoteActivePoll] = useState(false);
     const [hasMore, setHasMore] = useState(false);
     const [currentLimit, setCurrentLimit] = useState(LIMIT_MESSAGES);
     const [totalCount, setTotalCount] = useState(0);
@@ -63,28 +90,44 @@ const CRightChatById = ({
     const messagesRef = useRef(messages);
     messagesRef.current = messages;
 
-    const am4MessagesIndicateLivePipeline = useCallback((): boolean => {
-        for (const m of messagesRef.current) {
-            if (m.type !== 'answer_machine_v4_stream') {
-                continue;
+    const am4MessagesIndicateLivePipeline = useCallback((): boolean =>
+        am4StreamingLooksLiveFromList(messagesRef.current),
+    []);
+
+    const am4LocallyLiveFromMessages = useMemo(
+        () => am4StreamingLooksLiveFromList(messages),
+        [messages],
+    );
+
+    const messageChunksRender = useMemo(() => chunkMessagesForChatRender(messages), [messages]);
+
+    const latestAm4ChunkIndex = useMemo(() => {
+        let ix = -1;
+        messageChunksRender.forEach((chunk, i) => {
+            if (chunk.kind === 'am4_pipeline_group') {
+                ix = i;
             }
-            const sp = m.streamPayload as AnswerMachineV4StreamPayload | undefined;
-            if (!sp) {
-                continue;
-            }
-            if (sp.kind === 'iteration' && sp.status === 'in_progress') {
-                return true;
-            }
-            if (sp.kind === 'sub_question' && sp.status === 'pending') {
-                return true;
-            }
-        }
-        return false;
-    }, []);
+        });
+        return ix;
+    }, [messageChunksRender]);
+
+    const cancelLatestAm4Eligible =
+        answerEngineKind === 'answerMachine4' && (am4LocallyLiveFromMessages || am4RemoteActivePoll);
 
     const refreshChatMessages = useCallback(() => {
         setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
     }, []);
+
+    const handleCancelLatestAm4Run = useCallback(async () => {
+        try {
+            await cancelAnswerMachineV4RunByThreadId(threadId);
+            toast.success('Cancellation requested. Future AM4 iterations for this run are skipped.');
+            refreshChatMessages();
+        } catch (err) {
+            console.error(err);
+            toast.error('Could not cancel. Try refreshing the thread.');
+        }
+    }, [threadId, refreshChatMessages]);
 
     const am4ThreadTools: Am4ThreadToolsContext | null = useMemo(() => {
         if (answerEngineKind !== 'answerMachine4') {
@@ -143,6 +186,7 @@ const CRightChatById = ({
         setCurrentLimit(LIMIT_MESSAGES);
         setTotalCount(0);
         setHasMore(true);
+        setAm4RemoteActivePoll(false);
         useEffectOneTimeMessagesScrollDownRef.current = false;
     }, [threadId])
 
@@ -192,15 +236,17 @@ const CRightChatById = ({
         let cancelled = false;
         const tick = async () => {
             let shouldRefresh = am4MessagesIndicateLivePipeline();
-            if (!shouldRefresh) {
-                try {
-                    const r = await pollAnswerMachineStatus(threadId);
-                    if (!cancelled && (r.isProcessing || r.status === 'pending')) {
+            try {
+                const r = await pollAnswerMachineStatus(threadId);
+                if (!cancelled) {
+                    const remoteActive = answerMachinePollIndicatesActiveNotesWork(r);
+                    setAm4RemoteActivePoll(remoteActive);
+                    if (!shouldRefresh && remoteActive) {
                         shouldRefresh = true;
                     }
-                } catch {
-                    /* ignore */
                 }
+            } catch {
+                /* ignore */
             }
             if (!cancelled && shouldRefresh) {
                 setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
@@ -440,7 +486,7 @@ const CRightChatById = ({
 
                         {/* section render messages */}
                         <div className="w-full min-w-0">
-                            {chunkMessagesForChatRender(messages).map((chunk) => {
+                            {messageChunksRender.map((chunk, chunkIx) => {
                                 if (chunk.kind === 'am4_pipeline_group') {
                                     const g = chunk.messages;
                                     const key = `am4-pipeline-${g[0]._id}-${g[g.length - 1]._id}`;
@@ -450,6 +496,10 @@ const CRightChatById = ({
                                             items={g}
                                             threadId={threadId}
                                             onManualRefresh={refreshChatMessages}
+                                            cancelLatestRunActive={
+                                                cancelLatestAm4Eligible && chunkIx === latestAm4ChunkIndex
+                                            }
+                                            onCancelAnswerMachineRun={handleCancelLatestAm4Run}
                                         />
                                     );
                                 }
