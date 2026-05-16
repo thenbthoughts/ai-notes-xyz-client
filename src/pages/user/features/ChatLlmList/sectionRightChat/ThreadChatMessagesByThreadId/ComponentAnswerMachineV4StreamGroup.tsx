@@ -1,6 +1,8 @@
 import { useMemo, useRef, useState } from 'react';
+import { DateTime } from 'luxon';
 import { LucideBan, LucideChevronDown, LucideChevronRight, LucideCopy, LucideRefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
+import MarkdownRenderer from '../../../../../../components/markdown/MarkdownRenderer';
 import axiosCustom from '../../../../../../config/axiosCustom';
 import type { AnswerMachineV4StreamPayload, tsMessageItem } from '../../../../../../types/pages/tsNotesAdvanceList';
 import {
@@ -111,6 +113,44 @@ function Am4OpencodeSessionBanner({ sessionId }: { sessionId: string }) {
 const bubbleClass =
     'border border-zinc-200/90 bg-white/95 shadow-lg shadow-zinc-900/[0.04] ring-1 ring-black/[0.03] backdrop-blur-sm';
 
+/** Final-only merged notes: show answer text like a normal assistant bubble (no AM4 final-answer chrome). */
+function PlainAm4FinalAnswerBubble({
+    item,
+    attachments,
+    threadId,
+}: {
+    item: tsMessageItem;
+    attachments: tsMessageItem[];
+    threadId: string;
+}) {
+    const sp = item.streamPayload as AnswerMachineV4StreamPayload | undefined;
+    const text =
+        sp?.kind === 'final_answer'
+            ? sp.answerText
+            : (item.content || '').trim() || '(No final answer text.)';
+    const u = item.updatedAtUtc;
+    return (
+        <div
+            id={`message-id-${item._id}`}
+            className={`w-full rounded-2xl rounded-tl-md px-3.5 py-3 sm:px-4 ${bubbleClass}`}
+        >
+            <div className="not-prose text-sm leading-relaxed text-zinc-800">
+                <MarkdownRenderer content={text} />
+            </div>
+            {attachments.length > 0 ? (
+                <div className="mt-3">
+                    <AnswerMachineV4FileArtifacts threadId={threadId} items={attachments} />
+                </div>
+            ) : null}
+            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-zinc-400">
+                <span>{new Date(u).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                <span>{new Date(u).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                <span>{DateTime.fromJSDate(new Date(u)).toRelative()}</span>
+            </div>
+        </div>
+    );
+}
+
 export default function ComponentAnswerMachineV4StreamGroup({
     items,
     onManualRefresh,
@@ -169,6 +209,65 @@ export default function ComponentAnswerMachineV4StreamGroup({
     const anchorId = first._id;
     const grouped = useMemo(() => groupAnswerMachineV4PipelineItems(items), [items]);
     const iterationCount = grouped.filter((b) => b.type === 'iteration_block').length;
+
+    /** No iteration/sub-question rows — only final answer, files, or orphans; skip the pipeline shell. */
+    const hasIterationOrSubQuestion = useMemo(
+        () =>
+            items.some((m) => {
+                const sp = m.streamPayload as AnswerMachineV4StreamPayload | undefined;
+                return sp?.kind === 'iteration' || sp?.kind === 'sub_question';
+            }),
+        [items],
+    );
+
+    if (!hasIterationOrSubQuestion) {
+        return (
+            <div className="flex w-full min-w-0 justify-start py-1.5" id={`key-message-${anchorId}`}>
+                <div className="w-full max-w-[min(100%,42rem)] space-y-3">
+                    <Am4OpencodeSessionBanner sessionId={opencodeSessionId} />
+                    {grouped.map((block) => {
+                        if (block.type === 'iteration_block') {
+                            return null;
+                        }
+                        if (block.type === 'final_answer' && threadId) {
+                            return (
+                                <PlainAm4FinalAnswerBubble
+                                    key={block.item._id}
+                                    item={block.item}
+                                    attachments={block.attachments}
+                                    threadId={threadId}
+                                />
+                            );
+                        }
+                        if (block.type === 'final_answer') {
+                            return null;
+                        }
+                        if (block.type === 'orphan_files') {
+                            return threadId ? (
+                                <div
+                                    key={`orphan-am4-files-${block.items[0]?._id ?? 'none'}`}
+                                    className="rounded-xl border border-sky-200/70 bg-sky-50/40 p-3"
+                                >
+                                    <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-sky-900">
+                                        Answer Machine 4 files (unattached in this view)
+                                    </p>
+                                    <AnswerMachineV4FileArtifacts threadId={threadId} items={block.items} />
+                                </div>
+                            ) : null;
+                        }
+                        return threadId ? (
+                            <div key={block.item._id} className="rounded-xl border border-amber-200/60 bg-amber-50/30 p-3">
+                                <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+                                    Unattached sub-question
+                                </p>
+                                <AnswerMachineV4SubQuestionCollapsible item={block.item} threadId={threadId} />
+                            </div>
+                        ) : null;
+                    })}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex w-full min-w-0 justify-start py-1.5" id={`key-message-${anchorId}`}>

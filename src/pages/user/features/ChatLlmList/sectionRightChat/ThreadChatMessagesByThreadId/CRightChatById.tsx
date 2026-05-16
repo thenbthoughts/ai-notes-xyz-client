@@ -14,11 +14,6 @@ import ComponentNotesAdd, { type ChatMessageInputHandle } from './ComponentChatM
 import ComponentMessageItem from './ComponentMessageItem.tsx';
 import ComponentAnswerMachineV4StreamGroup from './ComponentAnswerMachineV4StreamGroup.tsx';
 import { chunkMessagesForChatRender } from './chunkMessagesForChatRender.ts';
-import {
-    collectAm4DownloadableFilesFromMessages,
-    inferAm4UploadTarget,
-    type Am4ThreadToolsContext,
-} from './am4MessagesUtils.ts';
 
 import {
     tsMessageItem,
@@ -128,18 +123,6 @@ const CRightChatById = ({
             toast.error('Could not cancel. Try refreshing the thread.');
         }
     }, [threadId, refreshChatMessages]);
-
-    const am4ThreadTools: Am4ThreadToolsContext | null = useMemo(() => {
-        if (answerEngineKind !== 'answerMachine4') {
-            return null;
-        }
-        return {
-            threadId,
-            downloadableFiles: collectAm4DownloadableFilesFromMessages(messages),
-            uploadTarget: inferAm4UploadTarget(messages),
-            onUploaded: refreshChatMessages,
-        };
-    }, [answerEngineKind, threadId, messages, refreshChatMessages]);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -510,7 +493,7 @@ const CRightChatById = ({
                                         className="w-full min-w-0"
                                         id={`key-message-${itemMessage._id}`}
                                     >
-                                        <ComponentMessageItem itemMessage={itemMessage} am4ThreadTools={am4ThreadTools} />
+                                        <ComponentMessageItem itemMessage={itemMessage} />
                                     </div>
                                 );
                             })}
