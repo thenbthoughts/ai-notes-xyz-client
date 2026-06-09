@@ -22,6 +22,7 @@ import {
 
 import ComponentAiGeneratedQuestionList from './ComponentAiGeneratedQuestionList.tsx';
 import ThreadSettingWrapper from '../ThreadSetting/ThreadSettingWrapper.tsx';
+import ThreadSettingInline from '../ThreadSetting/ThreadSettingInline.tsx';
 
 const LIMIT_MESSAGES = 10;
 
@@ -441,6 +442,8 @@ const CRightChatById = ({
                                             Send a message below. You can attach files, paste images, or use voice from the toolbar.
                                         </p>
                                     </div>
+
+                                    <ThreadSettingInline threadId={threadId} />
                                 </div>
                             )}
                         </div>
