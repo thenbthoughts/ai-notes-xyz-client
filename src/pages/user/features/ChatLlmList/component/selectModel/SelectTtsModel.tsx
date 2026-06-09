@@ -23,6 +23,8 @@ interface SelectTtsModelProps {
     setTtsModelProvider: React.Dispatch<React.SetStateAction<string>>;
     ttsModelName: string;
     setTtsModelName: React.Dispatch<React.SetStateAction<string>>;
+    /** When true, always show controls (used inside SelectModel tabs). */
+    panelMode?: boolean;
 }
 
 const SelectTtsModel: React.FC<SelectTtsModelProps> = ({
@@ -30,10 +32,12 @@ const SelectTtsModel: React.FC<SelectTtsModelProps> = ({
     setTtsModelProvider,
     ttsModelName,
     setTtsModelName,
+    panelMode = false,
 }) => {
     const [localaiModels, setLocalaiModels] = useState<Array<{ modelName: string; modelLabel: string; modelType?: string }>>([]);
     const [isLoadingLocalai, setIsLoadingLocalai] = useState(false);
-    const [expanded, setExpanded] = useState(true);
+    const [collapsedExpanded, setCollapsedExpanded] = useState(true);
+    const expanded = panelMode || collapsedExpanded;
 
     useEffect(() => {
         if (ttsModelProvider !== 'localai') return;
@@ -71,34 +75,36 @@ const SelectTtsModel: React.FC<SelectTtsModelProps> = ({
         }
     }, [ttsModelProvider, setTtsModelName]);
 
+    const currentLabel = (ttsModelProvider && ttsModelName)
+        ? `${ttsModelProvider} — ${ttsModelName}`
+        : 'Default (auto)';
+
     return (
         <Fragment>
             <div className="mb-2 lg:mb-3">
-                <div className="flex justify-between items-center">
-                    <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">
-                        TTS (Text-to-Speech) -
-                        {(ttsModelProvider && ttsModelName) ? (
-                            <span className="text-gray-500">
-                                {ttsModelProvider} - {ttsModelName}
-                            </span>
-                        ) : (
-                            <span className="text-gray-500">
-                                Default (auto)
-                            </span>
-                        )}
-                    </label>
-                    <button
-                        type="button"
-                        onClick={() => setExpanded((prev) => !prev)}
-                        className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
-                        aria-expanded={expanded}
-                        title={expanded ? "Collapse" : "Expand"}
-                    >
-                        {expanded ? <LucideExpand className="w-4 h-4" /> : <LucidePlus className="w-4 h-4" />}
-                    </button>
-                </div>
+                {panelMode ? (
+                    <p className="mb-2 text-xs text-zinc-500">
+                        Current: <span className="font-medium text-zinc-700">{currentLabel}</span>
+                    </p>
+                ) : (
+                    <div className="flex justify-between items-center">
+                        <label className="block text-sm font-medium text-gray-700 mb-1 lg:mb-2">
+                            TTS (Text-to-Speech) -
+                            <span className="text-gray-500"> {currentLabel}</span>
+                        </label>
+                        <button
+                            type="button"
+                            onClick={() => setCollapsedExpanded((prev) => !prev)}
+                            className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                            aria-expanded={expanded}
+                            title={expanded ? "Collapse" : "Expand"}
+                        >
+                            {expanded ? <LucideExpand className="w-4 h-4" /> : <LucidePlus className="w-4 h-4" />}
+                        </button>
+                    </div>
+                )}
                 {expanded && (
-                    <div className="flex flex-col sm:flex-row gap-2 mt-2">
+                    <div className={`flex flex-col sm:flex-row gap-2 ${panelMode ? '' : 'mt-2'}`}>
                         {TTS_PROVIDER_OPTIONS.map((opt) => (
                             <button
                                 key={opt.value}
