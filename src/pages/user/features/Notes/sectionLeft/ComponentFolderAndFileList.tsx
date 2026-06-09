@@ -207,17 +207,25 @@ const ComponentFolderAndFileList = () => {
     const renderMenuItem = (
         item: MenuItem & { children?: MenuItem[] },
         level: number = 0,
+        index: number = 0,
     ) => {
         const hasChildren = Boolean(item.children && item.children.length > 0);
         const isActive = activeItem === item._id;
         const isExpanded = expandedItems.includes(item._id);
 
-        const leftAccent =
-            isActive
-                ? 'border-l-indigo-600 bg-white text-zinc-950'
-                : item.isStar && level === 0
-                    ? 'border-l-amber-500 hover:bg-white/70'
-                    : 'border-l-transparent hover:bg-white/60';
+        const stripeBg = isActive
+            ? 'bg-indigo-50'
+            : index % 2 === 0
+                ? 'bg-slate-50'
+                : 'bg-zinc-100';
+
+        const leftAccent = isActive
+            ? 'border-l-indigo-600 text-zinc-950'
+            : item.isStar && level === 0
+                ? 'border-l-amber-500'
+                : 'border-l-transparent';
+
+        const hoverBg = isActive ? '' : 'hover:bg-zinc-200/70';
 
         const indentPx = level * 6;
         const borderStyle = level > 0 ? {
@@ -227,8 +235,8 @@ const ComponentFolderAndFileList = () => {
         } : {};
         return (
             <div key={item._id} style={{ paddingLeft: `${indentPx}px`, width: '100%', marginTop: 0, marginBottom: 0, ...borderStyle }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 0 }}>
-                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', minWidth: 0 }}>
+                    <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', minWidth: 0 }}>
                         <Link
                             to={`/user/notes?action=edit&id=${item._id}&workspace=${workspaceId}`}
                             title={item.title}
@@ -239,20 +247,13 @@ const ComponentFolderAndFileList = () => {
                                 // if (hasChildren) toggleExpanded(item._id);
                             }}
                             className={
-                                `${leftAccent} block w-full rounded-r-md border-l-2 border-t-0 border-b-0 border-r-0 py-0.5 pl-1.5 pr-1 text-left text-[11px] font-medium text-zinc-800 overflow-hidden min-w-0 transition-colors`
+                                `${leftAccent} ${stripeBg} ${hoverBg} block w-full border-l-2 py-1.5 pl-1 pr-0.5 text-left text-sm font-medium text-zinc-800 break-words transition-colors`
                             }
                             style={{
-                                fontSize: level === 0 ? '12px' : '11px',
+                                fontSize: level === 0 ? '15px' : '13px',
                             }}
                         >
-                            <span style={{
-                                flex: 1,
-                                minWidth: 0,
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                                display: 'block',
-                            }}>{item.title}</span>
+                            {item.title}
                         </Link>
                     </div>
                     {hasChildren && (
@@ -272,7 +273,7 @@ const ComponentFolderAndFileList = () => {
                 {/* Children */}
                 {hasChildren && isExpanded && (
                     <div className="my-0.5">
-                        {item.children!.map(child => renderMenuItem(child, level + 1))}
+                        {item.children!.map((child, childIndex) => renderMenuItem(child, level + 1, childIndex))}
                     </div>
                 )}
             </div>
@@ -280,9 +281,9 @@ const ComponentFolderAndFileList = () => {
     };
 
     return (
-        <div className="rounded-xl border border-zinc-200/60 bg-white text-zinc-900 shadow-sm">
-            <nav className="flex flex-col divide-y divide-zinc-100/80">
-                {hierarchicalItems.map(item => renderMenuItem(item))}
+        <div className="overflow-hidden rounded-lg border border-zinc-200/60 bg-white text-zinc-900">
+            <nav className="flex flex-col">
+                {hierarchicalItems.map((item, index) => renderMenuItem(item, 0, index))}
             </nav>
         </div>
     );
