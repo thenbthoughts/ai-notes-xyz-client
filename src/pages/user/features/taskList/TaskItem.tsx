@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type React from 'react';
 import { tsPageTask } from "../../../../types/pages/tsPageTaskList";
 
@@ -32,6 +33,8 @@ const TaskItem = ({
     setIsTaskAddModalIsOpen,
     layout = 'grid',
 }: TaskItemProps) => {
+    const [showActions, setShowActions] = useState(false);
+
     const axiosChangeTaskList = async (taskStatusId: string): Promise<void> => {
         const data = {
             id: task._id,
@@ -281,8 +284,7 @@ const TaskItem = ({
             value={task.taskStatusId}
             onChange={(e) => axiosChangeTaskList(e.target.value)}
             className={
-                'min-w-0 rounded-md border border-zinc-200/80 bg-white py-1 pl-1.5 pr-6 text-xs leading-tight text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 ' +
-                (isList ? 'w-full max-w-full sm:w-auto sm:max-w-[160px]' : 'max-w-full flex-1 sm:max-w-[132px]')
+                'min-w-0 max-w-full flex-1 rounded-md border border-zinc-200/80 bg-white py-1 pl-1.5 pr-6 text-xs leading-tight text-zinc-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/15 sm:max-w-[160px]'
             }
         >
             {taskStatusList.map((taskStatus) => (
@@ -335,17 +337,15 @@ const TaskItem = ({
                     strokeWidth={2}
                 />
             </button>
-            {isList && (
-                <button
-                    type="button"
-                    onClick={() => taskChatWithAi(task._id)}
-                    className="rounded-md border border-zinc-200/80 bg-indigo-600 p-1 text-white shadow-sm transition-colors hover:bg-indigo-500"
-                    title="AI chat"
-                    aria-label="AI chat"
-                >
-                    <LucideMessageCircle className="h-4 w-4 text-white/95" strokeWidth={2} />
-                </button>
-            )}
+            <button
+                type="button"
+                onClick={() => taskChatWithAi(task._id)}
+                className="rounded-md border border-zinc-200/80 bg-indigo-600 p-1 text-white shadow-sm transition-colors hover:bg-indigo-500"
+                title="AI chat"
+                aria-label="AI chat"
+            >
+                <LucideMessageCircle className="h-4 w-4 text-white/95" strokeWidth={2} />
+            </button>
         </div>
     );
 
@@ -358,50 +358,28 @@ const TaskItem = ({
             ? 'rounded-lg p-1.5 sm:p-2'
             : 'h-full rounded-xl p-2 sm:p-2.5');
 
-    if (isList) {
-        return (
-            <div className={shellClass}>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
-                    <div className="min-w-0 flex-1">
-                        <h3 className="min-w-0 text-sm font-semibold leading-snug text-zinc-900">
-                            {task.title}
-                        </h3>
-                        {chips}
-                        {sendQueueBlock}
-                    </div>
-                    <div className="flex min-w-0 shrink-0 flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-end sm:gap-2">
-                        {selectEl}
-                        {iconButtons}
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    const titleButton = (
+        <button
+            type="button"
+            onClick={() => setShowActions((prev) => !prev)}
+            className="min-w-0 text-left text-sm font-semibold leading-snug text-zinc-900 transition-colors hover:text-indigo-700"
+            aria-expanded={showActions}
+        >
+            {task.title}
+        </button>
+    );
+
+    const actionsVisibleClass = showActions ? 'flex' : 'hidden group-hover:flex';
 
     return (
         <div className={shellClass}>
-            <div className="flex items-start justify-between gap-1">
-                <h3 className="min-w-0 text-sm font-semibold leading-snug text-zinc-900">
-                    {task.title}
-                </h3>
-            </div>
-
+            {titleButton}
             {chips}
             {sendQueueBlock}
-
-            <div className="mt-1.5 flex flex-wrap items-center gap-1">
+            <div className={`${actionsVisibleClass} mt-1.5 flex-wrap items-center gap-1`}>
                 {selectEl}
                 {iconButtons}
             </div>
-
-            <button
-                type="button"
-                onClick={() => taskChatWithAi(task._id)}
-                className="mt-1.5 inline-flex w-full items-center justify-center gap-1 rounded-lg border border-indigo-600/20 bg-indigo-600 py-1.5 text-[11px] font-medium text-white shadow-sm transition-colors hover:bg-indigo-500"
-            >
-                <LucideMessageCircle className="h-3.5 w-3.5 text-white/95" strokeWidth={2} />
-                AI chat
-            </button>
         </div>
     );
 };
