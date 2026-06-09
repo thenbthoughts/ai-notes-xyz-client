@@ -9,9 +9,7 @@ import { toast } from "react-hot-toast";
 import Tooltip from '@rc-component/tooltip';
 
 import ThreadSettingContextSearch from "./ThreadSettingContextSearch";
-import SelectApiKey from "./SelectApiKey";
-import SelectSttModel from "./SelectSttModel";
-import SelectTtsModel from "./SelectTtsModel";
+import { SelectModel } from "../../component/selectModel";
 
 const ThreadSetting = ({
     closeModal,
@@ -227,26 +225,17 @@ const ThreadSetting = ({
                             )}
                         </div>
 
-                        {/* field -> aiModelProvider */}
-                        <SelectApiKey
+                        <SelectModel
                             aiModelProvider={aiModelProvider}
                             setAiModelProvider={setAiModelProvider}
                             aiModelName={aiModelName}
                             setAiModelName={setAiModelName}
                             aiModelOpenAiCompatibleConfigId={aiModelOpenAiCompatibleConfigId}
                             setAiModelOpenAiCompatibleConfigId={setAiModelOpenAiCompatibleConfigId}
-                        />
-
-                        {/* field -> sttModelProvider */}
-                        <SelectSttModel
                             sttModelProvider={sttModelProvider}
                             setSttModelProvider={setSttModelProvider}
                             sttModelName={sttModelName}
                             setSttModelName={setSttModelName}
-                        />
-
-                        {/* field -> ttsModelProvider */}
-                        <SelectTtsModel
                             ttsModelProvider={ttsModelProvider}
                             setTtsModelProvider={setTtsModelProvider}
                             ttsModelName={ttsModelName}
