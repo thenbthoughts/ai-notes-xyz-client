@@ -171,8 +171,8 @@ const ComponentNotesLeft = () => {
 
             <ComponentNotesWorkspace />
 
-            <div className="space-y-1">
-                <h2 className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">In workspace</h2>
+            <div className="space-y-1 py-1">
+                <h2 className="text-xs font-medium uppercase tracking-wider text-zinc-400">In workspace</h2>
                 {workspaceId.length === 24 && (
                     <ComponentFolderAndFileList />
                 )}
