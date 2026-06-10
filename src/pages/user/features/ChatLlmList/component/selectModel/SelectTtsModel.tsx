@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect } from "react";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import Select from "react-select";
 import { LucideExpand, LucidePlus } from "lucide-react";
+import { reactSelectPortalProps } from "./reactSelectPortalProps";
 
 export type TtsModelProvider = "openai" | "groq" | "localai" | "";
 
@@ -143,6 +144,7 @@ const SelectTtsModel: React.FC<SelectTtsModelProps> = ({
                             options={localaiModels.map(m => ({ value: m.modelName, label: m.modelLabel || m.modelName }))}
                             placeholder="Select TTS model..."
                             isSearchable={true}
+                            {...reactSelectPortalProps}
                         />
                     )}
                 </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import axiosCustom from "../../../../../../../config/axiosCustom";
+import { reactSelectPortalProps } from "../reactSelectPortalProps";
 import { tsSchemaAiModelListGroq } from "../../../../../../../types/pages/settings/dataModelGroq";
 
 const SelectAiModelGroq = ({
@@ -61,6 +62,7 @@ const SelectAiModelGroq = ({
                 placeholder="Select a model..."
                 isLoading={isLoadingModel}
                 isSearchable={true}
+                {...reactSelectPortalProps}
             />
         </div>
     );
