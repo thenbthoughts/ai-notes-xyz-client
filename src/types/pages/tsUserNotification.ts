@@ -1,6 +1,5 @@
 export interface IUserNotification {
     _id: string;
-    userId: string;
     smtpTo: string;
     subject: string;
     text: string;

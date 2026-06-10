@@ -1,7 +1,7 @@
 export interface IInfoVault {
     // identification
     _id: string;
-    userId: string;
+
 
     // basic information
     infoVaultType: string;
@@ -50,7 +50,7 @@ export interface IInfoVaultCustomField {
     // identification
     _id: string;
     infoVaultId: string;
-    userId: string;
+
 
     // fields
     key: string;
@@ -69,7 +69,7 @@ export interface IInfoVaultEmail {
     // identification
     _id: string;
     infoVaultId: string;
-    userId: string;
+
 
     // fields
     email: string;
@@ -89,7 +89,7 @@ export interface IInfoVaultPhone {
     // identification
     _id: string;
     infoVaultId: string;
-    userId: string;
+
 
     // fields
     phoneNumber: string;
@@ -110,7 +110,7 @@ export interface IInfoVaultWebsite {
     // identification
     _id: string;
     infoVaultId: string;
-    userId: string;
+
 
     // fields
     url: string;
@@ -130,7 +130,7 @@ export interface IInfoVaultSignificantDate {
     // identification
     _id: string;
     infoVaultId: string;
-    userId: string;
+
 
     // fields
     date: Date;
@@ -149,7 +149,7 @@ export interface IInfoVaultAddress {
     // identification
     _id: string;
     infoVaultId: string;
-    userId: string;
+
 
     // fields
     countryRegion: string;

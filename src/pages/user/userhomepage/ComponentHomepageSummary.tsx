@@ -19,7 +19,6 @@ const mutedText = 'text-[11px] leading-snug font-medium text-sky-700/75';
 
 interface HomepageSummary {
     _id: string;
-    userId: string;
     generatedAtUtc: string;
     summary: string;
 }

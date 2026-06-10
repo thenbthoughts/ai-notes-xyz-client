@@ -5,7 +5,6 @@ import axiosCustom from "../../../../config/axiosCustom";
 // Interface matching the Mongoose schema
 interface IUserDeviceList {
     _id: string;
-    userId: string;
     randomDeviceId: string;
     isExpired: boolean;
     userAgent: string;

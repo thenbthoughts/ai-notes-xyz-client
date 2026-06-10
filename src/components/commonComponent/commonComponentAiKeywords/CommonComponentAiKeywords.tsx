@@ -6,7 +6,6 @@ import { Plus, RefreshCw } from 'lucide-react';
 
 interface IKeyword {
     _id: string;
-    userId: string;
     keyword: string;
     aiCategory: string;
     aiSubCategory: string;

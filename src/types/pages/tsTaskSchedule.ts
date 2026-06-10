@@ -2,7 +2,6 @@
 export interface ITaskSchedule {
     // identification
     _id: string;
-    userId: string;
 
     // required
     isActive: boolean;
