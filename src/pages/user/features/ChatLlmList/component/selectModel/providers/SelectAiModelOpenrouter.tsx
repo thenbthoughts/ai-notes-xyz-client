@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import axiosCustom from "../../../../../../../config/axiosCustom";
+import { reactSelectPortalProps } from "../reactSelectPortalProps";
 import { tsSchemaAiModelListOpenrouter } from "../../../../../../../types/pages/settings/dataModelOpenrouter";
 
 const SelectAiModelOpenrouter = ({
@@ -87,6 +88,7 @@ const SelectAiModelOpenrouter = ({
                 placeholder="Select a model..."
                 isLoading={isLoadingModel}
                 isSearchable={true}
+                {...reactSelectPortalProps}
             />
         </div>
     );

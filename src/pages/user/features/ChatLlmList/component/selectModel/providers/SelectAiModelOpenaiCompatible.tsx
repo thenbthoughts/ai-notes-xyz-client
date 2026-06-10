@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Select from "react-select";
 
 import axiosCustom from "../../../../../../../config/axiosCustom";
+import { reactSelectPortalProps } from "../reactSelectPortalProps";
 
 interface IOpenaiCompatibleModel {
     _id: string;
@@ -92,6 +93,7 @@ const SelectAiModelOpenaiCompatible = ({
                     })}
                     placeholder="Select a configuration..."
                     isSearchable={true}
+                    {...reactSelectPortalProps}
                 />
             )}
         </div>

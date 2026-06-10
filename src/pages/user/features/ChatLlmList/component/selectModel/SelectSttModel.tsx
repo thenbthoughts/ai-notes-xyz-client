@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect } from "react";
 import axiosCustom from "../../../../../../config/axiosCustom";
 import Select from "react-select";
 import { LucideExpand, LucidePlus } from "lucide-react";
+import { reactSelectPortalProps } from "./reactSelectPortalProps";
 
 export type SttModelProvider = "groq" | "openai" | "localai" | "";
 
@@ -143,6 +144,7 @@ const SelectSttModel: React.FC<SelectSttModelProps> = ({
                             options={localaiModels.map(m => ({ value: m.modelName, label: m.modelLabel || m.modelName }))}
                             placeholder="Select STT model..."
                             isSearchable={true}
+                            {...reactSelectPortalProps}
                         />
                     )}
                 </div>
