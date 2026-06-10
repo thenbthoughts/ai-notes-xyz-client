@@ -27,9 +27,6 @@ export interface IChatLlmThread {
     aiTasks: object[];
     tagsAi: string[];
 
-    // auth
-    userId: string;
-
     // auto
     createdAtUtc: Date;
     createdAtIpAddress: string;

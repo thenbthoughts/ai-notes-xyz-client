@@ -67,9 +67,6 @@ export interface ITaskScheduleTaskAdd {
 }
 
 export interface ISendMyselfEmailForm {
-    // auth
-    userId: string;
-
     // identification
     taskScheduleId: string;
 
