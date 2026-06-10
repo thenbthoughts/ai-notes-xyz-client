@@ -18,7 +18,6 @@ interface ConversationItem {
     type: string;
     content: string;
     reasoningContent: string;
-    username: string;
     tags: string[];
     visibility: string;
     fileUrl: string;

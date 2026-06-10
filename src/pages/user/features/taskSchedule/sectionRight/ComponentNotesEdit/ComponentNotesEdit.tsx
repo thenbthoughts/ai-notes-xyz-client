@@ -1032,7 +1032,6 @@ const ComponentNotesEditWrapper = ({
         subtaskArr: [],
     });
     const [formDataSendMyselfEmail, setFormDataSendMyselfEmail] = useState<ISendMyselfEmailForm>({
-        username: '',
         taskScheduleId: '',
         emailSubject: '',
         emailContent: '',

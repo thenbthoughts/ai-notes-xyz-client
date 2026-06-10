@@ -100,16 +100,16 @@ const OpencodeApiKey = () => {
 
             <div className="mt-3">
                 <label htmlFor="opencodeUsername" className="block text-gray-700 font-bold mb-2">
-                    Username (Basic auth)
+                    User ID (Basic auth)
                 </label>
                 <input
                     type="text"
                     id="opencodeUsername"
                     className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    placeholder="OpenCode basic auth username"
+                    placeholder="OpenCode basic auth userId"
                     value={opencodeUsername}
                     onChange={(e) => setOpencodeUsername(e.target.value)}
-                    autoComplete="username"
+                    autoComplete="userId"
                 />
             </div>
 

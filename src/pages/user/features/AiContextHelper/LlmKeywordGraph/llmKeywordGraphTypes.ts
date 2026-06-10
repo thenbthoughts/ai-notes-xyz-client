@@ -9,7 +9,6 @@ export enum MetadataSourceType {
 // Frontend interface mirroring the Mongoose Schema
 export interface ILlmContextKeyword {
     _id: string; // Mapped from ObjectId
-    username: string;
     keyword: string;
     aiCategory: string;
     aiSubCategory: string;

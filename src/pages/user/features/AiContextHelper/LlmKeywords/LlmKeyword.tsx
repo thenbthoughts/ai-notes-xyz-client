@@ -4,7 +4,6 @@ import axiosCustom from '../../../../../config/axiosCustom';
 
 interface ILlmContextKeyword {
     _id: string;
-    username: string;
     keyword: string;
     aiCategory: string;
     aiSubCategory: string;

@@ -116,7 +116,7 @@ const OpencodeWithShellApiKey = () => {
 
                 <div className="mt-3">
                     <label htmlFor="opencodeWithShellBasicUser" className="block text-gray-700 font-bold mb-2">
-                        Username (Basic auth, shared with OpenCode)
+                        User ID (Basic auth, shared with OpenCode)
                     </label>
                     <input
                         type="text"
@@ -124,7 +124,7 @@ const OpencodeWithShellApiKey = () => {
                         className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={opencodeUsername}
                         onChange={(e) => setOpencodeUsername(e.target.value)}
-                        autoComplete="username"
+                        autoComplete="userId"
                     />
                 </div>
 

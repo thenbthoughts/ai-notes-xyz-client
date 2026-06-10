@@ -1,7 +1,6 @@
 export interface tsLifeEventsItem {
     // identification
     _id: string;
-    username: string;
 
     // fields
     title: string;

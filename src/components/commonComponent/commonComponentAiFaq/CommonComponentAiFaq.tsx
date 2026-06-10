@@ -6,7 +6,6 @@ import { RefreshCw } from 'lucide-react';
 
 interface IFaq {
     _id: string;
-    username: string;
     question: string;
     answer: string;
     aiCategory: string;

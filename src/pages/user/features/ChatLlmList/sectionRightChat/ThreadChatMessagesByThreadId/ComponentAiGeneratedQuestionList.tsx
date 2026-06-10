@@ -32,7 +32,7 @@ const ComponentAiGeneratedQuestionList = ({
         aiSummary: '',
         aiTasks: [],
         tagsAi: [],
-        username: '',
+
         createdAtUtc: new Date(),
         createdAtIpAddress: '',
         createdAtUserAgent: '',
@@ -107,7 +107,7 @@ const ComponentAiGeneratedQuestionList = ({
                 aiSummary: '',
                 aiTasks: [],
                 tagsAi: [],
-                username: '',
+        
                 createdAtUtc: new Date(),
                 createdAtIpAddress: '',
                 createdAtUserAgent: '',

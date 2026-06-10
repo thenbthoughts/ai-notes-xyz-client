@@ -40,9 +40,6 @@ export interface tsPageTask {
     taskWorkspaceId: string;
     taskStatusId: string;
 
-    // auth
-    username: string;
-
     // auto
     dateTimeUtc: Date;
     userAgent: string;
@@ -64,9 +61,6 @@ export interface tsPageTask {
         parentTaskId: string;
         taskCompletedStatus: boolean;
         taskPosition: number;
-
-        // auth
-        username: string;
     }[];
 }
 

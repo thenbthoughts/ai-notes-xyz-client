@@ -2,7 +2,6 @@
 export interface INotes extends Document {
     // identification
     _id: string;
-    username: string;
     notesWorkspaceId: string;
 
     // fields

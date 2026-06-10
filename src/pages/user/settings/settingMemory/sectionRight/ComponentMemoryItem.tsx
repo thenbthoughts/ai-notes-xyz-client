@@ -6,7 +6,6 @@ import { LucideEdit, LucideTrash2, LucideLock, LucideUnlock, LucideSave, LucideX
 
 interface IUserMemory {
     _id: string;
-    username: string;
     content: string;
     isPermanent: boolean;
     createdAtUtc: string | null;

@@ -27,8 +27,9 @@ const createTodoCardFromSubtask = async ({
             throw new Error('Task not found');
         }
 
+        const { userId: _omitUserId, ...taskWithoutUserId } = task;
         const newTask = {
-            ...task,
+            ...taskWithoutUserId,
             title: `${task.title} - ${subTaskTitle}`,
             isArchived: false,
             isCompleted: false,

@@ -478,7 +478,7 @@ const Setting = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [emailVerified, setEmailVerified] = useState(false);
-    const [username, setUsername] = useState(""); // Added username state
+    const [username, setUsername] = useState(""); // username (formerly user identifier)
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [profilePictureLink, setProfilePictureLink] = useState("");
     const [bio, setBio] = useState("");
@@ -513,7 +513,7 @@ const Setting = () => {
             setName(response.data.name);
             setEmail(response.data.email);
             setEmailVerified(response.data.emailVerified);
-            setUsername(response.data.username); // Set username from response
+            setUsername(response.data.username || response.data.userId || response.data._id || ''); // Set username from response
             setDateOfBirth(response.data.dateOfBirth);
             setProfilePictureLink(response.data.profilePictureLink);
             setLanguages(response.data?.languages || []);
