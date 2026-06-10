@@ -41,7 +41,7 @@ export interface tsPageTask {
     taskStatusId: string;
 
     // auth
-    username: string;
+    userId: string;
 
     // auto
     dateTimeUtc: Date;
@@ -66,7 +66,7 @@ export interface tsPageTask {
         taskPosition: number;
 
         // auth
-        username: string;
+        userId: string;
     }[];
 }
 

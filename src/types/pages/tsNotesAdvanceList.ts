@@ -78,7 +78,7 @@ export interface tsMessageItem {
     type: string;
     content: string;
     reasoningContent: string;
-    username: string;
+    userId: string;
     tags: string[];
     visibility: string;
     fileUrlArr: string[];

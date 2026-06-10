@@ -6,7 +6,7 @@ import { useAtomValue } from 'jotai';
 
 interface OllamaModel {
     _id: string;
-    username: string;
+    userId: string;
     modelLabel: string;
     modelName: string;
     isInputModalityText: 'true' | 'false' | 'pending';

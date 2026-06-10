@@ -2,7 +2,7 @@
 export interface ITaskSchedule {
     // identification
     _id: string;
-    username: string;
+    userId: string;
 
     // required
     isActive: boolean;
@@ -68,7 +68,7 @@ export interface ITaskScheduleTaskAdd {
 
 export interface ISendMyselfEmailForm {
     // auth
-    username: string;
+    userId: string;
 
     // identification
     taskScheduleId: string;

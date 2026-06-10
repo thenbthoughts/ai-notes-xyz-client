@@ -21,7 +21,7 @@ interface TaskInfo {
     taskStatus?: string;
     labels: string[];
     labelsAi: string[];
-    username: string;
+    userId: string;
     dateTimeUtc: string;
     userAgent: string;
     createdAtIpAddress: string;
@@ -41,7 +41,7 @@ interface TaskInfo {
 
 interface NotesInfo {
     _id: string;
-    username: string;
+    userId: string;
     notesWorkspaceId: string;
     title: string;
     description: string;
@@ -62,7 +62,7 @@ interface NotesInfo {
 
 interface MemoInfo {
     _id: string;
-    username: string;
+    userId: string;
     title: string;
     body: string;
     labelIds?: string[];
@@ -77,7 +77,7 @@ interface MemoInfo {
 
 interface LifeEventInfo {
     _id: string;
-    username: string;
+    userId: string;
     title: string;
     description: string;
     categoryId: string | null;

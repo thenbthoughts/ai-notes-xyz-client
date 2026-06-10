@@ -10,7 +10,7 @@ const perPage = 20;
 
 interface IUserMemory {
     _id: string;
-    username: string;
+    userId: string;
     content: string;
     isPermanent: boolean;
     createdAtUtc: string | null;

@@ -274,7 +274,7 @@ const ExportGraph = () => {
     const generateMockData: ILlmContextKeyword[] = [
         {
             _id: '65f1a2b3c4d5e6f7a8b9c0d1',
-            username: 'dev_user',
+            userId: 'dev_user',
             keyword: 'Next.js 14 Server Actions',
             aiCategory: 'Technology',
             aiSubCategory: 'Web Development',
@@ -288,7 +288,7 @@ const ExportGraph = () => {
         },
         {
             _id: '65f1a2b3c4d5e6f7a8b9c0d2',
-            username: 'dev_user',
+            userId: 'dev_user',
             keyword: 'Q3 Financial Review',
             aiCategory: 'Business',
             aiSubCategory: 'Finance',
@@ -302,7 +302,7 @@ const ExportGraph = () => {
         },
         {
             _id: '65f1a2b3c4d5e6f7a8b9c0d3',
-            username: 'dev_user',
+            userId: 'dev_user',
             keyword: 'Docker Containerization',
             aiCategory: 'Technology',
             aiSubCategory: 'DevOps',
@@ -316,7 +316,7 @@ const ExportGraph = () => {
         },
         {
             _id: '65f1a2b3c4d5e6f7a8b9c0d4',
-            username: 'dev_user',
+            userId: 'dev_user',
             keyword: 'Weekend trip to Kyoto',
             aiCategory: 'Personal',
             aiSubCategory: 'Travel',
@@ -330,7 +330,7 @@ const ExportGraph = () => {
         },
         {
             _id: '65f1a2b3c4d5e6f7a8b9c0d5',
-            username: 'dev_user',
+            userId: 'dev_user',
             keyword: 'Debugging Python asyncio',
             aiCategory: 'Technology',
             aiSubCategory: 'Programming',
@@ -344,7 +344,7 @@ const ExportGraph = () => {
         },
         {
             _id: '65f1a2b3c4d5e6f7a8b9c0d6',
-            username: 'dev_user',
+            userId: 'dev_user',
             keyword: 'Vegan Lasagna Recipe',
             aiCategory: 'Personal',
             aiSubCategory: 'Food',
@@ -358,7 +358,7 @@ const ExportGraph = () => {
         },
         {
             _id: '65f1a2b3c4d5e6f7a8b9c0d7',
-            username: 'dev_user',
+            userId: 'dev_user',
             keyword: 'AWS Lambda Cold Starts',
             aiCategory: 'Technology',
             aiSubCategory: 'Cloud',

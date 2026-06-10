@@ -18,7 +18,7 @@ interface ConversationItem {
     type: string;
     content: string;
     reasoningContent: string;
-    username: string;
+    userId: string;
     tags: string[];
     visibility: string;
     fileUrl: string;

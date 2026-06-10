@@ -17,7 +17,7 @@ const MODEL_TYPE_OPTIONS: { value: LocalaiModelType; label: string }[] = [
 
 interface LocalaiModel {
     _id: string;
-    username: string;
+    userId: string;
     modelLabel: string;
     modelName: string;
     modelType: LocalaiModelType;

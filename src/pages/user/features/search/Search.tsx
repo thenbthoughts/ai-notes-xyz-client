@@ -19,7 +19,7 @@ interface TaskInfo {
     taskStatus?: string;
     labels: string[];
     labelsAi: string[];
-    username: string;
+    userId: string;
     dateTimeUtc: string;
     userAgent: string;
     createdAtIpAddress: string;
@@ -39,7 +39,7 @@ interface TaskInfo {
 
 interface NotesInfo {
     _id: string;
-    username: string;
+    userId: string;
     notesWorkspaceId: string;
     title: string;
     description: string;
@@ -61,7 +61,7 @@ interface NotesInfo {
 
 interface LifeEventInfo {
     _id: string;
-    username: string;
+    userId: string;
     title: string;
     description: string;
     categoryId: string | null;
@@ -89,7 +89,7 @@ interface LifeEventInfo {
 
 interface ChatLlmThreadInfo {
     _id: string;
-    username: string;
+    userId: string;
     threadTitle: string;
     systemPrompt: string;
     tagsAi: string[];
@@ -100,7 +100,7 @@ interface ChatLlmThreadInfo {
 
 interface InfoVaultInfo {
     _id: string;
-    username: string;
+    userId: string;
     title: string;
     content: string;
     tags: string[];
@@ -111,7 +111,7 @@ interface InfoVaultInfo {
 
 interface MemoInfo {
     _id: string;
-    username: string;
+    userId: string;
     title: string;
     body: string;
     labelIds?: string[];

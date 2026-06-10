@@ -478,7 +478,7 @@ const Setting = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [emailVerified, setEmailVerified] = useState(false);
-    const [username, setUsername] = useState(""); // Added username state
+    const [userId, setUserId] = useState(""); // user identifier (formerly username)
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [profilePictureLink, setProfilePictureLink] = useState("");
     const [bio, setBio] = useState("");
@@ -513,7 +513,7 @@ const Setting = () => {
             setName(response.data.name);
             setEmail(response.data.email);
             setEmailVerified(response.data.emailVerified);
-            setUsername(response.data.username); // Set username from response
+            setUserId(response.data._id || response.data.userId || ''); // Set userId (_id ref) from response
             setDateOfBirth(response.data.dateOfBirth);
             setProfilePictureLink(response.data.profilePictureLink);
             setLanguages(response.data?.languages || []);
@@ -577,14 +577,14 @@ const Setting = () => {
         return (
             <div>
                 <div className="mb-4">
-                    <label htmlFor="username" className="block text-gray-700 font-bold mb-2">
-                        Username
+                    <label htmlFor="userId" className="block text-gray-700 font-bold mb-2">
+                        User ID
                     </label>
                     <input
                         type="text"
-                        id="username"
+                        id="userId"
                         className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        value={username}
+                        value={userId}
                         disabled // Input is disabled
                     />
                 </div>
