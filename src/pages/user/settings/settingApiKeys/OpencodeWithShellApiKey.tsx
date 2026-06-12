@@ -87,11 +87,9 @@ const OpencodeWithShellApiKey = () => {
                     )}
                 </div>
                 <p className="text-sm text-gray-600 mb-3">
-                    Set the OpenCode server URL for this integration and HTTP Basic credentials (same fields as the
-                    standalone <strong>OpenCode</strong> provider — they are saved as{' '}
+                    Set the OpenCode server URL for this integration and HTTP Basic credentials (saved as{' '}
                     <code className="bg-gray-100 px-1 rounded">opencodeUsername</code> and{' '}
-                    <code className="bg-gray-100 px-1 rounded">opencodePassword</code>,
-                    not as separate with-shell columns). Add <strong>ai-notes-xyz-shell</strong>: origin only
+                    <code className="bg-gray-100 px-1 rounded">opencodePassword</code>). Add <strong>ai-notes-xyz-shell</strong>: origin only
                     (no <code className="bg-gray-100 px-1 rounded">/api</code> path) and API token (
                     <code className="bg-gray-100 px-1 rounded">X-API-Token</code>).
                     OpenCode <code className="bg-gray-100 px-1 rounded">GET /global/health</code> and shell{' '}

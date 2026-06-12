@@ -13,7 +13,6 @@ export type ApiKeyType =
   | 'smtp'
   | 'telegram'
   | 'shellEngine'
-  | 'opencode'
   | 'opencodeWithShell';
 
 /**

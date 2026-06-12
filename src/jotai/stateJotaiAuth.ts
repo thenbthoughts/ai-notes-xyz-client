@@ -16,7 +16,6 @@ export type AuthState = {
     smtpValid: boolean;
     telegramValid: boolean;
     shellEngineValid: boolean;
-    apiKeyOpencodeValid: boolean;
     apiKeyOpencodeWithShellValid: boolean;
 
     clientFrontendUrl: string;
@@ -38,7 +37,6 @@ const stateJotaiAuthAtom = atom<AuthState>({
     smtpValid: false,
     telegramValid: false,
     shellEngineValid: false,
-    apiKeyOpencodeValid: false,
     apiKeyOpencodeWithShellValid: false,
 
     clientFrontendUrl: '',

@@ -19,10 +19,9 @@ import TelegramSettings from "./TelegramSettings";
 import FileStorageType from "./FileStorageType";
 import ClientFrontendUrl from "./ClientFrontendUrl";
 import ShellEngineApiKey from "./ShellEngineApiKey";
-import OpencodeApiKey from "./OpencodeApiKey";
 import OpencodeWithShellApiKey from "./OpencodeWithShellApiKey";
 
-type SelectionType = 'groq' | 'openrouter' | 's3' | 'ollama' | 'qdrant' | 'replicate' | 'runpod' | 'openai' | 'localai' | 'smtp' | 'telegram' | 'shellEngine' | 'opencode' | 'opencodeWithShell' | 'fileStorage' | 'clientUrl' | null;
+type SelectionType = 'groq' | 'openrouter' | 's3' | 'ollama' | 'qdrant' | 'replicate' | 'runpod' | 'openai' | 'localai' | 'smtp' | 'telegram' | 'shellEngine' | 'opencodeWithShell' | 'fileStorage' | 'clientUrl' | null;
 
 const SettingApiKey = () => {
     const [selectedOption, setSelectedOption] = useState<SelectionType>(null);
@@ -35,7 +34,6 @@ const SettingApiKey = () => {
         { key: 'localai' as const, label: 'LocalAI', type: 'api' },
         { key: 'ollama' as const, label: 'Ollama', type: 'api' },
         { key: 'openai' as const, label: 'OpenAI', type: 'api' },
-        { key: 'opencode' as const, label: 'OpenCode', type: 'api' },
         { key: 'opencodeWithShell' as const, label: 'OpenCode with Shell', type: 'api' },
         { key: 'openrouter' as const, label: 'OpenRouter', type: 'api' },
         { key: 'qdrant' as const, label: 'Qdrant', type: 'api' },
@@ -89,8 +87,6 @@ const SettingApiKey = () => {
                                     isValid = authState.telegramValid;
                                 } else if (option.key === 'shellEngine') {
                                     isValid = authState.shellEngineValid;
-                                } else if (option.key === 'opencode') {
-                                    isValid = authState.apiKeyOpencodeValid;
                                 } else if (option.key === 'opencodeWithShell') {
                                     isValid = authState.apiKeyOpencodeWithShellValid;
                                 } else {
@@ -136,7 +132,6 @@ const SettingApiKey = () => {
                     {selectedOption === 'smtp' && <SmtpSettings />}
                     {selectedOption === 'telegram' && <TelegramSettings />}
                     {selectedOption === 'shellEngine' && <ShellEngineApiKey />}
-                    {selectedOption === 'opencode' && <OpencodeApiKey />}
                     {selectedOption === 'opencodeWithShell' && <OpencodeWithShellApiKey />}
                     {selectedOption === 'clientUrl' && <ClientFrontendUrl />}
                     {selectedOption === null && (
