@@ -142,15 +142,6 @@ const ComponentApiKeySet = () => {
             required: false,
         },
         {
-            name: 'OpenCode',
-            key: 'apiKeyOpencodeValid',
-            valid: authState.apiKeyOpencodeValid,
-            icon: Braces,
-            description: 'OpenCode HTTP API (Basic auth + health)',
-            color: 'indigo',
-            required: false,
-        },
-        {
             name: 'OpenCode with Shell',
             key: 'apiKeyOpencodeWithShellValid',
             valid: authState.apiKeyOpencodeWithShellValid,

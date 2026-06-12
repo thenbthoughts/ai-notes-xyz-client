@@ -6,11 +6,11 @@ import axiosCustom from "../../../../config/axiosCustom";
 import { useApiKeyClear } from "./utils/useApiKeyClear";
 
 const OpencodeWithShellApiKey = () => {
-    const [opencodeWithShellUrl, setOpencodeWithShellUrl] = useState("");
+    const [opencodeUrl, setOpencodeUrl] = useState("");
     const [opencodeUsername, setOpencodeUsername] = useState("");
     const [opencodePassword, setOpencodePassword] = useState("");
-    const [opencodeWithShellShellUrl, setOpencodeWithShellShellUrl] = useState("");
-    const [opencodeWithShellShellToken, setOpencodeWithShellShellToken] = useState("");
+    const [opencodeWithCustomShellUrl, setOpencodeWithCustomShellUrl] = useState("");
+    const [opencodeWithCustomShellToken, setOpencodeWithCustomShellToken] = useState("");
 
     const [requestState, setRequestState] = useState({
         loading: false,
@@ -30,11 +30,11 @@ const OpencodeWithShellApiKey = () => {
             await axiosCustom.post(
                 `/api/user/api-keys/updateUserApiOpencodeWithShell`,
                 {
-                    opencodeWithShellUrl,
+                    opencodeUrl,
                     opencodeUsername,
                     opencodePassword,
-                    opencodeWithShellShellUrl,
-                    opencodeWithShellShellToken,
+                    opencodeWithCustomShellUrl,
+                    opencodeWithCustomShellToken,
                 },
                 {
                     headers: {
@@ -87,11 +87,9 @@ const OpencodeWithShellApiKey = () => {
                     )}
                 </div>
                 <p className="text-sm text-gray-600 mb-3">
-                    Set the OpenCode server URL for this integration and HTTP Basic credentials (same fields as the
-                    standalone <strong>OpenCode</strong> provider — they are saved as{' '}
+                    Set the OpenCode server URL for this integration and HTTP Basic credentials (saved as{' '}
                     <code className="bg-gray-100 px-1 rounded">opencodeUsername</code> and{' '}
-                    <code className="bg-gray-100 px-1 rounded">opencodePassword</code>,
-                    not as separate with-shell columns). Add <strong>ai-notes-xyz-shell</strong>: origin only
+                    <code className="bg-gray-100 px-1 rounded">opencodePassword</code>). Add <strong>ai-notes-xyz-shell</strong>: origin only
                     (no <code className="bg-gray-100 px-1 rounded">/api</code> path) and API token (
                     <code className="bg-gray-100 px-1 rounded">X-API-Token</code>).
                     OpenCode <code className="bg-gray-100 px-1 rounded">GET /global/health</code> and shell{' '}
@@ -102,16 +100,16 @@ const OpencodeWithShellApiKey = () => {
 
             <div className="border-t border-gray-200 pt-4 mt-4">
                 <h4 className="text-sm font-semibold text-gray-800 mb-2">OpenCode</h4>
-                <label htmlFor="opencodeWithShellUrl" className="block text-gray-700 font-bold mb-2">
+                <label htmlFor="opencodeUrl" className="block text-gray-700 font-bold mb-2">
                     OpenCode URL
                 </label>
                 <input
                     type="text"
-                    id="opencodeWithShellUrl"
+                    id="opencodeUrl"
                     className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     placeholder="https://your-opencode-host/"
-                    value={opencodeWithShellUrl}
-                    onChange={(e) => setOpencodeWithShellUrl(e.target.value)}
+                    value={opencodeUrl}
+                    onChange={(e) => setOpencodeUrl(e.target.value)}
                 />
 
                 <div className="mt-3">
@@ -145,29 +143,29 @@ const OpencodeWithShellApiKey = () => {
 
             <div className="border-t border-gray-200 pt-4 mt-4">
                 <h4 className="text-sm font-semibold text-gray-800 mb-2">Shell execute</h4>
-                <label htmlFor="opencodeWithShellShellUrl" className="block text-gray-700 font-bold mb-2">
+                <label htmlFor="opencodeWithCustomShellUrl" className="block text-gray-700 font-bold mb-2">
                     Shell service URL
                 </label>
                 <input
                     type="text"
-                    id="opencodeWithShellShellUrl"
+                    id="opencodeWithCustomShellUrl"
                     className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     placeholder="http://localhost:2001/"
-                    value={opencodeWithShellShellUrl}
-                    onChange={(e) => setOpencodeWithShellShellUrl(e.target.value)}
+                    value={opencodeWithCustomShellUrl}
+                    onChange={(e) => setOpencodeWithCustomShellUrl(e.target.value)}
                 />
 
                 <div className="mt-3">
-                    <label htmlFor="opencodeWithShellShellToken" className="block text-gray-700 font-bold mb-2">
+                    <label htmlFor="opencodeWithCustomShellToken" className="block text-gray-700 font-bold mb-2">
                         API token
                     </label>
                     <input
                         type="password"
-                        id="opencodeWithShellShellToken"
+                        id="opencodeWithCustomShellToken"
                         className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         placeholder="Same value as API_TOKEN on the shell server"
-                        value={opencodeWithShellShellToken}
-                        onChange={(e) => setOpencodeWithShellShellToken(e.target.value)}
+                        value={opencodeWithCustomShellToken}
+                        onChange={(e) => setOpencodeWithCustomShellToken(e.target.value)}
                         autoComplete="off"
                     />
                 </div>

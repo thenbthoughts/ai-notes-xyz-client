@@ -23,6 +23,10 @@ const ComponentThreadAdd = () => {
         executeShell: false,
     });
 
+    const isShellValid = formData.answerEngine === 'answerMachine4'
+        ? authState.apiKeyOpencodeWithShellValid
+        : authState.shellEngineValid;
+
     const [answerMachineMinNumberOfIterations, setAnswerMachineMinNumberOfIterations] = useState<number>(1);
     const [answerMachineMaxNumberOfIterations, setAnswerMachineMaxNumberOfIterations] = useState<number>(7);
 
@@ -201,7 +205,13 @@ const ComponentThreadAdd = () => {
                                         name="answerEngine"
                                         value="conciseAnswer"
                                         checked={formData.answerEngine === "conciseAnswer"}
-                                        onChange={() => setFormData({ ...formData, answerEngine: "conciseAnswer" })}
+                                        onChange={() => {
+                                            setFormData({
+                                                ...formData,
+                                                answerEngine: "conciseAnswer",
+                                                executeShell: formData.executeShell && authState.shellEngineValid
+                                            });
+                                        }}
                                     />
                                     <Tooltip
                                         placement="top"
@@ -231,7 +241,13 @@ const ComponentThreadAdd = () => {
                                         name="answerEngine"
                                         value="answerMachine4"
                                         checked={formData.answerEngine === 'answerMachine4'}
-                                        onChange={() => setFormData({ ...formData, answerEngine: 'answerMachine4' })}
+                                        onChange={() => {
+                                            setFormData({
+                                                ...formData,
+                                                answerEngine: 'answerMachine4',
+                                                executeShell: formData.executeShell && authState.apiKeyOpencodeWithShellValid
+                                            });
+                                        }}
                                     />
                                     <span className="ml-2 text-sm text-gray-700 flex items-center">
                                         <Tooltip
@@ -267,14 +283,14 @@ const ComponentThreadAdd = () => {
                                 type="checkbox"
                                 className="rounded border-zinc-300 text-teal-600 focus:ring-teal-500"
                                 checked={formData.executeShell}
-                                disabled={!authState.shellEngineValid}
+                                disabled={!isShellValid}
                                 onChange={(e) => setFormData({ ...formData, executeShell: e.target.checked })}
                             />
                             <span className="text-sm text-zinc-800">Execute shell</span>
                         </label>
-                        {!authState.shellEngineValid && (
+                        {!isShellValid && (
                             <p className="text-xs text-zinc-500">
-                                Configure Shell execute in{' '}
+                                Configure {formData.answerEngine === 'answerMachine4' ? 'OpenCode with Shell' : 'Shell execute'} in{' '}
                                 <Link to="/user/setting/api-key" className="text-teal-600 underline">
                                     API Keys
                                 </Link>{' '}
@@ -287,7 +303,7 @@ const ComponentThreadAdd = () => {
                             </p>
                         )}
                         {formData.executeShell &&
-                            authState.shellEngineValid && (
+                            isShellValid && (
                             <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 <div>
                                     <label className="block text-sm text-zinc-700 mb-1">
