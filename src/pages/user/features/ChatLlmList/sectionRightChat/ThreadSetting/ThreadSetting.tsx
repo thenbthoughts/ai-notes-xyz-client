@@ -167,6 +167,10 @@ const ThreadSetting = ({
     }
 
     const renderMain = () => {
+        const isShellValid = formData.answerEngine === 'answerMachine4'
+            ? authState.apiKeyOpencodeWithShellValid
+            : authState.shellEngineValid;
+
         return (
             <div className="p-1 lg:p-2">
                 <div className="flex flex-col h-full">
@@ -299,7 +303,13 @@ const ThreadSetting = ({
                                                 name="answerEngine"
                                                 value="conciseAnswer"
                                                 checked={formData.answerEngine === "conciseAnswer"}
-                                                onChange={() => setFormData({ ...formData, answerEngine: "conciseAnswer" })}
+                                                onChange={() => {
+                                                    setFormData({
+                                                        ...formData,
+                                                        answerEngine: "conciseAnswer",
+                                                        executeShell: formData.executeShell && authState.shellEngineValid
+                                                    });
+                                                }}
                                             />
                                             <Tooltip
                                                 placement="top"
@@ -329,7 +339,13 @@ const ThreadSetting = ({
                                                 name="answerEngine"
                                                 value="answerMachine4"
                                                 checked={formData.answerEngine === 'answerMachine4'}
-                                                onChange={() => setFormData({ ...formData, answerEngine: 'answerMachine4' })}
+                                                onChange={() => {
+                                                    setFormData({
+                                                        ...formData,
+                                                        answerEngine: 'answerMachine4',
+                                                        executeShell: formData.executeShell && authState.apiKeyOpencodeWithShellValid
+                                                    });
+                                                }}
                                             />
                                             <span className="ml-2 text-sm text-gray-700 flex items-center">
                                                 <Tooltip
@@ -365,14 +381,14 @@ const ThreadSetting = ({
                                         type="checkbox"
                                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                         checked={formData.executeShell}
-                                        disabled={!authState.shellEngineValid}
+                                        disabled={!isShellValid}
                                         onChange={(e) => setFormData({ ...formData, executeShell: e.target.checked })}
                                     />
                                     <span className="text-sm text-gray-800">Execute shell</span>
                                 </label>
-                                {!authState.shellEngineValid && (
+                                {!isShellValid && (
                                     <p className="text-xs text-gray-500">
-                                        Configure Shell execute in{' '}
+                                        Configure {formData.answerEngine === 'answerMachine4' ? 'OpenCode with Shell' : 'Shell execute'} in{' '}
                                         <Link to="/user/setting/api-key" className="text-blue-600 underline">
                                             API Keys
                                         </Link>{' '}
@@ -384,7 +400,7 @@ const ThreadSetting = ({
                                         Shell runs before Answer Machine 4 starts, using the same shell service as Concise.
                                     </p>
                                 )}
-                                {formData.executeShell && authState.shellEngineValid && (
+                                {formData.executeShell && isShellValid && (
                                     <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -473,7 +489,7 @@ const ThreadSetting = ({
                                     </div>
                                 )}
                             </div>
-                            
+
                             {/* Answer Machine Iterations Setting */}
                             {formData.answerEngine === 'answerMachine4' && (
                                 <div className="mt-3 space-y-3">
