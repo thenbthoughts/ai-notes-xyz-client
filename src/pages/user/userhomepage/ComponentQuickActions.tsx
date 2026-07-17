@@ -4,7 +4,6 @@ import {
     LucideChevronDown,
     LucideFileText,
     LucideListTodo,
-    LucidePlus,
     LucideBookOpen,
     LucideHeart,
     LucideCalendar,
@@ -19,6 +18,7 @@ import { infoVaultAddAxios } from '../features/InfoVault/utils/infoVaultListAxio
 import { lifeEventAddAxios } from '../features/LifeEventsList/utils/lifeEventsListAxios';
 import toast from 'react-hot-toast';
 import axiosCustom from '../../../config/axiosCustom';
+import ComponentQuickActionAiChat from './ComponentQuickActionAiChat';
 
 const panel =
     'rounded-2xl border-2 border-sky-200/80 bg-white/90 p-2.5 shadow-md shadow-sky-200/25 backdrop-blur-sm transition hover:shadow-lg hover:shadow-sky-200/40';
@@ -31,7 +31,6 @@ const chipAction =
 
 const QuickActionsComponent = () => {
     const [isActionsExpanded, setIsActionsExpanded] = useState(true);
-    const [isAddThreadLoading, setIsAddThreadLoading] = useState(false);
 
     const navigate = useNavigate();
 
@@ -52,46 +51,6 @@ const QuickActionsComponent = () => {
             navigate(`/user/task?workspace=${result.workspaceId}&edit-task-id=${result.recordId}`);
         } else {
             toast.error(result.error);
-        }
-    };
-
-    const addNewThread = async () => {
-        setIsAddThreadLoading(true);
-        try {
-            let aiModelProvider: 'openrouter' | 'groq' | 'ollama' | 'openai-compatible' = 'openrouter';
-            let aiModelName = 'openrouter/auto';
-            let aiModelOpenAiCompatibleConfigId: string | null = null;
-
-            try {
-                const lastUsedResponse = await axiosCustom.get('/api/chat-llm/threads-crud/lastUsedLlmModel');
-                if (lastUsedResponse.data.model) {
-                    aiModelProvider = lastUsedResponse.data.model.aiModelProvider;
-                    aiModelName = lastUsedResponse.data.model.aiModelName;
-                    aiModelOpenAiCompatibleConfigId =
-                        lastUsedResponse.data.model.aiModelOpenAiCompatibleConfigId || null;
-                }
-            } catch (error) {
-                console.error('Error fetching last used model:', error);
-            }
-
-            const result = await axiosCustom.post('/api/chat-llm/threads-crud/threadsAdd', {
-                isPersonalContextEnabled: false,
-                isAutoAiContextSelectEnabled: false,
-                aiModelProvider: aiModelProvider,
-                aiModelName: aiModelName,
-                aiModelOpenAiCompatibleConfigId: aiModelOpenAiCompatibleConfigId,
-            });
-
-            const tempThreadId = result?.data?.thread?._id;
-            if (tempThreadId && typeof tempThreadId === 'string') {
-                navigate(`/user/chat?id=${tempThreadId}`);
-            }
-
-            toast.success('New thread added successfully!');
-        } catch (error) {
-            alert('Error adding new thread: ' + error);
-        } finally {
-            setIsAddThreadLoading(false);
         }
     };
 
@@ -283,17 +242,8 @@ const QuickActionsComponent = () => {
                 </button>
             </div>
 
-            {isActionsExpanded && (
-                <div className="flex flex-wrap gap-1.5">
-                    <button
-                        type="button"
-                        onClick={() => addNewThread()}
-                        disabled={isAddThreadLoading}
-                        className={chipAction}
-                    >
-                        <LucidePlus className="h-3.5 w-3.5" strokeWidth={2} />
-                        AI chat
-                    </button>
+            <div className={`flex flex-wrap gap-1.5 ${isActionsExpanded ? '' : 'hidden'}`}>
+                    <ComponentQuickActionAiChat />
                     <button
                         type="button"
                         onClick={() => notesQuickDailyNotesAddAxiosLocal()}
@@ -335,7 +285,6 @@ const QuickActionsComponent = () => {
                         About today
                     </button>
                 </div>
-            )}
         </div>
     );
 };
