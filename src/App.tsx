@@ -60,6 +60,7 @@ const CalendarWrapper = lazy(() => import("./pages/user/features/Calendar/Calend
 const FinanceWrapper = lazy(() => import("./pages/user/features/Finance/FinanceWrapper.tsx"));
 const TaskScheduleWrapper = lazy(() => import("./pages/user/features/taskSchedule/TaskScheduleWrapper.tsx"));
 const TimelineWrapper = lazy(() => import("./pages/user/features/Timeline/TimelineWrapper.tsx"));
+const TimelineFilesWrapper = lazy(() => import("./pages/user/features/Timeline/TimelineFilesWrapper.tsx"));
 
 // pages -> test
 const TestDevWrapper = lazy(() => import("./pages/test/testDev/TestDevWrapper.tsx"));
@@ -241,6 +242,14 @@ function App() {
           element: (
             <UnauthorizedRoute>
               <TimelineWrapper />
+            </UnauthorizedRoute>
+          ),
+        },
+        {
+          path: "/user/timeline/files",
+          element: (
+            <UnauthorizedRoute>
+              <TimelineFilesWrapper />
             </UnauthorizedRoute>
           ),
         },

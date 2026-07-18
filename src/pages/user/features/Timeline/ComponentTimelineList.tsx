@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios, { CancelTokenSource } from 'axios';
 import { TimelineItem, timelineGetAxios } from './utils/timelineAxios.ts';
 import ComponentTimelineItem from './ComponentTimelineItem.tsx';
+import ComponentTimelineTabs from './ComponentTimelineTabs.tsx';
 import ReactPaginate from 'react-paginate';
 
 const perPage = 30;
@@ -64,7 +65,7 @@ const ComponentTimelineList = ({
             return null;
         }
         return (
-            <div className="mb-2 text-[10px] text-gray-500">
+            <div className="mb-2 text-[10px] font-medium text-zinc-600">
                 {totalCount} items
             </div>
         );
@@ -116,9 +117,10 @@ const ComponentTimelineList = ({
         <div
             className="p-2"
         >
-            <div className="mb-3 pb-1.5 border-b border-gray-200">
+            <div className="mb-1">
                 <h1 className="text-sm font-semibold text-gray-900">Timeline</h1>
             </div>
+            <ComponentTimelineTabs />
 
             {renderCount()}
 
