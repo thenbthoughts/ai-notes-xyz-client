@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { LucideChevronRight, LucideHome } from 'lucide-react';
+import { LucideChevronRight, LucideHardDrive } from 'lucide-react';
 import { jotaiDriveCurrentPath } from '../stateJotai/driveStateJotai';
 
 const DriveBreadcrumbs = () => {
@@ -17,28 +17,41 @@ const DriveBreadcrumbs = () => {
     };
 
     return (
-        <div className="flex items-center gap-1 text-sm text-gray-600 mb-4">
+        <nav className="flex flex-wrap items-center gap-0.5 text-sm" aria-label="Breadcrumb">
             <button
+                type="button"
                 onClick={() => navigateToPath(-1)}
-                className="flex items-center gap-1 px-2 py-1 rounded-sm hover:bg-gray-100 transition"
+                className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-medium transition ${
+                    pathParts.length === 0
+                        ? 'bg-sky-50 text-sky-800'
+                        : 'text-slate-600 hover:bg-slate-100'
+                }`}
             >
-                <LucideHome size={16} />
-                <span>Home</span>
+                <LucideHardDrive size={16} />
+                My Drive
             </button>
-            {pathParts.map((part, index) => (
-                <div key={index} className="flex items-center gap-1">
-                    <LucideChevronRight size={16} className="text-gray-400" />
-                    <button
-                        onClick={() => navigateToPath(index)}
-                        className="px-2 py-1 rounded-sm hover:bg-gray-100 transition"
-                    >
-                        {part}
-                    </button>
-                </div>
-            ))}
-        </div>
+            {pathParts.map((part, index) => {
+                const isLast = index === pathParts.length - 1;
+                return (
+                    <div key={`${part}-${index}`} className="flex items-center gap-0.5">
+                        <LucideChevronRight size={16} className="text-slate-300" />
+                        <button
+                            type="button"
+                            onClick={() => navigateToPath(index)}
+                            className={`max-w-[160px] truncate rounded-lg px-2.5 py-1.5 transition ${
+                                isLast
+                                    ? 'bg-sky-50 font-medium text-sky-800'
+                                    : 'text-slate-600 hover:bg-slate-100'
+                            }`}
+                            title={part}
+                        >
+                            {part}
+                        </button>
+                    </div>
+                );
+            })}
+        </nav>
     );
 };
 
 export default DriveBreadcrumbs;
-

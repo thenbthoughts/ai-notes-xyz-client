@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DriveFile } from '../../../../../types/pages/Drive.types';
-import { driveGetFileUrl, driveUpdateFile } from '../utils/driveAxios';
+import { driveFetchFileText, driveUpdateFile } from '../utils/driveAxios';
 import { LucideX, LucideSave } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -19,14 +19,7 @@ const DriveTextEditor = ({ file, bucketName, onClose, onSave }: DriveTextEditorP
     useEffect(() => {
         const fetchContent = async () => {
             try {
-                const fileUrl = driveGetFileUrl(bucketName, file.fileKey);
-                const response = await fetch(fileUrl, {
-                    credentials: 'include',
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch file');
-                }
-                const text = await response.text();
+                const text = await driveFetchFileText(bucketName, file.fileKey);
                 setContent(text);
             } catch (error) {
                 toast.error('Failed to load file content');
@@ -62,7 +55,7 @@ const DriveTextEditor = ({ file, bucketName, onClose, onSave }: DriveTextEditorP
 
     if (loading) {
         return (
-            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black bg-opacity-75">
                 <div className="bg-white rounded-lg p-8">
                     <p>Loading file...</p>
                 </div>
@@ -72,7 +65,7 @@ const DriveTextEditor = ({ file, bucketName, onClose, onSave }: DriveTextEditorP
 
     return (
         <div
-            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+            className="fixed inset-0 z-[1100] flex items-center justify-center bg-black bg-opacity-75"
             onClick={onClose}
         >
             <div

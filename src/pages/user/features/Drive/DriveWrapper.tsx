@@ -1,12 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAtom } from 'jotai';
-import { LucideGrid, LucideList } from 'lucide-react';
+import { LucideGrid3X3, LucideList, LucideHardDrive } from 'lucide-react';
 import ReactPaginate from 'react-paginate';
 import toast from 'react-hot-toast';
 import { DriveFile } from '../../../../types/pages/Drive.types';
-import { getFileTypeCategory } from './utils/driveFileUtils';
-import { driveGetFiles, driveGetFileUrl } from './utils/driveAxios';
-import { jotaiDriveCurrentBucket, jotaiDriveCurrentPath, jotaiDriveViewMode, jotaiDriveRefresh } from './stateJotai/driveStateJotai';
+import {
+    getFileTypeCategory,
+    FILE_TYPE_FILTER_OPTIONS,
+} from './utils/driveFileUtils';
+import { driveGetFiles, driveDownloadFile } from './utils/driveAxios';
+import {
+    jotaiDriveCurrentBucket,
+    jotaiDriveCurrentPath,
+    jotaiDriveViewMode,
+    jotaiDriveRefresh,
+} from './stateJotai/driveStateJotai';
 import DriveBucketSelector from './components/DriveBucketSelector';
 import DriveBreadcrumbs from './components/DriveBreadcrumbs';
 import DriveFilters from './components/DriveFilters';
@@ -24,16 +32,18 @@ const DriveWrapper = () => {
     const [currentPath] = useAtom(jotaiDriveCurrentPath);
     const [viewMode, setViewMode] = useAtom(jotaiDriveViewMode);
     const [refresh, setRefresh] = useAtom(jotaiDriveRefresh);
-    
+
     const [files, setFiles] = useState<DriveFile[]>([]);
     const [loading, setLoading] = useState(false);
+    const [loadError, setLoadError] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<DriveFile | null>(null);
-    const [viewerType, setViewerType] = useState<'image' | 'video' | 'pdf' | 'text' | 'markdown' | null>(null);
+    const [viewerType, setViewerType] = useState<
+        'image' | 'video' | 'pdf' | 'text' | 'markdown' | null
+    >(null);
     const [page, setPage] = useState(1);
     const [perPage] = useState(50);
     const [totalCount, setTotalCount] = useState(0);
-    
-    // Filter states
+
     const [searchQuery, setSearchQuery] = useState('');
     const [fileTypeFilter, setFileTypeFilter] = useState<string[]>([]);
     const [sortBy, setSortBy] = useState<'name' | 'size' | 'date'>('name');
@@ -43,32 +53,29 @@ const DriveWrapper = () => {
         if (!currentBucket) {
             setFiles([]);
             setTotalCount(0);
+            setLoadError(null);
             return;
         }
 
         const fetchFiles = async () => {
             setLoading(true);
+            setLoadError(null);
             try {
-                // Fetch all files (or a large number) for client-side filtering
                 const response = await driveGetFiles({
                     bucketName: currentBucket,
                     parentPath: currentPath,
                     page: 1,
-                    perPage: 10000, // Fetch a large number for client-side filtering
+                    perPage: 10000,
                 });
-                
-                // Debug logging
-                console.log('Drive files response:', {
-                    parentPath: currentPath,
-                    totalFiles: response.files.length,
-                    folders: response.files.filter(f => f.isFolder).length,
-                    files: response.files.filter(f => !f.isFolder).length,
-                    allFiles: response.files,
-                });
-                
-                setFiles(response.files);
-                setTotalCount(response.pagination.totalCount);
+
+                setFiles(Array.isArray(response?.files) ? response.files : []);
+                setTotalCount(response?.pagination?.totalCount ?? 0);
             } catch (error) {
+                const message =
+                    error instanceof Error ? error.message : 'Failed to load files';
+                setLoadError(message);
+                setFiles([]);
+                setTotalCount(0);
                 toast.error('Failed to load files');
                 console.error(error);
             } finally {
@@ -79,19 +86,18 @@ const DriveWrapper = () => {
         fetchFiles();
     }, [currentBucket, currentPath, refresh]);
 
-    // Reset to page 1 when path or filters change
     useEffect(() => {
         setPage(1);
     }, [currentPath, searchQuery, fileTypeFilter, sortBy, sortOrder]);
 
-    const handleFileClick = (file: DriveFile) => {
+    const handleFileClick = async (file: DriveFile) => {
         if (file.isFolder) {
-            return; // Handled by DriveFileItem
+            return;
         }
 
         const category = getFileTypeCategory(file);
         setSelectedFile(file);
-        
+
         switch (category) {
             case 'image':
                 setViewerType('image');
@@ -109,9 +115,16 @@ const DriveWrapper = () => {
                 setViewerType('markdown');
                 break;
             default:
-                // For other file types, try to download
-                const url = driveGetFileUrl(currentBucket, file.fileKey);
-                window.open(url, '_blank');
+                setSelectedFile(null);
+                setViewerType(null);
+                try {
+                    await driveDownloadFile(currentBucket, file.fileKey, file.fileName);
+                } catch (error) {
+                    toast.error(
+                        error instanceof Error ? error.message : 'Failed to download file'
+                    );
+                    console.error(error);
+                }
                 break;
         }
     };
@@ -119,7 +132,7 @@ const DriveWrapper = () => {
     const handleEditClick = (file: DriveFile) => {
         const category = getFileTypeCategory(file);
         setSelectedFile(file);
-        
+
         if (category === 'markdown') {
             setViewerType('markdown');
         } else if (category === 'text') {
@@ -136,62 +149,59 @@ const DriveWrapper = () => {
         setRefresh((prev) => prev + 1);
     };
 
-    // Filter and sort files
-    const filteredAndSortedFiles = files
-        .filter(file => {
-            // Search filter
-            if (searchQuery && !file.fileName.toLowerCase().includes(searchQuery.toLowerCase())) {
-                return false;
-            }
+    const filteredAndSortedFiles = useMemo(() => {
+        return files
+            .filter((file) => {
+                if (
+                    searchQuery &&
+                    !file.fileName.toLowerCase().includes(searchQuery.toLowerCase())
+                ) {
+                    return false;
+                }
 
-            // File type filter
-            if (!file.isFolder && fileTypeFilter.length > 0) {
-                const fileTypeOptions = [
-                    { value: 'image', extensions: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'] },
-                    { value: 'video', extensions: ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'] },
-                    { value: 'audio', extensions: ['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a'] },
-                    { value: 'pdf', extensions: ['pdf'] },
-                    { value: 'document', extensions: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf'] },
-                    { value: 'code', extensions: ['js', 'ts', 'jsx', 'tsx', 'py', 'java', 'cpp', 'c', 'cs', 'php', 'rb', 'go', 'rs'] },
-                    { value: 'archive', extensions: ['zip', 'rar', '7z', 'tar', 'gz', 'bz2'] },
-                    { value: 'markdown', extensions: ['md', 'markdown'] },
-                ];
+                if (!file.isFolder && fileTypeFilter.length > 0) {
+                    const fileExt = (file.fileType || '').toLowerCase();
+                    const matchesType = fileTypeFilter.some((filterType) => {
+                        const option = FILE_TYPE_FILTER_OPTIONS.find(
+                            (opt) => opt.value === filterType
+                        );
+                        return option
+                            ? (option.extensions as readonly string[]).includes(fileExt)
+                            : false;
+                    });
+                    if (!matchesType) return false;
+                }
 
-                const fileExt = file.fileType.toLowerCase();
-                const matchesType = fileTypeFilter.some(filterType => {
-                    const option = fileTypeOptions.find(opt => opt.value === filterType);
-                    return option?.extensions.includes(fileExt) || false;
-                });
+                return true;
+            })
+            .sort((a, b) => {
+                if (a.isFolder !== b.isFolder) {
+                    return a.isFolder ? -1 : 1;
+                }
 
-                if (!matchesType) return false;
-            }
+                let comparison = 0;
+                switch (sortBy) {
+                    case 'name':
+                        comparison = a.fileName.localeCompare(b.fileName);
+                        break;
+                    case 'size':
+                        comparison = (a.fileSize || 0) - (b.fileSize || 0);
+                        break;
+                    case 'date': {
+                        const dateA = a.lastModified
+                            ? new Date(a.lastModified).getTime()
+                            : 0;
+                        const dateB = b.lastModified
+                            ? new Date(b.lastModified).getTime()
+                            : 0;
+                        comparison = dateA - dateB;
+                        break;
+                    }
+                }
 
-            return true;
-        })
-        .sort((a, b) => {
-            // Always put folders first, then files
-            if (a.isFolder !== b.isFolder) {
-                return a.isFolder ? -1 : 1; // Folders come first (return -1 means a comes before b)
-            }
-
-            // Within folders or files, sort by the selected criteria
-            let comparison = 0;
-            switch (sortBy) {
-                case 'name':
-                    comparison = a.fileName.localeCompare(b.fileName);
-                    break;
-                case 'size':
-                    comparison = a.fileSize - b.fileSize;
-                    break;
-                case 'date':
-                    const dateA = a.lastModified ? new Date(a.lastModified).getTime() : 0;
-                    const dateB = b.lastModified ? new Date(b.lastModified).getTime() : 0;
-                    comparison = dateA - dateB;
-                    break;
-            }
-
-            return sortOrder === 'asc' ? comparison : -comparison;
-        });
+                return sortOrder === 'asc' ? comparison : -comparison;
+            });
+    }, [files, searchQuery, fileTypeFilter, sortBy, sortOrder]);
 
     const handleClearFilters = () => {
         setSearchQuery('');
@@ -200,41 +210,64 @@ const DriveWrapper = () => {
         setSortOrder('asc');
     };
 
+    const pageCount = Math.ceil(filteredAndSortedFiles.length / perPage) || 1;
+    const startIndex = (page - 1) * perPage;
+    const paginatedFiles = filteredAndSortedFiles.slice(startIndex, startIndex + perPage);
+
     return (
-        <div className="flex min-h-[calc(100vh-60px)]">
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col min-w-0">
-                <div className="container mx-auto px-4 py-4 flex flex-col">
-                    <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
-                        <div className="flex items-center gap-4">
-                            <DriveBucketSelector />
-                            <DriveReindexButton />
+        <div className="min-h-[calc(100vh-60px)] bg-slate-50">
+            <div className="mx-auto flex max-w-[1600px] flex-col px-3 py-4 sm:px-6">
+                {/* Header */}
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 text-white shadow-sm">
+                            <LucideHardDrive size={22} />
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div>
+                            <h1 className="text-xl font-semibold tracking-tight text-slate-900">
+                                Drive
+                            </h1>
+                            <p className="text-xs text-slate-500">Browse and manage your storage</p>
+                        </div>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <DriveBucketSelector />
+                        <DriveReindexButton />
+                        <div className="flex overflow-hidden rounded-lg border border-slate-200 bg-white">
                             <button
-                                onClick={() => setViewMode('grid')}
-                                className={`p-2 rounded-sm transition ${
-                                    viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
+                                type="button"
+                                onClick={() => setViewMode('list')}
+                                className={`p-2 transition ${
+                                    viewMode === 'list'
+                                        ? 'bg-sky-600 text-white'
+                                        : 'text-slate-600 hover:bg-slate-50'
                                 }`}
+                                title="List view"
+                                aria-label="List view"
                             >
-                                <LucideGrid size={20} />
+                                <LucideList size={18} />
                             </button>
                             <button
-                                onClick={() => setViewMode('list')}
-                                className={`p-2 rounded-sm transition ${
-                                    viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
+                                type="button"
+                                onClick={() => setViewMode('grid')}
+                                className={`p-2 transition ${
+                                    viewMode === 'grid'
+                                        ? 'bg-sky-600 text-white'
+                                        : 'text-slate-600 hover:bg-slate-50'
                                 }`}
+                                title="Grid view"
+                                aria-label="Grid view"
                             >
-                                <LucideList size={20} />
+                                <LucideGrid3X3 size={18} />
                             </button>
                         </div>
                     </div>
+                </div>
 
-                    <div className="flex-shrink-0">
-                        <DriveBreadcrumbs />
-
-                        {/* Filters */}
-                        <DriveFilters
+                {/* Toolbar */}
+                <div className="mb-3 space-y-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+                    <DriveBreadcrumbs />
+                    <DriveFilters
                         searchQuery={searchQuery}
                         onSearchChange={setSearchQuery}
                         fileTypeFilter={fileTypeFilter}
@@ -244,98 +277,105 @@ const DriveWrapper = () => {
                         sortOrder={sortOrder}
                         onSortOrderChange={setSortOrder}
                         onClearFilters={handleClearFilters}
-                        />
-                    </div>
+                    />
+                </div>
 
-                    {/* File count */}
-                    <div className="flex-shrink-0">
-                    {!loading && (
-                        <div className="mb-2 text-sm text-gray-600">
-                            {filteredAndSortedFiles.length > 0 ? (
-                                <>
-                                    Showing {Math.min((page - 1) * perPage + 1, filteredAndSortedFiles.length)}-{Math.min(page * perPage, filteredAndSortedFiles.length)} of {filteredAndSortedFiles.length} items
-                                    {totalCount !== filteredAndSortedFiles.length && (
-                                        <span className="ml-2 text-gray-500">(from {totalCount} total)</span>
-                                    )}
-                                    {(searchQuery || fileTypeFilter.length > 0) && (
-                                        <span className="ml-2 text-blue-600">(filtered)</span>
-                                    )}
-                                </>
-                            ) : totalCount > 0 ? (
-                                <span className="text-orange-600">No files match your filters</span>
-                            ) : (
-                                <span>No files found</span>
-                            )}
-                        </div>
-                    )}
-                    </div>
-
-                    {/* Files List/Grid */}
-                    <div>
-                        {loading ? (
-                            <div className="text-center py-12">
-                                <p className="text-gray-500">Loading files...</p>
-                            </div>
-                        ) : (
+                {/* Status */}
+                {!loading && !loadError && (
+                    <div className="mb-2 px-1 text-sm text-slate-500">
+                        {filteredAndSortedFiles.length > 0 ? (
                             <>
-                                {(() => {
-                                    const startIndex = (page - 1) * perPage;
-                                    const endIndex = startIndex + perPage;
-                                    const paginatedFiles = filteredAndSortedFiles.slice(startIndex, endIndex);
-                                    
-                                    return viewMode === 'grid' ? (
-                                        <DriveFileGrid
-                                            files={paginatedFiles}
-                                            onFileClick={handleFileClick}
-                                            onEditClick={handleEditClick}
-                                        />
-                                    ) : (
-                                        <DriveFileList
-                                            files={paginatedFiles}
-                                            onFileClick={handleFileClick}
-                                            onEditClick={handleEditClick}
-                                        />
-                                    );
-                                })()}
+                                {filteredAndSortedFiles.length} item
+                                {filteredAndSortedFiles.length === 1 ? '' : 's'}
+                                {totalCount !== filteredAndSortedFiles.length && (
+                                    <span className="text-slate-400">
+                                        {' '}
+                                        · {totalCount} in folder
+                                    </span>
+                                )}
+                                {(searchQuery || fileTypeFilter.length > 0) && (
+                                    <span className="text-sky-600"> · filtered</span>
+                                )}
                             </>
+                        ) : totalCount > 0 ? (
+                            <span className="text-amber-700">No items match your filters</span>
+                        ) : currentBucket ? (
+                            <span>Folder is empty — use Sync to refresh from storage</span>
+                        ) : (
+                            <span>Select a bucket to get started</span>
                         )}
                     </div>
+                )}
 
-                    {/* Pagination */}
-                    <div className="flex-shrink-0 mt-4">
-                    {!loading && filteredAndSortedFiles.length > perPage && (
-                        <div className="flex justify-center">
-                            <ReactPaginate
-                                breakLabel="..."
-                                nextLabel="next >"
-                                onPageChange={(e) => {
-                                    setPage(e.selected + 1);
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                }}
-                                marginPagesDisplayed={1}
-                                pageRangeDisplayed={3}
-                                pageCount={Math.ceil(filteredAndSortedFiles.length / perPage)}
-                                previousLabel="< previous"
-                                renderOnZeroPageCount={null}
-                                forcePage={page - 1}
-                                containerClassName="flex flex-wrap justify-center items-center gap-1 sm:space-x-1"
-                                pageClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                                previousClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                                previousLinkClassName="text-gray-700 px-2 sm:px-3"
-                                nextClassName="border border-gray-300 rounded-sm hover:bg-gray-200 text-base sm:text-lg m-0.5"
-                                nextLinkClassName="text-gray-700 px-2 sm:px-3"
-                                breakClassName="border border-gray-300 rounded-sm text-base sm:text-lg m-0.5"
-                                breakLinkClassName="text-gray-700 px-2 sm:px-3"
-                                activeLinkClassName="bg-blue-500 text-white"
-                                pageLinkClassName="text-gray-700 px-2 sm:px-3"
-                            />
+                {/* Content */}
+                <div className="min-h-[320px]">
+                    {loading ? (
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                            {Array.from({ length: 12 }).map((_, i) => (
+                                <div
+                                    key={i}
+                                    className="h-36 animate-pulse rounded-xl bg-slate-200/80"
+                                />
+                            ))}
                         </div>
+                    ) : loadError ? (
+                        <div className="flex flex-col items-center justify-center rounded-2xl border border-red-200 bg-red-50 px-6 py-16 text-center">
+                            <p className="text-sm font-medium text-red-800">Could not load files</p>
+                            <p className="mt-1 max-w-md text-xs text-red-600">{loadError}</p>
+                            <button
+                                type="button"
+                                onClick={() => setRefresh((p) => p + 1)}
+                                className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                            >
+                                Retry
+                            </button>
+                        </div>
+                    ) : viewMode === 'grid' ? (
+                        <DriveFileGrid
+                            files={paginatedFiles}
+                            onFileClick={handleFileClick}
+                            onEditClick={handleEditClick}
+                        />
+                    ) : (
+                        <DriveFileList
+                            files={paginatedFiles}
+                            onFileClick={handleFileClick}
+                            onEditClick={handleEditClick}
+                        />
                     )}
-                    </div>
                 </div>
+
+                {/* Pagination */}
+                {!loading && !loadError && filteredAndSortedFiles.length > perPage && (
+                    <div className="mt-4 flex justify-center">
+                        <ReactPaginate
+                            breakLabel="..."
+                            nextLabel="Next"
+                            onPageChange={(e) => {
+                                setPage(e.selected + 1);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            marginPagesDisplayed={1}
+                            pageRangeDisplayed={3}
+                            pageCount={pageCount}
+                            previousLabel="Prev"
+                            renderOnZeroPageCount={null}
+                            forcePage={Math.min(page - 1, pageCount - 1)}
+                            containerClassName="flex flex-wrap justify-center items-center gap-1"
+                            pageClassName="rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm"
+                            previousClassName="rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm"
+                            previousLinkClassName="block px-3 py-1.5 text-slate-700"
+                            nextClassName="rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm"
+                            nextLinkClassName="block px-3 py-1.5 text-slate-700"
+                            breakClassName="rounded-lg border border-slate-200 bg-white text-sm"
+                            breakLinkClassName="block px-3 py-1.5 text-slate-700"
+                            activeLinkClassName="!bg-sky-600 !text-white !border-sky-600"
+                            pageLinkClassName="block px-3 py-1.5 text-slate-700"
+                        />
+                    </div>
+                )}
             </div>
 
-            {/* Viewers and Editors */}
             {selectedFile && viewerType === 'image' && (
                 <DriveImageViewer
                     file={selectedFile}
@@ -378,4 +418,3 @@ const DriveWrapper = () => {
 };
 
 export default DriveWrapper;
-

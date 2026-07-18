@@ -1,11 +1,21 @@
+import { useEffect, useRef, useState } from 'react';
 import { DriveFile } from '../../../../../types/pages/Drive.types';
-import { getFileIcon, formatFileSize, isEditableFile } from '../utils/driveFileUtils';
-import { LucideDownload, LucideTrash2, LucideEdit } from 'lucide-react';
+import {
+    getFileIcon,
+    getFileIconClass,
+    formatFileSize,
+    formatModifiedDate,
+    isEditableFile,
+} from '../utils/driveFileUtils';
+import { LucideDownload, LucideTrash2, LucideEdit, LucideMoreVertical } from 'lucide-react';
 import { useAtom } from 'jotai';
-import { jotaiDriveCurrentBucket, jotaiDriveCurrentPath, jotaiDriveRefresh } from '../stateJotai/driveStateJotai';
-import { driveDeleteFile, driveGetFileUrl } from '../utils/driveAxios';
+import {
+    jotaiDriveCurrentBucket,
+    jotaiDriveCurrentPath,
+    jotaiDriveRefresh,
+} from '../stateJotai/driveStateJotai';
+import { driveDeleteFile, driveDownloadFile } from '../utils/driveAxios';
 import toast from 'react-hot-toast';
-import { useState } from 'react';
 
 interface DriveFileItemProps {
     file: DriveFile;
@@ -19,33 +29,37 @@ const DriveFileItem = ({ file, onFileClick, onEditClick, viewMode }: DriveFileIt
     const [, setCurrentPath] = useAtom(jotaiDriveCurrentPath);
     const [, setRefresh] = useAtom(jotaiDriveRefresh);
     const [deleting, setDeleting] = useState(false);
+    const [downloading, setDownloading] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
 
     const Icon = getFileIcon(file);
+    const iconClass = getFileIconClass(file);
     const editable = isEditableFile(file);
 
-    const handleFolderClick = () => {
+    useEffect(() => {
+        if (!menuOpen) return;
+        const onPointerDown = (e: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+                setMenuOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', onPointerDown);
+        return () => document.removeEventListener('mousedown', onPointerDown);
+    }, [menuOpen]);
+
+    const handleOpen = () => {
         if (file.isFolder) {
-            // For folders, filePath is the relative path from bucket root (after bucket prefix)
-            // This is what we use as parentPath when querying children
-            // So when clicking a folder, we navigate to its filePath
-            const folderPath = file.filePath || '';
-            console.log('Navigating to folder:', {
-                fileName: file.fileName,
-                filePath: file.filePath,
-                fileKey: file.fileKey,
-                fileKeyArr: file.fileKeyArr,
-                parentPath: file.parentPath,
-                folderPath,
-            });
-            setCurrentPath(folderPath);
+            setCurrentPath(file.filePath || '');
         } else {
             onFileClick(file);
         }
     };
 
-    const handleDelete = async (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (!confirm(`Are you sure you want to delete "${file.fileName}"?`)) {
+    const handleDelete = async () => {
+        setMenuOpen(false);
+        const label = file.isFolder ? 'folder from the index' : 'file';
+        if (!confirm(`Delete this ${label}: "${file.fileName}"?`)) {
             return;
         }
 
@@ -55,125 +69,133 @@ const DriveFileItem = ({ file, onFileClick, onEditClick, viewMode }: DriveFileIt
                 bucketName: currentBucket,
                 fileKey: file.fileKey,
             });
-            toast.success('File deleted successfully');
+            toast.success(file.isFolder ? 'Folder removed' : 'File deleted');
             setRefresh((prev) => prev + 1);
-        } catch (error) {
-            toast.error('Failed to delete file');
+        } catch {
+            toast.error(file.isFolder ? 'Failed to delete folder' : 'Failed to delete file');
         } finally {
             setDeleting(false);
         }
     };
 
-    const handleDownload = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        const url = driveGetFileUrl(currentBucket, file.fileKey);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = file.fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    const handleEdit = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (onEditClick) {
-            onEditClick(file);
+    const handleDownload = async () => {
+        setMenuOpen(false);
+        if (!currentBucket) {
+            toast.error('No bucket selected');
+            return;
+        }
+        setDownloading(true);
+        try {
+            await driveDownloadFile(currentBucket, file.fileKey, file.fileName);
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'Failed to download file');
+            console.error(error);
+        } finally {
+            setDownloading(false);
         }
     };
+
+    const handleEdit = () => {
+        setMenuOpen(false);
+        onEditClick?.(file);
+    };
+
+    const actionsMenu = (
+        <div className="relative" ref={menuRef}>
+            <button
+                type="button"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuOpen((v) => !v);
+                }}
+                className="rounded-full p-1.5 text-slate-500 opacity-0 transition group-hover:opacity-100 hover:bg-slate-200/80 focus:opacity-100"
+                title="More actions"
+                aria-label="More actions"
+            >
+                <LucideMoreVertical size={18} />
+            </button>
+            {menuOpen && (
+                <div
+                    className="absolute right-0 z-20 mt-1 min-w-[148px] overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {editable && onEditClick && (
+                        <button
+                            type="button"
+                            onClick={handleEdit}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
+                        >
+                            <LucideEdit size={16} />
+                            Edit
+                        </button>
+                    )}
+                    {!file.isFolder && (
+                        <button
+                            type="button"
+                            onClick={handleDownload}
+                            disabled={downloading}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                        >
+                            <LucideDownload size={16} />
+                            {downloading ? 'Downloading…' : 'Download'}
+                        </button>
+                    )}
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+                    >
+                        <LucideTrash2 size={16} />
+                        {deleting ? 'Deleting…' : 'Delete'}
+                    </button>
+                </div>
+            )}
+        </div>
+    );
 
     if (viewMode === 'list') {
         return (
             <div
-                className="flex items-center gap-4 p-3 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition"
-                onClick={handleFolderClick}
+                className="group grid cursor-pointer grid-cols-[minmax(0,1fr)_88px_40px] items-center gap-2 border-b border-slate-100 px-3 py-2.5 transition hover:bg-sky-50/60 sm:grid-cols-[minmax(0,1fr)_160px_120px_44px]"
+                onClick={handleOpen}
+                onDoubleClick={handleOpen}
             >
-                <Icon size={24} className="text-gray-600 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                    <div className="font-medium text-gray-900 truncate">{file.fileName}</div>
-                    <div className="text-sm text-gray-500">
-                        {file.isFolder ? 'Folder' : formatFileSize(file.fileSize)}
-                        {file.lastModified && ` • ${new Date(file.lastModified).toLocaleDateString()}`}
-                    </div>
+                <div className="flex min-w-0 items-center gap-3">
+                    <Icon size={22} className={`flex-shrink-0 ${iconClass}`} />
+                    <span className="truncate text-sm font-medium text-slate-800" title={file.fileName}>
+                        {file.fileName}
+                    </span>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                    {editable && onEditClick && (
-                        <button
-                            onClick={handleEdit}
-                            className="p-1 text-blue-600 hover:bg-blue-50 rounded-sm transition"
-                            title="Edit"
-                        >
-                            <LucideEdit size={18} />
-                        </button>
-                    )}
-                    {!file.isFolder && (
-                        <button
-                            onClick={handleDownload}
-                            className="p-1 text-green-600 hover:bg-green-50 rounded-sm transition"
-                            title="Download"
-                        >
-                            <LucideDownload size={18} />
-                        </button>
-                    )}
-                    <button
-                        onClick={handleDelete}
-                        disabled={deleting}
-                        className="p-1 text-red-600 hover:bg-red-50 rounded-sm transition disabled:opacity-50"
-                        title="Delete"
-                    >
-                        <LucideTrash2 size={18} />
-                    </button>
+                <div className="hidden text-sm text-slate-500 sm:block">
+                    {formatModifiedDate(file.lastModified)}
                 </div>
+                <div className="text-sm text-slate-500">
+                    {file.isFolder ? '—' : formatFileSize(file.fileSize)}
+                </div>
+                <div className="flex justify-end">{actionsMenu}</div>
             </div>
         );
     }
 
-    // Grid view
     return (
         <div
-            className="border border-gray-200 rounded-sm p-4 hover:shadow-md cursor-pointer transition bg-white"
-            onClick={handleFolderClick}
+            className="group relative flex cursor-pointer flex-col rounded-xl border border-transparent bg-white p-3 transition hover:border-slate-200 hover:bg-sky-50/40 hover:shadow-sm"
+            onClick={handleOpen}
+            onDoubleClick={handleOpen}
         >
-            <div className="flex flex-col items-center text-center">
-                <Icon size={48} className="text-gray-600 mb-2" />
-                <div className="font-medium text-sm text-gray-900 truncate w-full mb-1" title={file.fileName}>
-                    {file.fileName}
-                </div>
-                <div className="text-xs text-gray-500 mb-3">
-                    {file.isFolder ? 'Folder' : formatFileSize(file.fileSize)}
-                </div>
-                <div className="flex items-center gap-2">
-                    {editable && onEditClick && (
-                        <button
-                            onClick={handleEdit}
-                            className="p-1 text-blue-600 hover:bg-blue-50 rounded-sm transition"
-                            title="Edit"
-                        >
-                            <LucideEdit size={16} />
-                        </button>
-                    )}
-                    {!file.isFolder && (
-                        <button
-                            onClick={handleDownload}
-                            className="p-1 text-green-600 hover:bg-green-50 rounded-sm transition"
-                            title="Download"
-                        >
-                            <LucideDownload size={16} />
-                        </button>
-                    )}
-                    <button
-                        onClick={handleDelete}
-                        disabled={deleting}
-                        className="p-1 text-red-600 hover:bg-red-50 rounded-sm transition disabled:opacity-50"
-                        title="Delete"
-                    >
-                        <LucideTrash2 size={16} />
-                    </button>
-                </div>
+            <div className="absolute right-1 top-1">{actionsMenu}</div>
+            <div className="mb-3 flex aspect-[4/3] items-center justify-center rounded-lg bg-slate-50">
+                <Icon size={44} className={iconClass} />
+            </div>
+            <div className="truncate text-sm font-medium text-slate-800" title={file.fileName}>
+                {file.fileName}
+            </div>
+            <div className="mt-0.5 text-xs text-slate-500">
+                {file.isFolder ? 'Folder' : formatFileSize(file.fileSize)}
             </div>
         </div>
     );
 };
 
 export default DriveFileItem;
-

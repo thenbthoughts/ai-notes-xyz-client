@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { useAtom } from 'jotai';
 import { LucideRefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { jotaiDriveCurrentBucket, jotaiDriveCurrentPath, jotaiDriveRefresh } from '../stateJotai/driveStateJotai';
+import {
+    jotaiDriveCurrentBucket,
+    jotaiDriveCurrentPath,
+    jotaiDriveRefresh,
+} from '../stateJotai/driveStateJotai';
 import { driveReindexBucket } from '../utils/driveAxios';
 
 const DriveReindexButton = () => {
@@ -20,10 +24,16 @@ const DriveReindexButton = () => {
         setIndexing(true);
         try {
             const result = await driveReindexBucket(currentBucket, currentPath || undefined);
-            toast.success(`Indexed ${result.indexed} files${result.errors > 0 ? ` (${result.errors} errors)` : ''}`);
+            const indexed = result?.indexed ?? 0;
+            const errors = result?.errors ?? 0;
+            toast.success(
+                `Synced ${indexed} item${indexed === 1 ? '' : 's'}${
+                    errors > 0 ? ` (${errors} errors)` : ''
+                }`
+            );
             setRefresh((prev) => prev + 1);
-        } catch (error) {
-            toast.error('Failed to reindex bucket');
+        } catch {
+            toast.error('Failed to sync storage');
         } finally {
             setIndexing(false);
         }
@@ -31,15 +41,16 @@ const DriveReindexButton = () => {
 
     return (
         <button
+            type="button"
             onClick={handleReindex}
             disabled={indexing || !currentBucket}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            title={currentPath ? `Sync from current folder` : 'Sync all files from storage'}
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-            <LucideRefreshCw size={18} className={indexing ? 'animate-spin' : ''} />
-            <span>{indexing ? 'Indexing...' : 'Reindex'}</span>
+            <LucideRefreshCw size={16} className={indexing ? 'animate-spin text-sky-600' : ''} />
+            <span>{indexing ? 'Syncing…' : 'Sync'}</span>
         </button>
     );
 };
 
 export default DriveReindexButton;
-

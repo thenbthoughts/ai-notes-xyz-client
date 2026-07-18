@@ -140,6 +140,86 @@ export const driveGetFileUrl = (bucketName: string, fileKey: string): string => 
     return `${axiosCustom.defaults.baseURL}/api/drive/file?${params.toString()}`;
 };
 
+const parseBlobErrorMessage = async (data: unknown, fallback: string): Promise<string> => {
+    try {
+        if (data instanceof Blob) {
+            const text = await data.text();
+            try {
+                const j = JSON.parse(text) as { message?: string };
+                if (typeof j.message === 'string' && j.message.trim()) {
+                    return j.message;
+                }
+            } catch {
+                if (text.trim()) return text.slice(0, 200);
+            }
+        } else if (typeof data === 'object' && data && 'message' in data) {
+            const msg = (data as { message?: unknown }).message;
+            if (typeof msg === 'string' && msg.trim()) return msg;
+        }
+    } catch {
+        // ignore parse failures
+    }
+    return fallback;
+};
+
+/** Authenticated file fetch (cookies) — required for Capacitor / cross-origin SPA. */
+export const driveFetchFileBlob = async (
+    bucketName: string,
+    fileKey: string
+): Promise<Blob> => {
+    try {
+        const response = await axiosCustom.get<Blob>('/api/drive/file', {
+            params: { bucketName, fileKey },
+            responseType: 'blob',
+            withCredentials: true,
+        });
+        const ct = (response.headers['content-type'] || '').toLowerCase();
+        if (ct.includes('application/json')) {
+            throw new Error(await parseBlobErrorMessage(response.data, 'File request failed'));
+        }
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error && !(error as { isAxiosError?: boolean }).isAxiosError) {
+            throw error;
+        }
+        const axiosErr = error as {
+            response?: { data?: unknown; status?: number };
+            message?: string;
+        };
+        const fallback =
+            axiosErr.message ||
+            (axiosErr.response?.status
+                ? `File request failed (${axiosErr.response.status})`
+                : 'File request failed');
+        throw new Error(await parseBlobErrorMessage(axiosErr.response?.data, fallback));
+    }
+};
+
+export const driveFetchFileText = async (
+    bucketName: string,
+    fileKey: string
+): Promise<string> => {
+    const blob = await driveFetchFileBlob(bucketName, fileKey);
+    return blob.text();
+};
+
+export const driveDownloadFile = async (
+    bucketName: string,
+    fileKey: string,
+    fileName: string
+): Promise<void> => {
+    const blob = await driveFetchFileBlob(bucketName, fileKey);
+    const safeName = fileName.replace(/["\r\n]/g, '_') || 'download';
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = safeName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+};
+
 export const driveUpdateFile = async (params: {
     bucketName: string;
     fileKey: string;
