@@ -80,7 +80,9 @@ const AiSuggestionsDemo = lazy(() => import("./pages/user/features/Suggestions/d
 const Search = lazy(() => import("./pages/user/features/search/Search.tsx"));
 
 // pages -> drive
-const DriveWrapper = lazy(() => import("./pages/user/features/Drive/DriveWrapper.tsx"));
+const DriveLayout = lazy(() => import("./pages/user/features/Drive/DriveLayout.tsx"));
+const DriveBrowse = lazy(() => import("./pages/user/features/Drive/browse/DriveBrowse.tsx"));
+const DriveLibrary = lazy(() => import("./pages/user/features/Drive/library/DriveLibrary.tsx"));
 
 // pages -> ai context helper
 const LlmKeywordList = lazy(() => import("./pages/user/features/AiContextHelper/LlmKeywords/LlmKeyword.tsx"));
@@ -333,9 +335,19 @@ function App() {
           path: '/user/drive',
           element: (
             <UnauthorizedRoute>
-              <DriveWrapper />
+              <DriveLayout />
             </UnauthorizedRoute>
-          )
+          ),
+          children: [
+            {
+              index: true,
+              element: <DriveBrowse />,
+            },
+            {
+              path: 'library',
+              element: <DriveLibrary />,
+            },
+          ],
         },
 
         // 

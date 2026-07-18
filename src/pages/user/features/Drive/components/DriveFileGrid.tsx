@@ -6,15 +6,25 @@ interface DriveFileGridProps {
     files: DriveFile[];
     onFileClick: (file: DriveFile) => void;
     onEditClick?: (file: DriveFile) => void;
+    showPath?: boolean;
+    emptyLabel?: string;
+    emptyHint?: string;
 }
 
-const DriveFileGrid = ({ files, onFileClick, onEditClick }: DriveFileGridProps) => {
+const DriveFileGrid = ({
+    files,
+    onFileClick,
+    onEditClick,
+    showPath = false,
+    emptyLabel = 'This folder is empty',
+    emptyHint = 'Try reindexing or choose another location',
+}: DriveFileGridProps) => {
     if (files.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-16 text-slate-500">
                 <LucideFolderOpen size={48} className="mb-3 text-slate-300" />
-                <p className="text-sm font-medium">This folder is empty</p>
-                <p className="mt-1 text-xs text-slate-400">Try reindexing or choose another location</p>
+                <p className="text-sm font-medium">{emptyLabel}</p>
+                <p className="mt-1 text-xs text-slate-400">{emptyHint}</p>
             </div>
         );
     }
@@ -28,6 +38,7 @@ const DriveFileGrid = ({ files, onFileClick, onEditClick }: DriveFileGridProps) 
                     onFileClick={onFileClick}
                     onEditClick={onEditClick}
                     viewMode="grid"
+                    showPath={showPath}
                 />
             ))}
         </div>

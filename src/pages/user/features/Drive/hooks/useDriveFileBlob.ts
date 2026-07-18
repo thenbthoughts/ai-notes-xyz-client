@@ -5,9 +5,13 @@ import { driveFetchFileBlob } from '../utils/driveAxios';
  * Loads a Drive file via authenticated axios and exposes an object URL.
  * Revokes the URL on change/unmount.
  */
-export const useDriveFileBlob = (bucketName: string, fileKey: string) => {
+export const useDriveFileBlob = (
+    bucketName: string,
+    fileKey: string,
+    enabled = true
+) => {
     const [blobUrl, setBlobUrl] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(enabled);
     const [error, setError] = useState<string | null>(null);
     const blobUrlRef = useRef<string | null>(null);
 
@@ -21,9 +25,8 @@ export const useDriveFileBlob = (bucketName: string, fileKey: string) => {
         setBlobUrl(null);
         setError(null);
 
-        if (!bucketName || !fileKey) {
+        if (!enabled || !bucketName || !fileKey) {
             setLoading(false);
-            setError('Missing bucket or file key');
             return;
         }
 
@@ -51,7 +54,7 @@ export const useDriveFileBlob = (bucketName: string, fileKey: string) => {
                 blobUrlRef.current = null;
             }
         };
-    }, [bucketName, fileKey]);
+    }, [bucketName, fileKey, enabled]);
 
     return { blobUrl, loading, error };
 };

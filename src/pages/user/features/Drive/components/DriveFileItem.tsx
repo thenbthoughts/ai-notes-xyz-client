@@ -6,8 +6,10 @@ import {
     formatFileSize,
     formatModifiedDate,
     isEditableFile,
+    isImageFile,
 } from '../utils/driveFileUtils';
 import { LucideDownload, LucideTrash2, LucideEdit, LucideMoreVertical } from 'lucide-react';
+import DriveImageThumbnail from './DriveImageThumbnail';
 import { useAtom } from 'jotai';
 import {
     jotaiDriveCurrentBucket,
@@ -22,9 +24,10 @@ interface DriveFileItemProps {
     onFileClick: (file: DriveFile) => void;
     onEditClick?: (file: DriveFile) => void;
     viewMode: 'grid' | 'list';
+    showPath?: boolean;
 }
 
-const DriveFileItem = ({ file, onFileClick, onEditClick, viewMode }: DriveFileItemProps) => {
+const DriveFileItem = ({ file, onFileClick, onEditClick, viewMode, showPath = false }: DriveFileItemProps) => {
     const [currentBucket] = useAtom(jotaiDriveCurrentBucket);
     const [, setCurrentPath] = useAtom(jotaiDriveCurrentPath);
     const [, setRefresh] = useAtom(jotaiDriveRefresh);
@@ -36,6 +39,7 @@ const DriveFileItem = ({ file, onFileClick, onEditClick, viewMode }: DriveFileIt
     const Icon = getFileIcon(file);
     const iconClass = getFileIconClass(file);
     const editable = isEditableFile(file);
+    const showImagePreview = isImageFile(file);
 
     useEffect(() => {
         if (!menuOpen) return;
@@ -155,18 +159,39 @@ const DriveFileItem = ({ file, onFileClick, onEditClick, viewMode }: DriveFileIt
     );
 
     if (viewMode === 'list') {
+        const listGridClass = showPath
+            ? 'group grid cursor-pointer grid-cols-[minmax(0,1fr)_88px_40px] items-center gap-2 border-b border-slate-100 px-3 py-2.5 transition hover:bg-sky-50/60 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)_160px_120px_44px]'
+            : 'group grid cursor-pointer grid-cols-[minmax(0,1fr)_88px_40px] items-center gap-2 border-b border-slate-100 px-3 py-2.5 transition hover:bg-sky-50/60 sm:grid-cols-[minmax(0,1fr)_160px_120px_44px]';
+
         return (
             <div
-                className="group grid cursor-pointer grid-cols-[minmax(0,1fr)_88px_40px] items-center gap-2 border-b border-slate-100 px-3 py-2.5 transition hover:bg-sky-50/60 sm:grid-cols-[minmax(0,1fr)_160px_120px_44px]"
+                className={listGridClass}
                 onClick={handleOpen}
                 onDoubleClick={handleOpen}
             >
                 <div className="flex min-w-0 items-center gap-3">
-                    <Icon size={22} className={`flex-shrink-0 ${iconClass}`} />
+                    {showImagePreview ? (
+                        <DriveImageThumbnail
+                            file={file}
+                            bucketName={currentBucket}
+                            className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-md bg-slate-50"
+                            iconSize={18}
+                        />
+                    ) : (
+                        <Icon size={22} className={`flex-shrink-0 ${iconClass}`} />
+                    )}
                     <span className="truncate text-sm font-medium text-slate-800" title={file.fileName}>
                         {file.fileName}
                     </span>
                 </div>
+                {showPath && (
+                    <div
+                        className="hidden truncate text-sm text-slate-500 sm:block"
+                        title={file.filePath || file.parentPath || '—'}
+                    >
+                        {file.filePath || file.parentPath || '—'}
+                    </div>
+                )}
                 <div className="hidden text-sm text-slate-500 sm:block">
                     {formatModifiedDate(file.lastModified)}
                 </div>
@@ -184,13 +209,29 @@ const DriveFileItem = ({ file, onFileClick, onEditClick, viewMode }: DriveFileIt
             onClick={handleOpen}
             onDoubleClick={handleOpen}
         >
-            <div className="absolute right-1 top-1">{actionsMenu}</div>
-            <div className="mb-3 flex aspect-[4/3] items-center justify-center rounded-lg bg-slate-50">
-                <Icon size={44} className={iconClass} />
-            </div>
+            <div className="absolute right-1 top-1 z-10">{actionsMenu}</div>
+            {showImagePreview ? (
+                <DriveImageThumbnail
+                    file={file}
+                    bucketName={currentBucket}
+                    className="mb-3 flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg bg-slate-50"
+                />
+            ) : (
+                <div className="mb-3 flex aspect-[4/3] items-center justify-center rounded-lg bg-slate-50">
+                    <Icon size={44} className={iconClass} />
+                </div>
+            )}
             <div className="truncate text-sm font-medium text-slate-800" title={file.fileName}>
                 {file.fileName}
             </div>
+            {showPath && (
+                <div
+                    className="mt-0.5 truncate text-xs text-slate-400"
+                    title={file.filePath || file.parentPath || '—'}
+                >
+                    {file.filePath || file.parentPath || '—'}
+                </div>
+            )}
             <div className="mt-0.5 text-xs text-slate-500">
                 {file.isFolder ? 'Folder' : formatFileSize(file.fileSize)}
             </div>

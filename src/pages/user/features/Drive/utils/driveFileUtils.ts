@@ -97,6 +97,16 @@ export const getFileIconClass = (file: DriveFile): string => {
     return 'text-slate-500';
 };
 
+export const isImageFile = (file: DriveFile): boolean => {
+    if (file.isFolder) return false;
+    const ext = (file.fileType || '').toLowerCase();
+    const contentType = file.contentType?.toLowerCase() || '';
+    return (
+        ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'ico'].includes(ext) ||
+        contentType.startsWith('image/')
+    );
+};
+
 export const getFileTypeCategory = (
     file: DriveFile
 ): 'image' | 'video' | 'pdf' | 'text' | 'markdown' | 'other' => {

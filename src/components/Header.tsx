@@ -77,6 +77,9 @@ const Header = () => {
                             <Link to="/user/info-vault" className={navPill}>
                                 Info Vault
                             </Link>
+                            <Link to="/user/drive" className={navPill}>
+                                Drive
+                            </Link>
                             <Link to="/user/maps" className={navPill}>
                                 Maps
                             </Link>
