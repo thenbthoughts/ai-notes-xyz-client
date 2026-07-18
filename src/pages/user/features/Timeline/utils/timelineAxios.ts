@@ -1,16 +1,47 @@
-import { AxiosRequestConfig, CancelTokenSource } from "axios";
-import axiosCustom from "../../../../../config/axiosCustom";
+import { AxiosRequestConfig, CancelTokenSource } from 'axios';
+import axiosCustom from '../../../../../config/axiosCustom';
+
+export type TimelineEntityType =
+    | 'task'
+    | 'note'
+    | 'lifeEvent'
+    | 'chatLlmThread'
+    | 'infoVault'
+    | 'memo'
+    | 'comment';
+
+export type TimelineMediaType = 'image' | 'video' | 'audio' | 'file' | '';
+
+export interface TimelineMediaAttachment {
+    _id?: string;
+    fileType?: TimelineMediaType | string;
+    fileUrl?: string;
+    fileTitle?: string;
+    fileDescription?: string;
+    commentText?: string;
+    createdAtUtc?: string | null;
+    updatedAtUtc?: string | null;
+}
 
 export interface TimelineItem {
     _id?: string;
-    entityType: 'task' | 'note' | 'lifeEvent' | 'chatLlmThread' | 'infoVault';
+    entityType: TimelineEntityType;
     entityId: string;
+    parentEntityType?: TimelineEntityType | string;
+    parentEntityId?: string;
+    commentId?: string;
     updatedAtUtc?: string;
     createdAtUtc?: string;
-    // Additional fields from different entity types
     title?: string;
     content?: string;
-    [key: string]: any;
+    workspaceId?: string;
+    fileType?: TimelineMediaType;
+    fileUrl?: string;
+    fileTitle?: string;
+    fileDescription?: string;
+    photoUrl?: string;
+    isAi?: boolean;
+    mediaAttachments?: TimelineMediaAttachment[];
 }
 
 export interface TimelineGetResponse {
@@ -43,7 +74,7 @@ export const timelineGetAxios = async ({
         } as AxiosRequestConfig;
 
         const response = await axiosCustom.request(config);
-        
+
         return {
             message: response.data.message || '',
             docs: Array.isArray(response.data.docs) ? response.data.docs : [],
@@ -54,4 +85,3 @@ export const timelineGetAxios = async ({
         throw error;
     }
 };
-

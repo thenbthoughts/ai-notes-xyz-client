@@ -1,12 +1,9 @@
 import { TimelineItem } from './utils/timelineAxios.ts';
 import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
+import ComponentTimelineMedia from './ComponentTimelineMedia.tsx';
 
-const ComponentTimelineItem = ({
-    item,
-}: {
-    item: TimelineItem;
-}) => {
+const ComponentTimelineItem = ({ item }: { item: TimelineItem }) => {
     const navigate = useNavigate();
 
     const getEntityTypeLabel = (entityType: string) => {
@@ -21,6 +18,8 @@ const ComponentTimelineItem = ({
                 return 'Chat';
             case 'infoVault':
                 return 'Info Vault';
+            case 'memo':
+                return 'Memo';
             default:
                 return entityType;
         }
@@ -38,6 +37,8 @@ const ComponentTimelineItem = ({
                 return 'border-yellow-500';
             case 'infoVault':
                 return 'border-indigo-500';
+            case 'memo':
+                return 'border-pink-500';
             default:
                 return 'border-gray-400';
         }
@@ -46,9 +47,8 @@ const ComponentTimelineItem = ({
     const formatLocalDateTime = (dateString?: string) => {
         if (!dateString) return '';
         try {
-            const date = DateTime.fromISO(dateString);
-            return date.toLocaleString(DateTime.DATETIME_SHORT);
-        } catch (error) {
+            return DateTime.fromISO(dateString).toLocaleString(DateTime.DATETIME_SHORT);
+        } catch {
             return '';
         }
     };
@@ -56,24 +56,29 @@ const ComponentTimelineItem = ({
     const formatRelativeTime = (dateString?: string) => {
         if (!dateString) return '';
         try {
-            const date = DateTime.fromISO(dateString);
-            const relativeTime = date.toRelative();
-            return relativeTime || '';
-        } catch (error) {
+            return DateTime.fromISO(dateString).toRelative() || '';
+        } catch {
             return '';
         }
     };
 
-    const handleClick = () => {
-        const entityId = item.entityId;
+    const navigateToEntity = (
+        entityType: string,
+        entityId: string,
+        workspaceId?: string
+    ) => {
         if (!entityId) return;
 
-        switch (item.entityType) {
+        switch (entityType) {
             case 'task':
-                navigate(`/user/task?workspace=${item.workspaceId}&edit-task-id=${entityId}`);
+                navigate(
+                    `/user/task?workspace=${workspaceId || ''}&edit-task-id=${entityId}`
+                );
                 break;
             case 'note':
-                navigate(`/user/notes?action=edit&id=${entityId}&workspace=${item.workspaceId}`);
+                navigate(
+                    `/user/notes?action=edit&id=${entityId}&workspace=${workspaceId || ''}`
+                );
                 break;
             case 'lifeEvent':
                 navigate(`/user/life-events?action=edit&id=${entityId}`);
@@ -84,22 +89,48 @@ const ComponentTimelineItem = ({
             case 'infoVault':
                 navigate(`/user/info-vault?action=edit&id=${entityId}`);
                 break;
+            case 'memo':
+                navigate(`/user/memo`);
+                break;
             default:
                 break;
         }
     };
 
+    const handleClick = () => {
+        navigateToEntity(item.entityType, item.entityId, item.workspaceId);
+    };
+
+    const label = getEntityTypeLabel(item.entityType);
+
     return (
         <div
             onClick={handleClick}
-            className={`bg-white border-l-2 ${getEntityColor(item.entityType)} hover:bg-gray-50 transition-colors cursor-pointer py-2 px-3`}
+            className={`cursor-pointer border-l-2 bg-white px-3 py-2 transition-colors hover:bg-gray-50 ${getEntityColor(
+                item.entityType
+            )}`}
         >
-            <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] text-gray-500 uppercase tracking-wide">
-                            {getEntityTypeLabel(item.entityType)}
+            <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                    <div className="mb-0.5 flex flex-wrap items-center gap-2">
+                        <span className="text-[10px] uppercase tracking-wide text-gray-500">
+                            {label}
                         </span>
+                        {item.isAi && (
+                            <span className="rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-medium text-violet-700">
+                                AI
+                            </span>
+                        )}
+                        {(item.fileType || (item.mediaAttachments && item.mediaAttachments.length > 0)) && (
+                            <span className="rounded bg-orange-100 px-1.5 py-0.5 text-[10px] font-medium capitalize text-orange-700">
+                                {item.fileType
+                                    || (item.mediaAttachments && item.mediaAttachments[0]?.fileType)
+                                    || 'file'}
+                                {item.mediaAttachments && item.mediaAttachments.length > 1
+                                    ? ` · ${item.mediaAttachments.length}`
+                                    : ''}
+                            </span>
+                        )}
                         <span className="text-[10px] text-gray-400">
                             {formatLocalDateTime(item.updatedAtUtc || item.createdAtUtc)}
                         </span>
@@ -107,21 +138,22 @@ const ComponentTimelineItem = ({
                             ({formatRelativeTime(item.updatedAtUtc || item.createdAtUtc)})
                         </span>
                     </div>
+
                     {item.title && (
-                        <h3 className="text-xs font-medium text-gray-900 mb-0.5 truncate">
+                        <h3 className="mb-0.5 truncate text-xs font-medium text-gray-900">
                             {item.title}
                         </h3>
                     )}
+
                     {item.content && (
-                        <p className="text-[10px] text-gray-600 line-clamp-1">
-                            {item.content}
-                        </p>
+                        <p className="line-clamp-2 text-[10px] text-gray-600">{item.content}</p>
                     )}
-                    {!item.title && !item.content && (
-                        <p className="text-[10px] text-gray-500 truncate">
-                            {getEntityTypeLabel(item.entityType)}
-                        </p>
+
+                    {!item.title && !item.content && !item.fileType && (
+                        <p className="truncate text-[10px] text-gray-500">{label}</p>
                     )}
+
+                    <ComponentTimelineMedia item={item} />
                 </div>
             </div>
         </div>
@@ -129,4 +161,3 @@ const ComponentTimelineItem = ({
 };
 
 export default ComponentTimelineItem;
-

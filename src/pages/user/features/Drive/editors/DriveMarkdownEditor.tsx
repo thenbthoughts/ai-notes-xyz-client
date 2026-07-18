@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DriveFile } from '../../../../../types/pages/Drive.types';
-import { driveGetFileUrl, driveUpdateFile } from '../utils/driveAxios';
+import { driveFetchFileText, driveUpdateFile } from '../utils/driveAxios';
 import { LucideX, LucideSave, LucideEye, LucideEdit } from 'lucide-react';
 import toast from 'react-hot-toast';
 import MarkdownRenderer from '../../../../../components/markdown/MarkdownRenderer';
@@ -21,14 +21,7 @@ const DriveMarkdownEditor = ({ file, bucketName, onClose, onSave }: DriveMarkdow
     useEffect(() => {
         const fetchContent = async () => {
             try {
-                const fileUrl = driveGetFileUrl(bucketName, file.fileKey);
-                const response = await fetch(fileUrl, {
-                    credentials: 'include',
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch file');
-                }
-                const text = await response.text();
+                const text = await driveFetchFileText(bucketName, file.fileKey);
                 setContent(text);
             } catch (error) {
                 toast.error('Failed to load file content');
@@ -64,7 +57,7 @@ const DriveMarkdownEditor = ({ file, bucketName, onClose, onSave }: DriveMarkdow
 
     if (loading) {
         return (
-            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black bg-opacity-75">
                 <div className="bg-white rounded-lg p-8">
                     <p>Loading file...</p>
                 </div>
@@ -74,7 +67,7 @@ const DriveMarkdownEditor = ({ file, bucketName, onClose, onSave }: DriveMarkdow
 
     return (
         <div
-            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+            className="fixed inset-0 z-[1100] flex items-center justify-center bg-black bg-opacity-75"
             onClick={onClose}
         >
             <div
