@@ -1,6 +1,11 @@
 import { AxiosRequestConfig } from 'axios';
 import axiosCustom from '../../../../../config/axiosCustom';
-import { DriveBucket, DriveBucketsResponse, DriveIndexResponse } from '../../../../../types/pages/Drive.types';
+import {
+    DriveBucket,
+    DriveBucketsResponse,
+    DriveFile,
+    DriveIndexResponse,
+} from '../../../../../types/pages/Drive.types';
 
 export const driveGetBuckets = async (): Promise<DriveBucketsResponse> => {
     try {
@@ -231,6 +236,86 @@ export const driveDeleteFile = async (params: {
         return response.data;
     } catch (error) {
         console.error('Error deleting file:', error);
+        throw error;
+    }
+};
+
+export const driveGetFolders = async (params: {
+    bucketName: string;
+}): Promise<{ success: boolean; folders: DriveFile[] }> => {
+    try {
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: '/api/drive/folders',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: params,
+        };
+        const response = await axiosCustom.request(config);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching folders:', error);
+        throw error;
+    }
+};
+
+export const driveCreateFile = async (params: {
+    bucketName: string;
+    folderPath?: string;
+    fileName: string;
+    fileType: 'txt' | 'md';
+    content?: string;
+    overwrite?: boolean;
+}): Promise<{ success: boolean; file: DriveFile }> => {
+    try {
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: '/api/drive/file',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: params,
+        };
+        const response = await axiosCustom.request(config);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating file:', error);
+        throw error;
+    }
+};
+
+export const driveUploadFile = async (params: {
+    bucketName: string;
+    folderPath?: string;
+    file: File;
+    fileName?: string;
+    overwrite?: boolean;
+}): Promise<{ success: boolean; file: DriveFile }> => {
+    try {
+        const formData = new FormData();
+        formData.append('file', params.file);
+        formData.append('bucketName', params.bucketName);
+        formData.append('folderPath', params.folderPath ?? '');
+        if (params.fileName) {
+            formData.append('fileName', params.fileName);
+        }
+        if (params.overwrite) {
+            formData.append('overwrite', 'true');
+        }
+
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: '/api/drive/upload',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            data: formData,
+        };
+        const response = await axiosCustom.request(config);
+        return response.data;
+    } catch (error) {
+        console.error('Error uploading file:', error);
         throw error;
     }
 };

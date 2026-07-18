@@ -212,7 +212,7 @@ const DriveBrowse = () => {
                     ) : totalCount > 0 ? (
                         <span className="text-amber-700">No items match your filters</span>
                     ) : currentBucket ? (
-                        <span>Folder is empty — use Sync to refresh from storage</span>
+                        <span>Folder is empty — Upload or New file, or Sync to refresh from storage</span>
                     ) : (
                         <span>Select a bucket to get started</span>
                     )}

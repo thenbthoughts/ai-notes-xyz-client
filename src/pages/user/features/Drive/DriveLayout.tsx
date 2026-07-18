@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { LucideHardDrive } from 'lucide-react';
 import DriveBucketSelector from './components/DriveBucketSelector';
 import DriveReindexButton from './components/DriveReindexButton';
+import DriveAddActions from './components/DriveAddActions';
 import DriveNavTabs from './components/DriveNavTabs';
 
 const DriveLayout = () => {
@@ -22,6 +23,7 @@ const DriveLayout = () => {
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                         <DriveBucketSelector />
+                        <DriveAddActions />
                         <DriveReindexButton />
                     </div>
                 </div>
