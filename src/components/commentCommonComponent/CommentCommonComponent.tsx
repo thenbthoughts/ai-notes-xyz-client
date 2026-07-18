@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Trash2, Send, LucideFile, LucideDownload, LucideFileAudio } from 'lucide-react';
+import { Trash2, Send, LucideFile, LucideDownload, LucideFileAudio, LucideImagePlus } from 'lucide-react';
 import axiosCustom from '../../config/axiosCustom';
 import { DateTime } from 'luxon';
 import toast from 'react-hot-toast';
@@ -110,6 +110,87 @@ const ComponentTaskCommentListFileUpload = ({
                 multiple
                 hidden
                 ref={fileInputRef}
+            />
+        </div>
+    );
+};
+
+const ComponentTaskCommentListCameraUpload = ({
+    commentType,
+    entityId,
+    setTaskCommentsReloadRandomNumCurrent,
+}: {
+    commentType: ICommentType;
+    entityId: string;
+    setTaskCommentsReloadRandomNumCurrent: React.Dispatch<React.SetStateAction<number>>;
+}) => {
+    const [uploading, setUploading] = useState(false);
+    const cameraInputRef = useRef<HTMLInputElement>(null);
+
+    const handleCameraChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const uploadedFiles = e.target.files;
+        if (!uploadedFiles || !entityId) return;
+
+        setUploading(true);
+        for (let i = 0; i < uploadedFiles.length; i++) {
+            const file = uploadedFiles[i];
+            const toastId = `camera-upload-${i}`;
+
+            toast.loading(`Processing ${file.name}...`, { id: toastId });
+            try {
+                const fileUrl = await uploadFeatureFile({
+                    file,
+                    parentEntityId: entityId,
+                    apiUrl: envKeys.API_URL,
+                });
+
+                await axiosCustom.post('/api/comment-common/crud/commentCommonAdd', {
+                    commentType,
+                    entityId,
+                    isAi: false,
+                    commentText: '',
+                    fileType: 'image',
+                    fileUrl,
+                    fileTitle: file.name,
+                    fileDescription: file.name,
+                });
+
+                toast.success(`File "${file.name}" processed successfully!`, { id: toastId });
+            } catch (error) {
+                console.error(error);
+                toast.error(`Error processing "${file.name}"!`, { id: toastId });
+            } finally {
+                toast.dismiss(toastId);
+            }
+        }
+
+        setUploading(false);
+        setTaskCommentsReloadRandomNumCurrent((prev) => prev + 1);
+        if (cameraInputRef.current) cameraInputRef.current.value = '';
+    };
+
+    return (
+        <div>
+            <button
+                type="button"
+                title="Add image"
+                aria-label="Add image"
+                disabled={uploading}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-sm focus:outline-none focus:shadow-outline disabled:opacity-60"
+                onClick={() => cameraInputRef.current?.click()}
+            >
+                <LucideImagePlus className="inline-block w-5 h-5 mr-1" />
+                Camera
+            </button>
+            <input
+                type="file"
+                onChange={handleCameraChange}
+                className="mb-4 p-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                multiple
+                hidden
+                ref={cameraInputRef}
+                accept="image/*"
+                capture="environment"
             />
         </div>
     );
@@ -434,9 +515,14 @@ const ComponentTaskCommentList: React.FC<{
                 </h3>
             </div>
 
-            {/* upload file */}
-            <div>
+            {/* upload file + camera */}
+            <div className="flex flex-wrap items-center gap-2">
                 <ComponentTaskCommentListFileUpload
+                    entityId={entityId}
+                    setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
+                    commentType={commentType}
+                />
+                <ComponentTaskCommentListCameraUpload
                     entityId={entityId}
                     setTaskCommentsReloadRandomNumCurrent={setTaskCommentsReloadRandomNumCurrent}
                     commentType={commentType}
