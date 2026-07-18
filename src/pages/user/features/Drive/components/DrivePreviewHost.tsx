@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast';
-import { DriveFile } from '../../../../types/pages/Drive.types';
+import { DriveFile } from '../../../../../types/pages/Drive.types';
 import { getFileTypeCategory } from '../utils/driveFileUtils';
 import { driveDownloadFile } from '../utils/driveAxios';
 import DriveImageViewer from '../viewers/DriveImageViewer';
