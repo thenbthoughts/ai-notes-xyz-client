@@ -125,17 +125,6 @@ const ComponentFromBrithdayToToday = () => {
                 </Fragment>
             )}
 
-            <div className={`${panel} border-l-4 border-l-blue-400`}>
-                <h2 className={`${panelTitle} mb-1`}>
-                    <LucideQuote className="h-3.5 w-3.5 text-blue-500" strokeWidth={2} />
-                    Quote
-                </h2>
-                <p className="text-xs font-medium leading-relaxed text-sky-800/90">
-                    &ldquo;Set a goal. Break it into tiny steps. Work on them one by one. And don&apos;t
-                    forget—life&apos;s meant to be enjoyed too!&rdquo;
-                </p>
-            </div>
-
             {birthday === '0000-00-00' && (
                 <Link
                     to="/user/setting"
