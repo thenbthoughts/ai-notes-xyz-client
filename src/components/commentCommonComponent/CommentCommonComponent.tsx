@@ -144,7 +144,7 @@ const ComponentTaskCommentItem = ({
     };
 
     const getFileUrl = (fileUrl: string) =>
-        `${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${fileUrl}`;
+        `${envKeys.API_URL}/api/uploads/crud/getFile?fileName=${encodeURIComponent(fileUrl)}`;
 
     return (
         <div>
