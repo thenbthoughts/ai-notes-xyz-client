@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { DateTime } from 'luxon';
-import { LucideCake, LucideClock, LucideQuote } from 'lucide-react';
+import { LucideCake, LucideClock } from 'lucide-react';
 import axiosCustom from '../../../config/axiosCustom';
 import { Link } from 'react-router-dom';
 
