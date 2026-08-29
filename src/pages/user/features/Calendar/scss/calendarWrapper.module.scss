@@ -1,0 +1,19 @@
+.calendarTitleLink {
+    word-break: break-all;
+    white-space: break-spaces;
+
+    @media (min-width: 1024px) {
+        word-break: break-word;
+        white-space: break-spaces;
+    }
+}
+
+:global(.calendar-today-cell) {
+    background-color: rgba(99, 102, 241, 0.12) !important;
+    outline: 1px solid rgba(99, 102, 241, 0.4);
+    outline-offset: -1px;
+}
+
+:global(.calendar-weekend-cell) {
+    background-color: rgba(39, 39, 42, 0.6) !important;
+}

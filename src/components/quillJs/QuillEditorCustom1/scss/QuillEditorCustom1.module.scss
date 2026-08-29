@@ -1,0 +1,43 @@
+.quillCusomContainer {
+    background-color: #18181b;
+
+    :global(.ql-toolbar.ql-snow) {
+        background-color: #18181b;
+        border-color: #3f3f46;
+    }
+
+    :global(.ql-container.ql-snow) {
+        background-color: #18181b;
+        border-color: #3f3f46;
+    }
+
+    :global(.ql-editor) {
+        max-height: calc(70vh - 60px);
+        overflow-y: auto;
+        color: #f4f4f5;
+
+        /* Let the page scroll on narrow viewports — avoids a nested scrollbar in the editor. */
+        @media (max-width: 1023px) {
+            max-height: none;
+            min-height: 12rem;
+            overflow-y: visible;
+        }
+    }
+
+    :global(.ql-snow .ql-stroke) {
+        stroke: #a1a1aa;
+    }
+
+    :global(.ql-snow .ql-fill) {
+        fill: #a1a1aa;
+    }
+
+    :global(.ql-snow .ql-picker) {
+        color: #a1a1aa;
+    }
+
+    :global(.ql-snow .ql-picker-options) {
+        background-color: #18181b;
+        border-color: #3f3f46;
+    }
+}

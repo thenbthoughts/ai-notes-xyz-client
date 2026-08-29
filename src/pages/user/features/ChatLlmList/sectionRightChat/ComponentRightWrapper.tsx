@@ -1,0 +1,42 @@
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import CRightChatById from "./ThreadChatMessagesByThreadId/CRightChatById";
+import ComponentThreadAdd from "./ThreadAdd/ComponentThreadAdd";
+
+const ComponentRightWrapper = ({
+    refreshRandomNumParent,
+}: {
+    refreshRandomNumParent: number;
+}) => {
+    const location = useLocation();
+    const [threadId, setThreadId] = useState('');
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        
+        let tempThreadId = '';
+        const chatId = queryParams.get('id') || '';
+        if (chatId) {
+            tempThreadId = chatId;
+        }
+        setThreadId(tempThreadId);
+    }, [location.search]);
+
+    return (
+        <div>
+            {threadId === '' ? (
+                <ComponentThreadAdd />
+            ) : (
+                <div>
+                    <CRightChatById
+                        key={threadId}
+                        threadId={threadId}
+                        refreshRandomNumParent={refreshRandomNumParent}
+                    />
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default ComponentRightWrapper;

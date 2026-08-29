@@ -1,0 +1,171 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding-top: 60px;
+  color: #e4e4e7;
+  background: linear-gradient(110deg, #0a1628 0%, #0f1f2e 50%, #132a1f 100%);
+  background-size: cover;
+  background-position: center;
+}
+
+/* Markdown content styling */
+.markdown-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Inline code can wrap */
+.markdown-content > p > code,
+.markdown-content code:not([class*="language-"]) {
+  word-break: break-all;
+  white-space: normal;
+}
+
+/* Code blocks scroll horizontally */
+.markdown-content .overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* Syntax highlighter scrollbar styling (dark theme for code) */
+.markdown-content .group > .overflow-x-auto {
+  scrollbar-color: #4b5563 #1f2937;
+}
+
+.markdown-content .group > .overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.markdown-content .group > .overflow-x-auto::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 4px;
+}
+
+.markdown-content .group > .overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+.markdown-content .group > .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Table scrollbar styling (dark theme) */
+.markdown-content .overflow-hidden > .overflow-x-auto {
+  scrollbar-color: #52525b #27272a;
+}
+
+.markdown-content .overflow-hidden > .overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.markdown-content .overflow-hidden > .overflow-x-auto::-webkit-scrollbar-track {
+  background: #27272a;
+  border-radius: 3px;
+}
+
+.markdown-content .overflow-hidden > .overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #52525b;
+  border-radius: 3px;
+}
+
+.markdown-content .overflow-hidden > .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
+}
+
+/* Strong and emphasis styling */
+.markdown-content strong {
+  font-weight: 600;
+  color: #f4f4f5;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+/* Checkbox styling for task lists */
+.markdown-content input[type="checkbox"] {
+  margin-right: 0.5rem;
+  accent-color: #10b981;
+}
+
+/* Nested list indentation */
+.markdown-content ul ul,
+.markdown-content ol ol,
+.markdown-content ul ol,
+.markdown-content ol ul {
+  margin-left: 1rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* FullCalendar dark theme */
+.fc {
+  --fc-border-color: #3f3f46;
+  --fc-page-bg-color: #18181b;
+  --fc-neutral-bg-color: #27272a;
+  --fc-list-event-hover-bg-color: #27272a;
+  --fc-today-bg-color: rgba(63, 63, 70, 0.45);
+  --fc-neutral-text-color: #a1a1aa;
+  color: #e4e4e7;
+}
+.fc .fc-col-header-cell,
+.fc .fc-col-header-cell-cushion,
+.fc th,
+.fc thead th,
+.fc .fc-scrollgrid-sync-inner {
+  background: #27272a !important;
+  color: #e4e4e7 !important;
+}
+.fc .fc-daygrid-day,
+.fc .fc-daygrid-day-frame,
+.fc .fc-scrollgrid,
+.fc .fc-scrollgrid-section > td,
+.fc .fc-daygrid-body,
+.fc table {
+  background: #18181b !important;
+}
+.fc .fc-daygrid-day-number,
+.fc .fc-col-header-cell-cushion {
+  color: #e4e4e7 !important;
+}
+.fc .fc-button {
+  background: #27272a !important;
+  border-color: #3f3f46 !important;
+  color: #e4e4e7 !important;
+}
+.fc .fc-button:hover {
+  background: #3f3f46 !important;
+}
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background: #4f46e5 !important;
+  border-color: #4f46e5 !important;
+}
+.fc .fc-toolbar-title {
+  color: #f4f4f5;
+}
+
+/* Leaflet controls on dark UI chrome */
+.leaflet-container .leaflet-control-zoom a,
+.leaflet-container .leaflet-bar a,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  background-color: #27272a !important;
+  color: #e4e4e7 !important;
+  border-bottom-color: #3f3f46 !important;
+}
+.leaflet-container .leaflet-control-attribution,
+.leaflet-container .leaflet-control-scale-line {
+  background: rgba(24, 24, 27, 0.9) !important;
+  color: #a1a1aa !important;
+  border-color: #3f3f46 !important;
+}

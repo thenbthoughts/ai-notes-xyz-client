@@ -1,0 +1,13 @@
+import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
+import { ViewMode } from '../../../../../types/pages/Drive.types';
+export const jotaiDriveCurrentBucket = atom<string>('');
+export const jotaiDriveCurrentPath = atom<string>('');
+export const jotaiDriveViewMode = (() => { try { return atomWithStorage<ViewMode>('drive:viewMode', 'grid'); } catch { return atom<ViewMode>('grid'); } })();
+export const jotaiDriveRefresh = atom<number>(0);
+export const jotaiDriveSortBy = (() => { try { return atomWithStorage<string>('drive:sortBy', 'name'); } catch { return atom<string>('name'); } })();
+export const jotaiDriveSortOrder = (() => { try { return atomWithStorage<string>('drive:sortOrder', 'asc'); } catch { return atom<string>('asc'); } })();
+export const jotaiDriveGridSize = (() => { try { return atomWithStorage<number>('drive:gridSize', 1); } catch { return atom<number>(1); } })();
+export const jotaiDriveSelectedKeys = atom<string[]>([]);
+export const jotaiDriveTrashView = atom<boolean>(false);
+export const jotaiDriveContentSearchEnabled = atom<boolean>(false);

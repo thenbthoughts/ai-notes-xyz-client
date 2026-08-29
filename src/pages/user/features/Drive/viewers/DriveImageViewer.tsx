@@ -1,0 +1,47 @@
+import { DriveFile } from '../../../../../types/pages/Drive.types';
+import { LucideX } from 'lucide-react';
+import { useDriveFileBlob } from '../hooks/useDriveFileBlob';
+
+interface DriveImageViewerProps {
+    file: DriveFile;
+    bucketName: string;
+    onClose: () => void;
+}
+
+const DriveImageViewer = ({ file, bucketName, onClose }: DriveImageViewerProps) => {
+    const { blobUrl, loading, error } = useDriveFileBlob(bucketName, file.fileKey);
+
+    return (
+        <div
+            className="fixed inset-0 z-[1100] flex items-center justify-center bg-black bg-opacity-75"
+            onClick={onClose}
+        >
+            <div className="relative max-w-7xl max-h-full p-4" onClick={(e) => e.stopPropagation()}>
+                <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 bg-zinc-900 text-zinc-100 rounded-full p-2 hover:bg-zinc-800 transition z-10"
+                >
+                    <LucideX size={24} />
+                </button>
+                {loading && (
+                    <div className="text-white text-center py-12">Loading image...</div>
+                )}
+                {error && (
+                    <div className="text-red-300 text-center py-12 bg-black/40 px-4 rounded">
+                        {error}
+                    </div>
+                )}
+                {blobUrl && (
+                    <img
+                        src={blobUrl}
+                        alt={file.fileName}
+                        className="max-w-full max-h-[90vh] object-contain"
+                    />
+                )}
+                <div className="text-white text-center mt-2">{file.fileName}</div>
+            </div>
+        </div>
+    );
+};
+
+export default DriveImageViewer;

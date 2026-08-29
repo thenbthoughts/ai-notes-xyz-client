@@ -1,0 +1,26 @@
+.actionContainer {
+    overflow-x: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 52px;
+    padding: 0.35rem 0;
+    overflow-y: hidden;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgb(82 82 91 / 0.6) transparent;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgb(82 82 91 / 0.55);
+        border-radius: 999px;
+    }
+}

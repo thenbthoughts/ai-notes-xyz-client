@@ -1,0 +1,78 @@
+export interface tsMessageItem {
+    _id: string;
+    
+    // identification - pagination
+    dateTimeUtc: Date | null;
+    paginationDateLocalYearMonthStr: string;
+    paginationDateLocalYearMonthDateStr: string;
+
+    type: string;
+    content: string;
+    reasoningContent: string;
+    tags: string[];
+    visibility: string;
+    fileUrlArr: string[];
+
+    // file
+    fileUrl: string;
+    fileContentText: string;
+    fileContentAi: string;
+
+    // model info
+    isAi: boolean;
+    aiModelName: string;
+    aiModelProvider: string;
+
+    // auto
+    userAgent: string;
+    tagsAutoAi: string[];
+
+    // auto
+    createdAtUtc: Date;
+    createdAtIpAddress: string;
+    createdAtUserAgent: string;
+    updatedAtUtc: Date;
+    updatedAtIpAddress: string;
+    updatedAtUserAgent: string;
+
+    // Life event specific fields (added)
+    title?: string;
+    description?: string;
+    imageUrl?: string;
+    date?: string;
+    category?: string;
+    subcategory?: string;
+    priority?: string;
+    status?: string;
+    starred?: boolean;
+
+    // stats
+    promptTokens: number;
+    completionTokens: number;
+    reasoningTokens: number;
+    totalTokens: number;
+    costInUsd: number;
+
+    /** Present on shell-run assistant messages; used to preview imported binaries (PDF, HTML, …). */
+    shellRunArtifactV1?: {
+        importedFiles?: Array<{
+            fileName: string;
+            mimeType?: string;
+            storedFileUrl: string;
+        }>;
+    };
+
+    /** Agent final answer citations + research brief. */
+    agentFinalArtifactV1?: {
+        version?: number;
+        kind?: string;
+        citations?: Array<{
+            source: string;
+            id: string;
+            title: string;
+            summary: string;
+        }>;
+        researchBrief?: string;
+        confidence?: 'low' | 'medium' | 'high';
+    };
+}

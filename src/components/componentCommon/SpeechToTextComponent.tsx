@@ -1,0 +1,190 @@
+
+
+import { Fragment, useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import axiosCustom from "../../config/axiosCustom";
+import { useAudioRecorder } from 'react-audio-voice-recorder';
+import {
+    LucideAudioLines,
+    LucideLoader2,
+    LucideMicOff,
+    LucidePause,
+    LucidePlay,
+} from 'lucide-react';
+import { uploadFeatureFile } from "../../utils/featureFileUpload";
+import envKeys from "../../config/envKeys";
+
+/** Stable toast id so loading can be replaced or cleared on every path (react-hot-toast). */
+const SPEECH_TO_TEXT_TOAST_ID = 'speech-to-text-loading';
+
+const SpeechToText = ({
+    onTranscriptionComplete,
+    parentEntityId,
+}: {
+    onTranscriptionComplete: (text: string) => void;
+    parentEntityId: string;
+}) => {
+    const [isTranscribing, setIsTranscribing] = useState(false);
+
+    const {
+        startRecording,
+        stopRecording,
+        togglePauseResume,
+        recordingBlob,
+        isRecording,
+        isPaused,
+    } = useAudioRecorder();
+
+    useEffect(() => {
+        if (!recordingBlob) return;
+        handleAudioTranscription(recordingBlob);
+    }, [recordingBlob]);
+
+    const convertAudioToText = async (fileUrl: string): Promise<string> => {
+        try {
+            const response = await axiosCustom.post("/api/llm/crud/audioToText", {
+                fileUrl: fileUrl,
+            });
+            return response.data.data.contentAudioToText || "";
+        } catch (error) {
+            console.error("Error converting audio to text:", error);
+            throw new Error("Failed to convert audio to text");
+        }
+    };
+
+    const handleAudioTranscription = async (blob: Blob) => {
+        try {
+            setIsTranscribing(true);
+
+            toast.loading('Converting speech to text...', { id: SPEECH_TO_TEXT_TOAST_ID });
+
+            // Create file from blob
+            const audioFile = new File([blob], 'speech.webm', { type: 'audio/webm' });
+
+            // Upload to storage
+            const fileUrl = await uploadFeatureFile({
+                file: audioFile,
+                parentEntityId: parentEntityId,
+                apiUrl: envKeys.API_URL,
+            });
+
+            // Convert to text
+            const transcribedText = await convertAudioToText(fileUrl);
+
+            if (transcribedText && transcribedText.trim() !== '') {
+                toast.success('Speech converted to text successfully!', {
+                    id: SPEECH_TO_TEXT_TOAST_ID,
+                });
+                onTranscriptionComplete?.(transcribedText);
+            } else {
+                toast.error('No speech detected in the recording', {
+                    id: SPEECH_TO_TEXT_TOAST_ID,
+                });
+                onTranscriptionComplete?.('');
+            }
+
+        } catch (error) {
+            console.error("Error in speech transcription:", error);
+            toast.error('Failed to convert speech to text. Please try again.', {
+                id: SPEECH_TO_TEXT_TOAST_ID,
+            });
+        } finally {
+            setIsTranscribing(false);
+        }
+    };
+
+    const handleStartRecording = () => {
+        startRecording();
+    };
+
+    const handleStopRecording = () => {
+        stopRecording();
+    };
+
+    const handleTogglePauseResume = () => {
+        togglePauseResume();
+    };
+
+    const btnIcon =
+        'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border text-zinc-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:opacity-50';
+
+    return (
+        <Fragment>
+            {!isRecording && !isTranscribing && (
+                <button
+                    type="button"
+                    className={
+                        btnIcon +
+                        ' border-zinc-700/80 bg-zinc-900 shadow-sm hover:bg-zinc-800 hover:text-zinc-100'
+                    }
+                    onClick={handleStartRecording}
+                    disabled={isTranscribing}
+                    title="Dictate to title (speech to text)"
+                >
+                    <LucideAudioLines className="h-4 w-4" strokeWidth={2} aria-hidden />
+                </button>
+            )}
+
+            {isRecording && (
+                <Fragment>
+                    {isPaused && (
+                        <button
+                            type="button"
+                            className={
+                                btnIcon +
+                                ' border-emerald-700/80 bg-emerald-950 text-emerald-300 hover:bg-emerald-900/90'
+                            }
+                            onClick={handleTogglePauseResume}
+                            title="Resume recording"
+                        >
+                            <LucidePlay className="h-4 w-4" strokeWidth={2} aria-hidden />
+                        </button>
+                    )}
+                    {!isPaused && (
+                        <Fragment>
+                            <button
+                                type="button"
+                                className={
+                                    btnIcon +
+                                    ' border-red-200/80 bg-red-50 text-red-800 hover:bg-red-100/90'
+                                }
+                                onClick={handleStopRecording}
+                                title="Stop and transcribe"
+                            >
+                                <LucideMicOff className="h-4 w-4" strokeWidth={2} aria-hidden />
+                            </button>
+
+                            <button
+                                type="button"
+                                className={
+                                    btnIcon +
+                                    ' border-amber-700/80 bg-amber-950 text-amber-200 hover:bg-amber-900/90'
+                                }
+                                onClick={handleTogglePauseResume}
+                                title="Pause recording"
+                            >
+                                <LucidePause className="h-4 w-4" strokeWidth={2} aria-hidden />
+                            </button>
+                        </Fragment>
+                    )}
+                </Fragment>
+            )}
+
+            {isTranscribing && (
+                <button
+                    type="button"
+                    className={
+                        btnIcon +
+                        ' cursor-wait border-zinc-700/80 bg-zinc-950 text-zinc-400'
+                    }
+                    disabled
+                    title="Converting speech to text…"
+                >
+                    <LucideLoader2 className="h-4 w-4 animate-spin" strokeWidth={2} aria-hidden />
+                </button>
+            )}
+        </Fragment>
+    );
+};
+
+export default SpeechToText;

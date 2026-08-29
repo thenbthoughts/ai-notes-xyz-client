@@ -1,0 +1,133 @@
+import { useEffect } from "react";
+import { useAtom, useAtomValue } from 'jotai';
+import stateJotaiAuthAtom, { stateJotaiAuthReloadAtom } from '../jotai/stateJotaiAuth';
+import axiosCustom from '../config/axiosCustom';
+
+const RefreshToken = () => {
+    const [authState, setAuthState] = useAtom(stateJotaiAuthAtom);
+    const authStateReload = useAtomValue(stateJotaiAuthReloadAtom);
+
+    // useEffects
+    useEffect(() => {
+        if (authState.isLoggedIn === 'pending') {
+            refreshToken();
+        }
+    }, []);
+
+    useEffect(() => {
+        let ONE_DAY_IN_MS = 24 * 60 * 60 * 1_000;
+        const intervalId = setInterval(refreshToken, ONE_DAY_IN_MS); // Call refreshToken every 24 hours
+        return () => clearInterval(intervalId); // Clear the interval when the component unmounts
+    }, []);
+
+    useEffect(() => {
+        refreshToken();
+    }, [authStateReload])
+
+    const refreshToken = async () => {
+        const tempData = {
+            isLoggedIn: 'true' as "pending" | "true" | "false",
+            apiKeyGroqValid: false,
+            apiKeyOpenrouterValid: false,
+            fileStorageType: 'gridfs' as 'gridfs' | 's3',
+            apiKeyS3Valid: false,
+            apiKeyOllamaValid: false,
+            apiKeyQdrantValid: false,
+            apiKeyReplicateValid: false,
+            apiKeyRunpodValid: false,
+            apiKeyOpenaiValid: false,
+            apiKeyLocalaiValid: false,
+            smtpValid: false,
+            telegramValid: false,
+            agentWorkspaceValid: false,
+            mcpBearerTokenValid: false,
+            clientFrontendUrl: '',
+        };
+
+        try {
+            const resultUser = await axiosCustom.post('/api/user/crud/refresh-token', {}, {
+                withCredentials: true,
+                timeout: 10000, // Set timeout to 10 seconds
+            });
+
+            const userInfoFromApi = resultUser.data.user;
+            if (userInfoFromApi) {
+                if (typeof userInfoFromApi?.fileStorageType === 'string') {
+                    if(userInfoFromApi?.fileStorageType === 'gridfs') {
+                        tempData.fileStorageType = 'gridfs';
+                    } else if (userInfoFromApi?.fileStorageType === 's3') {
+                        tempData.fileStorageType = 's3';
+                    }
+                }
+                if (typeof userInfoFromApi?.apiKeyGroqValid === 'boolean') {
+                    tempData.apiKeyGroqValid = userInfoFromApi?.apiKeyGroqValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyOpenrouterValid === 'boolean') {
+                    tempData.apiKeyOpenrouterValid = userInfoFromApi?.apiKeyOpenrouterValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyS3Valid === 'boolean') {
+                    tempData.apiKeyS3Valid = userInfoFromApi?.apiKeyS3Valid;
+                }
+                if (typeof userInfoFromApi?.apiKeyOllamaValid === 'boolean') {
+                    tempData.apiKeyOllamaValid = userInfoFromApi?.apiKeyOllamaValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyQdrantValid === 'boolean') {
+                    tempData.apiKeyQdrantValid = userInfoFromApi?.apiKeyQdrantValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyReplicateValid === 'boolean') {
+                    tempData.apiKeyReplicateValid = userInfoFromApi?.apiKeyReplicateValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyRunpodValid === 'boolean') {
+                    tempData.apiKeyRunpodValid = userInfoFromApi?.apiKeyRunpodValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyOpenaiValid === 'boolean') {
+                    tempData.apiKeyOpenaiValid = userInfoFromApi?.apiKeyOpenaiValid;
+                }
+                if (typeof userInfoFromApi?.apiKeyLocalaiValid === 'boolean') {
+                    tempData.apiKeyLocalaiValid = userInfoFromApi?.apiKeyLocalaiValid;
+                }
+                if (typeof userInfoFromApi?.smtpValid === 'boolean') {
+                    tempData.smtpValid = userInfoFromApi?.smtpValid;
+                }
+                if (typeof userInfoFromApi?.telegramValid === 'boolean') {
+                    tempData.telegramValid = userInfoFromApi?.telegramValid;
+                }
+                if (typeof userInfoFromApi?.agentWorkspaceValid === 'boolean') {
+                    tempData.agentWorkspaceValid = userInfoFromApi?.agentWorkspaceValid;
+                }
+                if (typeof userInfoFromApi?.mcpBearerTokenValid === 'boolean') {
+                    tempData.mcpBearerTokenValid = userInfoFromApi?.mcpBearerTokenValid;
+                }
+                if (typeof userInfoFromApi?.clientFrontendUrl === 'string') {
+                    tempData.clientFrontendUrl = userInfoFromApi?.clientFrontendUrl;
+                }
+            }
+
+            setAuthState(tempData);
+        } catch (error) {
+            console.error('Refresh token failed:', error);
+            setAuthState({
+                isLoggedIn: 'false',
+                fileStorageType: 'gridfs',
+                apiKeyGroqValid: false,
+                apiKeyOpenrouterValid: false,
+                apiKeyS3Valid: false,
+                apiKeyOllamaValid: false,
+                apiKeyQdrantValid: false,
+                apiKeyReplicateValid: false,
+                apiKeyRunpodValid: false,
+                apiKeyOpenaiValid: false,
+                apiKeyLocalaiValid: false,
+                smtpValid: false,
+                telegramValid: false,
+                agentWorkspaceValid: false,
+                mcpBearerTokenValid: false,
+                clientFrontendUrl: '',
+            });
+        }
+    };
+
+    return <></>;
+};
+
+export default RefreshToken;
