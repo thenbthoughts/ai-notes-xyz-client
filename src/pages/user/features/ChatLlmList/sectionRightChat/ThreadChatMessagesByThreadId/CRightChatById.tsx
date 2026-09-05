@@ -114,6 +114,8 @@ const CRightChatById = ({
     const [shellFilesInitialPath, setShellFilesInitialPath] = useState<string | undefined>();
     const [openingOpencodeSession, setOpeningOpencodeSession] = useState(false);
     const [sessionCopied, setSessionCopied] = useState(false);
+    const [opencodeCustomUrl, setOpencodeCustomUrl] = useState<string>('');
+    const [opencodeCustomUsername, setOpencodeCustomUsername] = useState<string>('opencode');
     const [hasMore, setHasMore] = useState(false);
     const [currentLimit, setCurrentLimit] = useState(LIMIT_MESSAGES);
     const [totalCount, setTotalCount] = useState(0);
@@ -232,6 +234,40 @@ const CRightChatById = ({
         setSelectedAgentInstanceId(null);
         useEffectOneTimeMessagesScrollDownRef.current = false;
     }, [threadId])
+
+    // Fetch custom opencode url (Agent Workspace -> Opencode) to render Open session as a direct link
+    useEffect(() => {
+        const fetchOpencode = async () => {
+            try {
+                const res = await axiosCustom.get('/api/user/api-keys/getUserApiAgentWorkspace', { withCredentials: true });
+                if (typeof res.data?.opencodeUrl === 'string' && res.data.opencodeUrl.trim()) {
+                    setOpencodeCustomUrl(res.data.opencodeUrl.trim().replace(/\/+$/, ''));
+                } else {
+                    setOpencodeCustomUrl('');
+                }
+                if (typeof res.data?.opencodeUsername === 'string' && res.data.opencodeUsername.trim()) {
+                    setOpencodeCustomUsername(res.data.opencodeUsername.trim());
+                }
+            } catch {
+                setOpencodeCustomUrl('');
+            }
+        };
+        void fetchOpencode();
+    }, []);
+
+    const opencodeDirectLink = useMemo(() => {
+        if (!opencodeCustomUrl) return '';
+        const base = opencodeCustomUrl.replace(/\/+$/, '');
+        try {
+            const b64 = typeof window !== 'undefined' && typeof window.btoa === 'function'
+                ? window.btoa(base).replace(/=+$/, '')
+                : Buffer.from(base).toString('base64').replace(/=+$/, '');
+            if (opencodeSessionId) return `${base}/server/${b64}/session/${opencodeSessionId}`;
+            return `${base}/`;
+        } catch {
+            return base;
+        }
+    }, [opencodeCustomUrl, opencodeSessionId]);
 
     useEffect(() => {
         setRefreshRandomNum(
@@ -757,20 +793,33 @@ const CRightChatById = ({
                                         </span>
                                     </div>
                                     <div className="flex shrink-0 items-center gap-1.5">
-                                        <button
-                                            type="button"
-                                            onClick={() => void handleOpenOpencodeSession()}
-                                            disabled={openingOpencodeSession}
-                                            title="Open this OpenCode session on the virtual computer"
-                                            className="flex min-h-8 items-center gap-1 rounded-md border border-cyan-200/80 bg-zinc-900/80 px-2 py-1 text-[11px] font-medium text-cyan-300 shadow-sm transition hover:bg-cyan-950/40 disabled:opacity-50 sm:min-h-0 sm:px-1.5 sm:py-0.5 sm:text-[10px]"
-                                        >
-                                            {openingOpencodeSession ? (
-                                                <Loader2 className="h-3.5 w-3.5 animate-spin sm:h-3 sm:w-3" />
-                                            ) : (
+                                        {opencodeDirectLink ? (
+                                            <a
+                                                href={opencodeDirectLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                title={opencodeCustomUrl ? `Open Opencode at ${opencodeCustomUrl} as ${opencodeCustomUsername || 'opencode'}` : 'Open this OpenCode session on the virtual computer'}
+                                                className="flex min-h-8 items-center gap-1 rounded-md border border-cyan-200/80 bg-zinc-900/80 px-2 py-1 text-[11px] font-medium text-cyan-300 shadow-sm transition hover:bg-cyan-950/40 sm:min-h-0 sm:px-1.5 sm:py-0.5 sm:text-[10px]"
+                                            >
                                                 <Monitor className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
-                                            )}
-                                            Open session
-                                        </button>
+                                                Open session
+                                            </a>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                onClick={() => void handleOpenOpencodeSession()}
+                                                disabled={openingOpencodeSession}
+                                                title="Open this OpenCode session on the virtual computer"
+                                                className="flex min-h-8 items-center gap-1 rounded-md border border-cyan-200/80 bg-zinc-900/80 px-2 py-1 text-[11px] font-medium text-cyan-300 shadow-sm transition hover:bg-cyan-950/40 disabled:opacity-50 sm:min-h-0 sm:px-1.5 sm:py-0.5 sm:text-[10px]"
+                                            >
+                                                {openingOpencodeSession ? (
+                                                    <Loader2 className="h-3.5 w-3.5 animate-spin sm:h-3 sm:w-3" />
+                                                ) : (
+                                                    <Monitor className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
+                                                )}
+                                                Open session
+                                            </button>
+                                        )}
                                         <button
                                             type="button"
                                             onClick={() => openShellFiles()}
