@@ -294,6 +294,7 @@ const UserHomepage = () => {
         { label: 'Search', to: '/user/search', icon: LucideSearch },
         { label: 'Timeline', to: '/user/timeline', icon: LucideCalendar },
         { label: 'Suggestions', to: '/user/suggestions', icon: LucideLightbulb },
+        { label: 'Tasks', to: '/user/task', icon: LucideList },
         { label: 'Notes', to: '/user/notes', icon: LucideFileText },
         { label: 'Memo', to: '/user/memo', icon: LucideStickyNote },
         { label: 'Life events', to: '/user/life-events', icon: LucideCalendar1 },
@@ -540,49 +541,47 @@ const UserHomepage = () => {
                                 <Fragment>
                                     {filteredTiles.map((tile) => {
                                         if (tile.label === 'Tasks') {
-                                            return null;
+                                            return (
+                                                <Link
+                                                    key="Tasks"
+                                                    to="/user/task"
+                                                    aria-label={`Tasks ${dashboardStats.taskCompletedCount} of ${dashboardStats.totalCount} completed`}
+                                                    className="group flex flex-col items-center justify-center gap-1 rounded-2xl border-2 border-sky-700/80 bg-zinc-900/90 p-2 text-center shadow-md shadow-sky-900/30 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-sky-500 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900"
+                                                >
+                                                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-900/60 text-sky-400 ring-2 ring-sky-700/70 transition group-hover:scale-105 group-hover:bg-sky-800/80 sm:h-9 sm:w-9">
+                                                        <LucideList className="h-[18px] w-[18px] sm:h-5 sm:w-5" strokeWidth={2} />
+                                                    </span>
+                                                    <span className="max-w-full truncate px-0.5 text-[10px] font-bold uppercase tracking-wide text-sky-200 group-hover:text-sky-100 sm:text-xs">
+                                                        Tasks
+                                                    </span>
+                                                    {dashboardStats.taskCompletedCount > 0 &&
+                                                        dashboardStats.totalCount > 0 && (
+                                                            <div className="w-full space-y-1" title={completedTooltip}>
+                                                                <div className="text-[10px] font-semibold text-sky-300/90" title={completedTooltip}>
+                                                                    {dashboardStats.taskCompletedCount} /{' '}
+                                                                    {dashboardStats.totalCount}
+                                                                    {taskPct >= 1 && (
+                                                                        <span className="ml-1 text-cyan-400" title={completedTooltip}>
+                                                                            ({taskPct}%)
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <div className="h-1.5 w-full overflow-hidden rounded-full bg-sky-800/80" title={completedTooltip}>
+                                                                    <div
+                                                                        className="h-full rounded-full bg-gradient-to-r from-sky-400 via-cyan-400 to-blue-500 transition-all duration-500"
+                                                                        style={{ width: `${taskPct}%` }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    {dashboardStats.totalCount === 0 && (
+                                                        <span className="text-[10px] font-medium text-zinc-500" title={totalTooltip}>No tasks yet</span>
+                                                    )}
+                                                </Link>
+                                            );
                                         }
                                         return <NavTile key={tile.label} to={tile.to} href={tile.href} label={tile.label} icon={tile.icon} variant={tile.variant} />;
                                     })}
-                                    {filteredTiles.some((t) => {
-                                        return t.label === 'Tasks';
-                                    }) && (
-                                        <Link
-                                            to="/user/task"
-                                            aria-label={`Tasks ${dashboardStats.taskCompletedCount} of ${dashboardStats.totalCount} completed`}
-                                            className="group flex flex-col items-center justify-center gap-1 rounded-2xl border-2 border-sky-700/80 bg-zinc-900/90 p-2 text-center shadow-md shadow-sky-900/30 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-sky-500 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900"
-                                        >
-                                            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-900/60 text-sky-400 ring-2 ring-sky-700/70 transition group-hover:scale-105 group-hover:bg-sky-800/80 sm:h-9 sm:w-9">
-                                                <LucideList className="h-[18px] w-[18px] sm:h-5 sm:w-5" strokeWidth={2} />
-                                            </span>
-                                            <span className="max-w-full truncate px-0.5 text-[10px] font-bold uppercase tracking-wide text-sky-200 group-hover:text-sky-100 sm:text-xs">
-                                                Tasks
-                                            </span>
-                                            {dashboardStats.taskCompletedCount > 0 &&
-                                                dashboardStats.totalCount > 0 && (
-                                                    <div className="w-full space-y-1" title={completedTooltip}>
-                                                        <div className="text-[10px] font-semibold text-sky-300/90" title={completedTooltip}>
-                                                            {dashboardStats.taskCompletedCount} /{' '}
-                                                            {dashboardStats.totalCount}
-                                                            {taskPct >= 1 && (
-                                                                <span className="ml-1 text-cyan-400" title={completedTooltip}>
-                                                                    ({taskPct}%)
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-sky-800/80" title={completedTooltip}>
-                                                            <div
-                                                                className="h-full rounded-full bg-gradient-to-r from-sky-400 via-cyan-400 to-blue-500 transition-all duration-500"
-                                                                style={{ width: `${taskPct}%` }}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            {dashboardStats.totalCount === 0 && (
-                                                <span className="text-[10px] font-medium text-zinc-500" title={totalTooltip}>No tasks yet</span>
-                                            )}
-                                        </Link>
-                                    )}
                                     {filteredTiles.length === 0 && (
                                         <div className="col-span-2 flex flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-zinc-700 bg-zinc-900/50 px-3 py-6 text-center sm:col-span-3">
                                             <p className="text-xs font-semibold text-zinc-300">No tiles match “{searchQuery}”</p>
