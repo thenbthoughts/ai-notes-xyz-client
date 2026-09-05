@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -12,8 +12,12 @@ const AgentWorkspaceApiKey = () => {
     const [agentWorkspaceDesktopPassword, setAgentWorkspaceDesktopPassword] = useState("");
     const [agentWorkspaceApiUrl, setAgentWorkspaceApiUrl] = useState("");
     const [agentWorkspaceApiToken, setAgentWorkspaceApiToken] = useState("");
+    const [opencodeUrl, setOpencodeUrl] = useState("");
+    const [opencodeUsername, setOpencodeUsername] = useState("opencode");
+    const [opencodePassword, setOpencodePassword] = useState("");
     const [showDesktopPassword, setShowDesktopPassword] = useState(false);
     const [showApiToken, setShowApiToken] = useState(false);
+    const [showOpencodePassword, setShowOpencodePassword] = useState(false);
 
     const [requestState, setRequestState] = useState({
         loading: false,
@@ -25,6 +29,19 @@ const AgentWorkspaceApiKey = () => {
     const setAuthStateReload = useSetAtom(stateJotaiAuthReloadAtom);
 
     const { clearRequest, handleClearApiKey } = useApiKeyClear();
+
+    useEffect(() => {
+        const fetchCurrent = async () => {
+            try {
+                const res = await axiosCustom.get('/api/user/api-keys/getUserApiAgentWorkspace', { withCredentials: true });
+                if (res.data?.desktopUrl) setAgentWorkspaceDesktopUrl(res.data.desktopUrl);
+                if (res.data?.apiUrl) setAgentWorkspaceApiUrl(res.data.apiUrl);
+                if (typeof res.data?.opencodeUrl === 'string') setOpencodeUrl(res.data.opencodeUrl);
+                if (typeof res.data?.opencodeUsername === 'string' && res.data.opencodeUsername.trim()) setOpencodeUsername(res.data.opencodeUsername.trim());
+            } catch { /* ignore */ }
+        };
+        void fetchCurrent();
+    }, []);
 
     const handleUpdate = async () => {
         setRequestState({ loading: true, success: '', error: '' });
@@ -38,6 +55,9 @@ const AgentWorkspaceApiKey = () => {
                     agentWorkspaceDesktopPassword,
                     agentWorkspaceApiUrl,
                     agentWorkspaceApiToken,
+                    opencodeUrl,
+                    opencodeUsername: opencodeUsername.trim() || 'opencode',
+                    opencodePassword,
                 },
                 {
                     headers: {
@@ -231,6 +251,77 @@ const AgentWorkspaceApiKey = () => {
                         onClick={() => setShowApiToken(!showApiToken)}
                     >
                         {showApiToken ? "Hide token" : "Show token"}
+                    </button>
+                </div>
+            </div>
+
+            <div className="border-t border-zinc-700 pt-4 mt-4">
+                <h4 className="text-sm font-semibold text-zinc-200 mb-2">Opencode <span className="text-xs font-normal text-zinc-400">(optional)</span></h4>
+                <p className="text-xs text-zinc-400 mb-2">
+                    If set, <span className="font-mono text-zinc-300">Open session</span> will open this Opencode server instead of <code className="bg-zinc-800 px-1 rounded">http://localhost:4096</code>. Leave empty to use the workspace host on port 4096.
+                </p>
+                <label htmlFor="opencodeUrl" className="block text-zinc-300 font-bold mb-2">
+                    Opencode URL
+                </label>
+                <input
+                    type="text"
+                    id="opencodeUrl"
+                    className="shadow appearance-none border border-zinc-700 rounded-sm w-full py-2 px-3 bg-zinc-800 text-zinc-200 leading-tight focus:outline-none focus:shadow-outline"
+                    placeholder="http://localhost:4096"
+                    value={opencodeUrl}
+                    onChange={(e) => setOpencodeUrl(e.target.value)}
+                />
+
+                <div className="mt-3">
+                    <label htmlFor="opencodeUsername" className="block text-zinc-300 font-bold mb-2">
+                        Opencode Username
+                    </label>
+                    <input
+                        type="text"
+                        id="opencodeUsername"
+                        className="shadow appearance-none border border-zinc-700 rounded-sm w-full py-2 px-3 bg-zinc-800 text-zinc-200 leading-tight focus:outline-none focus:shadow-outline"
+                        placeholder="opencode"
+                        value={opencodeUsername}
+                        onChange={(e) => setOpencodeUsername(e.target.value)}
+                        autoComplete="username"
+                    />
+                    <p className="text-xs text-zinc-500 mt-1">Defaults to <code className="bg-zinc-800 px-1 rounded">opencode</code> if left empty.</p>
+                </div>
+
+                <div className="mt-3">
+                    <label htmlFor="opencodePassword" className="block text-zinc-300 font-bold mb-2">
+                        Opencode Password
+                    </label>
+                    <div className="relative">
+                        <input
+                            type={showOpencodePassword ? "text" : "password"}
+                            id="opencodePassword"
+                            className="shadow appearance-none border border-zinc-700 rounded-sm w-full py-2 px-3 pr-10 bg-zinc-800 text-zinc-200 leading-tight focus:outline-none focus:shadow-outline"
+                            placeholder="Same value as OPENCODE_SERVER_PASSWORD"
+                            value={opencodePassword}
+                            onChange={(e) => setOpencodePassword(e.target.value)}
+                            autoComplete="current-password"
+                        />
+                        <button
+                            type="button"
+                            className="absolute inset-y-0 right-0 px-3 text-zinc-400 hover:text-zinc-200"
+                            onClick={() => setShowOpencodePassword(!showOpencodePassword)}
+                            aria-label={showOpencodePassword ? "Hide password" : "Show password"}
+                            title={showOpencodePassword ? "Hide password" : "Show password"}
+                        >
+                            {showOpencodePassword ? (
+                                <EyeOff className="h-4 w-4" />
+                            ) : (
+                                <Eye className="h-4 w-4" />
+                            )}
+                        </button>
+                    </div>
+                    <button
+                        type="button"
+                        className="flex items-center mt-1 text-sm text-zinc-400 hover:text-zinc-200"
+                        onClick={() => setShowOpencodePassword(!showOpencodePassword)}
+                    >
+                        {showOpencodePassword ? "Hide password" : "Show password"}
                     </button>
                 </div>
             </div>
