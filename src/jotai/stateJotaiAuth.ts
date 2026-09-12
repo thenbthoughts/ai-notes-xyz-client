@@ -17,6 +17,7 @@ export type AuthState = {
     telegramValid: boolean;
     agentWorkspaceValid: boolean;
     mcpBearerTokenValid: boolean;
+    dappsValid: boolean;
 
     clientFrontendUrl: string;
 };
@@ -38,6 +39,7 @@ const stateJotaiAuthAtom = atom<AuthState>({
     telegramValid: false,
     agentWorkspaceValid: false,
     mcpBearerTokenValid: false,
+    dappsValid: false,
 
     clientFrontendUrl: '',
 });

@@ -41,6 +41,7 @@ const RefreshToken = () => {
             telegramValid: false,
             agentWorkspaceValid: false,
             mcpBearerTokenValid: false,
+            dappsValid: false,
             clientFrontendUrl: '',
         };
 
@@ -98,6 +99,9 @@ const RefreshToken = () => {
                 if (typeof userInfoFromApi?.mcpBearerTokenValid === 'boolean') {
                     tempData.mcpBearerTokenValid = userInfoFromApi?.mcpBearerTokenValid;
                 }
+                if (typeof (userInfoFromApi as any)?.dappsValid === 'boolean') {
+                    (tempData as any).dappsValid = (userInfoFromApi as any)?.dappsValid;
+                }
                 if (typeof userInfoFromApi?.clientFrontendUrl === 'string') {
                     tempData.clientFrontendUrl = userInfoFromApi?.clientFrontendUrl;
                 }
@@ -122,6 +126,7 @@ const RefreshToken = () => {
                 telegramValid: false,
                 agentWorkspaceValid: false,
                 mcpBearerTokenValid: false,
+                dappsValid: false,
                 clientFrontendUrl: '',
             });
         }

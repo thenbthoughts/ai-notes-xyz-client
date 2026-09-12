@@ -20,8 +20,9 @@ import FileStorageType from "./FileStorageType";
 import ClientFrontendUrl from "./ClientFrontendUrl";
 import AgentWorkspaceApiKey from "./AgentWorkspaceApiKey";
 import McpApiKey from "./McpApiKey";
+import DappsApiKey from "./DappsApiKey";
 
-type SelectionType = 'groq' | 'openrouter' | 's3' | 'ollama' | 'qdrant' | 'replicate' | 'runpod' | 'openai' | 'localai' | 'smtp' | 'telegram' | 'agentWorkspace' | 'mcp' | 'fileStorage' | 'clientUrl' | null;
+type SelectionType = 'groq' | 'openrouter' | 's3' | 'ollama' | 'qdrant' | 'replicate' | 'runpod' | 'openai' | 'localai' | 'smtp' | 'telegram' | 'agentWorkspace' | 'mcp' | 'dapps' | 'fileStorage' | 'clientUrl' | null;
 
 const SettingApiKey = () => {
     const [selectedOption, setSelectedOption] = useState<SelectionType>(null);
@@ -43,6 +44,7 @@ const SettingApiKey = () => {
         { key: 'telegram' as const, label: 'Telegram', type: 'api' },
         { key: 'agentWorkspace' as const, label: 'Agent Workspace', type: 'api' },
         { key: 'mcp' as const, label: 'MCP', type: 'api' },
+        { key: 'dapps' as const, label: 'DApps', type: 'api' },
     ];
 
     const renderApiKeys = () => {
@@ -89,6 +91,8 @@ const SettingApiKey = () => {
                                     isValid = authState.agentWorkspaceValid;
                                 } else if (option.key === 'mcp') {
                                     isValid = authState.mcpBearerTokenValid;
+                                } else if (option.key === 'dapps') {
+                                    isValid = authState.dappsValid;
                                 } else {
                                     isValid = false;
                                 }
@@ -133,6 +137,7 @@ const SettingApiKey = () => {
                     {selectedOption === 'telegram' && <TelegramSettings />}
                     {selectedOption === 'agentWorkspace' && <AgentWorkspaceApiKey />}
                     {selectedOption === 'mcp' && <McpApiKey />}
+                    {selectedOption === 'dapps' && <DappsApiKey />}
                     {selectedOption === 'clientUrl' && <ClientFrontendUrl />}
                     {selectedOption === null && (
                         <div className="text-center py-8 text-zinc-400 bg-zinc-950 rounded-lg border-2 border-dashed border-zinc-700 my-6">

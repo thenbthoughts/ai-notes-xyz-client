@@ -96,6 +96,13 @@ const LlmKeywordGraph = lazy(() => import("./pages/user/features/AiContextHelper
 // pages -> test
 const TestVoiceActivityDetection = lazy(() => import("./pages/test/testDev/TestVoiceActivityDetectionLibrary.tsx"));
 
+// pages -> dapps
+const DappsLayout = lazy(() => import("./pages/user/dapps/DappsLayout.tsx"));
+const DappsAdd = lazy(() => import("./pages/user/dapps/DappsAdd.tsx"));
+const DappsProjects = lazy(() => import("./pages/user/dapps/DappsProjects.tsx"));
+const DappsProjectDetail = lazy(() => import("./pages/user/dapps/DappsProjectDetail.tsx"));
+const DappsProjectSetting = lazy(() => import("./pages/user/dapps/DappsProjectSetting.tsx"));
+
 function App() {
   const Layout = () => {
     return (
@@ -414,6 +421,36 @@ function App() {
               <TestVoiceActivityDetection />
             </Suspense>
           )
+        },
+        {
+          path: '/user/dapps',
+          element: (
+            <UnauthorizedRoute>
+              <DappsLayout />
+            </UnauthorizedRoute>
+          ),
+          children: [
+            {
+              index: true,
+              element: <DappsProjects />,
+            },
+            {
+              path: 'add',
+              element: <DappsAdd />,
+            },
+            {
+              path: 'projects',
+              element: <DappsProjects />,
+            },
+            {
+              path: 'project/:id',
+              element: <DappsProjectDetail />,
+            },
+            {
+              path: 'project/:id/setting',
+              element: <DappsProjectSetting />,
+            },
+          ],
         }
       ]
     },

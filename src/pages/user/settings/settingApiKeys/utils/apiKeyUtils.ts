@@ -13,7 +13,8 @@ export type ApiKeyType =
   | 'smtp'
   | 'telegram'
   | 'agentWorkspace'
-  | 'mcp';
+  | 'mcp'
+  | 'dapps';
 
 /**
  * Clears an API key for the specified service

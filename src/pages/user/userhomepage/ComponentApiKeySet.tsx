@@ -218,6 +218,15 @@ const ComponentApiKeySet = () => {
             color: 'blue',
             required: false,
         },
+        {
+            name: 'DApps',
+            key: 'dappsValid',
+            valid: (authState as any).dappsValid,
+            icon: LucideTerminal,
+            description: 'Git (Gitea/GitHub) + Coolify hosting for dynamic apps (optional)',
+            color: 'emerald',
+            required: false,
+        },
     ];
 
     const completedCount = apiKeyStatus.filter((api) => {

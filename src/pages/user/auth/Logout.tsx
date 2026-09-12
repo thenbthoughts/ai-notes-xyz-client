@@ -48,6 +48,7 @@ export default function Component() {
                 telegramValid: false,
                 agentWorkspaceValid: false,
                 mcpBearerTokenValid: false,
+                dappsValid: false,
                 clientFrontendUrl: '',
             });
 
@@ -79,6 +80,7 @@ export default function Component() {
                 telegramValid: false,
                 agentWorkspaceValid: false,
                 mcpBearerTokenValid: false,
+                dappsValid: false,
                 clientFrontendUrl: '',
             });
         } finally {
