@@ -13,9 +13,9 @@ const ComponentThreadAdd = () => {
     const navigate = useNavigate();
     const setJotaiChatThreadRefreshRandomNum = useSetAtom(jotaiChatThreadRefreshRandomNum);
     const [formData, setFormData] = useState({
-        isPersonalContextEnabled: false,
+        isPersonalContextEnabled: true,
         isAutoAiContextSelectEnabled: false,
-        isMemoryEnabled: false,
+        isMemoryEnabled: true,
         useOmniparser: false,
 
         // answer type

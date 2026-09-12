@@ -564,35 +564,6 @@ const ComponentChatMessageInput = forwardRef<ChatMessageInputHandle, {
                     setFiles={setFiles}
                 />
 
-                <div className="mb-1.5 flex flex-wrap gap-1">
-                    {[
-                        {
-                            label: 'Summarize',
-                            text: 'Summarize the key points from our recent conversation and my relevant notes in short bullets.',
-                        },
-                        {
-                            label: 'Extract actions',
-                            text: 'Extract concrete action items from my notes and tasks related to this thread. List owners/dates if known.',
-                        },
-                        {
-                            label: 'Translate',
-                            text: 'Translate the last user message into clear, simple English (or keep English and tighten clarity).',
-                        },
-                    ].map((action) => (
-                        <button
-                            key={action.label}
-                            type="button"
-                            className="rounded-full border border-zinc-700/90 bg-zinc-900 px-2 py-0.5 text-[10px] font-medium text-zinc-400 shadow-sm transition hover:border-teal-300 hover:bg-teal-950/40 hover:text-teal-300"
-                            onClick={() =>
-                                setNewNote((prev) => (prev.trim() ? `${prev.trim()}\n\n${action.text}` : action.text))
-                            }
-                            title={action.text}
-                        >
-                            {action.label}
-                        </button>
-                    ))}
-                </div>
-
                 <TextAndFileInput
                     value={newNote}
                     setValue={setNewNote}
