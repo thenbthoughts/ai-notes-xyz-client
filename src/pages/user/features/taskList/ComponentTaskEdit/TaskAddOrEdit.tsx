@@ -57,6 +57,7 @@ const TaskAddOrEdit: React.FC<{
         priority: '',
         isArchived: false,
         isCompleted: false,
+        isTaskPinned: false,
     });
 
     const [workspaceId, setWorkspaceId] = useState('');
@@ -107,6 +108,7 @@ const TaskAddOrEdit: React.FC<{
                             isArchived: taskInfo.isArchived || false,
                             isCompleted: taskInfo.isCompleted || false,
                             priority: taskInfo.priority || '',
+                            isTaskPinned: taskInfo.isTaskPinned === true,
                         });
 
                         const fromArr = Array.isArray(taskInfo.dueDateReminderPresetLabels)
@@ -194,6 +196,12 @@ const TaskAddOrEdit: React.FC<{
                     setWorkspaceId(currentWorkspaceId);
                 }
                 setTaskStatusId('');
+                setFormData({
+                    priority: '',
+                    isArchived: false,
+                    isCompleted: false,
+                    isTaskPinned: false,
+                });
             }
         };
 
@@ -245,6 +253,7 @@ const TaskAddOrEdit: React.FC<{
             priority: formData.priority,
             isArchived: formData.isArchived,
             isCompleted: formData.isCompleted,
+            isTaskPinned: formData.isTaskPinned,
 
             // workspace
             taskWorkspaceId: workspaceId,
@@ -272,6 +281,7 @@ const TaskAddOrEdit: React.FC<{
             priority: string;
             isArchived: boolean;
             isCompleted: boolean;
+            isTaskPinned: boolean;
 
             // workspace
             taskWorkspaceId: string;
@@ -526,6 +536,17 @@ const TaskAddOrEdit: React.FC<{
                                 <div className="mt-0.5 flex flex-wrap gap-0.5 sm:mt-1 sm:gap-1">
                                     {isTaskAddModalIsOpen.modalType === 'edit' && (
                                         <Fragment>
+                                            <label className="flex cursor-pointer items-center gap-1 rounded-lg border border-zinc-700/80 bg-zinc-900 px-1.5 py-0.5 shadow-sm transition hover:border-zinc-500 sm:gap-1.5 sm:px-2 sm:py-1">
+                                                <input
+                                                    type="checkbox"
+                                                    className="h-3.5 w-3.5 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500/30"
+                                                    checked={formData.isTaskPinned}
+                                                    onChange={(e) =>
+                                                        setFormData({ ...formData, isTaskPinned: e.target.checked })
+                                                    }
+                                                />
+                                                <span className="text-xs font-medium text-amber-200">Pinned</span>
+                                            </label>
                                             <label className="flex cursor-pointer items-center gap-1 rounded-lg border border-zinc-700/80 bg-zinc-900 px-1.5 py-0.5 shadow-sm transition hover:border-zinc-500 sm:gap-1.5 sm:px-2 sm:py-1">
                                                 <input
                                                     type="checkbox"

@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import axiosCustom from '../../../../../config/axiosCustom.ts';
 import { Link, useNavigate } from 'react-router-dom';
 import { LucideSettings } from 'lucide-react';
-import { jotaiStateTaskWorkspaceId } from '../stateJotai/taskStateJotai.ts';
+import { jotaiStateTaskPageView, jotaiStateTaskWorkspaceId } from '../stateJotai/taskStateJotai.ts';
 import { useAtom } from 'jotai';
 
 interface Workspace {
@@ -37,6 +37,7 @@ const writeLastWorkspace = (next: string) => {
 const ComponentTaskWorkspace = () => {
     const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
     const [workspaceId, setWorkspaceId] = useAtom(jotaiStateTaskWorkspaceId);
+    const [taskPageView, setTaskPageView] = useAtom(jotaiStateTaskPageView);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -55,6 +56,11 @@ const ComponentTaskWorkspace = () => {
                 }
 
                 const searchParams = new URLSearchParams(window.location.search);
+                if (searchParams.get('view') === 'isTaskPinned') {
+                    setTaskPageView('isTaskPinned');
+                } else if (searchParams.get('workspace')) {
+                    setTaskPageView('workspace');
+                }
                 const workspaceQuery = searchParams.get("workspace");
                 if (workspaceQuery) {
                     for (const ws of resultWorkspaceArr) {
@@ -87,8 +93,47 @@ const ComponentTaskWorkspace = () => {
         fetchWorkspaces();
     }, []);
 
+    const menuButtonClass = (active: boolean) => {
+        if (active) {
+            return 'flex-1 rounded-md bg-zinc-100 px-2 py-1.5 text-[11px] font-medium text-zinc-900';
+        }
+        return 'flex-1 rounded-md px-2 py-1.5 text-[11px] font-medium text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200';
+    };
+
     return (
         <div className="space-y-1">
+            <div
+                className="mb-2 flex rounded-lg border border-zinc-700/80 bg-zinc-950 p-0.5"
+                role="group"
+                aria-label="Task view"
+            >
+                <button
+                    type="button"
+                    className={menuButtonClass(taskPageView === 'workspace')}
+                    aria-pressed={taskPageView === 'workspace'}
+                    onClick={() => {
+                        setTaskPageView('workspace');
+                        if (workspaceId.length === 24) {
+                            navigate(`/user/task?workspace=${workspaceId}`);
+                        } else {
+                            navigate('/user/task');
+                        }
+                    }}
+                >
+                    Workspace
+                </button>
+                <button
+                    type="button"
+                    className={menuButtonClass(taskPageView === 'isTaskPinned')}
+                    aria-pressed={taskPageView === 'isTaskPinned'}
+                    onClick={() => {
+                        setTaskPageView('isTaskPinned');
+                        navigate('/user/task?view=isTaskPinned');
+                    }}
+                >
+                    All workspaces
+                </button>
+            </div>
             <div className="flex items-center justify-between gap-1.5">
                 <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Workspace</span>
                 <Link
@@ -106,6 +151,7 @@ const ComponentTaskWorkspace = () => {
                 onChange={(e) => {
                     setWorkspaceId(e.target.value);
                     writeLastWorkspace(e.target.value);
+                    setTaskPageView('workspace');
                     navigate(`/user/task?workspace=${e.target.value}`);
                 }}
                 aria-label="Select workspace"

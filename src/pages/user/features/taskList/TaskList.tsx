@@ -32,8 +32,9 @@ import ComponentTaskListFooter from './ComponentTaskListFooter';
 import TaskAddOrEdit from './ComponentTaskEdit/TaskAddOrEdit';
 import ComponentTaskStatusListNames from './componentTaskStatusListNames/componentTaskStatusListNames';
 import ComponentTaskWorkspace from './componentTaskWorkspace/ComponentTaskWorkspace';
-import { jotaiStateTaskWorkspaceId, taskFilterSearchAtom, taskFilterPriorityAtom, taskFilterArchivedAtom, taskFilterCompletedAtom, taskFilterLabelsAtom, taskSortOverdueFirstAtom, taskFilterDueFromAtom, taskFilterDueToAtom, taskFilterPinnedAtom, taskSortByAtom } from './stateJotai/taskStateJotai';
+import { jotaiStateTaskPageView, jotaiStateTaskWorkspaceId, taskFilterSearchAtom, taskFilterPriorityAtom, taskFilterArchivedAtom, taskFilterCompletedAtom, taskFilterLabelsAtom, taskSortOverdueFirstAtom, taskFilterDueFromAtom, taskFilterDueToAtom, taskFilterPinnedAtom, taskSortByAtom } from './stateJotai/taskStateJotai';
 import ComponentTaskListLabels from './ComponentTaskListLabels';
+import TaskConfirmModal from './TaskConfirmModal';
 import { atomWithStorage } from 'jotai/utils';
 
 const expandedSectionsAtom = atomWithStorage(`taskList-expanded`, [] as string[]);
@@ -109,6 +110,7 @@ const writeLastWorkspace = (next: string) => {
 const TaskList: React.FC = () => {
     const [refreshRandomNum, setRefreshRandomNum] = useState(0);
     const [tasks, setTasks] = useState<tsPageTask[]>([]);
+    const [tasksForView, setTasksForView] = useState<'workspace' | 'isTaskPinned'>('workspace');
     const [searchInput, setSearchInput] = useAtom(taskFilterSearchAtom);
     const [loading, setLoading] = useState(false);
     const [priority, setPriority] = useAtom(taskFilterPriorityAtom);
@@ -124,6 +126,7 @@ const TaskList: React.FC = () => {
     const [dragOverStatus, setDragOverStatus] = useState<string | null>(null);
 
     const [workspaceId, setWorkspaceId] = useAtom(jotaiStateTaskWorkspaceId);
+    const [taskPageView, setTaskPageView] = useAtom(jotaiStateTaskPageView);
 
     const [taskStatusList, setTaskStatusList] = useState<{
         _id: string;
@@ -140,6 +143,7 @@ const TaskList: React.FC = () => {
     const [expandedSections, setExpandedSections] = useAtom(expandedSectionsAtom);
     const [taskLayoutMode, setTaskLayoutMode] = useAtom(taskListLayoutModeAtom);
     const [quickAddByStatus, setQuickAddByStatus] = useState<Record<string, string>>({});
+    const [clearPinnedOpen, setClearPinnedOpen] = useState(false);
 
     useEffect(() => {
         setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
@@ -149,6 +153,7 @@ const TaskList: React.FC = () => {
         isArchived,
         isCompleted,
         workspaceId,
+        taskPageView,
         searchInput,
         selectedLabels,
         dueFrom,
@@ -263,7 +268,8 @@ const TaskList: React.FC = () => {
                 priority: priority || '',
                 isArchived: isArchived || '',
                 isCompleted: isCompleted || '',
-                taskWorkspaceId: workspaceId || '',
+                taskWorkspaceId: taskPageView === 'isTaskPinned' ? '' : (workspaceId || ''),
+                taskPageView,
                 labelArr: selectedLabels || [],
                 dueDateFrom: dueFrom || '',
                 dueDateTo: dueTo || '',
@@ -277,6 +283,7 @@ const TaskList: React.FC = () => {
             if (signal?.aborted) return;
             const tempTaskArr = response.data.docs;
             setTasks(tempTaskArr);
+            setTasksForView(taskPageView);
         } catch (error) {
             if (axios.isCancel(error) || (error as { code?: string })?.code === 'ERR_CANCELED') {
                 return;
@@ -298,7 +305,13 @@ const TaskList: React.FC = () => {
 
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
+        const view = searchParams.get('view');
         const workspace = searchParams.get('workspace');
+        if (view === 'isTaskPinned') {
+            setTaskPageView('isTaskPinned');
+        } else if (workspace) {
+            setTaskPageView('workspace');
+        }
         if (workspace) {
             setWorkspaceId(workspace);
             writeLastWorkspace(workspace);
@@ -334,6 +347,25 @@ const TaskList: React.FC = () => {
         } catch (error) {
             console.error('Quick add failed', error);
             toast.error('Failed to add task');
+        }
+    };
+
+    const clearPinnedAcrossWorkspaces = async () => {
+        const taskIds = tasks.map((task) => {
+            return task._id;
+        });
+        if (taskIds.length === 0) {
+            return;
+        }
+        try {
+            await axiosCustom.post('/api/task/crud/taskUnpinPinned', {
+                taskIds,
+            });
+            toast.success('Pinned tasks cleared');
+            setRefreshRandomNum(Math.floor(Math.random() * 1_000_000));
+        } catch (error) {
+            console.error('Clear pinned tasks failed', error);
+            toast.error('Failed to clear pinned tasks');
         }
     };
 
@@ -511,7 +543,7 @@ const TaskList: React.FC = () => {
 
                 <ComponentTaskWorkspace />
 
-                {workspaceId.length === 24 && (
+                {taskPageView === 'workspace' && workspaceId.length === 24 && (
                     <div className="mt-2 border-t border-zinc-800 pt-2">
                         <ComponentTaskStatusListNames
                             workspaceId={workspaceId}
@@ -658,7 +690,7 @@ const TaskList: React.FC = () => {
 
                 </section>
 
-                {workspaceId.length === 24 && (
+                {taskPageView === 'workspace' && workspaceId.length === 24 && (
                     <div className="mt-2 border-t border-zinc-800 pt-2">
                         <ComponentTaskListLabels
                             workspaceId={workspaceId}
@@ -679,13 +711,70 @@ const TaskList: React.FC = () => {
                 className="mt-2 min-h-[200px] overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-900 shadow-sm sm:mt-3 lg:mt-0 lg:rounded-none lg:rounded-r-xl lg:border-l-0 lg:border-t lg:border-b lg:border-r lg:border-zinc-700/60"
             >
                 <div className="p-2 sm:p-3">
-                {loading && (
+                {(loading || taskPageView !== tasksForView) && (
                     <div className="flex justify-center py-5 sm:py-6">
                         <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-700 border-t-indigo-600" />
                     </div>
                 )}
 
-                {!loading && workspaceId.length === 24 && (
+                {!loading && taskPageView === tasksForView && taskPageView === 'isTaskPinned' && (
+                    <div className="space-y-2">
+                        <div className="flex flex-wrap items-center justify-between gap-1.5 rounded-lg border border-zinc-700/70 bg-zinc-950/80 px-2 py-1.5">
+                            <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                                <Pin className="h-3.5 w-3.5 text-amber-300" strokeWidth={2} aria-hidden />
+                                <span className="text-[11px] font-medium text-zinc-200">Pinned across workspaces</span>
+                                <span className="text-[11px] tabular-nums text-zinc-500">
+                                    {tasks.length === 1 ? '1 task' : `${tasks.length} tasks`}
+                                </span>
+                            </div>
+                            {tasks.length > 0 && (
+                                <button
+                                    type="button"
+                                    onClick={() => { setClearPinnedOpen(true); }}
+                                    className="inline-flex items-center gap-1 rounded-lg border border-zinc-700 bg-zinc-900 px-2 py-1 text-xs font-medium text-zinc-300 hover:bg-zinc-800"
+                                    aria-label="Clear pinned tasks"
+                                >
+                                    <LucideX className="h-3 w-3" strokeWidth={2} aria-hidden />
+                                    Clear
+                                </button>
+                            )}
+                        </div>
+                        {tasks.length === 0 && (
+                            <p className="py-6 text-center text-xs text-zinc-500">No pinned tasks. Pin a task to list it here.</p>
+                        )}
+                        {tasks.length > 0 && (
+                            <ul className="flex flex-col gap-1.5">
+                                {sortTasks(tasks).map((task) => {
+                                    return (
+                                        <li key={task._id} className="min-w-0">
+                                            <TaskItem
+                                                task={task}
+                                                taskStatusList={task.taskStatusList || []}
+                                                setRefreshRandomNum={setRefreshRandomNum}
+                                                setIsTaskAddModalIsOpen={setIsTaskAddModalIsOpen}
+                                                layout="list"
+                                                showWorkspaceTitle
+                                            />
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        )}
+                        <TaskConfirmModal
+                            isOpen={clearPinnedOpen}
+                            title="Clear pinned tasks?"
+                            body={`Unpin ${tasks.length === 1 ? '1 task' : `${tasks.length} tasks`} from the all-workspaces list?`}
+                            confirmLabel="Clear"
+                            onConfirm={() => {
+                                setClearPinnedOpen(false);
+                                void clearPinnedAcrossWorkspaces();
+                            }}
+                            onCancel={() => { setClearPinnedOpen(false); }}
+                        />
+                    </div>
+                )}
+
+                {!loading && taskPageView === tasksForView && taskPageView === 'workspace' && workspaceId.length === 24 && (
                     <div className="space-y-2 sm:space-y-3">
                         <div className="mb-1 flex flex-wrap items-center justify-between gap-1.5 rounded-lg border border-zinc-700/70 bg-zinc-950/80 px-2 py-1.5 sm:gap-2 sm:px-2.5">
                             <div className="flex min-w-0 flex-wrap items-center gap-1.5 sm:gap-2">

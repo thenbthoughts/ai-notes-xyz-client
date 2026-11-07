@@ -30,6 +30,7 @@ export type TaskItemProps = {
     layout?: TaskItemLayout;
     draggable?: boolean;
     onDragStart?: (e: React.DragEvent, id: string) => void;
+    showWorkspaceTitle?: boolean;
 };
 
 const PRIORITY_CYCLE = ['very-low', 'low', 'medium', 'high', 'very-high'] as const;
@@ -53,6 +54,7 @@ const TaskItem = ({
     layout = 'grid',
     draggable = false,
     onDragStart,
+    showWorkspaceTitle = false,
 }: TaskItemProps) => {
     const [showActions, setShowActions] = useState(false);
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -583,13 +585,26 @@ const TaskItem = ({
         >
             <div className="flex items-center gap-1">
                 <span className="cursor-grab select-none text-zinc-500" aria-hidden>⋮⋮</span>
-                <div className="min-w-0 flex-1">{titleButton}</div>
+                <div className="min-w-0 flex-1">
+                    {titleButton}
+                    {showWorkspaceTitle && (
+                        <p className="truncate text-[10px] font-medium text-zinc-500">
+                            {(task.taskWorkspace && task.taskWorkspace[0] && task.taskWorkspace[0].title) || 'Workspace'}
+                        </p>
+                    )}
+                </div>
             </div>
             {chips}
             {subtaskBar}
             {sendQueueBlock}
             <div className={`${actionsVisibleClass} mt-1.5 flex-wrap items-center gap-1`}>
-                {selectEl}
+                {showWorkspaceTitle ? (
+                    <span className="rounded-md border border-zinc-700/80 bg-zinc-950 px-1.5 py-1 text-[11px] text-zinc-300">
+                        {(task.taskStatusList && task.taskStatusList[0] && task.taskStatusList[0].statusTitle) || 'No list'}
+                    </span>
+                ) : (
+                    selectEl
+                )}
                 {iconButtons}
             </div>
             <TaskConfirmModal
