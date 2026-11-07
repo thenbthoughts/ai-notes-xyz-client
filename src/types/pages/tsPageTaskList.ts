@@ -39,6 +39,10 @@ export interface tsPageTask {
     _id: string;
     taskWorkspaceId: string;
     taskStatusId: string;
+    taskWorkspace?: {
+        _id: string;
+        title: string;
+    }[];
 
     // auto
     dateTimeUtc: Date;

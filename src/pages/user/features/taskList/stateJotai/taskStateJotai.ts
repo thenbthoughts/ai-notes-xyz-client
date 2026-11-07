@@ -3,6 +3,10 @@ import { atomWithStorage } from "jotai/utils";
 
 export const jotaiStateTaskWorkspaceId = atom<string>('');
 
+export type TaskPageView = 'workspace' | 'isTaskPinned';
+
+export const jotaiStateTaskPageView = atomWithStorage<TaskPageView>('taskList-pageView', 'workspace');
+
 export const taskFilterSearchAtom = atomWithStorage<string>('taskList-search', '');
 
 export const taskFilterPriorityAtom = atomWithStorage<string>('taskList-priority', '');
